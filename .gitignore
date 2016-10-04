@@ -1,0 +1,14 @@
+Makefile
+Makefile.in
+aclocal.m4
+.deps
+/m4
+/config
+/configure
+/config.status
+config.h*
+Doxyfile
+/libtool
+examples/fes_slev
+examples/fes_uv
+stamp-h1
