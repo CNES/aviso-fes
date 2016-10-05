@@ -81,4 +81,4 @@ BIBLIOGRAPHY
 CONTACT
 #######
 
-aviso@oceanobs.com
+aviso@altimetry.fr
