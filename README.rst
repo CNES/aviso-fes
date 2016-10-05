@@ -56,8 +56,8 @@ support from CNES (http://www.aviso.altimetry.fr/)*
 HOW TO INSTALL THE SOFTWARE ?
 #############################
 
-The complete description of the build method is described in the ``INSTALL`` file
-located in the root of this software.
+The complete description of the build method is described in the `INSTALL
+<INSTALL>`_ file located in the root of this software.
 
 HOW TO USE THE SOFTWARE ?
 #########################
