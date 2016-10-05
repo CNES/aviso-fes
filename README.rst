@@ -13,15 +13,15 @@ The FES2014 tides database includes 3 components:
 been computed using the new FES2014 tidal loading grids. Two versions
 are available:
 
-    * Non extrapolated version: the model is defined on a 1/16° grid directly
-      interpolated from the finite element native grid of the model. Filenames
-      are ``WAVE_FES2014b_elev.nc``.
+* Non extrapolated version: the model is defined on a 1/16° grid directly
+  interpolated from the finite element native grid of the model. Filenames
+  are ``WAVE_FES2014b_elev.nc``.
 
-    * Extrapolated version: the above version has been extrapolated on the
-      coasts in order to cover nearly entirely the coastal regions. The
-      procedure is a simple extrapolation applied on 10 pixels and using mean
-      values when necessary, it can be not enough accurate in some regions.
-      Filenames are ``WAVE_FES2014b_elev_extrapol.nc``.
+* Extrapolated version: the above version has been extrapolated on the
+  coasts in order to cover nearly entirely the coastal regions. The
+  procedure is a simple extrapolation applied on 10 pixels and using mean
+  values when necessary, it can be not enough accurate in some regions.
+  Filenames are ``WAVE_FES2014b_elev_extrapol.nc``.
 
 2. **Tide currents**: tidal curents derived from FES2014a model are delivered on
 the 1/16° grid, directly interpolated from the finite element native grid.
@@ -70,13 +70,13 @@ example of using this API.
 BIBLIOGRAPHY
 ############
 
-Lyard F., L. Carrere, M. Cancet, A. Guillot, N. Picot: *FES2014, a new finite
-elements tidal model for global ocean*, in preparation, to be submitted to Ocean
-Dynamics in 2016.
+* Lyard F., L. Carrere, M. Cancet, A. Guillot, N. Picot: *FES2014, a new finite
+  elements tidal model for global ocean*, in preparation, to be submitted to
+  Ocean Dynamics in 2016.
 
-Carrere L., F. Lyard, M. Cancet, A. Guillot, N. Picot: *FES 2014, a new tidal
-model - Validation results and perspectives for improvements*, presentation to
-ESA Living Planet Conference, Prague 2016.
+* Carrere L., F. Lyard, M. Cancet, A. Guillot, N. Picot: *FES 2014, a new tidal
+  model - Validation results and perspectives for improvements*, presentation to
+  ESA Living Planet Conference, Prague 2016.
 
 CONTACT
 #######
