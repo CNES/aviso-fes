@@ -64,8 +64,8 @@ HOW TO USE THE SOFTWARE ?
 
 This distribution contains a C API to be used to calculate the tide. The
 `API <API.rst>`_ documentation describes the functions to be used to
-perform the calculation. The directory `examples` contains an example of
-using this API.
+perform the calculation. The directory `examples <examples>`_ contains an
+example of using this API.
 
 BIBLIOGRAPHY
 ############
