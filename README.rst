@@ -35,7 +35,7 @@ FES2014_load must be used to compute the FES2014 geocentric (elastic) tide.
 Filenames are ``WAVE_FES2014_load.nc``.
 
 The tides database contains 34 tidal components for each tide product: 2N2,
-Eps2, J1, K1, K2, L2, La2, M2 , M3, M4, M6, M8, Mf, MKS2, Mm, MN4, MS4, MSf,
+Eps2, J1, K1, K2, L2, La2, M2, M3, M4, M6, M8, Mf, MKS2, Mm, MN4, MS4, MSf,
 MSqm, Mtm, Mu2, N2, N4, Nu2, O1, P1, Q1, R2, S1, S2, S4, Sa, Ssa, T2.
 
 .. note:: To produce FES2014 tidal prediction with the software, you need to use
