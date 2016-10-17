@@ -28,7 +28,7 @@ the 1/16° grid, directly interpolated from the finite element native grid.
 No extrapolation is done on the coasts for the currents. Filenames are
 ``WAVE_FES2014a_uv.nc``.
 
-3. **Tide loading**: the new FES2014b tide loading (noted FES2014_load) grids
+3. **Tide loading**: the new FES2014a tide loading (noted FES2014_load) grids
 are supplied on the same 1/16° grid.
 
 FES2014_load must be used to compute the FES2014 geocentric (elastic) tide.
