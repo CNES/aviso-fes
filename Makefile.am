@@ -26,3 +26,5 @@ endif
 SUBDIRS = $(dir)
 
 ACLOCAL_AMFLAGS = -I m4
+
+EXTRA_DIST = README.rst API.rst
