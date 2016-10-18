@@ -17,6 +17,12 @@ lib_LTLIBRARIES = libfes.la
 libfes_la_SOURCES = angle.h angle.c cache.c cache.h dlist.c dlist.h error.c \
 	error.h fes.c fes_int.h grid.c grid.h ini.c ini.h interp.c interp.h \
 	prediction.c prediction.h
-libfes_la_LDFLAGS = -version-info 2:7:0
+
+# These linker flags specify libtool version info.
+# See http://www.gnu.org/software/libtool/manual/libtool.html#Libtool-versioning
+# Note:
+#  version-info 9:0:7 results in soname of libnfes.so.2 -> libfes.so.2.7.0 (9 = 2 + 7)
+#  version-info 9:0:2 results in soname of libnfes.so.7 -> libfes.so.7.2.0 (9 = 7 + 2)
+libfes_la_LDFLAGS = -version-info 9:0:7
 nodist_libfes_la_SOURCES = uthash.h
 include_HEADERS = fes.h
