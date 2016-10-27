@@ -157,10 +157,8 @@ static int _read_grid_value(fes_handler* const fes, const size_t i_lon,
       value->re = DV;
       value->im = DV;
     } else {
-      value->re = amp * cos(-pha * RAD);
-      value->im =
-          grid->file[n].phase_lag ?
-              -amp * sin(-pha * RAD) : amp * sin(pha * RAD);
+      value->re = amp * cos(pha * RAD);
+      value->im = amp * sin(pha * RAD);
     }
 
     // Store the data read into the buffer, if the user wants.
@@ -601,11 +599,8 @@ int load_grid(const char* const path, const unsigned int n,
 
     for (ix = 0; ix < size; ++ix) {
       if (amp[ix] != undef && pha[ix] != undef) {
-        fes->grid.values[n][ix].re = amp[ix] * (float) (cos(-pha[ix] * RAD));
-        fes->grid.values[n][ix].im =
-            nc->phase_lag ?
-                -amp[ix] * (float) (sin(-pha[ix] * RAD)) :
-                amp[ix] * (float) (sin(pha[ix] * RAD));
+        fes->grid.values[n][ix].re = amp[ix] * (float) (cos(pha[ix] * RAD));
+        fes->grid.values[n][ix].im = amp[ix] * (float) (sin(pha[ix] * RAD));
       } else {
         fes->grid.values[n][ix].re = (float) (undef);
         fes->grid.values[n][ix].im = (float) (undef);
