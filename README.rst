@@ -1,3 +1,5 @@
+[![Build Status](https://drone.io/bitbucket.org/cnes_aviso/fes/status.png)](https://drone.io/bitbucket.org/cnes_aviso/fes/latest)
+
 DESCRIPTION
 ###########
 
