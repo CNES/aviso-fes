@@ -28,7 +28,7 @@ void dlist_destroy(fes_dlist* list) {
   while (list->size) {
     void* data;
 
-    if (dlist_remove(list, list->tail, &data) == 0 && list->del) {
+    if (dlist_remove(list, list->head, &data) == 0 && list->del) {
       list->del(data);
     }
   }
