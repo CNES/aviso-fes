@@ -245,14 +245,7 @@ static int parse_ini_file(fes_handler* fes, FILE* stream, char *root, _ini* ini)
 int ini_open(fes_handler* fes, const char* const path, void** handle) {
   _ini* ini;
   FILE* stream;
-  char savpath[MAX_PATH];
-
-  strcpy(savpath, path);
-
-  if ((ini = (_ini*) calloc(1, sizeof(_ini))) == NULL) {
-    set_fes_error(fes, FES_NO_MEMORY);
-    return 1;
-  }
+  char* path_copy;
 
   if ((stream = fopen(path, "r")) == NULL) {
     set_fes_extended_error(fes, FES_IO_ERROR,
@@ -260,9 +253,24 @@ int ini_open(fes_handler* fes, const char* const path, void** handle) {
     return 1;
   }
 
-  if (parse_ini_file(fes, stream, dirname(savpath), ini))
+  if((path_copy = STRDUP(path)) == NULL) {
+    set_fes_error(fes, FES_NO_MEMORY);
     return 1;
+  }
 
+  if ((ini = (_ini*) calloc(1, sizeof(_ini))) == NULL) {
+    free(path_copy);
+    set_fes_error(fes, FES_NO_MEMORY);
+    return 1;
+  }
+
+  if (parse_ini_file(fes, stream, dirname(path_copy), ini)) {
+    free(path_copy);
+    free(ini);
+    return 1;
+  }
+
+  free(path_copy);
   fclose(stream);
 
   *handle = ini;
