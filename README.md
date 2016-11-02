@@ -1,5 +1,3 @@
-[![Build Status](https://drone.io/bitbucket.org/cnes_aviso/fes/status.png)](https://drone.io/bitbucket.org/cnes_aviso/fes/latest) [![Build Coverage](https://scan.coverity.com/projects/10693/badge.svg)](https://scan.coverity.com/projects/fes)
-
 # DESCRIPTION
 
 This package is the fully revised version of the FES2014 distribution.
