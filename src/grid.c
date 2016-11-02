@@ -572,12 +572,11 @@ int load_grid(const char* const path, const unsigned int n,
       return 1;
     }
 
-    if ((amp = (float*) calloc(size, sizeof(float))) == NULL) {
-      set_fes_error(fes, FES_NO_MEMORY);
-      return 1;
-    }
-
-    if ((pha = (float*) calloc(size, sizeof(float))) == NULL) {
+    amp = (float*) calloc(size, sizeof(float));
+    pha = (float*) calloc(size, sizeof(float));
+    if (amp == NULL || pha == NULL) {
+      free(amp);
+      free(pha);
       set_fes_error(fes, FES_NO_MEMORY);
       return 1;
     }
@@ -587,13 +586,17 @@ int load_grid(const char* const path, const unsigned int n,
     if (rc) {
       set_fes_extended_error(fes, FES_NETCDF_ERROR, "%s (%s) : %s",
                              nc_strerror(rc), nc->amp, path);
-      return 1;
+    } else {
+      rc = nc_get_var_float(nc->id, nc->pha_id, pha);
+      if (rc)
+        set_fes_extended_error(fes, FES_NETCDF_ERROR, "%s (%s) : %s",
+                               nc_strerror(rc), nc->pha, path);
     }
 
-    rc = nc_get_var_float(nc->id, nc->pha_id, pha);
-    if (rc) {
-      set_fes_extended_error(fes, FES_NETCDF_ERROR, "%s (%s) : %s",
-                             nc_strerror(rc), nc->amp, path);
+    /* if an error was caught */
+    if(rc) {
+      free(amp);
+      free(pha);
       return 1;
     }
 
