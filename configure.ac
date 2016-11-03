@@ -26,23 +26,30 @@ AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 AM_PROG_AR
 LT_INIT
 
+#
 # Checks for programs.
+#
 AC_PROG_CC
 AC_PROG_INSTALL
 AC_CHECK_PROGS(AR, ar, [ar])
 
 AC_SUBST(AR_FLAGS, [cr])
 
+#
 # Checks for library functions.
+#
 AC_FUNC_MMAP
 
+#
 # Checks for header files
+#
 AC_CHECK_HEADER(stdarg.h)
 
-# Check for netcdf library
+#
+# Check for netcdf header/library
+#
 AC_ARG_VAR(NETCDF_INC, Location of netCDF headers)
 AC_ARG_VAR(NETCDF_LIB, Location of netCDF library)
-AC_ARG_VAR(UTHASH_INC, Location of uthash headers)
 
 if test "${NETCDF_LIB}"; then
     if test -d "${NETCDF_LIB}"; then
@@ -66,6 +73,23 @@ else
         CPPFLAGS="-I/usr/local/include ${CPPFLAGS}"
     fi
 fi
+
+AC_CHECK_HEADER(
+    [netcdf.h],
+    [],
+    [AC_MSG_ERROR([Can't find C header file for netcdf.])]
+)
+AC_CHECK_LIB(
+    [netcdf],
+    [nc_open],
+    [],
+    [AC_MSG_ERROR([Can't find netcdf library, or can't link a program to it.])]
+)
+
+#
+# Check for uthash
+#
+AC_ARG_VAR(UTHASH_INC, Location of uthash headers)
 if test "${UTHASH_INC}"; then
     if test -d "${UTHASH_INC}"; then
         CPPFLAGS="${CPPFLAGS} -I${UTHASH_INC}"
@@ -78,14 +102,56 @@ else
     fi
 fi
 
-AC_CHECK_HEADER(netcdf.h, [], [AC_MSG_ERROR([Can't find C header file for netcdf.])])
-AC_CHECK_LIB(netcdf, nc_open, [], [AC_MSG_ERROR([Can't find netcdf library, or can't link a program to it.])])
+AC_CHECK_HEADER(
+    [uthash.h],
+    [],
+    [AC_MSG_ERROR([Can't find C header file for uthash.])]
+)
 
-AC_CHECK_HEADER(uthash.h, [], [AC_MSG_ERROR([Can't find C header file for uthash.])])
+#
+# Check for strlcpy/strlcat
+#
+AC_CHECK_HEADERS(
+    [bsd/string.h],
+    [
+        AC_DEFINE(
+            [HAVE_BSD_STRING],
+            [1],
+            [Check for BSD string])
+    ]
+)
+AC_CHECK_FUNCS(
+    [strlcat strlcpy],
+    [STRL_FOUND="yes"],
+    [
+        AC_SEARCH_LIBS(
+            [strlcat],
+            [bsd strl],
+            [LIBSTRL_FOUND="yes"],
+            [STRL_FOUND="no"])
+        AC_SEARCH_LIBS(
+            [strlcpy],
+            [bsd strl],
+            [LIBSTRL_FOUND="yes"],
+            [STRL_FOUND="no"])
+    ]
+)
+# strlcat/strlcpy are provided by libbsd
+if test x"$LIBSTRL_FOUND" = x"yes"
+then
+    LIBS="$LIBS $STRL_LIBS"
+fi
+
+# Impossible to build the library without these functions
+if test x"$STRL_FOUND" != x"yes" -a x"$LIBSTRL_FOUND" != x"yes"
+then
+    AC_MSG_ERROR(no strlcpy/strlcat found)
+fi
 
 AC_SUBST([NETCDFLIB])
 AC_CONFIG_FILES([Makefile src/Makefile test/Makefile examples/Makefile])
 
+# Enable the documentation generation if doxygen is available
 AC_CHECK_PROGS([DOXYGEN], [doxygen], [])
 AM_CONDITIONAL([HAVE_DOXYGEN], [test -n "$DOXYGEN"])
 AM_COND_IF([HAVE_DOXYGEN],
@@ -100,3 +166,4 @@ echo "CFLAGS    = ${CFLAGS}"
 echo "CPP       = ${CPP}"
 echo "CPPFLAGS  = ${CPPFLAGS}"
 echo "LDFLAGS   = ${LDFLAGS}"
+echo "LIBS      = ${LIBS}"

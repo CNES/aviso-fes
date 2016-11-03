@@ -14,9 +14,13 @@
    along with FES.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <config.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
+#ifdef HAVE_BSD_STRING
+#include <bsd/string.h>
+#endif
 
 #include "fes.h"
 #include "fes_int.h"
