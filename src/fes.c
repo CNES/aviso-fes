@@ -201,7 +201,7 @@ int fes_new(FES* handle, const fes_enum_tide_type tide,
     fes->waves[ix].admittance = 0;
 
     /* Reading the name of the variable who contains the latitudes. */
-    strncpy(
+    strlcpy(
         file.lat,
         ini_get_string(ini,
                        _get_key(fes->type, fes->waves[ix].name, "LATITUDE"),
@@ -209,7 +209,7 @@ int fes_new(FES* handle, const fes_enum_tide_type tide,
         sizeof(file.lat));
 
     /* Reading the name of the variable who contains the longitude. */
-    strncpy(
+    strlcpy(
         file.lon,
         ini_get_string(ini,
                        _get_key(fes->type, fes->waves[ix].name, "LONGITUDE"),
@@ -217,7 +217,7 @@ int fes_new(FES* handle, const fes_enum_tide_type tide,
         sizeof(file.lon));
 
     /* Reading the name of the variable who contains the amplitudes. */
-    strncpy(
+    strlcpy(
         file.amp,
         ini_get_string(ini,
                        _get_key(fes->type, fes->waves[ix].name, "AMPLITUDE"),
@@ -225,7 +225,7 @@ int fes_new(FES* handle, const fes_enum_tide_type tide,
         sizeof(file.amp));
 
     /* Reading the name of the variable who contains the phases. */
-    strncpy(
+    strlcpy(
         file.pha,
         ini_get_string(ini, _get_key(fes->type, fes->waves[ix].name, "PHASE"),
                        PHASE),
