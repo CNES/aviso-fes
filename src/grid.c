@@ -153,7 +153,7 @@ static int _read_grid_value(fes_handler* const fes, const size_t i_lon,
       return 1;
     }
 
-    if (amp == grid->undef || amp == grid->undef) {
+    if (amp == grid->undef || pha == grid->undef) {
       value->re = DV;
       value->im = DV;
     } else {
