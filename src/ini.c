@@ -220,9 +220,9 @@ static int parse_ini_file(fes_handler* fes, FILE* stream, char *root, _ini* ini)
           return 1;
         }
 
-        strncpy(tmp, ptr, sizeof(tmp) - 1);
-        strncat(tmp, strstr(val, "}") + 1, sizeof(tmp) - strlen(tmp) - 1);
-        strncpy(val, tmp, sizeof(val));
+        strlcpy(tmp, ptr, sizeof(tmp) - 1);
+        strlcat(tmp, strstr(val, "}") + 1, sizeof(tmp) - strlen(tmp) - 1);
+        strlcpy(val, tmp, sizeof(val));
       }
       if (sscanf(first_char, "./%[^;]", tmp) == 1) {
         snprintf(val, sizeof(val), "%s/%s", root, tmp);
