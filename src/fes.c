@@ -116,7 +116,6 @@ int fes_new(FES* handle, const fes_enum_tide_type tide,
 
   /* Allocate handle */
   if ((fes = (fes_handler*) calloc(1, sizeof(fes_handler))) == NULL) {
-    set_fes_error(fes, FES_NO_MEMORY);
     return 1;
   }
 
