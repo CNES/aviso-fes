@@ -355,16 +355,16 @@ void admittance(fes_wave* const waves) {
    Arrays who contains the spline coefficients needed to compute MU2, NU2,
    L2, T2 and Lambda2 by admittance.
    */
-  static const double mu2[3] ={
-    0.069439968323, 0.351535557706, -0.046278307672 };
-  static const double nu2[3] ={
-    -0.006104695053, 0.156878802427, 0.006755704028 };
-  static const double l2[3] ={
-    0.077137765667, -0.051653455134, 0.027869916824 };
-  static const double t2[3] ={
-    0.180480173707, -0.020101177502, 0.008331518844 };
-  static const double lda2[3] = {
-    0.016503557465, -0.013307812292, 0.007753383202 };
+  static const double mu2[3] =
+      { 0.069439968323, 0.351535557706, -0.046278307672 };
+  static const double nu2[3] =
+      { -0.006104695053, 0.156878802427, 0.006755704028 };
+  static const double l2[3] =
+      { 0.077137765667, -0.051653455134, 0.027869916824 };
+  static const double t2[3] =
+      { 0.180480173707, -0.020101177502, 0.008331518844 };
+  static const double lda2[3] =
+      { 0.016503557465, -0.013307812292, 0.007753383202 };
   register fes_double_complex* x;
   register fes_double_complex* y;
   register fes_double_complex* z;
