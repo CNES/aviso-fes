@@ -226,7 +226,7 @@ static int parse_ini_file(fes_handler* fes, FILE* stream, char *root, _ini* ini)
         strncat(tmp, strstr(val, "}") + 1, sizeof(tmp) - strlen(tmp) - 1);
         strncpy(val, tmp, sizeof(val));
         /* Avoid the code checker to complain about buffer overflow */
-        val[sizeof(val) -1] = '\0';
+        val[sizeof(val) - 1] = '\0';
       }
       if (sscanf(first_char, "./%[^;]", tmp) == 1) {
         snprintf(val, sizeof(val), "%s/%s", root, tmp);
@@ -247,39 +247,43 @@ static int parse_ini_file(fes_handler* fes, FILE* stream, char *root, _ini* ini)
 /*
  */
 int ini_open(fes_handler* fes, const char* const path, void** handle) {
-  _ini* ini;
+  int rc = 0;
   FILE* stream;
-  char* path_copy;
+  _ini* ini = NULL;
+  char* path_copy = NULL;
 
   if ((stream = fopen(path, "r")) == NULL) {
     set_fes_extended_error(fes, FES_IO_ERROR,
                            "Can't open file `%s' for reading.", path);
-    return 1;
+    goto error;
   }
 
-  if((path_copy = STRDUP(path)) == NULL) {
+  if ((path_copy = STRDUP(path)) == NULL) {
     set_fes_error(fes, FES_NO_MEMORY);
-    return 1;
+    goto error;
   }
 
   if ((ini = (_ini*) calloc(1, sizeof(_ini))) == NULL) {
-    free(path_copy);
     set_fes_error(fes, FES_NO_MEMORY);
-    return 1;
+    goto error;
   }
 
-  if (parse_ini_file(fes, stream, dirname(path_copy), ini)) {
-    free(path_copy);
-    free(ini);
-    return 1;
-  }
-
-  free(path_copy);
-  fclose(stream);
+  if (parse_ini_file(fes, stream, dirname(path_copy), ini))
+    goto error;
 
   *handle = ini;
 
-  return 0;
+  goto finish;
+
+  error:
+    rc = 1;
+    free(ini);
+
+  finish:
+    free(path_copy);
+    if (stream != NULL)
+      fclose(stream);
+    return rc;
 }
 
 /*
@@ -288,15 +292,17 @@ void ini_close(void* handle) {
   unsigned int ix;
   _ini* ini = (_ini*) handle;
 
-  if (ini->maxItems > 0) {
-    for (ix = 0; ix < ini->nItems; ix++) {
-      free(ini->key[ix]);
-      free(ini->val[ix]);
+  if (ini != NULL) {
+    if (ini->maxItems > 0) {
+      for (ix = 0; ix < ini->nItems; ix++) {
+        free(ini->key[ix]);
+        free(ini->val[ix]);
+      }
+      free(ini->key);
+      free(ini->val);
     }
-    free(ini->key);
-    free(ini->val);
+    free(ini);
   }
-  free(ini);
 }
 
 /*

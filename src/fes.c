@@ -110,16 +110,16 @@ static size_t _get_env(fes_handler* handle) {
  */
 int fes_new(FES* handle, const fes_enum_tide_type tide,
             const fes_enum_access mode, const char* const path) {
-  int rc;
+  int rc = 0;
   int ix;
   unsigned int n = 0;
   size_t size;
   fes_handler* fes;
-  void* ini;
+  void* ini = NULL;
 
   /* Allocate handle */
   if ((fes = (fes_handler*) calloc(1, sizeof(fes_handler))) == NULL) {
-    return 1;
+    goto error;
   }
 
   /* set handle value */
@@ -133,7 +133,7 @@ int fes_new(FES* handle, const fes_enum_tide_type tide,
 
   /* Open configuration file */
   if (ini_open(fes, path, &ini))
-    return 1;
+    goto error;
 
   /* Determines the number of grid has to be loaded into memory */
   for (ix = 0; ix < N_WAVES; ++ix) {
@@ -149,21 +149,21 @@ int fes_new(FES* handle, const fes_enum_tide_type tide,
     if ((fes->grid.file = (fes_cdf_file*) calloc(fes->grid.n_grids,
                                                  sizeof(fes_cdf_file))) == NULL) {
       set_fes_error(fes, FES_NO_MEMORY);
-      return 1;
+      goto error;
     }
 
     if ((fes->grid.buffer = (fes_buffer*) calloc(1, sizeof(fes_buffer))) == NULL) {
       set_fes_error(fes, FES_NO_MEMORY);
-      return 1;
+      goto error;
     }
 
     /* Read the size of the buffer */
     if ((size = _get_env(fes)) == 0)
-      return 1;
+      goto error;
 
     fes->grid.buffer->values = NULL;
     if (fes_set_buffer_size(fes, size))
-      return 1;
+      goto error;
 
     dlist_init(&fes->grid.buffer->list, fes_delete_cache_item);
   }
@@ -173,14 +173,14 @@ int fes_new(FES* handle, const fes_enum_tide_type tide,
     if ((fes->grid.values = (fes_float_complex**) calloc(
         fes->grid.n_grids, sizeof(fes_float_complex*))) == NULL) {
       set_fes_error(fes, FES_NO_MEMORY);
-      return 1;
+      goto error;
     }
   }
 
   if ((fes->grid.waveIndex = (int*) calloc(fes->grid.n_grids, sizeof(int)))
       == NULL) {
     set_fes_error(fes, FES_NO_MEMORY);
-    return 1;
+    goto error;
   }
 
   /* Loading grids */
@@ -210,7 +210,7 @@ int fes_new(FES* handle, const fes_enum_tide_type tide,
                        LATITUDE),
         sizeof(file.lat));
     /* Avoid the code checker to complain about buffer overflow */
-    file.lat[sizeof(file.lat) -1] = '\0';
+    file.lat[sizeof(file.lat) - 1] = '\0';
 
     /* Reading the name of the variable who contains the longitude. */
     strncpy(
@@ -219,7 +219,7 @@ int fes_new(FES* handle, const fes_enum_tide_type tide,
                        _get_key(fes->type, fes->waves[ix].name, "LONGITUDE"),
                        LONGITUDE),
         sizeof(file.lon));
-    file.lon[sizeof(file.lon) -1] = '\0';
+    file.lon[sizeof(file.lon) - 1] = '\0';
 
     /* Reading the name of the variable who contains the amplitudes. */
     strncpy(
@@ -228,15 +228,15 @@ int fes_new(FES* handle, const fes_enum_tide_type tide,
                        _get_key(fes->type, fes->waves[ix].name, "AMPLITUDE"),
                        AMPLTIUDE),
         sizeof(file.amp));
-    file.amp[sizeof(file.amp) -1] = '\0';
+    file.amp[sizeof(file.amp) - 1] = '\0';
 
     /* Reading the name of the variable who contains the phases. */
     strncpy(
         file.pha,
         ini_get_string(ini, _get_key(fes->type, fes->waves[ix].name, "PHASE"),
-                       PHASE),
+        PHASE),
         sizeof(file.pha));
-    file.pha[sizeof(file.pha) -1] = '\0';
+    file.pha[sizeof(file.pha) - 1] = '\0';
 
     /* Grids contains phase lag ? */
     file.phase_lag = ini_get_integer(
@@ -245,14 +245,12 @@ int fes_new(FES* handle, const fes_enum_tide_type tide,
 
     /* loading netCDF grid */
     if ((rc = load_grid(filename, n, &file, fes)) != 0)
-      return rc;
+      goto error;
 
     fes->grid.waveIndex[n] = ix;
 
     ++n;
   }
-
-  ini_close(ini);
 
   /* Set wave order 2 to compute long-period equilibrium ocean tides */
   set_w2nd(fes->waves, fes->w2nd);
@@ -263,7 +261,15 @@ int fes_new(FES* handle, const fes_enum_tide_type tide,
    */
   fes->west_lon = fes->east_lon = fes->south_lat = fes->north_lat = nan("NaN");
 
-  return 0;
+  goto finish;
+
+  error:
+    if (rc == 0)
+      rc = 1;
+
+  finish:
+    ini_close(ini);
+    return rc;
 }
 
 int fes_set_buffer_size(FES handle, const size_t size) {
