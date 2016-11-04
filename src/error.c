@@ -14,28 +14,25 @@
    along with FES.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <config.h>
+#include "error.h"
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
-#ifdef HAVE_BSD_STRING
-#include <bsd/string.h>
-#endif
 
 #include "fes.h"
-#include "fes_int.h"
-#include "error.h"
 
 /* Error code message */
 static const char* err[] = { "Success", "Not enough memory", "netCDF error",
     "IO error", "Configuration file contains error", "Tide is undefined",
-    "Value error" };
+    "Value error", "Buffer overflow" };
 
 /*
  */
 void set_fes_error(fes_handler* const fes, const fes_enum_error errcode) {
   fes->last_errno = errcode;
-  strlcpy(fes->last_error, err[errcode], sizeof(fes->last_error));
+  strncpy(fes->last_error, err[errcode], sizeof(fes->last_error));
+  fes->last_error[sizeof(fes->last_error) - 1] = '\0';
 }
 
 /*

@@ -14,8 +14,13 @@
    along with FES.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <string.h>
 #include "cache.h"
+
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
+#include <uthash.h>
+
 #include "dlist.h"
 
 fes_cache_item*

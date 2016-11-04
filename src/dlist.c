@@ -14,10 +14,11 @@
    along with FES.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include "dlist.h"
+
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
 
 void dlist_init(fes_dlist* list, void (*del)(void* p)) {
   memset(list, 0, sizeof(fes_dlist));

@@ -26,40 +26,40 @@ int main(void) {
   a = 2;
   b = 2;
 
-  printf("*** testing _sumWeighting...\n");
-  _sumWeighting(2, 2, &a, &b);
+  printf("*** testing _sum_weighting...\n");
+  _sum_weighting(2, 2, &a, &b);
 
   err = a != 6 || b != 4;
 
   SUMMARIZE_ERR;
 
-  _sumWeighting(DV, 2, &a, &b);
+  _sum_weighting(DV, 2, &a, &b);
 
   err = a != 6 || b != 4;
 
   SUMMARIZE_ERR;
 
-  printf("*** testing _linearWeighting...\n");
-  _linearWeighting(1, 1, 1, &a, &b);
+  printf("*** testing _linear_weighting...\n");
+  _linear_weighting(1, 1, 1, &a, &b);
 
   err = a != 1 || b != 0;
 
   SUMMARIZE_ERR;
 
-  _linearWeighting(1, 0, 1, &a, &b);
+  _linear_weighting(1, 0, 1, &a, &b);
 
   err = a != 0 || b != 1;
 
   SUMMARIZE_ERR;
 
-  _linearWeighting(2, 1, 3, &a, &b);
+  _linear_weighting(2, 1, 3, &a, &b);
 
   err = a != 0.5 || b != 0.5;
 
   SUMMARIZE_ERR;
 
-  printf("*** testing bilinearInterp...\n");
-  bilinearInterp(-1, 1, -1, 1, 0, 1, 1, 2, 0, 0, &a);
+  printf("*** testing bilinear_interp...\n");
+  bilinear_interp(-1, 1, -1, 1, 0, 1, 1, 2, 0, 0, &a);
 
   err = a != 1.0;
 
