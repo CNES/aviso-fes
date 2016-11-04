@@ -14,12 +14,17 @@
    along with FES.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "grid.h"
+
+#include <math.h>
+#include <netcdf.h>
+#include <stddef.h>
 #include <stdlib.h>
 
-#include "error.h"
-#include "grid.h"
-#include "interp.h"
 #include "cache.h"
+#include "error.h"
+#include "fes.h"
+#include "interp.h"
 
 /*
  FILL_VALUES
@@ -479,30 +484,30 @@ int interp(fes_handler* fes, const double lat, const double lon) {
         && fes->ne[n].re == DV)
       goto no_data;
 
-    number = bilinearInterp(fes->west_lon, /* X1 */
-                            fes->east_lon, /* X2 */
-                            fes->south_lat, /* Y1 */
-                            fes->north_lat, /* Y2 */
-                            fes->sw[n].re, /* X1, Y1 */
-                            fes->se[n].re, /* X2, Y1 */
-                            fes->nw[n].re, /* X1, Y2 */
-                            fes->ne[n].re, /* X2, Y2 */
-                            lon, lat, &c.re);
+    number = bilinear_interp(fes->west_lon, /* X1 */
+                             fes->east_lon, /* X2 */
+                             fes->south_lat, /* Y1 */
+                             fes->north_lat, /* Y2 */
+                             fes->sw[n].re, /* X1, Y1 */
+                             fes->se[n].re, /* X2, Y1 */
+                             fes->nw[n].re, /* X1, Y2 */
+                             fes->ne[n].re, /* X2, Y2 */
+                             lon, lat, &c.re);
 
     if (c.re == DV)
       goto no_data;
 
     fes->min_number = MIN(fes->min_number, number);
 
-    number = bilinearInterp(fes->west_lon, /* X1 */
-                            fes->east_lon, /* X2 */
-                            fes->south_lat, /* Y1 */
-                            fes->north_lat, /* Y2 */
-                            fes->sw[n].im, /* X1, Y1 */
-                            fes->se[n].im, /* X2, Y1 */
-                            fes->nw[n].im, /* X1, Y2 */
-                            fes->ne[n].im, /* X2, Y2 */
-                            lon, lat, &c.im);
+    number = bilinear_interp(fes->west_lon, /* X1 */
+                             fes->east_lon, /* X2 */
+                             fes->south_lat, /* Y1 */
+                             fes->north_lat, /* Y2 */
+                             fes->sw[n].im, /* X1, Y1 */
+                             fes->se[n].im, /* X2, Y1 */
+                             fes->nw[n].im, /* X1, Y2 */
+                             fes->ne[n].im, /* X2, Y2 */
+                             lon, lat, &c.im);
 
     if (c.im == DV)
       goto no_data;

@@ -14,18 +14,16 @@
    along with FES.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <config.h>
+#include "ini.h"
+
 #include <ctype.h>
+#include <libgen.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <libgen.h>
-#ifdef HAVE_BSD_STRING
-#include <bsd/string.h>
-#endif
 
-#include "ini.h"
 #include "error.h"
+#include "fes.h"
 
 #define BUFFER_SIZE 256
 
@@ -224,9 +222,11 @@ static int parse_ini_file(fes_handler* fes, FILE* stream, char *root, _ini* ini)
           return 1;
         }
 
-        strlcpy(tmp, ptr, sizeof(tmp) - 1);
-        strlcat(tmp, strstr(val, "}") + 1, sizeof(tmp) - strlen(tmp) - 1);
-        strlcpy(val, tmp, sizeof(val));
+        strncpy(tmp, ptr, sizeof(tmp) - 1);
+        strncat(tmp, strstr(val, "}") + 1, sizeof(tmp) - strlen(tmp) - 1);
+        strncpy(val, tmp, sizeof(val));
+        /* Avoid the code checker to complain about buffer overflow */
+        val[sizeof(val) -1] = '\0';
       }
       if (sscanf(first_char, "./%[^;]", tmp) == 1) {
         snprintf(val, sizeof(val), "%s/%s", root, tmp);

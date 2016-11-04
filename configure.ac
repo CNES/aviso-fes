@@ -108,46 +108,6 @@ AC_CHECK_HEADER(
     [AC_MSG_ERROR([Can't find C header file for uthash.])]
 )
 
-#
-# Check for strlcpy/strlcat
-#
-AC_CHECK_HEADERS(
-    [bsd/string.h],
-    [
-        AC_DEFINE(
-            [HAVE_BSD_STRING],
-            [1],
-            [Check for BSD string])
-    ]
-)
-AC_CHECK_FUNCS(
-    [strlcat strlcpy],
-    [STRL_FOUND="yes"],
-    [
-        AC_SEARCH_LIBS(
-            [strlcat],
-            [bsd strl],
-            [LIBSTRL_FOUND="yes"],
-            [STRL_FOUND="no"])
-        AC_SEARCH_LIBS(
-            [strlcpy],
-            [bsd strl],
-            [LIBSTRL_FOUND="yes"],
-            [STRL_FOUND="no"])
-    ]
-)
-# strlcat/strlcpy are provided by libbsd
-if test x"$LIBSTRL_FOUND" = x"yes"
-then
-    LIBS="$LIBS $STRL_LIBS"
-fi
-
-# Impossible to build the library without these functions
-if test x"$STRL_FOUND" != x"yes" -a x"$LIBSTRL_FOUND" != x"yes"
-then
-    AC_MSG_ERROR(no strlcpy/strlcat found)
-fi
-
 AC_SUBST([NETCDFLIB])
 AC_CONFIG_FILES([Makefile src/Makefile test/Makefile examples/Makefile])
 

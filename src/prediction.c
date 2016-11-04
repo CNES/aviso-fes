@@ -14,11 +14,13 @@
    along with FES.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "assert.h"
-#include "string.h"
+#include "prediction.h"
+
+#include <assert.h>
+#include <math.h>
+#include <string.h>
 
 #include "angle.h"
-#include "prediction.h"
 
 /*
  _astronomics
@@ -140,7 +142,7 @@ static double _f_j1(const _fes_astronomic_angle* const a) {
 
 /*
  _f_m13 = (1 -10 sin² ½I + 15 sin⁴ ½I) cos² ½I / 0.5873
- 
+
  a Astronomic angle
  */
 static double _f_m13(const _fes_astronomic_angle* const a) {
@@ -149,7 +151,7 @@ static double _f_m13(const _fes_astronomic_angle* const a) {
 
 /*
  _f_m2 = cos⁴ ½I / 0.9154
- 
+
  a Astronomic angle
  */
 static double _f_m2(const _fes_astronomic_angle* const a) {
@@ -158,7 +160,7 @@ static double _f_m2(const _fes_astronomic_angle* const a) {
 
 /*
  _f_m3 = cos⁶ ½I / 0.8758
- 
+
  a Astronomic angle
  */
 static double _f_m3(const _fes_astronomic_angle* const a) {
@@ -167,7 +169,7 @@ static double _f_m3(const _fes_astronomic_angle* const a) {
 
 /*
  _f_mf = sin² I / 0.1578
- 
+
  a Astronomic angle
  */
 static double _f_mf(const _fes_astronomic_angle* const a) {
@@ -176,7 +178,7 @@ static double _f_mf(const _fes_astronomic_angle* const a) {
 
 /*
  _f_mm = (2/3 - sin² I) / 0.5021
- 
+
  a Astronomic angle
  */
 static double _f_mm(const _fes_astronomic_angle* const a) {
@@ -185,7 +187,7 @@ static double _f_mm(const _fes_astronomic_angle* const a) {
 
 /*
  _f_m22 = f²(M₂)
- 
+
  a Astronomic angle
  */
 static double _f_m22(const _fes_astronomic_angle* const a) {
@@ -194,7 +196,7 @@ static double _f_m22(const _fes_astronomic_angle* const a) {
 
 /*
  _f_m23 = f(M₂)³
- 
+
  a Astronomic angle
  */
 static double _f_m23(const _fes_astronomic_angle* const a) {
@@ -211,7 +213,7 @@ static double _f_m24(const _fes_astronomic_angle* const a) {
 
 /*
  _f_k1 = √(0.8965 sin² 2I+0.6001 sin 2I cos ν + 0.1006)
- 
+
  a Astronomic angle
  */
 static double _f_k1(const _fes_astronomic_angle* const a) {
@@ -222,7 +224,7 @@ static double _f_k1(const _fes_astronomic_angle* const a) {
 
 /*
  _f_k2 = √(19.0444 sin⁴ I + 2.7702 sin² I cos 2ν + 0.0981)
- 
+
  a Astronomic angle
  */
 static double _f_k2(const _fes_astronomic_angle* const a) {
@@ -232,9 +234,9 @@ static double _f_k2(const _fes_astronomic_angle* const a) {
 }
 
 /*
- _f_kj2 = sin² I / 0.1565 (formula #79) 
+ _f_kj2 = sin² I / 0.1565 (formula #79)
 
- 
+
  a Astronomic angle
  */
 static double _f_kj2(const _fes_astronomic_angle* const a) {
@@ -243,7 +245,7 @@ static double _f_kj2(const _fes_astronomic_angle* const a) {
 
 /*
  _f_l2 = _f_m2(a) * 1 / Ra
- 
+
  a Astronomic angle
  */
 static double _f_l2(const _fes_astronomic_angle* const a) {
@@ -252,7 +254,7 @@ static double _f_l2(const _fes_astronomic_angle* const a) {
 
 /*
  _f_m2_k2 = f(M₂) * f(K₂)
- 
+
  a Astronomic angle
  */
 static double _f_m2_k2(const _fes_astronomic_angle* const a) {
@@ -287,7 +289,7 @@ static double _f_m22_k1(const _fes_astronomic_angle* const a) {
 }
 /*
  _f_m23_k2 = f(M₂)³ * f(K₂)
- 
+
  a Astronomic angle
  */
 static double _f_m23_k2(const _fes_astronomic_angle* const a) {
@@ -765,9 +767,9 @@ void lpe_minus_n_waves(const float w2nd[][N_COEFS], const double ts,
 
 /*
  _frequency
- 
+
  Computes the wave frequency from the doodson arguments
- 
+
  t Mean solar angle relative to Greenwich
  s moon's mean longitude
  h sun's mean longitude
