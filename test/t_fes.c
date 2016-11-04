@@ -30,6 +30,7 @@ static int total_err = 0;
 int test(fes_enum_access access) {
   int err;
   int hour;
+  int rc = 0;
   double lon = -7.688;
   double lat = 59.195;
   double tide;
@@ -37,8 +38,8 @@ int test(fes_enum_access access) {
   double lp;
   double load;
   double loadlp;
-  FES short_tide;
-  FES radial_tide;
+  FES short_tide = NULL;
+  FES radial_tide = NULL;
 
   printf(
       "*** testing libfes with %s...\n",
@@ -277,12 +278,19 @@ int test(fes_enum_access access) {
     }
   }
 
+  goto on_terminate;
+
+on_error:
+  rc = 1;
+
+on_terminate:
   fes_delete(short_tide);
   fes_delete(radial_tide);
 
-  FINAL_RESULTS;
-
-  on_error: return 1;
+  if (rc == 0) {
+    FINAL_RESULTS;
+  }
+  return rc;
 }
 
 /*
