@@ -25,7 +25,7 @@
 /* Error code message */
 static const char* err[] = { "Success", "Not enough memory", "netCDF error",
     "IO error", "Configuration file contains error", "Tide is undefined",
-    "Value error", "Buffer overflow" };
+    "Value error" };
 
 /*
  */
