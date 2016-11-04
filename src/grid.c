@@ -599,7 +599,7 @@ int load_grid(const char* const path, const unsigned int n,
     }
 
     /* if an error was caught */
-    if(rc) {
+    if (rc) {
       free(amp);
       free(pha);
       return 1;

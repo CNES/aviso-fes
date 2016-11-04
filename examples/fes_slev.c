@@ -19,10 +19,14 @@
 
 #include "fes.h"
 
+// Path to the configuration file and data used to test the library
+// Change these settings to your liking.
 #define INI             "../test/fes.ini"
 #define FES_DATA        "../test/data"
 
 int main(void) {
+  // The return code
+  int rc = 0;
   // The hour of the estimate.
   int hour;
   // Latitude and longitude of the point where the ocean tide will be
@@ -43,7 +47,7 @@ int main(void) {
   double loadlp;
   // FES handlers
   FES short_tide;
-  FES radial_tide;
+  FES radial_tide = NULL;
 
 #ifdef WIN32
   _putenv(FES_DATA);
@@ -54,13 +58,13 @@ int main(void) {
   // Creating the FES handler to calculate the ocean tide
   if (fes_new(&short_tide, FES_TIDE, FES_IO, INI)) {
     printf("fes error : %s\n", fes_error(short_tide));
-    goto on_error;
+    goto error;
   }
 
   // Creating the FES handler to calculate the loading tide
   if (fes_new(&radial_tide, FES_RADIAL, FES_IO, INI)) {
     printf("fes error : %s\n", fes_error(radial_tide));
-    goto on_error;
+    goto error;
   }
 
   printf("%12s %5s %9s %9s %9s %9s %9s %9s %9s\n", "JulDay", "Hour", "Latitude",
@@ -76,7 +80,7 @@ int main(void) {
         continue;
       else {
         fprintf(stderr, "%s\n", fes_error(short_tide));
-        goto on_error;
+        goto error;
       }
     }
 
@@ -88,7 +92,7 @@ int main(void) {
         continue;
       else {
         fprintf(stderr, "%s\n", fes_error(radial_tide));
-        goto on_error;
+        goto error;
       }
     }
 
@@ -98,11 +102,15 @@ int main(void) {
            lat, lon, tide, lp, tide + lp, tide + lp + load, load);
   }
 
-  // Release the memory used by the FES handlers.
-  fes_delete(short_tide);
-  fes_delete(radial_tide);
+  goto finish;
 
-  return 0;
+  error:
+    rc = 1;
 
-  on_error: return 1;
+  finish:
+    // Release the memory used by the FES handlers.
+    fes_delete(short_tide);
+    fes_delete(radial_tide);
+
+    return rc;
 }
