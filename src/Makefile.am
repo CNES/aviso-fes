@@ -14,9 +14,9 @@
 #   along with FES.  If not, see <http://www.gnu.org/licenses/>.
 AM_CPPFLAGS = -I$(srcdir)/../lib
 lib_LTLIBRARIES = libfes.la
-libfes_la_SOURCES = angle.h angle.c cache.c cache.h dlist.c dlist.h error.c \
-	error.h fes.c fes_int.h grid.c grid.h ini.c ini.h interp.c interp.h \
-	prediction.c prediction.h
+libfes_la_SOURCES = angle.h angle.c cache.c cache.h compat.h compat.c   \
+	dlist.c dlist.h error.c error.h fes.c fes_int.h grid.c grid.h ini.c \
+	ini.h interp.c interp.h prediction.c prediction.h
 
 # These linker flags specify libtool version info.
 # See http://www.gnu.org/software/libtool/manual/libtool.html#Libtool-versioning

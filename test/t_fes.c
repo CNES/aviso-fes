@@ -298,8 +298,8 @@ on_terminate:
 int main(void) {
   int total_err = 0, err;
 
-#ifdef WIN32
-  _putenv(FES_DATA);
+#ifdef _WIN32
+  _putenv_s("FES_DATA", FES_DATA);
 #else
   setenv("FES_DATA", FES_DATA, 1);
 #endif
