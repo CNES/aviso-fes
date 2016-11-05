@@ -20,7 +20,7 @@
 #include "test.h"
 #include "grid.c"
 
-#ifdef WIN32
+#ifdef _WIN32
 #define GRID    "../../test/dummy.nc"
 #else
 #define GRID    "dummy.nc"

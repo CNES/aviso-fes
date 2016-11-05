@@ -25,16 +25,13 @@
 #include <uthash.h>
 
 #include "cache.h"
+#include "compat.h"
 #include "dlist.h"
 #include "error.h"
 #include "fes_int.h"
 #include "grid.h"
 #include "ini.h"
 #include "prediction.h"
-
-#ifdef _WIN32
-#define snprintf _snprintf
-#endif
 
 /* Default variable name for the amplitude data */
 #define AMPLTIUDE "amplitude"
@@ -88,7 +85,11 @@ static size_t _get_env(fes_handler* handle) {
   long int value;
 
   /* Read the buffer size from the environment variable */
+#ifdef _WIN32
+  if ((env = duplicate_env("FES_BUFFER_SIZE")) != NULL) {
+#else
   if ((env = getenv("FES_BUFFER_SIZE")) != NULL) {
+#endif
     char* ptr;
     value = strtol(env, &ptr, 10);
 
@@ -103,6 +104,9 @@ static size_t _get_env(fes_handler* handle) {
   else {
     value = BUFFER_SIZE;
   }
+#ifdef _WIN32
+  free(env);
+#endif
   return (size_t) value;
 }
 
@@ -203,40 +207,35 @@ int fes_new(FES* handle, const fes_enum_tide_type tide,
     fes->waves[ix].admittance = 0;
 
     /* Reading the name of the variable who contains the latitudes. */
-    strncpy(
+    STRNCPY(
         file.lat,
         ini_get_string(ini,
                        _get_key(fes->type, fes->waves[ix].name, "LATITUDE"),
                        LATITUDE),
         sizeof(file.lat));
-    /* Avoid the code checker to complain about buffer overflow */
-    file.lat[sizeof(file.lat) - 1] = '\0';
 
     /* Reading the name of the variable who contains the longitude. */
-    strncpy(
+    STRNCPY(
         file.lon,
         ini_get_string(ini,
                        _get_key(fes->type, fes->waves[ix].name, "LONGITUDE"),
                        LONGITUDE),
         sizeof(file.lon));
-    file.lon[sizeof(file.lon) - 1] = '\0';
 
     /* Reading the name of the variable who contains the amplitudes. */
-    strncpy(
+    STRNCPY(
         file.amp,
         ini_get_string(ini,
                        _get_key(fes->type, fes->waves[ix].name, "AMPLITUDE"),
                        AMPLTIUDE),
         sizeof(file.amp));
-    file.amp[sizeof(file.amp) - 1] = '\0';
 
     /* Reading the name of the variable who contains the phases. */
-    strncpy(
+    STRNCPY(
         file.pha,
         ini_get_string(ini, _get_key(fes->type, fes->waves[ix].name, "PHASE"),
         PHASE),
         sizeof(file.pha));
-    file.pha[sizeof(file.pha) - 1] = '\0';
 
     /* Grids contains phase lag ? */
     file.phase_lag = ini_get_integer(

@@ -21,6 +21,7 @@
 #include <string.h>
 
 #include "fes.h"
+#include "compat.h"
 
 /* Error code message */
 static const char* err[] = { "Success", "Not enough memory", "netCDF error",
@@ -31,8 +32,7 @@ static const char* err[] = { "Success", "Not enough memory", "netCDF error",
  */
 void set_fes_error(fes_handler* const fes, const fes_enum_error errcode) {
   fes->last_errno = errcode;
-  strncpy(fes->last_error, err[errcode], sizeof(fes->last_error));
-  fes->last_error[sizeof(fes->last_error) - 1] = '\0';
+  STRNCPY(fes->last_error, err[errcode], sizeof(fes->last_error));
 }
 
 /*

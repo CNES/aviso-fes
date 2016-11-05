@@ -49,8 +49,8 @@ int main(void) {
   FES short_tide;
   FES radial_tide = NULL;
 
-#ifdef WIN32
-  _putenv(FES_DATA);
+#ifdef _WIN32
+  _putenv_s("FES_DATA", FES_DATA);
 #else
   setenv("FES_DATA", FES_DATA, 1);
 #endif

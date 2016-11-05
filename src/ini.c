@@ -17,19 +17,20 @@
 #include "ini.h"
 
 #include <ctype.h>
+#ifndef _WIN32
 #include <libgen.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include "compat.h"
 #include "error.h"
 #include "fes.h"
 
 #define BUFFER_SIZE 256
 
 /*
- duplicateString
-
  Duplicate a string.
  des Pointer to the new string.
  src String to duplicate.
@@ -38,12 +39,6 @@
  */
 static int _duplicate_string(fes_handler* fes, char** dest,
                              const char* const src) {
-#ifdef _WIN32
-#define STRDUP _strdup
-#else
-#define STRDUP strdup
-#endif
-
   if (src == NULL)
     *dest = NULL;
   else if ((*dest = STRDUP(src)) == NULL) {
@@ -55,8 +50,6 @@ static int _duplicate_string(fes_handler* fes, char** dest,
 }
 
 /*
- skipSpace
-
  Skip spaces
 
  src String
@@ -74,8 +67,6 @@ _skip_space(char* str) {
 }
 
 /*
- trim
-
  Trim blank spaces
 
  src String
@@ -104,8 +95,6 @@ _trim(char* string) {
 }
 
 /*
- addEntry
-
  Add a new pair key, value into the table.
 
  ini
@@ -155,8 +144,6 @@ static int _add_entry(fes_handler* fes, _ini* const ini, const char* const key,
 }
 
 /*
- getEntry
-
  Returns the value for the key "key"
 
  ini
@@ -166,22 +153,16 @@ static int _add_entry(fes_handler* fes, _ini* const ini, const char* const key,
  */
 static const char*
 _get_entry(_ini* const ini, const char* const key) {
-#ifdef _WIN32
-#define strcasecmp _stricmp
-#endif
-
   unsigned int ix;
 
   for (ix = 0; ix < ini->nItems; ix++)
-    if (strcasecmp(ini->key[ix], key) == 0)
+    if (STRCASECMP(ini->key[ix], key) == 0)
       return ini->val[ix];
 
   return NULL;
 }
 
 /*
- parseIni
-
  Parse ini file
 
  stream
@@ -206,13 +187,44 @@ static int parse_ini_file(fes_handler* fes, FILE* stream, char *root, _ini* ini)
       continue;
 
     /* Lookup pair key = "value" our key ='value' or key = value. */
+#ifdef _WIN32
+    if (sscanf_s(first_char, "%[^=] = \"%[^\"]\"", key, (unsigned)sizeof(key),
+          val, (unsigned)sizeof(val)) == 2 ||
+        sscanf_s(first_char, "%[^=] = '%[^\']'", key, (unsigned)sizeof(key),
+          val, (unsigned)sizeof(val)) == 2 ||
+        sscanf_s(first_char, "%[^=] = %[^;]", key, (unsigned)sizeof(key),
+          val, (unsigned)sizeof(val)) == 2) {
+      first_char = val;
+
+      /* If the value contains an environment variable turns on the
+       string. */
+      if (sscanf_s(first_char, "${%[^${}]}", tmp,
+          (unsigned)sizeof(tmp)) == 1) {
+        char* ptr = duplicate_env(tmp);
+
+        if (ptr == NULL) {
+          set_fes_extended_error(fes, FES_INI_ERROR,
+                                 "%s environment variable is not set.", tmp);
+          return 1;
+        }
+
+        strncpy_s(tmp, sizeof(tmp) - 1, ptr, _TRUNCATE);
+        strncat_s(tmp, sizeof(tmp) - strlen(tmp) - 1, strstr(val, "}") + 1,
+                  _TRUNCATE);
+        strncpy_s(val, sizeof(val), tmp, _TRUNCATE);
+        free(ptr);
+      }
+      if (sscanf_s(first_char, "./%[^;]", tmp, (unsigned)sizeof(tmp)) == 1) {
+        _snprintf_s(val, sizeof(val), _TRUNCATE, "%s/%s", root, tmp);
+      }
+#else
     if (sscanf(first_char, "%[^=] = \"%[^\"]\"", key, val) == 2
         || sscanf(first_char, "%[^=] = '%[^\']'", key, val) == 2
         || sscanf(first_char, "%[^=] = %[^;]", key, val) == 2) {
-      /* If the value contains an environment variable turns on the
-       string. */
       first_char = val;
 
+      /* If the value contains an environment variable turns on the
+       string. */
       if (sscanf(first_char, "${%[^${}]}", tmp) == 1) {
         char* ptr = getenv(tmp);
 
@@ -224,13 +236,12 @@ static int parse_ini_file(fes_handler* fes, FILE* stream, char *root, _ini* ini)
 
         strncpy(tmp, ptr, sizeof(tmp) - 1);
         strncat(tmp, strstr(val, "}") + 1, sizeof(tmp) - strlen(tmp) - 1);
-        strncpy(val, tmp, sizeof(val));
-        /* Avoid the code checker to complain about buffer overflow */
-        val[sizeof(val) - 1] = '\0';
+        STRNCPY(val, tmp, sizeof(val));
       }
       if (sscanf(first_char, "./%[^;]", tmp) == 1) {
         snprintf(val, sizeof(val), "%s/%s", root, tmp);
       }
+#endif
 
       /* We check that the string read is not empty ( "" or''), if this
        is the case we add an empty string for the reading, otherwise
@@ -252,7 +263,13 @@ int ini_open(fes_handler* fes, const char* const path, void** handle) {
   _ini* ini = NULL;
   char* path_copy = NULL;
 
-  if ((stream = fopen(path, "r")) == NULL) {
+#ifdef _WIN32
+  if (fopen_s(&stream, path, "r"))
+    stream = NULL;
+#else
+  stream = fopen(path, "r");
+#endif
+  if (stream == NULL) {
     set_fes_extended_error(fes, FES_IO_ERROR,
                            "Can't open file `%s' for reading.", path);
     goto error;
@@ -316,7 +333,7 @@ int ini_get_integer(void* const handle, const char* const key,
   if (value == NULL)
     result = defValue;
   else {
-    if (sscanf(value, "%d", &result) != 1)
+    if (SSCANF(value, "%d", &result) != 1)
       return defValue;
   }
 
@@ -334,7 +351,7 @@ double ini_get_float(void* const handle, const char* const key,
   if (value == NULL)
     result = defValue;
   else {
-    if (sscanf(value, "%lf", &result) != 1)
+    if (SSCANF(value, "%lf", &result) != 1)
       return defValue;
   }
 
