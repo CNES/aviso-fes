@@ -118,7 +118,7 @@ fes_delete(FES handle);
  @param lon Longitude in degrees for the position at which tide is
  computed.
  @param time Julian day (days since 1950-01-01 00:00:00.000 UTC).
- @param h Computed height of the diurnal and semi-diunral
+ @param h Computed height of the diurnal and semi-diurnal
  constituents of the tidal spectrum (in centimeters).
  @param h_long_period Computed height of the long period wave constituents of
  the tidal spectrum (in centimeters).
