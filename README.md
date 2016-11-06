@@ -63,6 +63,10 @@ This distribution contains a C API to be used to calculate the tide. The
 perform the calculation. The directory [examples](examples) contains an
 example of using this API.
 
+> It is also possible to use this library using Python. The
+> [README](python/README.rst) file in the Python directory contains more
+> information.
+
 # BIBLIOGRAPHY
 
 * Lyard F., L. Carrere, M. Cancet, A. Guillot, N. Picot: *FES2014, a new finite
