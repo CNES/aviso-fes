@@ -27,4 +27,5 @@ SUBDIRS = $(dir)
 
 ACLOCAL_AMFLAGS = -I m4
 
-EXTRA_DIST = README.rst API.rst
+EXTRA_DIST = README.md API.rst python/extension/wrapper/fes.pxd \
+	python/extension/wrapper/fes.pyx python/README.rst python/setup.py
