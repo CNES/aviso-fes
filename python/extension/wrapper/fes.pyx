@@ -109,27 +109,34 @@ cdef ndarray_check_date_unit(object array, NPY_DATETIMEUNIT unit):
 cdef class Handler:
     """
     FES handler
+
+    :param tide: Computation mode. If tide is equals to "tide", the handler
+        computes the tide, if modeshe computes the radial tide.
+    :type tide: str
+    :param mode: One of 'memory', 'io' which request loading grids into
+        memory or direct access from NetCDF grids.
+    :type mode: str
+    :param path: Path to the configuration file.
+    :type path: str
     """
     cdef void* wrapped
 
-    def __cinit__(self, str tide not None, str mode not None, str path not None):
-        """
-        Default contructor
-
-        :param tide: Computation mode. If tide is equals to "tide", the handler
-            computes the tide, if modeshe computes the radial tide.
-        :type tide: str
-        :param mode: One of 'memory', 'io' which request loading grids into
-            memory or direct access from NetCDF grids.
-        :type mode: str
-        :param path: Path to the configuration file.
-        :type path: str
-        """
+    cdef _check(self, int rc):
         cdef:
-            cdef bytes py_bytes;
+            const char* c_str
+            bytes py_bytes;
+
+        if rc:
+            c_str = fes.fes_error(self.wrapped)
+            py_bytes = c_str;
+            raise RuntimeError(py_bytes.decode())
+
+    def __cinit__(self, str tide not None, str mode not None, str path not None):
+        cdef:
             fes.fes_enum_tide_type c_tide
             fes.fes_enum_access c_mode
-            char* c_str
+            const char* c_str
+            bytes py_bytes;
 
         if tide == 'ocean':
             c_tide = fes.FES_TIDE
@@ -148,10 +155,8 @@ cdef class Handler:
         py_bytes = path.encode()
         c_str = py_bytes
 
-        if fes.fes_new(cython.address(self.wrapped), c_tide, c_mode, c_str):
-            c_str = fes.fes_error(self.wrapped)
-            py_bytes = c_str;
-            raise RuntimeError(py_bytes.decode())
+        self._check(
+            fes.fes_new(cython.address(self.wrapped), c_tide, c_mode, c_str))
 
     def __dealloc__(self):
         fes.fes_delete(self.wrapped)
@@ -198,9 +203,7 @@ cdef class Handler:
         elif rc == fes.FES_SUCCESS:
             return (h, h_long_period)
         else:
-            c_str = fes.fes_error(self.wrapped)
-            py_bytes = c_str;
-            raise RuntimeError(py_bytes.decode())
+            self._check(rc)
 
     def set_buffer_size(self, int size):
         """
@@ -209,14 +212,7 @@ cdef class Handler:
         :param size: Size of the buffer in MB
         :type size: int
         """
-        cdef:
-            fes.fes_enum_tide_type c_tide
-            fes.fes_enum_access c_mode
-
-        if fes.fes_set_buffer_size(self.wrapped, size):
-            c_str = fes.fes_error(self.wrapped)
-            py_bytes = c_str;
-            raise RuntimeError(py_bytes.decode())
+        self._check(fes.fes_set_buffer_size(self.wrapped, size))
 
     def min_number(self):
         """
@@ -296,9 +292,7 @@ cdef class Handler:
             if rc == fes.FES_NO_DATA:
                 vh[ix] = libc.math.nan("NaN")
             elif rc != fes.FES_SUCCESS:
-                c_str = fes.fes_error(self.wrapped)
-                py_bytes = c_str;
-                raise RuntimeError(py_bytes.decode())
+                self._check(rc)
 
         return (h, h_long_period)
 
