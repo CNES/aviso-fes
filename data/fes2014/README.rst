@@ -1,17 +1,46 @@
 CONTENTS
 ########
 
+Configuration Files
+*******************
+
 This directory contains the different configuration files to compute:
 
 - FES2014 elevations (ocean or geocentric)
-    - use `ocean_tide.ini <ocean_tide.ini>`_ to compute the ocean tide with the native grids.
-    - use `ocean_tide_extrapolated.ini <ocean_tide_extrapolated.ini>`_ to compute the ocean tide with the extrapolated grids.
-    - use `load_tide.ini <load_tide.ini>`_ to compute the load tide.
+    - Use `ocean_tide.ini <ocean_tide.ini>`_ to compute the ocean tide
+      with the native grids.
+    - Use `ocean_tide_extrapolated.ini <ocean_tide_extrapolated.ini>`_
+      to compute the ocean tide with the extrapolated grids.
+    - Use `load_tide.ini <load_tide.ini>`_ to compute the load tide.
 - FES2014 currents
-    - use `northward_velocity.ini <northward_velocity.ini>`_ to use the native grids.
-    - use `eastward_velocity.ini <eastward_velocity.ini>`_ to use the extrapolated grids.
+    - Use `northward_velocity.ini <northward_velocity.ini>`_ to use the
+      native grids.
+    - Use `eastward_velocity.ini <eastward_velocity.ini>`_ to use the
+      native grids.
 
-The various sub directories located here are empty. Indeed, data necessary to calculate the different tides are not distributed here, but on the `AVISO <http://www.aviso.altimetry.fr/en/data/products/auxiliary-products/global-tide-fes/>`_ website. You will find on the AVISO FTP server the following archives for filling empty directories:
+.. note ::
+
+    The configuration files are supplied for use with the tree as described
+    below.
+
+    .. code-block :: 
+
+        data/
+        └── fes2014
+            ├── eastward_velocity
+            ├── load_tide
+            ├── northward_velocity
+            ├── ocean_tide
+            └── ocean_tide_extrapolated
+
+Database Contents
+*****************
+
+The various sub directories located here are empty. Indeed, data necessary to
+calculate the different tides are not distributed here, but on the
+`AVISO <http://www.aviso.altimetry.fr/en/data/products/auxiliary-products/global-tide-fes/>`_
+website. You will find on the AVISO FTP server authenticated the following
+archives for filling empty directories:
 
 - eastward_velocity.tar.xz
 - load_tide.tar.xz
@@ -32,13 +61,14 @@ DATABASE DESCRIPTION
 ####################
 
 The FES2014 tides database includes 3 components: Tide elevations, currents and
-loading. Each components contains 34 tidal components:
+loading. Each component contains 34 tidal components:
 
     2N₂, J₁, K₁, K₂, L₂, MKS₂, MN₄, MS₄, Mf, Mm, Msf, Msqm, Mtm, M₂, M₃, M₄, M₆, M₈,
     N₂, N₄, O₁, P₁, P₁, R₂, Sa, Ssa, S₁, S₂, S₄, T₂, µ₂, ε₂, λ₂, ν₂
 
-Tide elevations
+Tide Elevations
 ***************
+
 FES2014b ocean tide model is distributed; this model has
 been computed using the new FES2014 tidal loading grids. Two versions
 are available:
@@ -50,19 +80,20 @@ are available:
   * Extrapolated version contained in the *ocean_tide_extrapolated.tar.xz*: the
     above version has been extrapolated on the coasts in order to cover nearly
     entirely the coastal regions. The procedure is a simple extrapolation
-    applied on 10 pixels and using mean values when necessary, it can be not
-    enough accurate in some regions.
+    applied on 10 pixels and using mean values when necessary, it cannot be
+    accurate enough in some regions.
 
-Tide currents
+Tide Currents
 *************
 
-Tidal curents derived from FES2014a model are delivered on
+Tidal currents derived from FES2014a models are delivered on
 the 1/16° grid, directly interpolated from the finite element native grid.
-No extrapolation is done on the coasts for the currents. This database is
+No extrapolation is done on the coasts of the currents. This database is
 contained in two separate archives: *eastward_velocity.tar.xz* and
 *northward_velocity.tar.xz*.
 
-Tide loading
+Tide Loading
 ************
-The new FES2014a tide loading (noted FES2014_load) are supplied on the same
-1/16° grid.
+
+The new FES2014a tide loading is supplied on the same 1/16° grid. This
+dataset is provided into the *load_tide.tar.xz* archive.
