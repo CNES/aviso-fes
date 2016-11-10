@@ -2,7 +2,7 @@
 
 This package is the fully revised version of the FES2014 distribution.
 This distribution includes the FES2014 tidal prediction software managed on this
-page and the [FES2014 tides databases][data/fes2014/README.rst]
+page and the [FES2014 tides databases](data/fes2014/README.rst)
 
 # CREDITS
 
