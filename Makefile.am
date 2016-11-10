@@ -16,7 +16,7 @@ datadir = @datadir@
 
 test: check
 
-dir = src test examples
+dir = data src test examples
 
 if HAVE_DOXYGEN
 doc: html
@@ -27,5 +27,12 @@ SUBDIRS = $(dir)
 
 ACLOCAL_AMFLAGS = -I m4
 
-EXTRA_DIST = README.md API.rst python/extension/wrapper/fes.pxd \
-	python/extension/wrapper/fes.pyx python/README.rst python/setup.py
+EXTRA_DIST =  API.rst \
+	python/README.rst \
+	python/examples/fes_slev.py \
+	python/extension/wrapper/fes.c \
+	python/extension/wrapper/fes.pxd \
+	python/extension/wrapper/fes.pyx \
+	python/setup.py \
+    README.md
+

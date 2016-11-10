@@ -11,7 +11,7 @@
 # but WITHOUT ANY WARRANTY, to the extent permitted by law; without
 # even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 # PARTICULAR PURPOSE.
-AC_INIT([libfes], [2.7.3], [aviso@oceanobs.com])
+AC_INIT([libfes], [2.7.4], [aviso@oceanobs.com])
 
 CONFIG_ABORT=yes
 
@@ -109,7 +109,11 @@ AC_CHECK_HEADER(
 )
 
 AC_SUBST([NETCDFLIB])
-AC_CONFIG_FILES([Makefile src/Makefile test/Makefile examples/Makefile])
+AC_CONFIG_FILES([Makefile
+                 data/Makefile
+                 src/Makefile
+                 test/Makefile
+                 examples/Makefile])
 
 # Enable the documentation generation if doxygen is available
 AC_CHECK_PROGS([DOXYGEN], [doxygen], [])

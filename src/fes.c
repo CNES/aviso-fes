@@ -147,6 +147,13 @@ int fes_new(FES* handle, const fes_enum_tide_type tide,
       fes->grid.n_grids++;
   }
 
+  if (fes->grid.n_grids == 0) {
+    set_fes_extended_error(fes, FES_INI_ERROR,
+                           "The configuration file defines no %s wave",
+                           tide == FES_RADIAL ? "radial" : "tide");
+    goto error;
+  }
+
   /* Allocate grids buffer */
   if (mode == FES_IO) {
     /* to read data from grids */
