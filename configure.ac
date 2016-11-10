@@ -109,7 +109,11 @@ AC_CHECK_HEADER(
 )
 
 AC_SUBST([NETCDFLIB])
-AC_CONFIG_FILES([Makefile src/Makefile test/Makefile examples/Makefile])
+AC_CONFIG_FILES([Makefile
+                 data/Makefile
+                 src/Makefile
+                 test/Makefile
+                 examples/Makefile])
 
 # Enable the documentation generation if doxygen is available
 AC_CHECK_PROGS([DOXYGEN], [doxygen], [])

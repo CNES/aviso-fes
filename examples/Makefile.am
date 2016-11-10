@@ -14,6 +14,7 @@
 #   along with FES.  If not, see <http://www.gnu.org/licenses/>.
 AM_CPPFLAGS = -I$(srcdir)/../src
 LDADD = $(srcdir)/../src/libfes.la -lm -lnetcdf
-bin_PROGRAMS = fes_slev
 EXTRA_DIST = fes_slev.txt
+fes_slev_PROGRAMS = fes_slev
 fes_slev_SOURCES = fes_slev.c
+fes_slevdir =
