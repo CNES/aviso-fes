@@ -197,13 +197,12 @@ cdef class Handler:
                           fes.cnes_julian_day_from_datetime(date),
                           &h,
                           &h_long_period)
-
-        if rc == fes.FES_NO_DATA:
-            return (None, h_long_period)
-        elif rc == fes.FES_SUCCESS:
-            return (h, h_long_period)
-        else:
-            self._check(rc)
+        if rc:
+            if fes.fes_errno(self.wrapped) == fes.NO_DATA:
+                return (None, h_long_period)
+            else:
+                self._check(rc)
+        return (h, h_long_period)
 
     def set_buffer_size(self, int size):
         """
@@ -289,10 +288,11 @@ cdef class Handler:
                               &vh[ix],
                               &vh_long_period[ix])
 
-            if rc == fes.FES_NO_DATA:
-                vh[ix] = libc.math.nan("NaN")
-            elif rc != fes.FES_SUCCESS:
-                self._check(rc)
+            if rc:
+                if fes.fes_errno(self.wrapped) == fes.FES_NO_DATA:
+                    vh[ix] = libc.math.nan("NaN")
+                else:
+                    self._check(rc)
 
         return (h, h_long_period)
 
