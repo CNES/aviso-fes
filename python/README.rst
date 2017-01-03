@@ -4,7 +4,7 @@ Python wrapper
 This folder contains the necessary script to build a Python wrapper to the
 FES library.
 
-The setup script uses the Python Distribution Utilities (‚ÄúDistutils‚Äù) to build
+The setup script uses the Python Distribution Utilities (ìDistutilsî) to build
 and install the library. Please see the associated documentation on how to
 install a `Python package <https://docs.python.org/3/installing/index.html#installing-index>`_.
 
@@ -158,10 +158,10 @@ The Python library provides an interface to control the C API library.
 
     Creates a new FES handler.
 
-        *``tide`` specifies the tide computation mode : **tide** to compute
+        * ``tide`` specifies the tide computation mode : **tide** to compute
           the short tide or ``radial`` to compute the radial tide.
         * ``mode`` drives the memory management of the library :
-          ``√¨o`` no data are loaded into memory (data for the calculation will
+          ``Ïo`` no data are loaded into memory (data for the calculation will
           be read from the netCDF grids if necessary) or ``memory`` to load
           all NetCDF grids into memory.
         * ``path`` defines the path to the configuration file to use.
