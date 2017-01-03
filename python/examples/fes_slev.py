@@ -1,7 +1,7 @@
+#!/usr/bin/env python3
 """
 Example of using the FES Python interface
 """
-#!/usr/bin/env python3
 import argparse
 import datetime
 import numpy as np
