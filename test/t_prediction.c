@@ -715,6 +715,16 @@ int main(void) {
         err = CHECK_INT(w[i].type, LP_TIDE);
         SUMMARIZE_ERR;
         break;
+      case SA:
+        err = CHECK_INT(strcmp(w[i].name, "SA"), 0);
+        SUMMARIZE_ERR;
+
+        err = CHECK_FLOAT(w[i].freq, 0.04106864 * RAD);
+        SUMMARIZE_ERR;
+
+        err = CHECK_INT(w[i].type, LP_TIDE);
+        SUMMARIZE_ERR;
+        break;
       default:
         printf("missing %s\n", w[i].name);
         assert(0);
@@ -938,6 +948,9 @@ int main(void) {
       case SSA:
         err = CHECK_FLOAT(w[i].v0u * DEG, 2.0);
         break;
+      case SA:
+        err = CHECK_FLOAT(w[i].v0u * DEG, 1.0);
+        break;
       default:
         assert(0);
     }
@@ -970,6 +983,7 @@ int main(void) {
       case PSI1:
       case S6:
       case SSA:
+      case SA:
         err = CHECK_FLOAT(w[i].f, 1.0);
         break;
       case K1:

@@ -367,9 +367,14 @@
 #define SSA      65
 
 /**
+ @brief Index to access the wave Sa in the internal table.
+ */
+#define SA      66
+
+/**
  @brief The total number of waves known in the internal table.
  */
-#define N_WAVES  66
+#define N_WAVES  67
 
 /**
  @brief The number of waves taken into account to compute long-period.
