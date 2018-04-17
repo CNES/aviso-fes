@@ -342,7 +342,7 @@ static void _nodal_g(const _fes_astronomic_angle* const a, fes_wave* const w) {
     if (ix == L2)
       u -= a->r;
     if (ix == M13)
-      u -= 1.0 / sqrt(2.310 + 1.435 * cos(2 * (a->p - a->xi)));
+      u -= 1.0 / sqrt(2.310 + 1.435 * cos(2 * RAD * (a->p - a->xi)));
     w[ix].v0u = fmod(v + u, 360.00) * RAD;
   }
 }
