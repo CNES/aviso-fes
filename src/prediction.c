@@ -878,6 +878,14 @@ void set_waves(fes_wave* const w) {
    */
   _init_wave("SSA", 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, LP_TIDE, _f_1, &w[SSA]);
   /*
+   * Sa
+   *
+   * V = h
+   * u = 0
+   * f = 1
+   */
+  _init_wave("SA", 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, LP_TIDE, _f_1, &w[SA]);
+  /*
    * 2Q₁
    *
    * V = T - 4s + h + 2p + 90°
