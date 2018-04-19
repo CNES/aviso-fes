@@ -23,6 +23,6 @@ libfes_la_SOURCES = angle.h angle.c cache.c cache.h compat.h compat.c   \
 # Note:
 #  version-info 9:0:7 results in soname of libnfes.so.2 -> libfes.so.2.7.0 (9 = 2 + 7)
 #  version-info 9:0:2 results in soname of libnfes.so.7 -> libfes.so.7.2.0 (9 = 7 + 2)
-libfes_la_LDFLAGS = -version-info 10:0:8
+libfes_la_LDFLAGS = -version-info 11:0:9
 nodist_libfes_la_SOURCES = uthash.h
 include_HEADERS = fes.h
