@@ -121,6 +121,13 @@ cdef class Handler:
     """
     cdef void* wrapped
 
+    @staticmethod
+    def dump(str path not None):
+        py_byte_string = path.encode('UTF-8')
+        cdef char* c_string = py_byte_string
+        if fes.fes_dump_template(c_string) != 0:
+            raise RuntimeError("Template creation failed");
+
     cdef _check(self, int rc):
         cdef:
             const char* c_str
@@ -198,7 +205,7 @@ cdef class Handler:
                           &h,
                           &h_long_period)
         if rc:
-            if fes.fes_errno(self.wrapped) == fes.NO_DATA:
+            if fes.fes_errno(self.wrapped) == fes.FES_NO_DATA:
                 return (None, h_long_period)
             else:
                 self._check(rc)
@@ -295,5 +302,3 @@ cdef class Handler:
                     self._check(rc)
 
         return (h, h_long_period)
-
-

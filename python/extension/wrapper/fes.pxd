@@ -42,6 +42,7 @@ cdef extern from "fes.h" nogil:
     int fes_min_number(void*)
     char* fes_error(void*)
     fes_enum_error fes_errno(void*)
+    int fes_dump_template(char* path)
 
 
 # Converts a python datetime object into a Julian day CNES

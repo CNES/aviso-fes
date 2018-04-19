@@ -163,3 +163,11 @@ fes_errno(FES fes);
  */
 const char *
 fes_error(FES fes);
+
+/**
+ @brief Dump the template of the configuration file that the library uses.
+
+ @return 0 on success otherwise 1 on error
+ */
+int
+fes_dump_template(const char* path);
