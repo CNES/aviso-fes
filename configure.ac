@@ -11,7 +11,7 @@
 # but WITHOUT ANY WARRANTY, to the extent permitted by law; without
 # even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 # PARTICULAR PURPOSE.
-AC_INIT([libfes], [2.8.0], [aviso@oceanobs.com])
+AC_INIT([libfes], [2.9.0], [aviso@oceanobs.com])
 
 CONFIG_ABORT=yes
 
