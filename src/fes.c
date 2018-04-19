@@ -48,6 +48,13 @@
 /* Default variable and dimension name for longitude */
 #define LONGITUDE "longitude"
 
+/* Definition of known keyword suffixes. */
+#define KW_AMPLITUDE "AMPLITUDE"
+#define KW_FILE "FILE"
+#define KW_LATITUDE "LATITUDE"
+#define KW_LONGITUDE "LONGITUDE"
+#define KW_PHASE "PHASE"
+
 /* Default size of the buffer */
 #define BUFFER_SIZE 64
 
@@ -63,12 +70,18 @@
  Returns a pointer to a static string that contains the key name.
  */
 static char*
-_get_key(const fes_enum_tide_type tide, const char* const name,
-         const char* const key) {
+_get_key(const fes_enum_tide_type tide,
+         const char* const name,
+         const char* const key)
+{
   static char buffer[MAX_PATH];
 
-  snprintf(buffer, sizeof(buffer), "%s_%s_%s",
-           tide == FES_RADIAL ? "RADIAL" : "TIDE", name, key);
+  snprintf(buffer,
+           sizeof(buffer),
+           "%s_%s_%s",
+           tide == FES_RADIAL ? "RADIAL" : "TIDE",
+           name,
+           key);
 
   return buffer;
 }
@@ -80,7 +93,9 @@ _get_key(const fes_enum_tide_type tide, const char* const name,
 
  Returns the buffer size on success or 0 on failure.
  */
-static size_t _get_env(fes_handler* handle) {
+static size_t
+_get_env(fes_handler* handle)
+{
   char* env;
   long int value;
 
@@ -95,8 +110,10 @@ static size_t _get_env(fes_handler* handle) {
 
     if (ptr == env || value == LONG_MIN || value == LONG_MAX || value < 0) {
       set_fes_extended_error(
-          handle, FES_VALUE_ERROR,
-          "FES_BUFFER_SIZE define and invalid memory size: %s", env);
+        handle,
+        FES_VALUE_ERROR,
+        "FES_BUFFER_SIZE define and invalid memory size: %s",
+        env);
       value = 0;
     }
   }
@@ -107,13 +124,143 @@ static size_t _get_env(fes_handler* handle) {
 #ifdef _WIN32
   free(env);
 #endif
-  return (size_t) value;
+  return (size_t)value;
+}
+
+#define DUPLICATE_KEY(type, key, keyword)                                      \
+  (key) = STRDUP(_get_key(type, fes->waves[ix].name, (keyword)));              \
+  if ((key) == NULL) {                                                         \
+    goto error;                                                                \
+  }
+
+/*
+ _delete_string_list
+
+ Free the memory used by a string list whose last element is set to NULL in
+ order to mark the end of the list
+ */
+static void
+_delete_string_list(char** list)
+{
+  size_t ix = 0;
+  if (list != NULL) {
+    while (list[ix] != NULL) {
+      free(list[ix++]);
+    }
+    free(list);
+  }
+}
+
+/*
+ _known_keys
+
+ Creation of the list of keywords known by the program.
+
+ Returns the list of keys known by the program.
+*/
+static char**
+_known_keys(fes_handler* fes)
+{
+#define SIZE (N_WAVES * 10 + 1)
+  char** keys;
+  size_t ix, jx;
+
+  if ((keys = (char**)calloc(SIZE, sizeof(char*))) == NULL) {
+    return NULL;
+  }
+
+  for (ix = 0, jx = 0; ix < N_WAVES; ++ix, jx += 10) {
+    DUPLICATE_KEY(FES_TIDE, keys[jx], KW_FILE);
+    DUPLICATE_KEY(FES_TIDE, keys[jx + 1], KW_LATITUDE);
+    DUPLICATE_KEY(FES_TIDE, keys[jx + 2], KW_LONGITUDE);
+    DUPLICATE_KEY(FES_TIDE, keys[jx + 3], KW_AMPLITUDE);
+    DUPLICATE_KEY(FES_TIDE, keys[jx + 4], KW_PHASE);
+    DUPLICATE_KEY(FES_RADIAL, keys[jx + 5], KW_FILE);
+    DUPLICATE_KEY(FES_RADIAL, keys[jx + 6], KW_LATITUDE);
+    DUPLICATE_KEY(FES_RADIAL, keys[jx + 7], KW_LONGITUDE);
+    DUPLICATE_KEY(FES_RADIAL, keys[jx + 8], KW_AMPLITUDE);
+    DUPLICATE_KEY(FES_RADIAL, keys[jx + 9], KW_PHASE);
+  }
+  return keys;
+
+error:
+  _delete_string_list(keys);
+  return NULL;
+}
+
+/*
+ _check_ini
+
+ Checks that the configuration file does not contain words unknown by the
+ library.
+
+ Returns 1 on failure
+ */
+static int
+_check_ini(fes_handler* fes, void* ini)
+{
+  char** keys = _known_keys(fes);
+  char** unhandled_keys = NULL;
+  char* buffer = NULL;
+  size_t ix;
+  int rc = 1;
+
+  if (keys == NULL) {
+    set_fes_error(fes, FES_NO_MEMORY);
+    goto error;
+  }
+
+  // Check that the configuration file contains only known keywords.
+  if (ini_check_handled_keys(ini, (const char**)(keys), &unhandled_keys)) {
+    set_fes_error(fes, FES_NO_MEMORY);
+    goto error;
+  }
+
+  if ((buffer = (char*)calloc(MAX_PATH, sizeof(char))) == NULL) {
+    set_fes_error(fes, FES_NO_MEMORY);
+    goto error;
+  }
+
+  // Builds the error message
+  STRNCPY(buffer, "Configuration file contains unhandled keys: ", MAX_PATH);
+  ix = 0;
+  while (unhandled_keys[ix] != NULL) {
+    if (ix) {
+      strncat(buffer, ", ", MAX_PATH - strlen(buffer) - 1);
+    }
+    strncat(buffer, unhandled_keys[ix++], MAX_PATH - strlen(buffer) - 1);
+  }
+
+  // If there are keys that are not handled by this program, the error is fixed
+  // using the built error message.
+  if (ix != 0) {
+    // If the error message has been truncated because its length exceeds the
+    // size of the allocated memory, the last three characters are replaced by
+    // three dots in order to indicate it to the user.
+    if (strlen(buffer) == sizeof(buffer) - 1) {
+      buffer[sizeof(buffer) - 2] = '.';
+      buffer[sizeof(buffer) - 3] = '.';
+      buffer[sizeof(buffer) - 4] = '.';
+    }
+    set_fes_extended_error(fes, FES_INI_ERROR, "%s", buffer);
+  } else {
+    rc = 0;
+  }
+error:
+  _delete_string_list(keys);
+  _delete_string_list(unhandled_keys);
+  free(buffer);
+  return rc;
 }
 
 /*
  */
-int fes_new(FES* handle, const fes_enum_tide_type tide,
-            const fes_enum_access mode, const char* const path) {
+int
+fes_new(FES* handle,
+        const fes_enum_tide_type tide,
+        const fes_enum_access mode,
+        const char* const path)
+{
   int rc = 0;
   int ix;
   unsigned int n = 0;
@@ -122,7 +269,7 @@ int fes_new(FES* handle, const fes_enum_tide_type tide,
   void* ini = NULL;
 
   /* Allocate handle */
-  if ((fes = (fes_handler*) calloc(1, sizeof(fes_handler))) == NULL) {
+  if ((fes = (fes_handler*)calloc(1, sizeof(fes_handler))) == NULL) {
     goto error;
   }
 
@@ -139,16 +286,20 @@ int fes_new(FES* handle, const fes_enum_tide_type tide,
   if (ini_open(fes, path, &ini))
     goto error;
 
+  if (_check_ini(fes, ini))
+    goto error;
+
   /* Determines the number of grid has to be loaded into memory */
   for (ix = 0; ix < N_WAVES; ++ix) {
     /* Get key name for current wave */
-    if (ini_get_string(ini, _get_key(fes->type, fes->waves[ix].name, "FILE"),
-    NULL) != NULL)
+    if (ini_get_string(
+          ini, _get_key(fes->type, fes->waves[ix].name, "FILE"), NULL) != NULL)
       fes->grid.n_grids++;
   }
 
   if (fes->grid.n_grids == 0) {
-    set_fes_extended_error(fes, FES_INI_ERROR,
+    set_fes_extended_error(fes,
+                           FES_INI_ERROR,
                            "The configuration file defines no %s wave",
                            tide == FES_RADIAL ? "radial" : "tide");
     goto error;
@@ -157,13 +308,14 @@ int fes_new(FES* handle, const fes_enum_tide_type tide,
   /* Allocate grids buffer */
   if (mode == FES_IO) {
     /* to read data from grids */
-    if ((fes->grid.file = (fes_cdf_file*) calloc(fes->grid.n_grids,
-                                                 sizeof(fes_cdf_file))) == NULL) {
+    if ((fes->grid.file = (fes_cdf_file*)calloc(
+           fes->grid.n_grids, sizeof(fes_cdf_file))) == NULL) {
       set_fes_error(fes, FES_NO_MEMORY);
       goto error;
     }
 
-    if ((fes->grid.buffer = (fes_buffer*) calloc(1, sizeof(fes_buffer))) == NULL) {
+    if ((fes->grid.buffer = (fes_buffer*)calloc(1, sizeof(fes_buffer))) ==
+        NULL) {
       set_fes_error(fes, FES_NO_MEMORY);
       goto error;
     }
@@ -181,15 +333,15 @@ int fes_new(FES* handle, const fes_enum_tide_type tide,
 
   if (mode == FES_MEM) {
     /* to read data from memory */
-    if ((fes->grid.values = (fes_float_complex**) calloc(
-        fes->grid.n_grids, sizeof(fes_float_complex*))) == NULL) {
+    if ((fes->grid.values = (fes_float_complex**)calloc(
+           fes->grid.n_grids, sizeof(fes_float_complex*))) == NULL) {
       set_fes_error(fes, FES_NO_MEMORY);
       goto error;
     }
   }
 
-  if ((fes->grid.waveIndex = (int*) calloc(fes->grid.n_grids, sizeof(int)))
-      == NULL) {
+  if ((fes->grid.waveIndex = (int*)calloc(fes->grid.n_grids, sizeof(int))) ==
+      NULL) {
     set_fes_error(fes, FES_NO_MEMORY);
     goto error;
   }
@@ -198,7 +350,7 @@ int fes_new(FES* handle, const fes_enum_tide_type tide,
   for (ix = 0; ix < N_WAVES; ++ix) {
     fes_cdf_file file;
     const char* filename = ini_get_string(
-        ini, _get_key(fes->type, fes->waves[ix].name, "FILE"), NULL);
+      ini, _get_key(fes->type, fes->waves[ix].name, "FILE"), NULL);
 
     if (filename == NULL) {
       /* Wave computed by admittance or not computed */
@@ -215,39 +367,34 @@ int fes_new(FES* handle, const fes_enum_tide_type tide,
 
     /* Reading the name of the variable who contains the latitudes. */
     STRNCPY(
-        file.lat,
-        ini_get_string(ini,
-                       _get_key(fes->type, fes->waves[ix].name, "LATITUDE"),
-                       LATITUDE),
-        sizeof(file.lat));
+      file.lat,
+      ini_get_string(
+        ini, _get_key(fes->type, fes->waves[ix].name, KW_LATITUDE), LATITUDE),
+      sizeof(file.lat));
 
     /* Reading the name of the variable who contains the longitude. */
     STRNCPY(
-        file.lon,
-        ini_get_string(ini,
-                       _get_key(fes->type, fes->waves[ix].name, "LONGITUDE"),
-                       LONGITUDE),
-        sizeof(file.lon));
+      file.lon,
+      ini_get_string(
+        ini, _get_key(fes->type, fes->waves[ix].name, KW_LONGITUDE), LONGITUDE),
+      sizeof(file.lon));
 
     /* Reading the name of the variable who contains the amplitudes. */
     STRNCPY(
-        file.amp,
-        ini_get_string(ini,
-                       _get_key(fes->type, fes->waves[ix].name, "AMPLITUDE"),
-                       AMPLTIUDE),
-        sizeof(file.amp));
+      file.amp,
+      ini_get_string(
+        ini, _get_key(fes->type, fes->waves[ix].name, KW_AMPLITUDE), AMPLTIUDE),
+      sizeof(file.amp));
 
     /* Reading the name of the variable who contains the phases. */
-    STRNCPY(
-        file.pha,
-        ini_get_string(ini, _get_key(fes->type, fes->waves[ix].name, "PHASE"),
-        PHASE),
-        sizeof(file.pha));
+    STRNCPY(file.pha,
+            ini_get_string(
+              ini, _get_key(fes->type, fes->waves[ix].name, KW_PHASE), PHASE),
+            sizeof(file.pha));
 
     /* Grids contains phase lag ? */
     file.phase_lag = ini_get_integer(
-        ini, _get_key(fes->type, fes->waves[ix].name, "PHASE_LAG"),
-        PHASE_LAG);
+      ini, _get_key(fes->type, fes->waves[ix].name, "PHASE_LAG"), PHASE_LAG);
 
     /* loading netCDF grid */
     if ((rc = load_grid(filename, n, &file, fes)) != 0)
@@ -269,42 +416,45 @@ int fes_new(FES* handle, const fes_enum_tide_type tide,
 
   goto finish;
 
-  error:
-    if (rc == 0)
-      rc = 1;
+error:
+  if (rc == 0)
+    rc = 1;
 
-  finish:
-    ini_close(ini);
-    return rc;
+finish:
+  ini_close(ini);
+  return rc;
 }
 
-int fes_set_buffer_size(FES handle, const size_t size) {
-  fes_handler* fes = (fes_handler *) handle;
+int
+fes_set_buffer_size(FES handle, const size_t size)
+{
+  fes_handler* fes = (fes_handler*)handle;
 
   if (fes->grid.buffer == NULL) {
-    set_fes_extended_error(fes, FES_VALUE_ERROR,
-                           "The buffer is not initialized");
+    set_fes_extended_error(
+      fes, FES_VALUE_ERROR, "The buffer is not initialized");
     return 1;
   }
 
   if (size < BUFFER_SIZE) {
-    set_fes_extended_error(fes, FES_VALUE_ERROR,
-                           "The buffer size must be >= %d Mb",
-                           BUFFER_SIZE);
+    set_fes_extended_error(
+      fes, FES_VALUE_ERROR, "The buffer size must be >= %d Mb", BUFFER_SIZE);
     return 1;
   }
 
-  fes->grid.buffer->max_size = ((size * 1024 * 1024)
-      / (sizeof(fes_double_complex) * fes->grid.n_grids));
+  fes->grid.buffer->max_size =
+    ((size * 1024 * 1024) / (sizeof(fes_double_complex) * fes->grid.n_grids));
   fes->grid.buffer->max_size = (fes->grid.buffer->max_size / 8) * 8;
   return 0;
 }
 
 /*
  */
-void fes_delete(FES handle) {
+void
+fes_delete(FES handle)
+{
   size_t ix;
-  fes_handler* fes = (fes_handler *) handle;
+  fes_handler* fes = (fes_handler*)handle;
 
   if (fes != NULL) {
     for (ix = 0; ix < fes->grid.n_grids; ++ix) {
@@ -316,8 +466,8 @@ void fes_delete(FES handle) {
     }
     if (fes->grid.buffer != NULL) {
       fes_cache_item *current_item, *tmp;
-      HASH_ITER (hh, fes->grid.buffer->values, current_item, tmp)
-        HASH_DEL(fes->grid.buffer->values, current_item);
+      HASH_ITER(hh, fes->grid.buffer->values, current_item, tmp)
+      HASH_DEL(fes->grid.buffer->values, current_item);
       dlist_destroy(&fes->grid.buffer->list);
     }
 
@@ -331,13 +481,19 @@ void fes_delete(FES handle) {
 
 /*
  */
-int fes_core(FES handle, const double lat, const double lon, const double time,
-             double* h, double* h_long_period) {
+int
+fes_core(FES handle,
+         const double lat,
+         const double lon,
+         const double time,
+         double* h,
+         double* h_long_period)
+{
   int ix;
   double phi;
   double t1 = julian_centuries(time);
   double delta;
-  fes_handler* fes = (fes_handler *) handle;
+  fes_handler* fes = (fes_handler*)handle;
 
   delta = (t1 - fes->nodal_time) * 3.6525E+04 * 24.0;
 
@@ -357,8 +513,8 @@ int fes_core(FES handle, const double lat, const double lon, const double time,
     *h = 0.0;
 
     if (fes->type == FES_TIDE) {
-      lpe_minus_n_waves((const float (*)[N_COEFS]) (fes->w2nd), time, lat,
-                        h_long_period);
+      lpe_minus_n_waves(
+        (const float(*)[N_COEFS])(fes->w2nd), time, lat, h_long_period);
     } else
       *h_long_period = 0;
 
@@ -370,8 +526,8 @@ int fes_core(FES handle, const double lat, const double lon, const double time,
       if (phi < 0.0)
         phi = phi + 2.0 * M_PI;
 
-      tide = fes->waves[ix].f
-          * (fes->waves[ix].c.re * cos(phi) + fes->waves[ix].c.im * sin(phi));
+      tide = fes->waves[ix].f *
+             (fes->waves[ix].c.re * cos(phi) + fes->waves[ix].c.im * sin(phi));
 
       if (fes->waves[ix].type == SP_TIDE)
         *h += tide;
@@ -382,8 +538,8 @@ int fes_core(FES handle, const double lat, const double lon, const double time,
     *h = nan("nan");
 
     if (fes->type == FES_TIDE) {
-      lpe_minus_n_waves((const float (*)[N_COEFS]) (fes->w2nd), time, lat,
-                        h_long_period);
+      lpe_minus_n_waves(
+        (const float(*)[N_COEFS])(fes->w2nd), time, lat, h_long_period);
     } else
       *h_long_period = 0;
     set_fes_error(fes, FES_NO_DATA);
@@ -395,7 +551,9 @@ int fes_core(FES handle, const double lat, const double lon, const double time,
 
 /*
  */
-int fes_min_number(FES handle) {
-  fes_handler* fes = (fes_handler *) handle;
+int
+fes_min_number(FES handle)
+{
+  fes_handler* fes = (fes_handler*)handle;
   return fes->min_number;
 }
