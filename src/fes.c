@@ -557,3 +557,46 @@ fes_min_number(FES handle)
   fes_handler* fes = (fes_handler*)handle;
   return fes->min_number;
 }
+
+/*
+ */
+int
+fes_dump_template(const char* path)
+{
+  fes_handler* fes;
+  FILE* stream = NULL;
+  char** keys = NULL;
+  int rc = 1, ix = 0;
+
+  /* Allocate handle */
+  if ((fes = (fes_handler*)calloc(1, sizeof(fes_handler))) == NULL) {
+    goto error;
+  }
+  set_waves(fes->waves);
+
+  if ((keys = _known_keys(fes)) == NULL) {
+    goto error;
+  }
+
+#ifdef _WIN32
+  if (fopen_s(&stream, path, "w"))
+    stream = NULL;
+#else
+  stream = fopen(path, "w");
+#endif
+  if (stream == NULL) {
+    goto error;
+  }
+
+  while (keys[ix] != NULL) {
+    fprintf(stream, ";%s = \n", keys[ix++]);
+  }
+  rc = 0;
+
+error:
+  if (stream != NULL)
+    fclose(stream);
+  fes_delete(fes);
+  _delete_string_list(keys);
+  return rc;
+}
