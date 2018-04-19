@@ -102,3 +102,34 @@ ini_get_float(void* const handle, const char* const key, const double defValue);
 const char*
 ini_get_string(void* const handle, const char* const key,
                const char* const defValue);
+
+/**
+ @brief Check that the configuration file contains only known keywords.
+
+ @param handle Handle for the open file
+ @param keys The list of keys known.
+ @param unhandled_keys The list of keys that are contained in the
+   configuration file, loaded into memory, but that are not present in the
+   list of known keys. This function allocates memory to this variable and must
+   be released by the caller.
+
+ @return 1 if the memory allocation of the result variable failed
+   otherwise 0.
+
+ @note
+  The string lists used by the variables "keys" and "unhandled_keys" end with a
+ last element set to NULL to mark the end of this list. To browse this list
+ execute the following code:
+
+   @code{.c}
+   if (ini_check_handled_keys(ini, n, keys, &unhandled_keys) == 0) {
+     size_t ix = 0;
+     while(unhandled_keys[ix] != NULL) {
+       free(unhandled_keys[ix++]);
+     }
+   }
+   @endcode
+ */
+int
+ini_check_handled_keys(void *const handle, const char **const keys,
+                       char ***unhandled_keys);
