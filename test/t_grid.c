@@ -120,8 +120,6 @@ int main(void) {
   err = CHECK_FLOAT(c.im, 1);
   SUMMARIZE_ERR;
 
-  grid.file->phase_lag = 1;
-
   if (_read_grid_value(&fes, 1, 1, 0, &c))
     DIE
     ;

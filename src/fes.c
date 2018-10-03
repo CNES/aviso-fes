@@ -39,9 +39,6 @@
 /* Default variable name for the phase data */
 #define PHASE "phase"
 
-/* Default value for the phase lag */
-#define PHASE_LAG 0
-
 /* Default variable and dimension name for latitudes */
 #define LATITUDE "latitude"
 
@@ -391,10 +388,6 @@ fes_new(FES* handle,
             ini_get_string(
               ini, _get_key(fes->type, fes->waves[ix].name, KW_PHASE), PHASE),
             sizeof(file.pha));
-
-    /* Grids contains phase lag ? */
-    file.phase_lag = ini_get_integer(
-      ini, _get_key(fes->type, fes->waves[ix].name, "PHASE_LAG"), PHASE_LAG);
 
     /* loading netCDF grid */
     if ((rc = load_grid(filename, n, &file, fes)) != 0)
