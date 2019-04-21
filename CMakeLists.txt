@@ -117,23 +117,22 @@ if(NOT WIN32)
   endif()
 endif()
 
-CHECK_FUNCTION_EXISTS(pow RESULT)
-if(NOT RESULT)
-  unset(RESULT)
-  CHECK_FUNCTION_EXISTS(pow RESULT)
-  if(RESULT)
-    list(APPEND CMAKE_REQUIRED_LIBRARIES m)
+CHECK_FUNCTION_EXISTS(pow POW_FUNCTION_EXISTS)
+if(NOT POW_FUNCTION_EXISTS)
+  unset(POW_FUNCTION_EXISTS cache)
+  list(APPEND CMAKE_REQUIRED_LIBRARIES m)
+  CHECK_FUNCTION_EXISTS(pow POW_FUNCTION_EXISTS)
+  if(not POW_FUNCTION_EXISTS)
+    message(FATAL_ERROR "Failed making the pow() function available")
   endif()
 endif()
 
 enable_testing()
 
-# set(CMAKE_FIND_LIBRARY_SUFFIXES ".a" ".so" ".dylib" ".lib")
-
 # API documentation
-if (BUILD_DOC)
+# if (BUILD_DOC)
 #   add_subdirectory(docs)
-endif()
+# endif()
 
 # NetCDF
 find_package(NetCDF 4.1.1 REQUIRED)
