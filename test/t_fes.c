@@ -20,10 +20,12 @@
 #include "test.h"
 #include "fes.h"
 
+#ifndef INI
 #define INI "fes.ini"
+#endif
 #define FES_DATA "data"
 
-#define CHECK_TIDE(a, b, c) fabs((a)-(b)) > c
+#define CHECK_TIDE(a, b, c) fabs((a) - (b)) > c
 
 static int total_err = 0;
 
@@ -41,11 +43,10 @@ int test(fes_enum_access access) {
   FES short_tide = NULL;
   FES radial_tide = NULL;
 
-  printf(
-      "*** testing libfes with %s...\n",
-      access == FES_IO ?
-          "direct access" :
-          (access == FES_MEM ? "memory access" : "buffered access"));
+  printf("*** testing libfes with %s...\n",
+         access == FES_IO
+             ? "direct access"
+             : (access == FES_MEM ? "memory access" : "buffered access"));
 
   if (fes_new(&short_tide, FES_TIDE, access, INI)) {
     printf("fes error : %s\n", fes_error(short_tide));

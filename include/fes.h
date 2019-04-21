@@ -21,6 +21,9 @@
 */
 
 #pragma once
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include <stdlib.h>
 
 /**
@@ -86,9 +89,8 @@ typedef void* FES;
  with the FES_BUFFER_SIZE environment variable. This variable must define a
  positive integer representing the size of the memory in Mb.
  */
-int
-fes_new(FES* handle, const fes_enum_tide_type tide, const fes_enum_access mode,
-        const char* const path);
+int fes_new(FES* handle, const fes_enum_tide_type tide,
+            const fes_enum_access mode, const char* const path);
 
 /**
  @brief Sets the size of the buffer
@@ -98,16 +100,14 @@ fes_new(FES* handle, const fes_enum_tide_type tide, const fes_enum_access mode,
 
  @return 0 on success or 1 on failure.
  */
-int
-fes_set_buffer_size(FES handle, const size_t size);
+int fes_set_buffer_size(FES handle, const size_t size);
 
 /**
  @brief Frees the memory used.
 
  @param handle FES data identifier
  */
-void
-fes_delete(FES handle);
+void fes_delete(FES handle);
 
 /**
  @brief Driver for tidal computation.
@@ -129,9 +129,8 @@ fes_delete(FES handle);
  h_long_period is always computed because this value does not depend
  on input grids.
  */
-int
-fes_core(FES handle, const double lat, const double lon, const double time,
-         double* h, double* h_long_period);
+int fes_core(FES handle, const double lat, const double lon, const double time,
+             double* h, double* h_long_period);
 
 /**
  @brief Return the minimum number of points used to interpolate the tidal waves
@@ -141,8 +140,7 @@ fes_core(FES handle, const double lat, const double lon, const double time,
 
  @return The minimum number of points used during the interpolation
  */
-int
-fes_min_number(FES handle);
+int fes_min_number(FES handle);
 
 /**
  @brief Returns the last error code.
@@ -151,8 +149,7 @@ fes_min_number(FES handle);
 
  @return the \link #fes_enum_error error code\endlink.
  */
-fes_enum_error
-fes_errno(FES fes);
+fes_enum_error fes_errno(FES fes);
 
 /**
  @brief Returns the message error.
@@ -161,13 +158,15 @@ fes_errno(FES fes);
 
  @return the message error.
  */
-const char *
-fes_error(FES fes);
+const char* fes_error(FES fes);
 
 /**
  @brief Dump the template of the configuration file that the library uses.
 
  @return 0 on success otherwise 1 on error
  */
-int
-fes_dump_template(const char* path);
+int fes_dump_template(const char* path);
+
+#ifdef __cplusplus
+}
+#endif
