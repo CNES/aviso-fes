@@ -13,18 +13,14 @@ support from CNES (http://www.aviso.altimetry.fr/)*
 # HOW TO INSTALL THE SOFTWARE ?
 
 The complete description of the build method is described in the
-[INSTALL](INSTALL) file located in the root of this software.
+[INSTALL](INSTALL.md) file located in the root of this software.
 
 # HOW TO USE THE SOFTWARE ?
 
-This distribution contains a C API to be used to calculate the tide. The
+This distribution contains a C/Python API to be used to calculate the tide. The
 [API](API.rst) documentation describes the functions to be used to
 perform the calculation. The directory [examples](examples) contains an
 example of using this API.
-
-> It is also possible to use this library using Python. The
-> [README](python/README.rst) file in the Python directory contains more
-> information.
 
 # BIBLIOGRAPHY
 

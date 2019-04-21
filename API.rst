@@ -284,3 +284,92 @@ Sets the size of the buffer.
 **Returns**: 0 on success or 1 on failure.
 
 **Type**: int
+
+``fes_dump_template``
+---------------------
+
+Dump the template of the configuration file that the library uses.
+
+
+|
+
+.. sourcecode:: C
+
+    int fes_dump_template(const char* path)
+
+**Parameters**:
+
+    **path**\(*const char*): Path to the dump of the configuration file to
+    create 
+
+**Returns**: 0 on success or 1 on failure.
+
+**Type**: int
+
+API for Python
+##############
+
+The Python library provides an interface to control the C API library.
+
+``fes`` objects
+===============
+
+*class* **fes.Handler** (*tide, mode, path*)
+
+    Creates a new FES handler.
+
+        * ``tide`` specifies the tide computation mode : **tide** to compute
+          the short tide or ``radial`` to compute the radial tide.
+        * ``mode`` drives the memory management of the library :
+          ``io`` no data are loaded into memory (data for the calculation will
+          be read from the netCDF grids if necessary) or ``memory`` to load
+          all NetCDF grids into memory.
+        * ``path`` defines the path to the configuration file to use.
+
+        .. note::
+
+            If you want to use the library in a multi-threaded environment it
+            is necessary to create as many ``Handler`` that you have threads.
+
+        .. warning::
+
+            Since the C library is not "thread-safe", the Python class uses a
+            synchronization method to make it "thread-safe": an instance cannot
+            perform more than one task at a time within several threads.
+
+Instance methods:
+
+**fes.Handler.calculate** (*lon, lat, date*)
+
+    Tidal computation
+
+    * ``lat`` is the latitude in degrees (positive north) for the position
+      at which tide is computed.
+    * ``lon`` is the longitude in degrees for the position at which tide is
+      computed.
+    * ``date`` date at which tide is computed
+
+    Returns a tuple that contains:
+
+    * Computed height of the diurnal and
+      semi-diurnal constituents of the tidal spectrum
+      (in centimeters) or None if no data is available
+      at the given position.
+    * Computed height of the long period wave constituents of
+      the tidal spectrum (in centimeters). This value is always
+      computed because this value does not depend on input grids.
+    * The minimum number of points used to interpolate the tidal waves for the
+      asked positions.
+
+    .. note::
+
+        The method returns "NaN" if the numerical grids defining tidal waves
+        are not undefined.
+
+**fes.Handler.set_buffer_size** (size)
+
+    Fixed size, in MB, of read buffer in case read mode selected is "io".
+
+**fes.Handler.dump** (*path*)
+
+    Dump the configuration file used in the given path.
