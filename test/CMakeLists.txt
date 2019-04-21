@@ -19,7 +19,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../src)
 
 macro (configure_test test)
     add_executable(${test} ${test}.c)
-    target_link_libraries(${test} fes ${NETCDF_LIBRARIES})
+    target_link_libraries(${test} fes ${NETCDF_LIBRARIES} ${MATH_LIBRARY})
     add_test(
         NAME ${test}
         COMMAND ${test}

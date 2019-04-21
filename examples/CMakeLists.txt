@@ -13,7 +13,7 @@
 #  You should have received a copy of the GNU LESSER GENERAL PUBLIC LICENSE
 #  along with FES.  If not, see <http://www.gnu.org/licenses/>.
 add_executable(fes_slev fes_slev.c)
-target_link_libraries(fes_slev fes ${NETCDF_LIBRARIES})
+target_link_libraries(fes_slev fes ${NETCDF_LIBRARIES} ${MATH_LIBRARY})
 target_compile_definitions(fes_slev
     PRIVATE
         INI="${CMAKE_SOURCE_DIR}/test/fes.ini"
