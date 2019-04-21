@@ -38,6 +38,11 @@
 #define STRDUP(s) _strdup(s)
 
 /**
+ * Concatenates string
+ */
+#define STRNCAT_S(dest, size, src, count) strncat_s(dest, size, src, count)
+
+/**
  * Reads formatted data from a string
  */
 #define SSCANF(format, ...) \
@@ -82,6 +87,11 @@ char
  * Duplicates string
  */
 #define STRDUP(s) strdup(s)
+
+/**
+ * Concatenates string
+ */
+#define STRNCAT_S(dest, size, src, count) strncat(dest, src, count)
 
 /**
  * Reads formatted data from a string

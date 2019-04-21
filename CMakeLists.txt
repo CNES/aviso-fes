@@ -143,7 +143,7 @@ find_package(NetCDF 4.1.1 REQUIRED)
 include_directories(${NETCDF_INCLUDE_DIRS})
 
 # uthash
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/third_party/uthash/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/third_party/uthash/src)
 
 include_directories(include)
 install(FILES include/fes.h DESTINATION include)

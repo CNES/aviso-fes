@@ -223,9 +223,9 @@ _check_ini(fes_handler* fes, void* ini)
   ix = 0;
   while (unhandled_keys[ix] != NULL) {
     if (ix) {
-      strncat(buffer, ", ", MAX_PATH - strlen(buffer) - 1);
+      STRNCAT_S(buffer, MAX_PATH, ", ", MAX_PATH - strlen(buffer) - 1);
     }
-    strncat(buffer, unhandled_keys[ix++], MAX_PATH - strlen(buffer) - 1);
+    STRNCAT_S(buffer, MAX_PATH, unhandled_keys[ix++], MAX_PATH - strlen(buffer) - 1);
   }
 
   // If there are keys that are not handled by this program, the error is fixed
