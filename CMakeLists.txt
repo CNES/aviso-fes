@@ -33,7 +33,11 @@ if (POLICY CMP0042)
 endif ()
 
 cmake_policy(SET CMP0048 NEW)
-project(interp LANGUAGES C)
+if (BUILD_PYTHON)
+  project(interp LANGUAGES C CXX)
+else()
+  project(interp LANGUAGES C)
+endif()
 
 if (POLICY CMP0063)
   cmake_policy(SET CMP0063 NEW)
@@ -124,7 +128,7 @@ endif()
 
 enable_testing()
 
-set(CMAKE_FIND_LIBRARY_SUFFIXES ".a" ".so" ".dylib" ".lib")
+# set(CMAKE_FIND_LIBRARY_SUFFIXES ".a" ".so" ".dylib" ".lib")
 
 # API documentation
 if (BUILD_DOC)
@@ -136,8 +140,7 @@ find_package(NetCDF 4.1.1 REQUIRED)
 include_directories(${NETCDF_INCLUDE_DIRS})
 
 # uthash
-find_package(uthash 2.0.0 REQUIRED)
-include_directories(${UTHASH_INCLUDE_DIRS})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/third_party/uthash/include)
 
 include_directories(include)
 install(FILES include/fes.h DESTINATION include)

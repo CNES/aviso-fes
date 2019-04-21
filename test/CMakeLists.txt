@@ -13,7 +13,6 @@
 #  You should have received a copy of the GNU LESSER GENERAL PUBLIC LICENSE
 #  along with FES.  If not, see <http://www.gnu.org/licenses/>.
 set(ENV{FES_DATA} ${CMAKE_CURRENT_SOURCE_DIR})
-message(ENV{FES_DATA})
 get_filename_component(INI "fes.ini" ABSOLUTE)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../src)
