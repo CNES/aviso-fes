@@ -186,6 +186,31 @@ error:
 }
 
 /*
+ _translate_path
+
+ Replace the characters "/" with characters "\\" to translate the file paths
+ under Windows.
+
+ Returns the translated path
+*/
+static char*
+_translate_path(char* path)
+{
+#if _WIN32
+  if (path != NULL) {
+    char* ptr = path;
+    while (*ptr) {
+      if (*ptr == '/') {
+        *ptr = '\\';
+      }
+      ptr++;
+    }
+  }
+#endif
+  return path;
+}
+
+/*
  _check_ini
 
  Checks that the configuration file does not contain words unknown by the
@@ -225,7 +250,8 @@ _check_ini(fes_handler* fes, void* ini)
     if (ix) {
       STRNCAT_S(buffer, MAX_PATH, ", ", MAX_PATH - strlen(buffer) - 1);
     }
-    STRNCAT_S(buffer, MAX_PATH, unhandled_keys[ix++], MAX_PATH - strlen(buffer) - 1);
+    STRNCAT_S(
+      buffer, MAX_PATH, unhandled_keys[ix++], MAX_PATH - strlen(buffer) - 1);
   }
 
   // If there are keys that are not handled by this program, the error is fixed
@@ -346,8 +372,8 @@ fes_new(FES* handle,
   /* Loading grids */
   for (ix = 0; ix < N_WAVES; ++ix) {
     fes_cdf_file file;
-    const char* filename = ini_get_string(
-      ini, _get_key(fes->type, fes->waves[ix].name, "FILE"), NULL);
+    const char* filename = _translate_path((char*)(ini_get_string(
+      ini, _get_key(fes->type, fes->waves[ix].name, "FILE"), NULL)));
 
     if (filename == NULL) {
       /* Wave computed by admittance or not computed */
