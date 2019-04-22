@@ -1,3 +1,6 @@
+![alt-text](https://anaconda.org/fbriol/lagrangian/badges/installer/conda.svg)
+![build-status](https://img.shields.io/bitbucket/pipelines/cnes_aviso/fes.svg)
+
 # DESCRIPTION
 
 This package is the fully revised version of the FES2014 distribution.
