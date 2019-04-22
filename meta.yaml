@@ -4,7 +4,7 @@ package:
 
 source:
   url: https://bitbucket.org/cnes_aviso/fes/downloads/fes-2.9.1-Source.tar.xz
-  sha256: 8c8dbbbfc9ce020f5eafa5e19bbc53e1b699a77cc0eefa62ae9ae16163690ba0
+  sha256: f5a8188943b3b8a1fc70f4655d5d8fb8bb6fdd7e51b6c7ce55a47d28e0162b56
 
 requirements:
   build:
