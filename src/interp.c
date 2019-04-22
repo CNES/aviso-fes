@@ -31,6 +31,10 @@
  w1 Linear weight w1
  w2 Linear weight w2
  */
+#ifdef _WIN32
+// Disables the warning of a possible division by 0.
+#pragma warning(disable : 4723)
+#endif
 static void _linear_weighting(const double x, const double x_1,
                               const double x_2, double* w_1, double* w_2) {
   assert(x >= x_1 - EPSILON);
@@ -43,10 +47,14 @@ static void _linear_weighting(const double x, const double x_1,
     *w_1 = 0.0;
     *w_2 = 1.0;
   } else {
-    *w_1 = (x_2 - x) / (x_2 - x_1);
-    *w_2 = (x - x_1) / (x_2 - x_1);
+    double dx = 1 / (x_2 - x_1);
+    *w_1 = (x_2 - x) * dx;
+    *w_2 = (x - x_1) * dx;
   }
 }
+#ifdef _WIN32
+#pragma warning(default : 4723)
+#endif
 
 /*
  _sum_weighting

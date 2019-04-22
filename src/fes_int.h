@@ -595,8 +595,6 @@ struct _fes_cdf_file {
   int amp_id;
   /** NetCDF variable identifier that corresponds to phase data. */
   int pha_id;
-  /** True if phase data contains phase lag. */
-  int phase_lag;
   /** NetCDF variable name that contains amplitude data. */
   char amp[NC_MAX_VAR_DIMS];
   /** NetCDF variable name that contains latitude data. */

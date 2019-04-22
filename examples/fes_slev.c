@@ -21,8 +21,12 @@
 
 // Path to the configuration file and data used to test the library
 // Change these settings to your liking.
-#define INI             "../test/fes.ini"
-#define FES_DATA        "../test/data"
+#ifndef INI
+#define INI "../test/fes.ini"
+#endif
+#ifndef FES_DATA
+#define FES_DATA "../test/data"
+#endif
 
 int main(void) {
   // The return code
@@ -104,13 +108,13 @@ int main(void) {
 
   goto finish;
 
-  error:
-    rc = 1;
+error:
+  rc = 1;
 
-  finish:
-    // Release the memory used by the FES handlers.
-    fes_delete(short_tide);
-    fes_delete(radial_tide);
+finish:
+  // Release the memory used by the FES handlers.
+  fes_delete(short_tide);
+  fes_delete(radial_tide);
 
-    return rc;
+  return rc;
 }
