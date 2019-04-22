@@ -17,7 +17,6 @@ cmake_minimum_required(VERSION 2.8.12)
 project(fes)
 
 include(CheckFunctionExists)
-include(CheckLibraryExists)
 include(CheckCXXSourceRuns)
 
 if("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_BINARY_DIR}")
@@ -30,8 +29,10 @@ option(BUILD_DOC "Build documentation" OFF)
 option(BUILD_PYTHON "Build python extension" OFF)
 
 # Version
+find_package(PythonInterp REQUIRED)
 execute_process(
-  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/version.py OUTPUT_VARIABLE VERSION)
+  COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/version.py
+  OUTPUT_VARIABLE VERSION)
 string(REPLACE " " ";" VERSION_LIST ${VERSION})
 list(GET VERSION_LIST 0 LIB_VERSION_MAJOR)
 list(GET VERSION_LIST 1 LIB_VERSION_MINOR)
