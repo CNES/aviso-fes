@@ -54,7 +54,7 @@ def main():
     lats = [-7.688] * dates.size
     lats = np.array(lats)
 
-    # Create handler
+    # Computes tides
     tide, lp, _ = short_tide.calculate(lats, lons, dates)
     load, load_lp, _ = radial_tide.calculate(lats, lons, dates)
 
