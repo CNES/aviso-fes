@@ -36,7 +36,8 @@ def revision(path, update=False):
             for line in stream:
                 line = line.strip()
                 if "#define FES_VERSION" in line:
-                    return line.split()[-1]
+                    return tuple(
+                        int(item) for item in line.split()[-1].split("."))
 
     (major, minor, patch) = (int(item) for item in match.group(1).split("."))
 

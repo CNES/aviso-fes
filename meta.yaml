@@ -3,13 +3,11 @@ package:
   version: 2.9.1
 
 source:
-  # url: https://bitbucket.org/cnes_aviso/lagrangian/downloads/lagrangian-2.3.0.tar.gz
-  path: .
+  url: https://bitbucket.org/cnes_aviso/fes/downloads/fes-2.9.1-Source.tar.xz
+  sha256: 8c8dbbbfc9ce020f5eafa5e19bbc53e1b699a77cc0eefa62ae9ae16163690ba0
 
 requirements:
   build:
-    # - {{ compiler('c') }}
-    # - {{ compiler('cxx') }}
     - cmake
     - libnetcdf
     - python {{ python }}
