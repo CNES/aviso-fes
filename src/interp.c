@@ -43,8 +43,9 @@ static void _linear_weighting(const double x, const double x_1,
     *w_1 = 0.0;
     *w_2 = 1.0;
   } else {
-    *w_1 = (x_2 - x) / (x_2 - x_1);
-    *w_2 = (x - x_1) / (x_2 - x_1);
+    double denominator = 1 / (x_2 - x_1);
+    *w_1 = (x_2 - x) * denominator;
+    *w_2 = (x - x_1) * denominator;
   }
 }
 

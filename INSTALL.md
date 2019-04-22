@@ -19,8 +19,8 @@ Requirements
   array-oriented scientific data.
   (http://www.unidata.ucar.edu/software/netcdf/)
 
-Building
---------
+Building & Installing
+---------------------
 
 One nice and highly recommended feature of CMake is the ability to do out of
 source builds. In this way you can make all your `.o` files, various temporary
