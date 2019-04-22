@@ -1,8 +1,6 @@
-Installation Instructions
-=========================
+# Installation Instructions
 
-Requirements
-------------
+## Requirements
 
 * cmake: CMake is an open-source, cross-platform family of tools designed to
   build, test and package software. CMake is used to control the software
@@ -16,8 +14,7 @@ Requirements
   array-oriented scientific data.
   (http://www.unidata.ucar.edu/software/netcdf/)
 
-Building & Installing
----------------------
+## Building & Installing
 
 One nice and highly recommended feature of CMake is the ability to do out of
 source builds. In this way you can make all your `.o` files, various temporary
@@ -130,6 +127,30 @@ If you want to generate the Python library, enable `BUILD_PYTHON`. You can
 also specify which python interpreter you want to use for generation by passing
 `-DPYTHON_EXECUTABLE=/which/python/to/use` option to CMake.
 
-Running tests
--------------
+## Running tests
+
 In the building directory execute the `make test` command.
+
+## Create package
+
+### Sources
+
+> When you create a distribution containing the source code, please extract
+> the GIT tag to identify the distributed version:
+> `git checkout <TAG> -b <tag>`
+
+The "package_source" target of the makefile allows to generate a source installer. To create this archive, in the build directory of the software execute the following command :
+
+    make package_source
+
+### Binaries and headers
+
+The "package" target of the makefile allows to generate an installer of libraries and C headers in :
+* ".deb" format if you generate the library under "Debian/Ubuntu" distribution,
+* ".rpm" if the generation is done under "Red Hat/CentOS" or
+* ".zip" if the generation is done under "Windows" or
+* ".tar.gz" under the other platforms.
+
+To create this installer, in the construction directory of the software execute the following command :
+
+    make package

@@ -14,7 +14,5 @@
 # along with FES.  If not, see <http://www.gnu.org/licenses/>.
 file(GLOB_RECURSE WRAPPED_SOURCES "*.cpp")
 pybind11_add_module(pyfes ${WRAPPED_SOURCES})
-set_target_properties(pyfes PROPERTIES LINK_SEARCH_START_STATIC 1)
-set_target_properties(pyfes PROPERTIES LINK_SEARCH_END_STATIC 1)
-target_link_libraries(pyfes PUBLIC fes ${NETCDF_LIBRARIES} ${MATH_LIBRARY})
+target_link_libraries(pyfes PUBLIC fes ${NETCDF_LIBRARIES})
 install(TARGETS pyfes DESTINATION ${PYTHON_SITE_DIR})
