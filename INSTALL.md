@@ -14,6 +14,16 @@
   array-oriented scientific data.
   (http://www.unidata.ucar.edu/software/netcdf/)
 
+
+## Install with conda
+
+The easiest route to installing FES is through conda. For all platforms
+installing this package can be done with:
+
+~~~~
+conda install -c fbriol fes
+~~~~
+
 ## Building & Installing
 
 One nice and highly recommended feature of CMake is the ability to do out of
