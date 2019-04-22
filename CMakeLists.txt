@@ -46,9 +46,9 @@ endif ()
 
 cmake_policy(SET CMP0048 NEW)
 if (BUILD_PYTHON)
-  project(interp LANGUAGES C CXX)
+  project(fes LANGUAGES C CXX)
 else()
-  project(interp LANGUAGES C)
+  project(fes LANGUAGES C)
 endif()
 
 if (POLICY CMP0063)
