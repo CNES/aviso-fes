@@ -11,9 +11,6 @@ Requirements
   used in the compiler environment of your choice.
   (https://cmake.org/)
 
-* uthash: A hash table library for C structures.
-  (https://github.com/troydhanson/uthash.git)
-
 * netcdf: A set of software libraries and self-describing, machine-
   independent data formats that support the creation, access, and sharing of
   array-oriented scientific data.
