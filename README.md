@@ -1,4 +1,6 @@
-![alt-text](https://anaconda.org/fbriol/lagrangian/badges/installer/conda.svg)
+![conda](https://anaconda.org/fbriol/lagrangian/badges/installer/conda.svg)
+![platforms](https://anaconda.org/fbriol/fes/badges/platforms.svg)
+![latest-release-date](https://anaconda.org/fbriol/fes/badges/latest_release_date.svg)
 ![build-status](https://img.shields.io/bitbucket/pipelines/cnes_aviso/fes.svg)
 
 # DESCRIPTION
