@@ -17,16 +17,15 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "test.h"
+#include "compat.h"
 #include "grid.c"
+#include "test.h"
 
-#ifdef _WIN32
-#define GRID    "../../test/dummy.nc"
-#else
-#define GRID    "dummy.nc"
-#endif
+#define GRID "dummy.nc"
 
-int main(void) {
+int
+main(void)
+{
   int total_err = 0, err;
   fes_grid grid;
   fes_cdf_file nc;
@@ -65,17 +64,26 @@ int main(void) {
   err = CHECK_FLOAT(_get_value(10, -90, 0.5), -85);
   SUMMARIZE_ERR;
 
-  strcpy(grid.file->lat, "latitude");
-  strcpy(grid.file->lon, "longitude");
-  strcpy(grid.file->amp, "amplitude");
-  strcpy(grid.file->pha, "phase");
+  STRNCPY(grid.file->lat, "latitude", sizeof(grid.file->lat));
+  STRNCPY(grid.file->lon, "longitude", sizeof(grid.file->lon));
+  STRNCPY(grid.file->amp, "amplitude", sizeof(grid.file->amp));
+  STRNCPY(grid.file->pha, "phase", sizeof(grid.file->pha));
 
   printf("*** testing _open_grid..\n");
-  if (_open_grid(GRID, &fes, &nc, &lon_dim, &lat_dim, &lon_min, &lat_min,
-                 &lon_max, &lat_max, &lon_step, &lat_step, &undef)) {
+  if (_open_grid(GRID,
+                 &fes,
+                 &nc,
+                 &lon_dim,
+                 &lat_dim,
+                 &lon_min,
+                 &lat_min,
+                 &lon_max,
+                 &lat_max,
+                 &lon_step,
+                 &lat_step,
+                 &undef)) {
     printf("%s\n", "nok");
-    DIE
-    ;
+    DIE;
   }
 
   err = CHECK_INT(lon_dim, 2);
@@ -112,19 +120,15 @@ int main(void) {
   printf("*** testing _read_grid_value..\n");
   fes.grid = grid;
   if (_read_grid_value(&fes, 1, 1, 0, &c))
-    DIE
-    ;
+    DIE;
 
   err = CHECK_FLOAT(c.re, 0);
   SUMMARIZE_ERR;
   err = CHECK_FLOAT(c.im, 1);
   SUMMARIZE_ERR;
 
-  grid.file->phase_lag = 1;
-
   if (_read_grid_value(&fes, 1, 1, 0, &c))
-    DIE
-    ;
+    DIE;
 
   err = CHECK_FLOAT(c.re, 0);
   SUMMARIZE_ERR;
@@ -132,8 +136,7 @@ int main(void) {
   SUMMARIZE_ERR;
 
   if (_read_grid_value(&fes, 0, 1, 0, &c))
-    DIE
-    ;
+    DIE;
 
   err = CHECK_FLOAT(c.re, DV);
   SUMMARIZE_ERR;

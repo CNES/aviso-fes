@@ -1,0 +1,24 @@
+package:
+  name: fes
+  version: 2.9.1
+
+source:
+  # url: https://bitbucket.org/cnes_aviso/lagrangian/downloads/lagrangian-2.3.0.tar.gz
+  path: .
+
+requirements:
+  build:
+    # - {{ compiler('c') }}
+    # - {{ compiler('cxx') }}
+    - cmake
+    - libnetcdf
+    - python {{ python }}
+    - setuptools
+  run:
+    - python {{ python }}
+    - libnetcdf
+    - numpy
+
+test:
+  imports:
+    - pyfes

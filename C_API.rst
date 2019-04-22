@@ -284,3 +284,24 @@ Sets the size of the buffer.
 **Returns**: 0 on success or 1 on failure.
 
 **Type**: int
+
+``fes_dump_template``
+---------------------
+
+Dump the template of the configuration file that the library uses.
+
+
+|
+
+.. sourcecode:: C
+
+    int fes_dump_template(const char* path)
+
+**Parameters**:
+
+    **path**\(*const char*): Path to the dump of the configuration file to
+    create 
+
+**Returns**: 0 on success or 1 on failure.
+
+**Type**: int
