@@ -1,5 +1,5 @@
 package:
-  name: fes
+  name: pyfes
   version: 2.9.1
 
 source:
