@@ -51,9 +51,9 @@ def revision(path, update=False):
             lines = stream.readlines()
 
         for idx, line in enumerate(lines):
-            if "#define VERSION" in line:
-                lines[idx] = "#define FES_VERSION %d.%d.%d" % (major, minor,
-                                                               patch)
+            if "#define FES_VERSION" in line:
+                lines[idx] = "#define FES_VERSION \"%d.%d.%d\"" % (
+                    major, minor, patch)
 
         with open(path, "w") as stream:
             stream.writelines(lines)
