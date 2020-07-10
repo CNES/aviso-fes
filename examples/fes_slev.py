@@ -29,23 +29,20 @@ def usage():
     """
     parser = argparse.ArgumentParser(
         description='Program example using the Python API for FES.')
-    parser.add_argument(
-        'ocean',
-        help='Path to the configuration file that contains '
-        'the defintion of grids to use to compute the '
-        'ocean tide',
-        type=argparse.FileType('r'))
-    parser.add_argument(
-        '--load',
-        help='Path to the configuration file that contains '
-        'the defintion of grids to use to compute the '
-        'load tide',
-        type=argparse.FileType('r'))
-    parser.add_argument(
-        '--date',
-        help='Date of calculation of the oceanic tide.',
-        default=datetime.datetime.now(),
-        type=argparse.FileType('r'))
+    parser.add_argument('ocean',
+                        help='Path to the configuration file that contains '
+                        'the defintion of grids to use to compute the '
+                        'ocean tide',
+                        type=argparse.FileType('r'))
+    parser.add_argument('--load',
+                        help='Path to the configuration file that contains '
+                        'the defintion of grids to use to compute the '
+                        'load tide',
+                        type=argparse.FileType('r'))
+    parser.add_argument('--date',
+                        help='Date of calculation of the oceanic tide.',
+                        default=datetime.datetime.now(),
+                        type=argparse.FileType('r'))
     return parser.parse_args()
 
 
@@ -66,17 +63,21 @@ def main():
     lats = np.arange(-90, 90, 0.5)
     lons = np.arange(-180, 180, 0.5)
 
-    lons, lats = np.meshgrid(lons, lats, indexing='ij')
+    lons, lats = np.meshgrid(lons, lats)
 
-    dates = np.empty(lons.shape, dtype='datetime64[us]')
+    shape = lons.shape
+
+    dates = np.empty(shape, dtype='datetime64[us]')
     dates.fill(args.date)
 
     # Create handler
-    tide, lp, _ = short_tide.calculate(lats.ravel(), lons.ravel(),
+    tide, lp, _ = short_tide.calculate(lons.ravel(), lats.ravel(),
                                        dates.ravel())
+    tide, lp = tide.reshape(shape), lp.reshape(shape)
     if radial_tide is not None:
-        load, load_lp, _ = radial_tide.calculate(lats.ravel(), lons.ravel(),
+        load, load_lp, _ = radial_tide.calculate(lons.ravel(), lats.ravel(),
                                                  dates.ravel())
+        load, load_lp = load.reshape(shape), load_lp.reshape(shape)
     else:
         load = np.zeros(lons.shape)
         load_lp = load
