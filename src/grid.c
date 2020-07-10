@@ -136,13 +136,13 @@ static int _read_grid_value(fes_handler* const fes, const size_t i_lon,
 
     size_t count[2] = { 1, 1 };
     size_t start[2];
+    ptrdiff_t stride[2] = {1, 1};
 
     start[0] = grid->transpose ? i_lon : i_lat;
     start[1] = grid->transpose ? i_lat : i_lon;
 
     rc = nc_get_vars_float(grid->file[n].id, grid->file[n].amp_id, start, count,
-    NULL,
-                           &amp);
+                           stride, &amp);
     if (rc) {
       set_fes_extended_error(fes, FES_NETCDF_ERROR, "%s (%s)", nc_strerror(rc),
                              grid->file[n].amp);
@@ -150,8 +150,7 @@ static int _read_grid_value(fes_handler* const fes, const size_t i_lon,
     }
 
     rc = nc_get_vars_float(grid->file[n].id, grid->file[n].pha_id, start, count,
-    NULL,
-                           &pha);
+                           stride, &pha);
     if (rc) {
       set_fes_extended_error(fes, FES_NETCDF_ERROR, "%s (%s)", nc_strerror(rc),
                              grid->file[n].pha);

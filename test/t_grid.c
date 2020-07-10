@@ -21,11 +21,11 @@
 #include "grid.c"
 #include "test.h"
 
-#define GRID "dummy.nc"
+#ifndef DUMMY_GRID
+#define DUMMY_GRID "dummy.nc"
+#endif
 
-int
-main(void)
-{
+int main(void) {
   int total_err = 0, err;
   fes_grid grid;
   fes_cdf_file nc;
@@ -69,19 +69,9 @@ main(void)
   STRNCPY(grid.file->amp, "amplitude", sizeof(grid.file->amp));
   STRNCPY(grid.file->pha, "phase", sizeof(grid.file->pha));
 
-  printf("*** testing _open_grid..\n");
-  if (_open_grid(GRID,
-                 &fes,
-                 &nc,
-                 &lon_dim,
-                 &lat_dim,
-                 &lon_min,
-                 &lat_min,
-                 &lon_max,
-                 &lat_max,
-                 &lon_step,
-                 &lat_step,
-                 &undef)) {
+  printf("*** testing _open_grid\n");
+  if (_open_grid(DUMMY_GRID, &fes, &nc, &lon_dim, &lat_dim, &lon_min, &lat_min,
+                 &lon_max, &lat_max, &lon_step, &lat_step, &undef)) {
     printf("%s\n", "nok");
     DIE;
   }
@@ -119,24 +109,21 @@ main(void)
 
   printf("*** testing _read_grid_value..\n");
   fes.grid = grid;
-  if (_read_grid_value(&fes, 1, 1, 0, &c))
-    DIE;
+  if (_read_grid_value(&fes, 1, 1, 0, &c)) DIE;
 
   err = CHECK_FLOAT(c.re, 0);
   SUMMARIZE_ERR;
   err = CHECK_FLOAT(c.im, 1);
   SUMMARIZE_ERR;
 
-  if (_read_grid_value(&fes, 1, 1, 0, &c))
-    DIE;
+  if (_read_grid_value(&fes, 1, 1, 0, &c)) DIE;
 
   err = CHECK_FLOAT(c.re, 0);
   SUMMARIZE_ERR;
   err = CHECK_FLOAT(c.im, 1);
   SUMMARIZE_ERR;
 
-  if (_read_grid_value(&fes, 0, 1, 0, &c))
-    DIE;
+  if (_read_grid_value(&fes, 0, 1, 0, &c)) DIE;
 
   err = CHECK_FLOAT(c.re, DV);
   SUMMARIZE_ERR;
