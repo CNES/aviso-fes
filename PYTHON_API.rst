@@ -35,10 +35,10 @@ Instance methods:
 
   Tidal computation
 
-  * ``lat`` is the latitude in degrees (positive north) for the position
-    at which tide is computed.
   * ``lon`` is the longitude in degrees for the position at which tide is
     computed.
+  * ``lat`` is the latitude in degrees (positive north) for the position
+    at which tide is computed.
   * ``date`` date at which tide is computed.
 
     .. note::
