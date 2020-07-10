@@ -17,13 +17,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "test.h"
 #include "fes.h"
+#include "test.h"
 
 #ifndef INI
 #define INI "fes.ini"
 #endif
+
+#ifndef FES_DATA
 #define FES_DATA "data"
+#endif
 
 #define CHECK_TIDE(a, b, c) fabs((a) - (b)) > c
 

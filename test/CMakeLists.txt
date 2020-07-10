@@ -14,6 +14,8 @@
 #  along with FES.  If not, see <http://www.gnu.org/licenses/>.
 set(ENV{FES_DATA} ${CMAKE_CURRENT_SOURCE_DIR})
 get_filename_component(INI "fes.ini" ABSOLUTE)
+get_filename_component(DUMMY_GRID "dummy.nc" ABSOLUTE)
+get_filename_component(FES_DATA "data" ABSOLUTE)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../src)
 
@@ -28,8 +30,9 @@ endmacro()
 
 configure_test (t_angle)
 configure_test (t_grid)
+target_compile_definitions(t_grid PRIVATE DUMMY_GRID="${DUMMY_GRID}")
 configure_test (t_interp)
 configure_test (t_prediction)
 
 configure_test (t_fes)
-target_compile_definitions(t_fes PRIVATE INI="${INI}")
+target_compile_definitions(t_fes PRIVATE INI="${INI}" FES_DATA="${FES_DATA}")
