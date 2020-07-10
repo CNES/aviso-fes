@@ -12,8 +12,9 @@
 //
 // You should have received a copy of the GNU LESSER GENERAL PUBLIC LICENSE
 // along with FES.  If not, see <http://www.gnu.org/licenses/>.
-#include <iostream>
 #include "fes_handler.hpp"
+
+#include <iostream>
 
 void Handler::check(const int status) const {
   if (status != FES_SUCCESS) {
@@ -161,9 +162,13 @@ pybind11::tuple Handler::calculate(pybind11::array_t<double>& lon,
   auto _h = h.mutable_unchecked<1>();
   auto _h_long_period = h_long_period.mutable_unchecked<1>();
   auto _samples = samples.mutable_unchecked<1>();
-  for (pybind11::ssize_t ix = 0; ix < size; ++ix) {
-    std::tie(_h(ix), _h_long_period(ix), _samples(ix)) =
-        calculate(_lon[ix], _lat[ix], _date[ix]);
+  {
+    pybind11::gil_scoped_release gil;
+
+    for (pybind11::ssize_t ix = 0; ix < size; ++ix) {
+      std::tie(_h(ix), _h_long_period(ix), _samples(ix)) =
+          calculate(_lon[ix], _lat[ix], _date[ix]);
+    }
   }
   return pybind11::make_tuple(h, h_long_period, samples);
 }
