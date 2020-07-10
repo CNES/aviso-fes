@@ -1,22 +1,43 @@
-package:
-  name: pyfes
-  version: 2.9.1
+{% set name = "pyfes" %}
+{% set version = "2.9.2" %}
 
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+  
 source:
   url: https://bitbucket.org/cnes_aviso/fes/downloads/fes-2.9.1-Source.tar.xz
   sha256: f5a8188943b3b8a1fc70f4655d5d8fb8bb6fdd7e51b6c7ce55a47d28e0162b56
 
 requirements:
   build:
+    - {{ compiler('cxx') }}  # [linux or osx]
+    - vs2017_win-64          # [win]
     - cmake
-    - libnetcdf
+  host:
     - python {{ python }}
+    - libnetcdf
     - setuptools
   run:
-    - python {{ python }}
+    - {{ pin_compatible('numpy') }}
+    - python
     - libnetcdf
-    - numpy
 
 test:
   imports:
     - pyfes
+
+about:
+  home: https://bitbucket.org/cnes_aviso/fes
+  license: GNU Lesser General Public License v3
+  license_family: LGPL
+  license_file: LICENSE
+  summary: 'FES2014 prediction software'
+  description: |
+    This package is the fully revised version of the FES2014 distribution.
+    This distribution includes the FES2014 tidal prediction software and
+    the FES2014 tides databases
+
+extra:
+  recipe-maintainers:
+    - fbriol
