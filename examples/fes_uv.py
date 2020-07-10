@@ -74,9 +74,9 @@ def main():
     dates.fill(args.date)
 
     # Create handler
-    u_tide, lp, _ = eastward_velocity.calculate(lats.ravel(), lons.ravel(),
+    u_tide, lp, _ = eastward_velocity.calculate(lons.ravel(), lats.ravel(),
                                                 dates.ravel())
-    v_tide, _, _ = northward_velocity.calculate(lats.ravel(), lons.ravel(),
+    v_tide, _, _ = northward_velocity.calculate(lons.ravel(), lats.ravel(),
                                                 dates.ravel())
 
     # Creating an image to see the result in meters
