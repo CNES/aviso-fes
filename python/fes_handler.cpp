@@ -158,13 +158,13 @@ pybind11::tuple Handler::calculate(pybind11::array_t<double>& lon,
   std::unique_lock<std::mutex> lock(mutex_);
   // arrays must one-dimensionnal
   if (lon.ndim() != 1) {
-    throw std::invalid_argument("lon must be a one-dimensionnal array");
+    throw std::invalid_argument("lon must be a one-dimensional array");
   }
   if (lat.ndim() != 1) {
-    throw std::invalid_argument("lat must be a one-dimensionnal array");
+    throw std::invalid_argument("lat must be a one-dimensional array");
   }
   if (date.ndim() != 1) {
-    throw std::invalid_argument("date must be a one-dimensionnal array");
+    throw std::invalid_argument("date must be a one-dimensional array");
   }
 
   auto size = lon.size();
