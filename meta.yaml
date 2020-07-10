@@ -31,7 +31,7 @@ about:
   home: https://bitbucket.org/cnes_aviso/fes
   license: GNU Lesser General Public License v3
   license_family: LGPL
-  license_file: LICENSE
+  license_file: COPYING
   summary: 'FES2014 prediction software'
   description: |
     This package is the fully revised version of the FES2014 distribution.
