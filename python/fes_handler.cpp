@@ -14,7 +14,57 @@
 // along with FES.  If not, see <http://www.gnu.org/licenses/>.
 #include "fes_handler.hpp"
 
+#include <datetime.h>
+
 #include <iostream>
+
+/// Returns number of days since civil 1970-01-01.  Negative values indicate
+/// days prior to 1970-01-01.
+///
+/// http://howardhinnant.github.io/date_algorithms.html
+static inline int64_t days_from_civil(int y, unsigned m, unsigned d) {
+  y -= static_cast<int>(m <= 2);
+  const auto era = (y >= 0 ? y : y - 399) / 400;
+  const auto yoe = static_cast<unsigned>(y - era * 400);            // [0, 399]
+  const auto doy = (153 * (m + (m > 2 ? -3 : 9)) + 2) / 5 + d - 1;  // [0, 365]
+  const auto doe = yoe * 365 + yoe / 4 - yoe / 100 + doy;  // [0, 146096]
+  return era * 146097LL + static_cast<int64_t>(doe) - 719468LL;
+}
+
+std::chrono::system_clock::time_point timestamp(pybind11::handle datetime) {
+  if (!datetime) {
+    throw std::invalid_argument(
+        "a datetime.datetime is required (got type null)");
+  }
+
+  if (!PyDateTimeAPI) {
+    PyDateTime_IMPORT;
+  }
+
+  if (PyDateTime_Check(datetime.ptr())) {
+    if (reinterpret_cast<_PyDateTime_BaseTZInfo*>(datetime.ptr())->hastzinfo) {
+      throw std::invalid_argument(
+          "only the naive datetime object can be converted to timestamp");
+    }
+
+    auto sec = days_from_civil(PyDateTime_GET_YEAR(datetime.ptr()),
+                               PyDateTime_GET_MONTH(datetime.ptr()),
+                               PyDateTime_GET_DAY(datetime.ptr())) *
+               86400;
+
+    sec += PyDateTime_DATE_GET_HOUR(datetime.ptr()) * 3600 +
+           PyDateTime_DATE_GET_MINUTE(datetime.ptr()) * 60 +
+           PyDateTime_DATE_GET_SECOND(datetime.ptr());
+
+    return std::chrono::system_clock::from_time_t(sec) +
+           std::chrono::microseconds(
+               PyDateTime_DATE_GET_MICROSECOND(datetime.ptr()));
+  }
+
+  throw std::invalid_argument(
+      "a datetime.datetime is required (got type " +
+      std::string(pybind11::str(datetime.get_type().attr("__name__"))) + ")");
+}
 
 void Handler::check(const int status) const {
   if (status != FES_SUCCESS) {
@@ -27,20 +77,11 @@ std::vector<std::chrono::system_clock::time_point> Handler::cast_datetime(
   auto result = std::vector<std::chrono::system_clock::time_point>();
   auto size = array.size();
   result.reserve(size);
-
   auto type_num =
       pybind11::detail::array_descriptor_proxy(array.dtype().ptr())->type_num;
   if (type_num == pybind11::detail::npy_api::NPY_OBJECT_) {
-    // numpy.ndarray[datetime.datetime[m, 1]]
-    auto caster =
-        pybind11::detail::type_caster<std::chrono::system_clock::time_point>();
-
     for (auto& item : array) {
-      if (!caster.load(item, true)) {
-        return {};
-      }
-      result.emplace_back(
-          static_cast<std::chrono::system_clock::time_point>(caster));
+      result.emplace_back(timestamp(item));
     }
   } else if (type_num == 21 /* NPY_DATETIME */) {
     auto dtype = std::string(pybind11::str(array.dtype()));
