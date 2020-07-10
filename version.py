@@ -1,19 +1,22 @@
 #!/usr/bin/env python3
 """Handle the library version number."""
 import argparse
-import datetime
 import os
 import re
 import subprocess
 import sys
+
+PATTERN = "#define FES_VERSION"
 
 
 def execute(cmd):
     """
     Executes a command and returns the lines displayed on the standard output
     """
-    process = subprocess.Popen(
-        cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    process = subprocess.Popen(cmd,
+                               shell=True,
+                               stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE)
     stdout = process.stdout.read()
     if sys.version_info[0] == 3:
         stdout = stdout.decode('utf8')
@@ -31,13 +34,13 @@ def revision(path, update=False):
     # If the information is unavailable (execution of this function outside the
     # development environment), file generation is not possible
     if not stdout:
-        pattern = re.compile(r'\s+return "(\d+)"')
+        pattern = re.compile(PATTERN + r' "(.*)"').search
         with open(path, "r") as stream:
             for line in stream:
-                line = line.strip()
-                if "#define FES_VERSION" in line:
+                match = pattern(line)
+                if match is not None:
                     return tuple(
-                        int(item) for item in line.split()[-1].split("."))
+                        int(item) for item in match.group(1).split("."))
 
     (major, minor, patch) = (int(item) for item in match.group(1).split("."))
 
@@ -51,9 +54,8 @@ def revision(path, update=False):
             lines = stream.readlines()
 
         for idx, line in enumerate(lines):
-            if "#define FES_VERSION" in line:
-                lines[idx] = "#define FES_VERSION \"%d.%d.%d\"" % (
-                    major, minor, patch)
+            if PATTERN in line:
+                lines[idx] = PATTERN + "\"%d.%d.%d\"" % (major, minor, patch)
 
         with open(path, "w") as stream:
             stream.writelines(lines)
@@ -76,8 +78,8 @@ def main():
     """Main function"""
     args = usage()
     path = os.path.normpath(
-        os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "include", "fes.h"))
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "include",
+                     "fes.h"))
     sys.stdout.write("%d %d %d" % revision(path, args.update))
 
 
