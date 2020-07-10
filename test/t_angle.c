@@ -17,8 +17,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "test.h"
 #include "angle.h"
+#include "test.h"
 
 int main(void) {
   int total_err = 0;
@@ -54,4 +54,3 @@ int main(void) {
 
   FINAL_RESULTS;
 }
-
