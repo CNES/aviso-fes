@@ -28,22 +28,19 @@ def usage():
     """
     parser = argparse.ArgumentParser(
         description='Program example using the Python API for FES.')
-    parser.add_argument(
-        'ocean',
-        help='Path to the configuration file that contains '
-        'the defintion of grids to use to compute the '
-        'ocean tide',
-        type=argparse.FileType('r'))
-    parser.add_argument(
-        'load',
-        help='Path to the configuration file that contains '
-        'the defintion of grids to use to compute the '
-        'load tide',
-        type=argparse.FileType('r'))
-    parser.add_argument(
-        '--date',
-        help='Date of calculation of the oceanic tide.',
-        default=datetime.datetime(1983, 1, 1))
+    parser.add_argument('ocean',
+                        help='Path to the configuration file that contains '
+                        'the defintion of grids to use to compute the '
+                        'ocean tide',
+                        type=argparse.FileType('r'))
+    parser.add_argument('load',
+                        help='Path to the configuration file that contains '
+                        'the defintion of grids to use to compute the '
+                        'load tide',
+                        type=argparse.FileType('r'))
+    parser.add_argument('--date',
+                        help='Date of calculation of the oceanic tide.',
+                        default=datetime.datetime(1983, 1, 1))
     return parser.parse_args()
 
 
@@ -63,20 +60,17 @@ def main():
         for item in range(24)
     ])
 
-    lons = [59.195] * dates.size
-    lons = np.array(lons)
-    lats = [-7.688] * dates.size
-    lats = np.array(lats)
+    lats = np.full(dates.shape, 59.195)
+    lons = np.full(dates.shape, -7.688)
 
     # Computes tides
-    tide, lp, _ = short_tide.calculate(lats, lons, dates)
-    load, load_lp, _ = radial_tide.calculate(lats, lons, dates)
+    tide, lp, _ = short_tide.calculate(lons, lats, dates)
+    load, load_lp, _ = radial_tide.calculate(lons, lats, dates)
 
     for idx, date in enumerate(dates):
-        print(
-            "%s %9.3f %9.3f %9.3f %9.3f %9.3f %9.3f %9.3f" %
-            (date, lats[idx], lons[idx], tide[idx], lp[idx],
-             tide[idx] + lp[idx], tide[idx] + lp[idx] + load[idx], load[idx]))
+        print("%s %9.3f %9.3f %9.3f %9.3f %9.3f %9.3f %9.3f" %
+              (date, lats[idx], lons[idx], tide[idx], lp[idx], tide[idx] +
+               lp[idx], tide[idx] + lp[idx] + load[idx], load[idx]))
 
 
 if __name__ == '__main__':
