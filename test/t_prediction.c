@@ -17,8 +17,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "test.h"
 #include "prediction.c"
+#include "test.h"
 
 static int test_admittance(const double r, const int ix, fes_wave* w) {
   int rc;
@@ -1182,7 +1182,8 @@ int main(void) {
   err = test_admittance(0.2387, _2N2, w);
   SUMMARIZE_ERR;
 
-  err = test_admittance(0.094151295, EPS2, w); /*cas ou 2N2 calculee par admittance auparavant */
+  err = test_admittance(0.094151295, EPS2,
+                        w); /*cas ou 2N2 calculee par admittance auparavant */
   SUMMARIZE_ERR;
 
   w[_2N2].admittance = 0; /* on force 2N2 a etre calcule en dynamique */
@@ -1199,7 +1200,7 @@ int main(void) {
   set_w2nd(w, w2nd);
 
   printf("*** testing lpe_minus_5_waves\n");
-  lpe_minus_n_waves((const float (*)[N_COEFS]) (w2nd), 1, 1, &hlp);
+  lpe_minus_n_waves((const float(*)[N_COEFS])(w2nd), 1, 1, &hlp);
   err = CHECK_FLOAT(hlp, -1.124059213786);
   SUMMARIZE_ERR;
 
