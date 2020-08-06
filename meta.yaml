@@ -13,6 +13,7 @@ requirements:
   build:
     - {{ compiler('cxx') }}  # [linux or osx]
     - vs2017_win-64          # [win]
+    - make                   # [linux or osx]
     - cmake
   host:
     - python {{ python }}
