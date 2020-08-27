@@ -1,0 +1,13 @@
+image: gcc:8
+
+pipelines:
+  default:
+    - step:
+        script:
+          - apt-get update -q -y
+          - apt-get install cmake libnetcdf-dev uthash-dev -q -y
+          - mkdir build
+          - cd build
+          - cmake ..
+          - make all
+          - make test
