@@ -210,7 +210,7 @@ parse_ini_file(fes_handler* fes, FILE* stream, char* root, _ini* ini)
   while (fgets(buffer, sizeof(buffer), stream) != NULL) {
     char* first_char = _skip_space(buffer);
     char key[MAX_PATH];
-    char val[MAX_PATH];
+    char val[MAX_PATH * 2];
     char tmp[MAX_PATH];
 
     /* If the string is too long then resize it. */
