@@ -1424,6 +1424,6 @@ void set_waves(fes_wave* const w) {
    * u = 2ξ - 2ν (=celui de M₂ - S₂)
    * f = f(M₂) * f(S2) = f(M₂)
    */
-  _init_wave("MSF", 0, 0, 2, -2, 0, 0, 0, 0, 2, -2, 0, 0, SP_TIDE, _f_m2,
+  _init_wave("MSF", 0, 0, 2, -2, 0, 0, 0, 0, 2, -2, 0, 0, LP_TIDE, _f_m2,
              &w[MSF]);
 }
