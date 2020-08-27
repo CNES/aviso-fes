@@ -702,7 +702,7 @@ int main(void) {
         err = CHECK_FLOAT(w[i].freq, 1.01589578 * RAD);
         SUMMARIZE_ERR;
 
-        err = CHECK_INT(w[i].type, SP_TIDE);
+        err = CHECK_INT(w[i].type, LP_TIDE);
         SUMMARIZE_ERR;
         break;
       case SSA:
