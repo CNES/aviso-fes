@@ -29,7 +29,7 @@ test:
     - pyfes
 
 about:
-  home: https://bitbucket.org/cnes_aviso/fes
+  home: https://github.com/CNES/aviso-fes
   license: GNU Lesser General Public License v3
   license_family: LGPL
   license_file: COPYING
