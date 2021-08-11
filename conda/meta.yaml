@@ -6,11 +6,8 @@ package:
   version: {{ version }}
   
 source:
-  # url: https://bitbucket.org/cnes_aviso/fes/downloads/fes-2.9.2-Source.tar.xz
-  # sha256: 16c90f163f797c2004f3856995d796a5394fd276e6f4103560e5a2da9ca8f485
-  # git_url: https://github.com/CNES/pangeo-pyinterp
-  # git_rev: HEAD
-  path: ..
+  git_url: https://github.com/CNES/aviso-fes
+  git_rev: HEAD
 
 requirements:
   build:
