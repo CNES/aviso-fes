@@ -1,10 +1,8 @@
-API for Python
-##############
+# API for Python
 
 The Python library provides an interface to control the C API library.
 
-``fes`` objects
-===============
+## ``fes`` objects
 
 *class* **fes.Handler** (*tide: str, mode: str, path: str*)
 
@@ -18,18 +16,18 @@ The Python library provides an interface to control the C API library.
     all NetCDF grids into memory.
   * ``path`` defines the path to the configuration file to use.
 
-  .. note::
+> **_NOTE_**
+>
+>    If you want to use the library in a multi-threaded environment it
+>    is necessary to create as many ``Handler`` that you have threads.
 
-      If you want to use the library in a multi-threaded environment it
-      is necessary to create as many ``Handler`` that you have threads.
+> **_WARNING_**
+>
+>    Since the C library is not "thread-safe", the Python class uses a
+>    synchronization method to make it "thread-safe": an instance cannot
+>    perform more than one task at a time within several threads.
 
-  .. warning::
-
-      Since the C library is not "thread-safe", the Python class uses a
-      synchronization method to make it "thread-safe": an instance cannot
-      perform more than one task at a time within several threads.
-
-Instance methods:
+### Instance methods:
 
 **fes.Handler.calculate** (*lon: numpy.ndarray, lat: numpy.ndarray, date: numpy.ndarray*) -> tuple
 
@@ -41,10 +39,10 @@ Instance methods:
     at which tide is computed.
   * ``date`` date at which tide is computed.
 
-    .. note::
-
-      This numpy array can contain objects of type ``datetime.datetime`` or
-      numpy dates of type ``datetime64[us]``.
+    > **_NOTE_**
+    >
+    > This numpy array can contain objects of type ``datetime.datetime`` or
+    > numpy dates of type ``datetime64[us]``.
 
   Returns a tuple that contains:
 
@@ -58,15 +56,15 @@ Instance methods:
   * The minimum number of points used to interpolate the tidal waves for the
     asked positions.
 
-  .. note::
-
-      The method returns "NaN" if the numerical grids defining tidal waves
-      are not undefined.
+  > **_NOTE_**:
+  >
+  > The method returns "NaN" if the numerical grids defining tida waves
+  > are not undefined.
 
 **fes.Handler.set_buffer_size** (*size: int*)
 
-    Fixed size, in MB, of read buffer in case read mode selected is "io".
+Fixed size, in MB, of read buffer in case read mode selected is "io".
 
 **fes.Handler.dump** (*path: str*)
 
-    Dump the configuration file used in the given path.
+Dump the configuration file used in the given path.

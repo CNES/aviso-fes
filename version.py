@@ -22,18 +22,25 @@ def execute(cmd):
         stdout = stdout.decode('utf8')
     return stdout
 
+def update_meta(path, version):
+    """Updating the version number description in conda/meta.yaml."""
+    with open(path, "r") as stream:
+        lines = stream.readlines()
+    pattern = re.compile(r'{% set version = ".*" %}')
+
+    for idx, line in enumerate(lines):
+        match = pattern.search(line)
+        if match is not None:
+            lines[idx] = '{%% set version = "%s" %%}\n' % version
+
+    with open(path, "w") as stream:
+        stream.write("".join(lines))
 
 def revision(path, update=False):
     """
     Creation of the file describing the library version.
     """
-    stdout = execute("git describe --tags --dirty --long --always").strip()
-    pattern = re.compile(r'([\w\d\.]+)-(\d+)-g([\w\d]+)(?:-(dirty))?')
-    match = pattern.search(stdout)
-
-    # If the information is unavailable (execution of this function outside the
-    # development environment), file generation is not possible
-    if not stdout:
+    if not update:
         pattern = re.compile(PATTERN + r' "(.*)"').search
         with open(path, "r") as stream:
             for line in stream:
@@ -42,12 +49,11 @@ def revision(path, update=False):
                     return tuple(
                         int(item) for item in match.group(1).split("."))
 
+    stdout = execute("git describe --tags --dirty --long --always").strip()
+    pattern = re.compile(r'([\w\d\.]+)-(\d+)-g([\w\d]+)(?:-(dirty))?')
+    match = pattern.search(stdout)
+    assert match is not None
     (major, minor, patch) = (int(item) for item in match.group(1).split("."))
-
-    # sha1 = match.group(3)
-    # stdout = execute("git log  %s -1 --format='%%H %%at'" % sha1)
-    # stdout = stdout.strip().split()
-    # date = datetime.datetime.fromtimestamp(int(stdout[1])).isoformat()
 
     if update:
         with open(path, "r") as stream:
@@ -55,10 +61,16 @@ def revision(path, update=False):
 
         for idx, line in enumerate(lines):
             if PATTERN in line:
-                lines[idx] = PATTERN + "\"%d.%d.%d\"" % (major, minor, patch)
+                lines[idx] = PATTERN + " \"%d.%d.%d\"\n" % (major, minor,
+                                                            patch)
 
         with open(path, "w") as stream:
             stream.writelines(lines)
+
+        update_meta(
+            os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                         "conda/meta.yaml"),
+            "%d.%d.%d" % (major, minor, patch))
 
     return (major, minor, patch)
 

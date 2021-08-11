@@ -1,13 +1,8 @@
-![conda](https://anaconda.org/fbriol/lagrangian/badges/installer/conda.svg)
-![platforms](https://anaconda.org/fbriol/fes/badges/platforms.svg)
-![latest-release-date](https://anaconda.org/fbriol/fes/badges/latest_release_date.svg)
-![build-status](https://img.shields.io/bitbucket/pipelines/cnes_aviso/fes.svg)
-
 # DESCRIPTION
 
 This package is the fully revised version of the FES2014 distribution.
 This distribution includes the FES2014 tidal prediction software managed on this
-page and the [FES2014 tides databases](data/fes2014/README.rst)
+page and the [FES2014 tides databases](data/fes2014/README.md)
 
 # CREDITS
 
@@ -23,18 +18,18 @@ The complete description of the build method is described in the
 # HOW TO USE THE SOFTWARE ?
 
 This distribution contains a C/Python API to be used to calculate the tide. The
-[C API](C_API.rst) documentation describes the functions to be used to
+[C API](C_API.md) documentation describes the functions to be used to
 perform the calculation with C/C++. The directory [examples](examples) contains an
 example of using this API.
 
 This distribution contains a C/Python API to be used to calculate the tide.
 
-The [C API](C_API.rst) documentation describes the functions to be used to
+The [C API](C_API.md) documentation describes the functions to be used to
 perform the calculation with C/C++. The source code
 [fes_slev.c](examples/fes_slev.c) contains an example of how to use this
 API with the "C" language.
 
-The [Python API](PYTHON_API.rst) documentation describes the functions to be
+The [Python API](PYTHON_API.md) documentation describes the functions to be
 used to perform the calculation with Python. The [examples](examples) directory
 contains several examples of using this API:
 [tide_gauge.py](examples/tide_gauge.py) illustrates the basic use of the API
