@@ -11,8 +11,7 @@ source:
 
 requirements:
   build:
-    - {{ compiler('cxx') }}  # [linux or osx]
-    - vs2017_win-64          # [win]
+    - {{ compiler('cxx') }}
     - make                   # [linux or osx]
     - cmake
   host:
