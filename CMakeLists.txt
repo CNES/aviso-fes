@@ -29,9 +29,9 @@ option(BUILD_DOC "Build documentation" OFF)
 option(BUILD_PYTHON "Build python extension" OFF)
 
 # Version
-find_package(PythonInterp REQUIRED)
+find_package (Python3 COMPONENTS Interpreter Development)
 execute_process(
-  COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/version.py
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/version.py
   OUTPUT_VARIABLE VERSION)
 string(REPLACE " " ";" VERSION_LIST ${VERSION})
 list(GET VERSION_LIST 0 LIB_VERSION_MAJOR)
