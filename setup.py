@@ -43,11 +43,7 @@ class CMakeBuild(build_ext):
             ]
         )
 
-        check_call(
-            [
-                "cmake", "--build", self.build_temp, "--config", cfg
-            ]
-        )
+        check_call(["cmake", "--build", self.build_temp, "--config", cfg])
 
 
 setup(
