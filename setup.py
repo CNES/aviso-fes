@@ -7,13 +7,7 @@ from subprocess import check_call
 from setuptools import Extension, setup, find_packages
 from setuptools.command.build_ext import build_ext
 
-# Package
-base_dir = pathlib.Path(__file__).parent
 
-
-# A CMakeExtension needs a sourcedir instead of a file list.
-# The name must be the _single_ output extension from the CMake build.
-# If you need multiple extensions, see scikit-build.
 class CMakeExtension(Extension):
     def __init__(self, name, sourcedir=""):
         Extension.__init__(self, name, sources=[])
@@ -23,6 +17,7 @@ class CMakeExtension(Extension):
 class CMakeBuild(build_ext):
     def build_extension(self, ext):
         # Download submodules
+        base_dir = pathlib.Path(__file__).parent
         check_call(['git', 'submodule', 'update', '--init', '--recursive'], cwd=base_dir)
 
         extdir = os.path.abspath(os.path.dirname(self.get_ext_fullpath(ext.name)))
@@ -55,8 +50,6 @@ class CMakeBuild(build_ext):
         )
 
 
-# The information here can also be placed in setup.cfg - better separation of
-# logic and declaration, and simpler if you include description/version in a file.
 setup(
     name="pyfes",
     version="2.9.3",
