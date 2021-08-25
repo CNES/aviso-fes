@@ -45,8 +45,8 @@ class CMakeBuild(build_ext):
 
         check_call(
             [
-                "cmake", "--build", ".", "--config", cfg
-            ], cwd=self.build_temp
+                "cmake", "--build", self.build_temp, "--config", cfg
+            ]
         )
 
 
