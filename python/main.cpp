@@ -28,4 +28,6 @@ PYBIND11_MODULE(pyfes, m) {
               py::array_t<double>& lat, py::array& date) -> py::tuple {
              return self.calculate(lon, lat, date);
            });
+
+  m.attr("__version__") = "2.9.3";
 }
