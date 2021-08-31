@@ -22,19 +22,33 @@ def execute(cmd):
         stdout = stdout.decode('utf8')
     return stdout
 
-def update_meta(path, version):
-    """Updating the version number description in conda/meta.yaml."""
+
+def update_version(path, version, pattern, replaced_line):
+    """Updating the version number description"""
     with open(path, "r") as stream:
         lines = stream.readlines()
-    pattern = re.compile(r'{% set version = ".*" %}')
+    pattern = re.compile(pattern)
 
     for idx, line in enumerate(lines):
         match = pattern.search(line)
         if match is not None:
-            lines[idx] = '{%% set version = "%s" %%}\n' % version
+            lines[idx] = replaced_line % version
 
     with open(path, "w") as stream:
         stream.write("".join(lines))
+
+
+def update_meta(path, version):
+    """Updating the version number description in conda/meta.yaml."""
+    update_version(path, version, r'{% set version = ".*" %}',
+                   '{%% set version = "%s" %%}\n')
+
+
+def update_python_module(path, version):
+    """Updating the version number in the python module."""
+    update_version(path, version, r'm.attr\(__version__\) = "(.*)";',
+                   'm.attr(__version__) = "%s";\n')
+
 
 def revision(path, update=False):
     """
@@ -71,7 +85,10 @@ def revision(path, update=False):
             os.path.join(os.path.dirname(os.path.abspath(__file__)),
                          "conda/meta.yaml"),
             "%d.%d.%d" % (major, minor, patch))
-
+        update_python_module(
+            os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                         "python/main.cpp"),
+            "%d.%d.%d" % (major, minor, patch))
     return (major, minor, patch)
 
 
