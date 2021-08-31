@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU LESSER GENERAL PUBLIC LICENSE
 // along with FES.  If not, see <http://www.gnu.org/licenses/>.
 #include <pybind11/pybind11.h>
+
 #include "fes_handler.hpp"
 
 namespace py = pybind11;
@@ -24,8 +25,8 @@ PYBIND11_MODULE(pyfes, m) {
       .def_static("dump_template", &Handler::dump_template, py::arg("path"))
       .def("set_buffer_size", &Handler::set_buffer_size, py::arg("size"))
       .def("calculate",
-           [](Handler& self, py::array_t<double>& lon,
-              py::array_t<double>& lat, py::array& date) -> py::tuple {
+           [](Handler& self, py::array_t<double>& lon, py::array_t<double>& lat,
+              py::array& date) -> py::tuple {
              return self.calculate(lon, lat, date);
            });
 
