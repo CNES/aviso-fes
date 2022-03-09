@@ -381,6 +381,12 @@ fes_new(FES* handle,
       continue;
     }
 
+    /* Special case for MSF: is a long period tidal wave by default, but it's
+       a short period wave if the configuration file contains this key */
+    if (fes->waves[ix].name == "MSF") {
+        fes->waves[ix].type = SP_TIDE;
+    }
+
     /* Wave computed dynamically */
     fes->waves[ix].dynamic = 1;
 
