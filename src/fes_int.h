@@ -22,179 +22,179 @@
 
 #pragma once
 
+#include "fes.h"
 #include <math.h>
 #include <netcdf.h>
 #include <uthash.h>
-#include "fes.h"
 
 /**
  @brief Ignores warnings about unused variables.
  */
 #if (__GNUC__ > 2) || (__GNUC__ == 2 && __GNUC_MINOR__ > 4)
-#   define UNUSED __attribute__((__unused__))
+#define UNUSED __attribute__((__unused__))
 #else
-#   define UNUSED
+#define UNUSED
 #endif
 
 /**
  @brief Index to access the wave Mm in the internal table.
  */
-#define MM      0
+#define MM 0
 
 /**
  @brief Index to access the wave Mf in the internal table.
  */
-#define MF      1
+#define MF 1
 
 /**
  @brief Index to access the wave Mtm in the internal table.
  */
-#define MTM     2
+#define MTM 2
 
 /**
  @brief Index to access the wave Msqm in the internal table.
  */
-#define MSQM    3
+#define MSQM 3
 
 /**
  @brief Index to access the wave 2Q₁ in the internal table.
  */
-#define _2Q1     4
+#define _2Q1 4
 
 /**
  @brief Index to access the wave σ₁ in the internal table.
  */
-#define SIGMA1  5
+#define SIGMA1 5
 
 /**
  @brief Index to access the wave Q₁ in the internal table.
  */
-#define Q1      6
+#define Q1 6
 
 /**
  @brief Index to access the wave ρ₁ in the internal table.
  */
-#define RHO1    7
+#define RHO1 7
 
 /**
  @brief Index to access the wave O₁ in the internal table.
  */
-#define O1      8
+#define O1 8
 
 /**
  @brief Index to access the wave MP₁ in the internal table.
  */
-#define MP1     9
+#define MP1 9
 
 /**
  @brief Index to access the wave M₁₁ in the internal table.
  */
-#define M11     10
+#define M11 10
 
 /**
  @brief Index to access the wave M₁₂ in the internal table.
  */
-#define M12     11
+#define M12 11
 
 /**
  @brief Index to access the wave M₁₃ in the internal table.
  */
-#define M13     12
+#define M13 12
 
 /**
  @brief Index to access the wave χ₁ in the internal table.
  */
-#define CHI1    13
+#define CHI1 13
 
 /**
  @brief Index to access the wave π₁ in the internal table.
  */
-#define PI1     14
+#define PI1 14
 
 /**
  @brief Index to access the wave P₁ in the internal table.
  */
-#define P1      15
+#define P1 15
 
 /**
  @brief Index to access the wave S₁ in the internal table.
  */
-#define S1      16
+#define S1 16
 
 /**
  @brief Index to access the wave K₁ in the internal table.
  */
-#define K1      17
+#define K1 17
 
 /**
  @brief Index to access the wave ψ₁ in the internal table.
  */
-#define PSI1    18
+#define PSI1 18
 
 /**
  @brief Index to access the wave φ₁ in the internal table.
  */
-#define PHI1    19
+#define PHI1 19
 
 /**
  @brief Index to access the wave θ₁ in the internal table.
  */
-#define THETA1  20
+#define THETA1 20
 
 /**
  @brief Index to access the wave J₁ in the internal table.
  */
-#define J1      21
+#define J1 21
 
 /**
  @brief Index to access the wave OO₁ in the internal table.
  */
-#define OO1     22
+#define OO1 22
 
 /**
  @brief Index to access the wave MNS₂ in the internal table.
  */
-#define MNS2    23
+#define MNS2 23
 
 /**
  @brief Index to access the wave ε₂ in the internal table.
  */
-#define EPS2    24
+#define EPS2 24
 
 /**
  @brief Index to access the wave 2N₂ in the internal table.
  */
-#define _2N2    25
+#define _2N2 25
 
 /**
  @brief Index to access the wave µ₂ in the internal table.
  */
-#define MU2     26
+#define MU2 26
 
 /**
  @brief Index to access the wave 2MS₂ in the internal table.
  */
-#define _2MS2   27
+#define _2MS2 27
 
 /**
  @brief Index to access the wave N₂ in the internal table.
  */
-#define N2      28
+#define N2 28
 
 /**
  @brief Index to access the wave ν₂ in the internal table.
  */
-#define NU2     29
+#define NU2 29
 
 /**
  @brief Index to access the wave M₂ in the internal table.
  */
-#define M2      30
+#define M2 30
 
 /**
  @brief Index to access the wave MKS₂ in the internal table.
  */
-#define MKS2    31
+#define MKS2 31
 
 /**
  @brief Index to access the wave λ₂ in the internal table.
@@ -204,177 +204,177 @@
 /**
  @brief Index to access the wave L₂ in the internal table.
  */
-#define L2      33
+#define L2 33
 
 /**
  @brief Index to access the wave 2MN₂ in the internal table.
  */
-#define _2MN2   34
+#define _2MN2 34
 
 /**
  @brief Index to access the wave T₂ in the internal table.
  */
-#define T2      35
+#define T2 35
 
 /**
  @brief Index to access the wave S₂ in the internal table.
  */
-#define S2      36
+#define S2 36
 
 /**
  @brief Index to access the wave R₂ in the internal table.
  */
-#define R2      37
+#define R2 37
 
 /**
  @brief Index to access the wave K₂ in the internal table.
  */
-#define K2      38
+#define K2 38
 
 /**
  @brief Index to access the wave MSN₂ in the internal table.
  */
-#define MSN2    39
+#define MSN2 39
 
 /**
  @brief Index to access the wave η₂ in the internal table.
  */
-#define ETA2    40
+#define ETA2 40
 
 /**
  @brief Index to access the wave 2SM₂ in the internal table.
  */
-#define _2SM2   41
+#define _2SM2 41
 
 /**
  @brief Index to access the wave MO₃ in the internal table.
  */
-#define MO3     42
+#define MO3 42
 
 /**
  @brief Index to access the wave 2MK₃ in the internal table.
  */
-#define _2MK3   43
+#define _2MK3 43
 
 /**
  @brief Index to access the wave M₃ in the internal table.
  */
-#define M3      44
+#define M3 44
 
 /**
  @brief Index to access the wave MK₃ in the internal table.
  */
-#define MK3     45
+#define MK3 45
 
 /**
  @brief Index to access the wave N₄ in the internal table.
  */
-#define N4      46
+#define N4 46
 
 /**
  @brief Index to access the wave MN₄ in the internal table.
  */
-#define MN4     47
+#define MN4 47
 
 /**
  @brief Index to access the wave M₄ in the internal table.
  */
-#define M4      48
+#define M4 48
 
 /**
  @brief Index to access the wave SN₄ in the internal table.
  */
-#define SN4     49
+#define SN4 49
 
 /**
  @brief Index to access the wave MS₄ in the internal table.
  */
-#define MS4     50
+#define MS4 50
 
 /**
  @brief Index to access the wave MK₄ in the internal table.
  */
-#define MK4     51
+#define MK4 51
 
 /**
  @brief Index to access the wave S₄ in the internal table.
  */
-#define S4      52
+#define S4 52
 
 /**
  @brief Index to access the wave SK₄ in the internal table.
  */
-#define SK4     53
+#define SK4 53
 
 /**
  @brief Index to access the wave R₄ in the internal table.
  */
-#define R4      54
+#define R4 54
 
 /**
  @brief Index to access the wave 2MN₆ in the internal table.
  */
-#define _2MN6   55
+#define _2MN6 55
 
 /**
  @brief Index to access the wave M₆ in the internal table.
  */
-#define M6      56
+#define M6 56
 
 /**
  @brief Index to access the wave MSN₆ in the internal table.
  */
-#define MSN6    57
+#define MSN6 57
 
 /**
  @brief Index to access the wave 2MS₆ in the internal table.
  */
-#define _2MS6   58
+#define _2MS6 58
 
 /**
  @brief Index to access the wave 2MK₆ in the internal table.
  */
-#define _2MK6   59
+#define _2MK6 59
 
 /**
  @brief Index to access the wave 2SM₆ in the internal table.
  */
-#define _2SM6   60
+#define _2SM6 60
 
 /**
  @brief Index to access the wave MSK₆ in the internal table.
  */
-#define MSK6    61
+#define MSK6 61
 
 /**
  @brief Index to access the wave S₆ in the internal table.
  */
-#define S6      62
+#define S6 62
 
 /**
  @brief Index to access the wave M8 in the internal table.
  */
-#define M8      63
+#define M8 63
 
 /**
  @brief Index to access the wave MSf in the internal table.
  */
-#define MSF      64
+#define MSF 64
 
 /**
  @brief Index to access the wave Ssa in the internal table.
  */
-#define SSA      65
+#define SSA 65
 
 /**
  @brief Index to access the wave Sa in the internal table.
  */
-#define SA      66
+#define SA 66
 
 /**
  @brief The total number of waves known in the internal table.
  */
-#define N_WAVES  67
+#define N_WAVES 67
 
 /**
  @brief The number of waves taken into account to compute long-period.
@@ -432,7 +432,7 @@
  @param b Second value to check
  @return 1 if values are equal, otherwise 0.
  */
-#define EQUALS(a, b) ( fabs(a - b) < EPSILON )
+#define EQUALS(a, b) (fabs(a - b) < EPSILON)
 
 /**
  @brief Test if a value is within the defined interval.
@@ -442,7 +442,7 @@
  @param c The upper end of the interval
  @return 1 if value is within the interval, otherwise 0.
  */
-#define CONTAINS(a, b, c) (( (b) >= (a) ) && ( (b) <= (c) ))
+#define CONTAINS(a, b, c) (((b) >= (a)) && ((b) <= (c)))
 
 /**
  @brief Compute the square root of a number.
@@ -475,12 +475,13 @@
  @param b Value to compare
  @return Returns the smaller of a and b.
  */
-#define MIN(a, b) ((a) < (b) ? (a): (b))
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
 
 /**
  @brief A complex number of float type.
  */
-struct _fes_float_complex {
+struct _fes_float_complex
+{
   /** Real part of the complex number */
   float re;
   /** Imaginary part of the complex number */
@@ -495,7 +496,8 @@ typedef struct _fes_float_complex fes_float_complex;
 /**
  @brief A complex number of double type.
  */
-struct _fes_double_complex {
+struct _fes_double_complex
+{
   /** Real part of the complex number */
   double re;
   /** Imaginary part of the complex number */
@@ -510,7 +512,8 @@ typedef struct _fes_double_complex fes_double_complex;
 /**
  @brief Possible type of tide.
  */
-typedef enum {
+typedef enum
+{
   /** Ocean tide. */
   SP_TIDE = 0,
   /** Long period tidal waves. */
@@ -520,7 +523,8 @@ typedef enum {
 /**
  @brief Astronomical angles.
  */
-struct __fes_astronomic_angle {
+struct __fes_astronomic_angle
+{
   /** Hour angle of mean sun. */
   double T;
   /** Mean longitude of the sun. */
@@ -555,7 +559,8 @@ typedef struct __fes_astronomic_angle _fes_astronomic_angle;
 /**
  @brief Wave definition.
  */
-struct _fes_wave {
+struct _fes_wave
+{
   /** Wave name */
   char* name;
   /** True if wave is computed by admittance. */
@@ -565,8 +570,7 @@ struct _fes_wave {
   /** Type of tide. */
   fes_enum_period_type type;
   /** Function to call for computing the node factor */
-  double
-  (*f_function)(const _fes_astronomic_angle* const);
+  double (*f_function)(const _fes_astronomic_angle* const);
   /** Wave frequency. */
   double freq;
   /** v0 (greenwich argument) + u (nodal correction for phase). */
@@ -587,7 +591,8 @@ typedef struct _fes_wave fes_wave;
 /**
  @brief Properties for a netCDF file.
  */
-struct _fes_cdf_file {
+struct _fes_cdf_file
+{
   /** NetCDF file identifier */
   int id;
   /** NetCDF variable identifier that corresponds to amplitude
@@ -613,7 +618,8 @@ typedef struct _fes_cdf_file fes_cdf_file;
 /**
  @brief structure for items in a double linked list
  */
-struct _fes_dlist_item {
+struct _fes_dlist_item
+{
   void* data;
   struct _fes_dlist_item* prev;
   struct _fes_dlist_item* next;
@@ -627,10 +633,10 @@ typedef struct _fes_dlist_item fes_dlist_item;
 /**
  @brief structure for double linked lists
  */
-struct _fes_dlist {
+struct _fes_dlist
+{
   size_t size;
-  void
-  (*del)(void* p);
+  void (*del)(void* p);
   fes_dlist_item* head;
   fes_dlist_item* tail;
 };
@@ -643,7 +649,8 @@ typedef struct _fes_dlist fes_dlist;
  @brief Properties of a value read from a netCDF file and stored in the
  buffer.
  */
-struct _fes_cache_item {
+struct _fes_cache_item
+{
   /** True if all the data has been filled */
   size_t filled;
   /** Grid index cached */
@@ -651,7 +658,7 @@ struct _fes_cache_item {
   /** Grid values cached */
   fes_double_complex* value;
   /** Cached item list */
-  fes_dlist_item *list_item;
+  fes_dlist_item* list_item;
   /** Hash handler */
   UT_hash_handle hh;
 };
@@ -664,7 +671,8 @@ typedef struct _fes_cache_item fes_cache_item;
 /**
  @brief Structure of the buffer used to cache the values read in netCDF files.
  */
-struct _fes_buffer {
+struct _fes_buffer
+{
   /** Maximum size of the buffer in bytes */
   size_t max_size;
   /** List sorted from the most recently used to the least recently used item */
@@ -681,7 +689,8 @@ typedef struct _fes_buffer fes_buffer;
 /**
  @brief Properties for tides grids.
  */
-struct _fes_grid {
+struct _fes_grid
+{
   /** Latitude dimension. */
   size_t lat_dim;
   /** Longitude dimension. */
@@ -724,7 +733,8 @@ typedef struct _fes_grid fes_grid;
 /**
  @brief Stores the data necessary to compute the tide prediction.
  */
-struct _fes_handler {
+struct _fes_handler
+{
   /** Last error number */
   fes_enum_error last_errno;
   /** Type of tide computed */

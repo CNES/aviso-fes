@@ -32,7 +32,9 @@
 
 static int total_err = 0;
 
-int test(fes_enum_access access) {
+int
+test(fes_enum_access access)
+{
   int err;
   int hour;
   int rc = 0;
@@ -48,8 +50,8 @@ int test(fes_enum_access access) {
 
   printf("*** testing libfes with %s...\n",
          access == FES_IO
-             ? "direct access"
-             : (access == FES_MEM ? "memory access" : "buffered access"));
+           ? "direct access"
+           : (access == FES_MEM ? "memory access" : "buffered access"));
 
   if (fes_new(&short_tide, FES_TIDE, access, INI)) {
     printf("fes error : %s\n", fes_error(short_tide));
@@ -299,7 +301,9 @@ on_terminate:
 
 /*
  */
-int main(void) {
+int
+main(void)
+{
   int total_err = 0, err;
 
 #ifdef _WIN32

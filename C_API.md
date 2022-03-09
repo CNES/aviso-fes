@@ -266,6 +266,6 @@ int fes_dump_template(const char* path)
 **Parameters**:
 
 * **path**(*const char*): Path to the dump of the configuration file to
-  create 
+  create
 
 **Returns**(*int*): 0 on success or 1 on failure.

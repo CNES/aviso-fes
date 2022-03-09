@@ -19,7 +19,9 @@
 #include "interp.c"
 #include "test.h"
 
-int main(void) {
+int
+main(void)
+{
   int total_err = 0, err;
   double a, b;
 

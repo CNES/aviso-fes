@@ -20,7 +20,9 @@
  @brief Compute the speed in degree by hour for the moon's mean
  longitude (s)
  */
-double s_speed(void) {
+double
+s_speed(void)
+{
   return (((1336.0 * 360.0 + 307.892) / JULIAN_CENTURY)) * 3600.0;
 }
 
@@ -28,7 +30,9 @@ double s_speed(void) {
  @brief Compute the speed in degree by hour for the sun's mean
  longitude (h)
  */
-double h_speed(void) {
+double
+h_speed(void)
+{
   return (((100.0 * 360.0 + 0.769) / JULIAN_CENTURY)) * 3600.0;
 }
 
@@ -36,7 +40,9 @@ double h_speed(void) {
  @brief Compute the speed in degree by hour for the longitude of
  moon's perigee (p)
  */
-double p_speed(void) {
+double
+p_speed(void)
+{
   return (((11.0 * 360.0 + 109.032) / JULIAN_CENTURY)) * 3600.0;
 }
 
@@ -44,7 +50,9 @@ double p_speed(void) {
  @brief Compute the speed in degree by hour for the longitude of
  moon's ascending node (N′)
  */
-double n_speed(void) {
+double
+n_speed(void)
+{
   return (((-5.0 * 360.0 - 134.142) / JULIAN_CENTURY)) * 3600.0;
 }
 
@@ -52,7 +60,9 @@ double n_speed(void) {
  @brief Compute the speed in degree by hour for the longitude of
  sun's perigee (p₁)
  */
-double p1_speed(void) {
+double
+p1_speed(void)
+{
   return ((1.719 / JULIAN_CENTURY)) * 3600;
 }
 
@@ -60,7 +70,9 @@ double p1_speed(void) {
  @brief Compute the speed in degree by hour for the local mean
  lunar time (τ)
  */
-double tau_speed(void) {
+double
+tau_speed(void)
+{
   return 15.0 - s_speed() + h_speed();
 }
 
@@ -68,7 +80,9 @@ double tau_speed(void) {
  @brief Compute the frequency in degree by hour for the moon's mean
  longitude (s)
  */
-double s_frequency(void) {
+double
+s_frequency(void)
+{
   return 1.0 / ((15.0 / s_speed()) * 24.0);
 }
 
@@ -76,7 +90,9 @@ double s_frequency(void) {
  @brief Compute the frequency in degree by hour for the sun's mean
  longitude (h)
  */
-double h_frequency(void) {
+double
+h_frequency(void)
+{
   return 1.0 / ((15.0 / h_speed()) * 24.0);
 }
 
@@ -84,7 +100,9 @@ double h_frequency(void) {
  @brief Compute the frequency in degree by hour for the longitude of
  moon's perigee (p)
  */
-double p_frequency(void) {
+double
+p_frequency(void)
+{
   return 1.0 / ((15.0 / p_speed()) * 24.0);
 }
 
@@ -92,7 +110,9 @@ double p_frequency(void) {
  @brief Compute the frequency in degree by hour for the longitude of
  moon's ascending node (N′)
  */
-double n_frequency(void) {
+double
+n_frequency(void)
+{
   return 1.0 / ((15.0 / n_speed()) * 24.0);
 }
 
@@ -100,7 +120,9 @@ double n_frequency(void) {
  @brief Compute the frequency in degree by hour for the longitude of
  sun's perigee (p₁)
  */
-double p1_frequency(void) {
+double
+p1_frequency(void)
+{
   return 1.0 / ((15.0 / p1_speed()) * 24.0);
 }
 
@@ -108,6 +130,8 @@ double p1_frequency(void) {
  @brief Compute the frequency in degree by hour for the local mean
  lunar time (τ)
  */
-double tau_frequency(void) {
+double
+tau_frequency(void)
+{
   return 1.0 / ((15.0 / tau_speed()) * 24.0);
 }

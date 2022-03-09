@@ -13,35 +13,39 @@
 // You should have received a copy of the GNU LESSER GENERAL PUBLIC LICENSE
 // along with FES.  If not, see <http://www.gnu.org/licenses/>.
 #pragma once
+#include "fes.h"
 #include <chrono>
-#include <string>
-#include <tuple>
 #include <mutex>
-#include <vector>
-#include <pybind11/pybind11.h>
 #include <pybind11/chrono.h>
 #include <pybind11/numpy.h>
-#include "fes.h"
+#include <pybind11/pybind11.h>
+#include <string>
+#include <tuple>
+#include <vector>
 
-class Handler {
- private:
+class Handler
+{
+private:
   std::mutex mutex_{};
-  FES fes_{nullptr};
+  FES fes_{ nullptr };
 
   void check(int status) const;
 
   std::vector<std::chrono::system_clock::time_point> cast_datetime(
-      pybind11::array& array) const;
+    pybind11::array& array) const;
 
   std::tuple<double, double, int> calculate(
-      const double lon, const double lat,
-      const std::chrono::system_clock::time_point& date) const;
+    const double lon,
+    const double lat,
+    const std::chrono::system_clock::time_point& date) const;
 
- public:
-  Handler(const std::string& tide, const std::string& mode,
+public:
+  Handler(const std::string& tide,
+          const std::string& mode,
           const std::string& path);
 
-  virtual ~Handler() {
+  virtual ~Handler()
+  {
     if (fes_ != nullptr) {
       fes_delete(fes_);
     }
@@ -52,16 +56,18 @@ class Handler {
   Handler& operator=(const Handler&) const = delete;
   Handler& operator=(Handler&&) = delete;
 
-  static void dump_template(const std::string& path) {
+  static void dump_template(const std::string& path)
+  {
     auto rc = fes_dump_template(path.c_str());
     if (rc != FES_SUCCESS) {
       throw std::runtime_error(
-          "an unknown error was detected during the generation of the "
-          "template");
+        "an unknown error was detected during the generation of the "
+        "template");
     }
   }
 
-  void set_buffer_size(size_t size) {
+  void set_buffer_size(size_t size)
+  {
     std::unique_lock<std::mutex> lock(mutex_);
     check(fes_set_buffer_size(fes_, size));
   }

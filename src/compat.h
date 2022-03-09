@@ -29,7 +29,7 @@
 /**
  * Copies characters of one string to another with security enhancements
  */
-#define STRNCPY(dst, src, size) \
+#define STRNCPY(dst, src, size)                                                \
   strncpy_s((dst), (sizeof(dst)), (src), _TRUNCATE)
 
 /**
@@ -45,8 +45,7 @@
 /**
  * Reads formatted data from a string
  */
-#define SSCANF(format, ...) \
-  sscanf_s((format), ##__VA_ARGS__)
+#define SSCANF(format, ...) sscanf_s((format), ##__VA_ARGS__)
 
 /**
  * Performs a case-insensitive comparison of strings.
@@ -71,17 +70,17 @@ duplicate_env(const char* name);
  * to an internal storage space allocated on the first call that will be
  * overwritten by subsequent calls.
  */
-char
-*dirname(const char *path);
+char*
+dirname(const char* path);
 
 #else
 
 /**
  * Copies characters of one string to another with security enhancements
  */
-#define STRNCPY(dst, src, size) \
-  strncpy((dst), (src), (size)); \
-  (dst)[(size) - 1] = '\0'
+#define STRNCPY(dst, src, size)                                                \
+  strncpy((dst), (src), (size));                                               \
+  (dst)[(size)-1] = '\0'
 
 /**
  * Duplicates string
@@ -96,8 +95,7 @@ char
 /**
  * Reads formatted data from a string
  */
-#define SSCANF(format, ...) \
-  sscanf((format), ##__VA_ARGS__)
+#define SSCANF(format, ...) sscanf((format), ##__VA_ARGS__)
 
 /**
  * Performs a case-insensitive comparison of strings.

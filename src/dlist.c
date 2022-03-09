@@ -20,12 +20,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-void dlist_init(fes_dlist* list, void (*del)(void* p)) {
+void
+dlist_init(fes_dlist* list, void (*del)(void* p))
+{
   memset(list, 0, sizeof(fes_dlist));
   list->del = del;
 }
 
-void dlist_destroy(fes_dlist* list) {
+void
+dlist_destroy(fes_dlist* list)
+{
   while (list->size) {
     void* data;
 
@@ -36,7 +40,9 @@ void dlist_destroy(fes_dlist* list) {
   memset(list, 0, sizeof(fes_dlist));
 }
 
-int dlist_remove(fes_dlist* list, fes_dlist_item* item, void** data) {
+int
+dlist_remove(fes_dlist* list, fes_dlist_item* item, void** data)
+{
   if (item == NULL || list->size == 0)
     return -1;
 
@@ -71,7 +77,9 @@ int dlist_remove(fes_dlist* list, fes_dlist_item* item, void** data) {
   return 0;
 }
 
-static int _ins_prev(fes_dlist* list, fes_dlist_item* item, const void* data) {
+static int
+_ins_prev(fes_dlist* list, fes_dlist_item* item, const void* data)
+{
   fes_dlist_item* new_item;
 
   // Do not accept a null item unless the list is empty.
@@ -80,10 +88,10 @@ static int _ins_prev(fes_dlist* list, fes_dlist_item* item, const void* data) {
   }
 
   // Allocate memory for the item
-  if ((new_item = (fes_dlist_item*) malloc(sizeof(fes_dlist_item))) == NULL)
+  if ((new_item = (fes_dlist_item*)malloc(sizeof(fes_dlist_item))) == NULL)
     return -1;
 
-  new_item->data = (void *) data;
+  new_item->data = (void*)data;
 
   // Insert in an empty list
   if (list->size == 0) {
@@ -108,7 +116,9 @@ static int _ins_prev(fes_dlist* list, fes_dlist_item* item, const void* data) {
   return 0;
 }
 
-int dlist_move_front(fes_dlist* list, fes_dlist_item* item) {
+int
+dlist_move_front(fes_dlist* list, fes_dlist_item* item)
+{
   if (list == NULL || list->size == 0 || item == NULL)
     return -1;
 
@@ -131,19 +141,26 @@ int dlist_move_front(fes_dlist* list, fes_dlist_item* item) {
   return 0;
 }
 
-int dlist_push_front(fes_dlist* list, const void *data) {
+int
+dlist_push_front(fes_dlist* list, const void* data)
+{
   return _ins_prev(list, list->head, data);
 }
 
-int dlist_pop_back(fes_dlist* list, void** data) {
+int
+dlist_pop_back(fes_dlist* list, void** data)
+{
   return dlist_remove(list, list->tail, data);
 }
 
-size_t dlist_size(const fes_dlist* const list) {
+size_t
+dlist_size(const fes_dlist* const list)
+{
   return list->size;
 }
 
 fes_dlist_item*
-dlist_head(const fes_dlist* const list) {
+dlist_head(const fes_dlist* const list)
+{
   return list->head;
 }

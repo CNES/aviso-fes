@@ -20,26 +20,35 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "fes.h"
 #include "compat.h"
+#include "fes.h"
 
 /* Error code message */
-static const char* err[] = { "Success", "Not enough memory", "netCDF error",
-    "IO error", "Configuration file contains error", "Tide is undefined",
-    "Value error" };
+static const char* err[] = { "Success",
+                             "Not enough memory",
+                             "netCDF error",
+                             "IO error",
+                             "Configuration file contains error",
+                             "Tide is undefined",
+                             "Value error" };
 
 /*
  */
-void set_fes_error(fes_handler* const fes, const fes_enum_error errcode) {
+void
+set_fes_error(fes_handler* const fes, const fes_enum_error errcode)
+{
   fes->last_errno = errcode;
   STRNCPY(fes->last_error, err[errcode], sizeof(fes->last_error));
 }
 
 /*
  */
-void set_fes_extended_error(fes_handler* const fes,
-                            const fes_enum_error errcode, const char* format,
-                            ...) {
+void
+set_fes_extended_error(fes_handler* const fes,
+                       const fes_enum_error errcode,
+                       const char* format,
+                       ...)
+{
   va_list argp;
 
   fes->last_errno = errcode;
@@ -51,13 +60,16 @@ void set_fes_extended_error(fes_handler* const fes,
 
 /*
  */
-fes_enum_error fes_errno(FES fes) {
-  return ((fes_handler*) fes)->last_errno;
+fes_enum_error
+fes_errno(FES fes)
+{
+  return ((fes_handler*)fes)->last_errno;
 }
 
 /*
  */
 const char*
-fes_error(FES fes) {
-  return ((fes_handler*) fes)->last_error;
+fes_error(FES fes)
+{
+  return ((fes_handler*)fes)->last_error;
 }

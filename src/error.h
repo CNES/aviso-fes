@@ -41,8 +41,10 @@ set_fes_error(fes_handler* const fes, const fes_enum_error errcode);
  @param format Error message template, in sprintf format
  */
 void
-set_fes_extended_error(fes_handler* const fes, const fes_enum_error errcode,
-                       const char* format, ...);
+set_fes_extended_error(fes_handler* const fes,
+                       const fes_enum_error errcode,
+                       const char* format,
+                       ...);
 
 /**
  @brief Clear possible error state of struct FES

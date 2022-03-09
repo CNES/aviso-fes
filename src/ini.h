@@ -26,7 +26,8 @@
 /**
  @brief Stores the data necessary to read a configuration file.
  */
-struct __ini {
+struct __ini
+{
   /** Number of items read. */
   unsigned int nItems;
   /** Keys known. */
@@ -100,7 +101,8 @@ ini_get_float(void* const handle, const char* const key, const double defValue);
  @return the string or the default value if the given key doesn't exists.
  */
 const char*
-ini_get_string(void* const handle, const char* const key,
+ini_get_string(void* const handle,
+               const char* const key,
                const char* const defValue);
 
 /**
@@ -131,5 +133,6 @@ ini_get_string(void* const handle, const char* const key,
    @endcode
  */
 int
-ini_check_handled_keys(void *const handle, const char **const keys,
-                       char ***unhandled_keys);
+ini_check_handled_keys(void* const handle,
+                       const char** const keys,
+                       char*** unhandled_keys);

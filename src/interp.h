@@ -40,7 +40,14 @@
  @return The number of points used in the interpolation
  */
 int
-bilinear_interp(const double x_1, const double x_2, const double y_1,
-                const double y_2, const double value_11, const double value_21,
-                const double value_12, const double value_22, const double x,
-                const double y, double* z);
+bilinear_interp(const double x_1,
+                const double x_2,
+                const double y_1,
+                const double y_2,
+                const double value_11,
+                const double value_21,
+                const double value_12,
+                const double value_22,
+                const double x,
+                const double y,
+                double* z);
