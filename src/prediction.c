@@ -30,7 +30,9 @@
  itj Desired UTC time, in (decimal) Modified.
  a astronomic angle computed
  */
-static void _astronomics(const double itj, _fes_astronomic_angle* const a) {
+static void
+_astronomics(const double itj, _fes_astronomic_angle* const a)
+{
   static const double ct0 = 180.0;
   static const double ct1 = 360.0 * 3.6525E+04;
   static const double cn0 = 259.1560563;
@@ -94,14 +96,11 @@ static void _astronomics(const double itj, _fes_astronomic_angle* const a) {
 
   a->r = atan(sin(2.0 * pp) / (1.0 / (6.0 * SQR(tgi2)) - cos(2.0 * pp)));
 
-  a->nuprim = atan(
-      sin(2.0 * (a->I)) * sin(a->nu)
-          / (sin(2.0 * (a->I)) * cos(a->nu) + 3.347E-01));
+  a->nuprim = atan(sin(2.0 * (a->I)) * sin(a->nu) /
+                   (sin(2.0 * (a->I)) * cos(a->nu) + 3.347E-01));
 
-  a->nusec = 0.5
-      * atan(
-          ((SQR(sin(a->I))) * sin(2.0 * (a->nu)))
-              / (SQR (sin (a->I)) * cos(2.0 * a->nu) + 7.27E-02));
+  a->nusec = 0.5 * atan(((SQR(sin(a->I))) * sin(2.0 * (a->nu))) /
+                        (SQR(sin(a->I)) * cos(2.0 * a->nu) + 7.27E-02));
 }
 
 /*
@@ -109,7 +108,9 @@ static void _astronomics(const double itj, _fes_astronomic_angle* const a) {
 
  a Astronomic angle
  */
-static double _f_o1(const _fes_astronomic_angle* const a) {
+static double
+_f_o1(const _fes_astronomic_angle* const a)
+{
   return sin(a->I) * SQR(cos(a->I * 0.5)) / 0.3800;
 }
 
@@ -118,7 +119,9 @@ static double _f_o1(const _fes_astronomic_angle* const a) {
 
  a Astronomic angle
  */
-static double _f_oo1(const _fes_astronomic_angle* const a) {
+static double
+_f_oo1(const _fes_astronomic_angle* const a)
+{
   return sin(a->I) * SQR(sin(a->I * 0.5)) / 0.01640;
 }
 
@@ -127,7 +130,9 @@ static double _f_oo1(const _fes_astronomic_angle* const a) {
 
  a Astronomic angle
  */
-static double _f_1(UNUSED const _fes_astronomic_angle* const a) {
+static double
+_f_1(UNUSED const _fes_astronomic_angle* const a)
+{
   return 1;
 }
 
@@ -136,7 +141,9 @@ static double _f_1(UNUSED const _fes_astronomic_angle* const a) {
 
  a Astronomic angle
  */
-static double _f_j1(const _fes_astronomic_angle* const a) {
+static double
+_f_j1(const _fes_astronomic_angle* const a)
+{
   return sin(2.0 * a->I) / 0.7214;
 }
 
@@ -145,7 +152,9 @@ static double _f_j1(const _fes_astronomic_angle* const a) {
 
  a Astronomic angle
  */
-static double _f_m13(const _fes_astronomic_angle* const a) {
+static double
+_f_m13(const _fes_astronomic_angle* const a)
+{
   return _f_o1(a) * sqrt(2.310 + 1.435 * cos(2.0 * (a->p - a->xi)));
 }
 
@@ -154,8 +163,10 @@ static double _f_m13(const _fes_astronomic_angle* const a) {
 
  a Astronomic angle
  */
-static double _f_m2(const _fes_astronomic_angle* const a) {
-  return POW4 (cos (a->I * 0.5)) / 0.9154;
+static double
+_f_m2(const _fes_astronomic_angle* const a)
+{
+  return POW4(cos(a->I * 0.5)) / 0.9154;
 }
 
 /*
@@ -163,7 +174,9 @@ static double _f_m2(const _fes_astronomic_angle* const a) {
 
  a Astronomic angle
  */
-static double _f_m3(const _fes_astronomic_angle* const a) {
+static double
+_f_m3(const _fes_astronomic_angle* const a)
+{
   return pow(cos(a->I * 0.5), 6.0) / 0.8758;
 }
 
@@ -172,8 +185,10 @@ static double _f_m3(const _fes_astronomic_angle* const a) {
 
  a Astronomic angle
  */
-static double _f_mf(const _fes_astronomic_angle* const a) {
-  return SQR (sin (a->I)) / 0.1578;
+static double
+_f_mf(const _fes_astronomic_angle* const a)
+{
+  return SQR(sin(a->I)) / 0.1578;
 }
 
 /*
@@ -181,7 +196,9 @@ static double _f_mf(const _fes_astronomic_angle* const a) {
 
  a Astronomic angle
  */
-static double _f_mm(const _fes_astronomic_angle* const a) {
+static double
+_f_mm(const _fes_astronomic_angle* const a)
+{
   return (2.0 / 3.0 - SQR(sin(a->I))) / 0.5021;
 }
 
@@ -190,7 +207,9 @@ static double _f_mm(const _fes_astronomic_angle* const a) {
 
  a Astronomic angle
  */
-static double _f_m22(const _fes_astronomic_angle* const a) {
+static double
+_f_m22(const _fes_astronomic_angle* const a)
+{
   return SQR(_f_m2(a));
 }
 
@@ -199,7 +218,9 @@ static double _f_m22(const _fes_astronomic_angle* const a) {
 
  a Astronomic angle
  */
-static double _f_m23(const _fes_astronomic_angle* const a) {
+static double
+_f_m23(const _fes_astronomic_angle* const a)
+{
   return POW3(_f_m2(a));
 }
 /*
@@ -207,7 +228,9 @@ static double _f_m23(const _fes_astronomic_angle* const a) {
 
  a Astronomic angle
  */
-static double _f_m24(const _fes_astronomic_angle* const a) {
+static double
+_f_m24(const _fes_astronomic_angle* const a)
+{
   return POW4(_f_m2(a));
 }
 
@@ -216,10 +239,11 @@ static double _f_m24(const _fes_astronomic_angle* const a) {
 
  a Astronomic angle
  */
-static double _f_k1(const _fes_astronomic_angle* const a) {
-  return sqrt(
-      0.8965 * SQR(sin(2.0 * a->I)) + 0.6001 * sin(2.0 * a->I) * cos(a->nu)
-          + 0.1006);
+static double
+_f_k1(const _fes_astronomic_angle* const a)
+{
+  return sqrt(0.8965 * SQR(sin(2.0 * a->I)) +
+              0.6001 * sin(2.0 * a->I) * cos(a->nu) + 0.1006);
 }
 
 /*
@@ -227,10 +251,11 @@ static double _f_k1(const _fes_astronomic_angle* const a) {
 
  a Astronomic angle
  */
-static double _f_k2(const _fes_astronomic_angle* const a) {
-  return sqrt(
-      19.0444 * POW4(sin(a->I)) + 2.7702 * SQR(sin(a->I)) * cos(2.0 * a->nu)
-          + 0.0981);
+static double
+_f_k2(const _fes_astronomic_angle* const a)
+{
+  return sqrt(19.0444 * POW4(sin(a->I)) +
+              2.7702 * SQR(sin(a->I)) * cos(2.0 * a->nu) + 0.0981);
 }
 
 /*
@@ -239,8 +264,10 @@ static double _f_k2(const _fes_astronomic_angle* const a) {
 
  a Astronomic angle
  */
-static double _f_kj2(const _fes_astronomic_angle* const a) {
-  return SQR (sin (a->I)) / 0.1565;
+static double
+_f_kj2(const _fes_astronomic_angle* const a)
+{
+  return SQR(sin(a->I)) / 0.1565;
 }
 
 /*
@@ -248,7 +275,9 @@ static double _f_kj2(const _fes_astronomic_angle* const a) {
 
  a Astronomic angle
  */
-static double _f_l2(const _fes_astronomic_angle* const a) {
+static double
+_f_l2(const _fes_astronomic_angle* const a)
+{
   return _f_m2(a) * a->x1ra;
 }
 
@@ -257,7 +286,9 @@ static double _f_l2(const _fes_astronomic_angle* const a) {
 
  a Astronomic angle
  */
-static double _f_m2_k2(const _fes_astronomic_angle* const a) {
+static double
+_f_m2_k2(const _fes_astronomic_angle* const a)
+{
   return _f_m2(a) * _f_k2(a);
 }
 
@@ -266,7 +297,9 @@ static double _f_m2_k2(const _fes_astronomic_angle* const a) {
 
  a Astronomic angle
  */
-static double _f_m2_k1(const _fes_astronomic_angle* const a) {
+static double
+_f_m2_k1(const _fes_astronomic_angle* const a)
+{
   return _f_m2(a) * _f_k1(a);
 }
 
@@ -275,7 +308,9 @@ static double _f_m2_k1(const _fes_astronomic_angle* const a) {
 
  a Astronomic angle
  */
-static double _f_m2_o1(const _fes_astronomic_angle* const a) {
+static double
+_f_m2_o1(const _fes_astronomic_angle* const a)
+{
   return _f_m2(a) * _f_o1(a);
 }
 
@@ -284,7 +319,9 @@ static double _f_m2_o1(const _fes_astronomic_angle* const a) {
 
  a Astronomic angle
  */
-static double _f_m22_k1(const _fes_astronomic_angle* const a) {
+static double
+_f_m22_k1(const _fes_astronomic_angle* const a)
+{
   return _f_m22(a) * _f_k1(a);
 }
 /*
@@ -292,7 +329,9 @@ static double _f_m22_k1(const _fes_astronomic_angle* const a) {
 
  a Astronomic angle
  */
-static double _f_m23_k2(const _fes_astronomic_angle* const a) {
+static double
+_f_m23_k2(const _fes_astronomic_angle* const a)
+{
   return _f_m23(a) * _f_k2(a);
 }
 
@@ -307,7 +346,9 @@ static double _f_m23_k2(const _fes_astronomic_angle* const a) {
  a Astronomic angle
  w Pointer to the array which contains waves definition.
  */
-static void _nodal_a(const _fes_astronomic_angle* const a, fes_wave* const w) {
+static void
+_nodal_a(const _fes_astronomic_angle* const a, fes_wave* const w)
+{
   int ix;
 
   for (ix = 0; ix < N_WAVES; ++ix) {
@@ -327,18 +368,20 @@ static void _nodal_a(const _fes_astronomic_angle* const a, fes_wave* const w) {
  w Pointer to the array which contains waves definition
 
  */
-static void _nodal_g(const _fes_astronomic_angle* const a, fes_wave* const w) {
+static void
+_nodal_g(const _fes_astronomic_angle* const a, fes_wave* const w)
+{
   int ix;
   register double u;
   register double v;
 
   for (ix = 0; ix < N_WAVES; ix++) {
-    v = w[ix].argument[0] * a->T + w[ix].argument[1] * a->s
-        + w[ix].argument[2] * a->h + w[ix].argument[3] * a->p
-        + w[ix].argument[5] * a->p1 + w[ix].argument[6] * 90.0;
+    v = w[ix].argument[0] * a->T + w[ix].argument[1] * a->s +
+        w[ix].argument[2] * a->h + w[ix].argument[3] * a->p +
+        w[ix].argument[5] * a->p1 + w[ix].argument[6] * 90.0;
 
-    u = w[ix].argument[7] * a->xi + w[ix].argument[8] * a->nu
-        + w[ix].argument[9] * a->nuprim + w[ix].argument[10] * a->nusec;
+    u = w[ix].argument[7] * a->xi + w[ix].argument[8] * a->nu +
+        w[ix].argument[9] * a->nuprim + w[ix].argument[10] * a->nusec;
     if (ix == L2)
       u -= a->r;
     if (ix == M13)
@@ -350,21 +393,28 @@ static void _nodal_g(const _fes_astronomic_angle* const a, fes_wave* const w) {
 /*
 
  */
-void admittance(fes_wave* const waves) {
+void
+admittance(fes_wave* const waves)
+{
   /*
    Arrays who contains the spline coefficients needed to compute MU2, NU2,
    L2, T2 and Lambda2 by admittance.
    */
-  static const double mu2[3] =
-      { 0.069439968323, 0.351535557706, -0.046278307672 };
-  static const double nu2[3] =
-      { -0.006104695053, 0.156878802427, 0.006755704028 };
-  static const double l2[3] =
-      { 0.077137765667, -0.051653455134, 0.027869916824 };
-  static const double t2[3] =
-      { 0.180480173707, -0.020101177502, 0.008331518844 };
-  static const double lda2[3] =
-      { 0.016503557465, -0.013307812292, 0.007753383202 };
+  static const double mu2[3] = { 0.069439968323,
+                                 0.351535557706,
+                                 -0.046278307672 };
+  static const double nu2[3] = { -0.006104695053,
+                                 0.156878802427,
+                                 0.006755704028 };
+  static const double l2[3] = { 0.077137765667,
+                                -0.051653455134,
+                                0.027869916824 };
+  static const double t2[3] = { 0.180480173707,
+                                -0.020101177502,
+                                0.008331518844 };
+  static const double lda2[3] = { 0.016503557465,
+                                  -0.013307812292,
+                                  0.007753383202 };
   register fes_double_complex* x;
   register fes_double_complex* y;
   register fes_double_complex* z;
@@ -509,7 +559,9 @@ void admittance(fes_wave* const waves) {
 
 /*
  */
-void compute_nodal_corrections(const double t0, fes_wave* const w) {
+void
+compute_nodal_corrections(const double t0, fes_wave* const w)
+{
   _fes_astronomic_angle astro;
 
   _astronomics(t0, &astro);
@@ -532,7 +584,9 @@ void compute_nodal_corrections(const double t0, fes_wave* const w) {
 
 /*
  */
-double julian_centuries(const double date) {
+double
+julian_centuries(const double date)
+{
   /*
    * 18262.0 = number of day elapsed between 1950-01-01 00:00:00.000 UTC and
    * 1900-01-01 00:00:00.000 UTC
@@ -542,7 +596,9 @@ double julian_centuries(const double date) {
 
 /*
  */
-void set_w2nd(const fes_wave* const w, float w2nd[][N_COEFS]) {
+void
+set_w2nd(const fes_wave* const w, float w2nd[][N_COEFS])
+{
   // Table below = Doodson coefficients
   // tau s   h   p   N'  p1  coef  => Doodson = several combination for
   //    waves/secondary waves = variation for N' factor in comparison with
@@ -550,112 +606,112 @@ void set_w2nd(const fes_wave* const w, float w2nd[][N_COEFS]) {
   // T   s   h   p   p1      coef  => Darwin = only combination for each
   //    waves, secondary waves are not explicitely described
   static const float cst_w2nd[N_WAVES_2ND][N_COEFS] = {
-      {/* 0,*/ 0,  0,  0,  1,  0,  0.02793f }, /*   0 */
-      {/* 0,*/ 0,  0,  0,  2,  0, -0.00027f }, /*   1 */
-      {/* 0,*/ 0,  0,  2,  1,  0,  0.00004f }, /*   2 */
-      {/* 0,*/ 0,  1,  0, -1, -1, -0.00004f }, /*   3 */
-      {/* 0,*/ 0,  1,  0,  0, -1, -0.00492f }, /*   4 */
-      {/* 0,*/ 0,  1,  0,  0,  1,  0.00026f }, /*   5 */
-      {/* 0,*/ 0,  1,  0,  1, -1,  0.00005f }, /*   6 */
-      {/* 0,*/ 0,  2, -2, -1,  0,  0.00002f }, /*   7 */
-      {/* 0,*/ 0,  2, -2,  0,  0, -0.00031f }, /*   8 */
-      {/* 0,*/ 0,  2,  0,  0,  0, -0.03095f }, /*   9 - ssa */
-      {/* 0,*/ 0,  2,  0,  0, -2, -0.00008f }, /*  10 */
-      {/* 0,*/ 0,  2,  0,  1,  0,  0.00077f }, /*  11 - ssa */
-      {/* 0,*/ 0,  2,  0,  2,  0,  0.00017f }, /*  12 - ssa */
-      {/* 0,*/ 0,  3,  0,  0, -1, -0.00181f }, /*  13 */
-      {/* 0,*/ 0,  3,  0,  1, -1,  0.00003f }, /*  14 */
-      {/* 0,*/ 0,  4,  0,  0, -2, -0.00007f }, /*  15 */
-      {/* 0,*/ 1, -3,  1, -1,  1,  0.00002f }, /*  16 */
-      {/* 0,*/ 1, -3,  1,  0,  1, -0.00029f }, /*  17 */
-      {/* 0,*/ 1, -3,  1,  1,  1,  0.00002f }, /*  18 */
-      {/* 0,*/ 1, -2, -1, -2,  0,  0.00003f }, /*  19 */
-      {/* 0,*/ 1, -2, -1, -1,  0,  0.00007f }, /*  20 */
-      {/* 0,*/ 1, -2,  1, -1,  0,  0.00048f }, /*  21 */
-      {/* 0,*/ 1, -2,  1,  0,  0, -0.00673f }, /*  22 */
-      {/* 0,*/ 1, -2,  1,  1,  0,  0.00043f }, /*  23 */
-      {/* 0,*/ 1, -1, -1, -1,  1,  0.00002f }, /*  24 */
-      {/* 0,*/ 1, -1, -1,  0,  1, -0.00021f }, /*  25 */
-      {/* 0,*/ 1, -1, -1,  1,  1,  0.00000f }, /*  26 */
-      {/* 0,*/ 1, -1,  0,  0,  0,  0.00020f }, /*  27 */
-      {/* 0,*/ 1, -1,  1,  0, -1,  0.00005f }, /*  28 */
-      {/* 0,*/ 1,  0, -1, -2,  0, -0.00003f }, /*  29 - Mm for FES2014 */
-      {/* 0,*/ 1,  0, -1, -1,  0,  0.00231f }, /*  30 - Mm for FES2014 */
-      {/* 0,*/ 1,  0, -1,  0,  0, -0.03518f }, /*  31 - Mm */
-      {/* 0,*/ 1,  0, -1,  1,  0,  0.00228f }, /*  32 - Mm */
-      {/* 0,*/ 1,  0,  1,  0,  0,  0.00189f }, /*  33 */
-      {/* 0,*/ 1,  0,  1,  1,  0,  0.00077f }, /*  34 */
-      {/* 0,*/ 1,  0,  1,  2,  0,  0.00021f }, /*  35 */
-      {/* 0,*/ 1,  1, -1,  0, -1,  0.00018f }, /*  36 */
-      {/* 0,*/ 1,  2, -1,  0,  0,  0.00049f }, /*  37 */
-      {/* 0,*/ 1,  2, -1,  1,  0,  0.00024f }, /*  38 */
-      {/* 0,*/ 1,  2, -1,  2,  0,  0.00004f }, /*  39 */
-      {/* 0,*/ 1,  3, -1,  0, -1,  0.00003f }, /*  40 */
-      {/* 0,*/ 2, -4,  2,  0,  0, -0.00011f }, /*  41 */
-      {/* 0,*/ 2, -3,  0,  0,  1, -0.00038f }, /*  42 */
-      {/* 0,*/ 2, -3,  0,  1,  1,  0.00002f }, /*  43 */
-      {/* 0,*/ 2, -2,  0, -1,  0, -0.00042f }, /*  44 */
-      {/* 0,*/ 2, -2,  0,  0,  0, -0.00582f }, /*  45 */
-      {/* 0,*/ 2, -2,  0,  1,  0,  0.00037f }, /*  46 */
-      {/* 0,*/ 2, -2,  2,  0,  0,  0.00004f }, /*  47 */
-      {/* 0,*/ 2, -1, -2,  0,  1, -0.00004f }, /*  48 */
-      {/* 0,*/ 2, -1, -1,  0,  0,  0.00003f }, /*  49 */
-      {/* 0,*/ 2, -1,  0,  0, -1,  0.00007f }, /*  50 */
-      {/* 0,*/ 2, -1,  0,  0,  1, -0.00020f }, /*  51 */
-      {/* 0,*/ 2, -1,  0,  1,  1, -0.00004f }, /*  52 */
-      {/* 0,*/ 2,  0, -2, -1,  0,  0.00015f }, /*  53 */
-      {/* 0,*/ 2,  0, -2,  0,  0, -0.00288f }, /*  54 */
-      {/* 0,*/ 2,  0, -2,  1,  0,  0.00019f }, /*  55 */
-      {/* 0,*/ 2,  0,  0,  0,  0, -0.06662f }, /*  56 - Mf */
-      {/* 0,*/ 2,  0,  0,  1,  0, -0.02762f }, /*  57 - Mf */
-      {/* 0,*/ 2,  0,  0,  2,  0, -0.00258f }, /*  58 - Mf */
-      {/* 0,*/ 2,  0,  0,  3,  0,  0.00007f }, /*  59 - Mf */
-      {/* 0,*/ 2,  1, -2,  0, -1,  0.00003f }, /*  60 */
-      {/* 0,*/ 2,  1,  0,  0, -1,  0.00023f }, /*  61 */
-      {/* 0,*/ 2,  1,  0,  1, -1,  0.00006f }, /*  62 */
-      {/* 0,*/ 2,  2, -2,  0,  0,  0.00020f }, /*  63 */
-      {/* 0,*/ 2,  2, -2,  1,  0,  0.00008f }, /*  64 */
-      {/* 0,*/ 2,  2,  0,  2,  0,  0.00003f }, /*  65 */
-      {/* 0,*/ 3, -5,  1,  0,  1, -0.00002f }, /*  66 */
-      {/* 0,*/ 3, -4,  1,  0,  0, -0.00017f }, /*  67 */
-      {/* 0,*/ 3, -3, -1,  0,  1, -0.00007f }, /*  68 */
-      {/* 0,*/ 3, -3,  1,  0,  1, -0.00012f }, /*  69 */
-      {/* 0,*/ 3, -3,  1,  1,  1, -0.00004f }, /*  70 */
-      {/* 0,*/ 3, -2, -1, -1,  0, -0.00010f }, /*  71 */
-      {/* 0,*/ 3, -2, -1,  0,  0, -0.00091f }, /*  72 */
-      {/* 0,*/ 3, -2, -1,  1,  0,  0.00006f }, /*  73 */
-      {/* 0,*/ 3, -2,  1,  0,  0, -0.00242f }, /*  74 */
-      {/* 0,*/ 3, -2,  1,  1,  0, -0.00100f }, /*  75 */
-      {/* 0,*/ 3, -2,  1,  2,  0, -0.00009f }, /*  76 */
-      {/* 0,*/ 3, -1, -1,  0,  1, -0.00013f }, /*  77 */
-      {/* 0,*/ 3, -1, -1,  1,  1, -0.00004f }, /*  78 */
-      {/* 0,*/ 3, -1,  0,  0,  0,  0.00006f }, /*  79 */
-      {/* 0,*/ 3, -1,  0,  1,  0,  0.00003f }, /*  80 */
-      {/* 0,*/ 3, -1,  1,  0, -1,  0.00003f }, /*  81 */
-      {/* 0,*/ 3,  0, -3,  0,  0, -0.00023f }, /*  82 */
-      {/* 0,*/ 3,  0, -3,  1, -1,  0.00004f }, /*  83 */
-      {/* 0,*/ 3,  0, -3,  1,  1,  0.00004f }, /*  84 */
-      {/* 0,*/ 3,  0, -1,  0,  0, -0.01275f }, /*  85 - Mtm */
-      {/* 0,*/ 3,  0, -1,  1,  0, -0.00528f }, /*  86 - Mtm */
-      {/* 0,*/ 3,  0, -1,  2,  0, -0.00051f }, /*  87 - Mtm */
-      {/* 0,*/ 3,  0,  1,  2,  0,  0.00005f }, /*  88 */
-      {/* 0,*/ 3,  0,  1,  3,  0,  0.00002f }, /*  89 */
-      {/* 0,*/ 3,  1, -1,  0, -1,  0.00011f }, /*  90 */
-      {/* 0,*/ 3,  1, -1,  1, -1,  0.00004f }, /*  91 */
-      {/* 0,*/ 4, -4,  0,  0,  0, -0.00008f }, /*  92 */
-      {/* 0,*/ 4, -4,  2,  0,  0, -0.00006f }, /*  93 */
-      {/* 0,*/ 4, -4,  2,  1,  0, -0.00002f }, /*  94 */
-      {/* 0,*/ 4, -3,  0,  0,  1, -0.00014f }, /*  95 */
-      {/* 0,*/ 4, -3,  0,  1,  1, -0.00006f }, /*  96 */
-      {/* 0,*/ 4, -2, -2,  0,  0, -0.00011f }, /*  97 */
-      {/* 0,*/ 4, -2,  0,  0,  0, -0.00205f }, /*  98 - Msqm */
-      {/* 0,*/ 4, -2,  0,  1,  0, -0.00085f }, /*  99 - Msqm */
-      {/* 0,*/ 4, -2,  0,  2,  0, -0.00008f }, /* 100 - Msqm : for FES2014*/
-      {/* 0,*/ 4, -1, -2,  0,  1, -0.00003f }, /* 101 */
-      {/* 0,*/ 4, -1,  0,  0, -1,  0.00003f }, /* 102 */
-      {/* 0,*/ 4,  0, -2,  0,  0, -0.00169f }, /* 103 */
-      {/* 0,*/ 4,  0, -2,  1,  0, -0.00070f }, /* 104 */
-      {/* 0,*/ 4,  0, -2,  2,  0, -0.00006f }, /* 105 */
+    { /* 0,*/ 0, 0, 0, 1, 0, 0.02793f },     /*   0 */
+    { /* 0,*/ 0, 0, 0, 2, 0, -0.00027f },    /*   1 */
+    { /* 0,*/ 0, 0, 2, 1, 0, 0.00004f },     /*   2 */
+    { /* 0,*/ 0, 1, 0, -1, -1, -0.00004f },  /*   3 */
+    { /* 0,*/ 0, 1, 0, 0, -1, -0.00492f },   /*   4 */
+    { /* 0,*/ 0, 1, 0, 0, 1, 0.00026f },     /*   5 */
+    { /* 0,*/ 0, 1, 0, 1, -1, 0.00005f },    /*   6 */
+    { /* 0,*/ 0, 2, -2, -1, 0, 0.00002f },   /*   7 */
+    { /* 0,*/ 0, 2, -2, 0, 0, -0.00031f },   /*   8 */
+    { /* 0,*/ 0, 2, 0, 0, 0, -0.03095f },    /*   9 - ssa */
+    { /* 0,*/ 0, 2, 0, 0, -2, -0.00008f },   /*  10 */
+    { /* 0,*/ 0, 2, 0, 1, 0, 0.00077f },     /*  11 - ssa */
+    { /* 0,*/ 0, 2, 0, 2, 0, 0.00017f },     /*  12 - ssa */
+    { /* 0,*/ 0, 3, 0, 0, -1, -0.00181f },   /*  13 */
+    { /* 0,*/ 0, 3, 0, 1, -1, 0.00003f },    /*  14 */
+    { /* 0,*/ 0, 4, 0, 0, -2, -0.00007f },   /*  15 */
+    { /* 0,*/ 1, -3, 1, -1, 1, 0.00002f },   /*  16 */
+    { /* 0,*/ 1, -3, 1, 0, 1, -0.00029f },   /*  17 */
+    { /* 0,*/ 1, -3, 1, 1, 1, 0.00002f },    /*  18 */
+    { /* 0,*/ 1, -2, -1, -2, 0, 0.00003f },  /*  19 */
+    { /* 0,*/ 1, -2, -1, -1, 0, 0.00007f },  /*  20 */
+    { /* 0,*/ 1, -2, 1, -1, 0, 0.00048f },   /*  21 */
+    { /* 0,*/ 1, -2, 1, 0, 0, -0.00673f },   /*  22 */
+    { /* 0,*/ 1, -2, 1, 1, 0, 0.00043f },    /*  23 */
+    { /* 0,*/ 1, -1, -1, -1, 1, 0.00002f },  /*  24 */
+    { /* 0,*/ 1, -1, -1, 0, 1, -0.00021f },  /*  25 */
+    { /* 0,*/ 1, -1, -1, 1, 1, 0.00000f },   /*  26 */
+    { /* 0,*/ 1, -1, 0, 0, 0, 0.00020f },    /*  27 */
+    { /* 0,*/ 1, -1, 1, 0, -1, 0.00005f },   /*  28 */
+    { /* 0,*/ 1, 0, -1, -2, 0, -0.00003f },  /*  29 - Mm for FES2014 */
+    { /* 0,*/ 1, 0, -1, -1, 0, 0.00231f },   /*  30 - Mm for FES2014 */
+    { /* 0,*/ 1, 0, -1, 0, 0, -0.03518f },   /*  31 - Mm */
+    { /* 0,*/ 1, 0, -1, 1, 0, 0.00228f },    /*  32 - Mm */
+    { /* 0,*/ 1, 0, 1, 0, 0, 0.00189f },     /*  33 */
+    { /* 0,*/ 1, 0, 1, 1, 0, 0.00077f },     /*  34 */
+    { /* 0,*/ 1, 0, 1, 2, 0, 0.00021f },     /*  35 */
+    { /* 0,*/ 1, 1, -1, 0, -1, 0.00018f },   /*  36 */
+    { /* 0,*/ 1, 2, -1, 0, 0, 0.00049f },    /*  37 */
+    { /* 0,*/ 1, 2, -1, 1, 0, 0.00024f },    /*  38 */
+    { /* 0,*/ 1, 2, -1, 2, 0, 0.00004f },    /*  39 */
+    { /* 0,*/ 1, 3, -1, 0, -1, 0.00003f },   /*  40 */
+    { /* 0,*/ 2, -4, 2, 0, 0, -0.00011f },   /*  41 */
+    { /* 0,*/ 2, -3, 0, 0, 1, -0.00038f },   /*  42 */
+    { /* 0,*/ 2, -3, 0, 1, 1, 0.00002f },    /*  43 */
+    { /* 0,*/ 2, -2, 0, -1, 0, -0.00042f },  /*  44 */
+    { /* 0,*/ 2, -2, 0, 0, 0, -0.00582f },   /*  45 */
+    { /* 0,*/ 2, -2, 0, 1, 0, 0.00037f },    /*  46 */
+    { /* 0,*/ 2, -2, 2, 0, 0, 0.00004f },    /*  47 */
+    { /* 0,*/ 2, -1, -2, 0, 1, -0.00004f },  /*  48 */
+    { /* 0,*/ 2, -1, -1, 0, 0, 0.00003f },   /*  49 */
+    { /* 0,*/ 2, -1, 0, 0, -1, 0.00007f },   /*  50 */
+    { /* 0,*/ 2, -1, 0, 0, 1, -0.00020f },   /*  51 */
+    { /* 0,*/ 2, -1, 0, 1, 1, -0.00004f },   /*  52 */
+    { /* 0,*/ 2, 0, -2, -1, 0, 0.00015f },   /*  53 */
+    { /* 0,*/ 2, 0, -2, 0, 0, -0.00288f },   /*  54 */
+    { /* 0,*/ 2, 0, -2, 1, 0, 0.00019f },    /*  55 */
+    { /* 0,*/ 2, 0, 0, 0, 0, -0.06662f },    /*  56 - Mf */
+    { /* 0,*/ 2, 0, 0, 1, 0, -0.02762f },    /*  57 - Mf */
+    { /* 0,*/ 2, 0, 0, 2, 0, -0.00258f },    /*  58 - Mf */
+    { /* 0,*/ 2, 0, 0, 3, 0, 0.00007f },     /*  59 - Mf */
+    { /* 0,*/ 2, 1, -2, 0, -1, 0.00003f },   /*  60 */
+    { /* 0,*/ 2, 1, 0, 0, -1, 0.00023f },    /*  61 */
+    { /* 0,*/ 2, 1, 0, 1, -1, 0.00006f },    /*  62 */
+    { /* 0,*/ 2, 2, -2, 0, 0, 0.00020f },    /*  63 */
+    { /* 0,*/ 2, 2, -2, 1, 0, 0.00008f },    /*  64 */
+    { /* 0,*/ 2, 2, 0, 2, 0, 0.00003f },     /*  65 */
+    { /* 0,*/ 3, -5, 1, 0, 1, -0.00002f },   /*  66 */
+    { /* 0,*/ 3, -4, 1, 0, 0, -0.00017f },   /*  67 */
+    { /* 0,*/ 3, -3, -1, 0, 1, -0.00007f },  /*  68 */
+    { /* 0,*/ 3, -3, 1, 0, 1, -0.00012f },   /*  69 */
+    { /* 0,*/ 3, -3, 1, 1, 1, -0.00004f },   /*  70 */
+    { /* 0,*/ 3, -2, -1, -1, 0, -0.00010f }, /*  71 */
+    { /* 0,*/ 3, -2, -1, 0, 0, -0.00091f },  /*  72 */
+    { /* 0,*/ 3, -2, -1, 1, 0, 0.00006f },   /*  73 */
+    { /* 0,*/ 3, -2, 1, 0, 0, -0.00242f },   /*  74 */
+    { /* 0,*/ 3, -2, 1, 1, 0, -0.00100f },   /*  75 */
+    { /* 0,*/ 3, -2, 1, 2, 0, -0.00009f },   /*  76 */
+    { /* 0,*/ 3, -1, -1, 0, 1, -0.00013f },  /*  77 */
+    { /* 0,*/ 3, -1, -1, 1, 1, -0.00004f },  /*  78 */
+    { /* 0,*/ 3, -1, 0, 0, 0, 0.00006f },    /*  79 */
+    { /* 0,*/ 3, -1, 0, 1, 0, 0.00003f },    /*  80 */
+    { /* 0,*/ 3, -1, 1, 0, -1, 0.00003f },   /*  81 */
+    { /* 0,*/ 3, 0, -3, 0, 0, -0.00023f },   /*  82 */
+    { /* 0,*/ 3, 0, -3, 1, -1, 0.00004f },   /*  83 */
+    { /* 0,*/ 3, 0, -3, 1, 1, 0.00004f },    /*  84 */
+    { /* 0,*/ 3, 0, -1, 0, 0, -0.01275f },   /*  85 - Mtm */
+    { /* 0,*/ 3, 0, -1, 1, 0, -0.00528f },   /*  86 - Mtm */
+    { /* 0,*/ 3, 0, -1, 2, 0, -0.00051f },   /*  87 - Mtm */
+    { /* 0,*/ 3, 0, 1, 2, 0, 0.00005f },     /*  88 */
+    { /* 0,*/ 3, 0, 1, 3, 0, 0.00002f },     /*  89 */
+    { /* 0,*/ 3, 1, -1, 0, -1, 0.00011f },   /*  90 */
+    { /* 0,*/ 3, 1, -1, 1, -1, 0.00004f },   /*  91 */
+    { /* 0,*/ 4, -4, 0, 0, 0, -0.00008f },   /*  92 */
+    { /* 0,*/ 4, -4, 2, 0, 0, -0.00006f },   /*  93 */
+    { /* 0,*/ 4, -4, 2, 1, 0, -0.00002f },   /*  94 */
+    { /* 0,*/ 4, -3, 0, 0, 1, -0.00014f },   /*  95 */
+    { /* 0,*/ 4, -3, 0, 1, 1, -0.00006f },   /*  96 */
+    { /* 0,*/ 4, -2, -2, 0, 0, -0.00011f },  /*  97 */
+    { /* 0,*/ 4, -2, 0, 0, 0, -0.00205f },   /*  98 - Msqm */
+    { /* 0,*/ 4, -2, 0, 1, 0, -0.00085f },   /*  99 - Msqm */
+    { /* 0,*/ 4, -2, 0, 2, 0, -0.00008f },   /* 100 - Msqm : for FES2014*/
+    { /* 0,*/ 4, -1, -2, 0, 1, -0.00003f },  /* 101 */
+    { /* 0,*/ 4, -1, 0, 0, -1, 0.00003f },   /* 102 */
+    { /* 0,*/ 4, 0, -2, 0, 0, -0.00169f },   /* 103 */
+    { /* 0,*/ 4, 0, -2, 1, 0, -0.00070f },   /* 104 */
+    { /* 0,*/ 4, 0, -2, 2, 0, -0.00006f },   /* 105 */
   };
   int ix;
 
@@ -694,9 +750,13 @@ void set_w2nd(const fes_wave* const w, float w2nd[][N_COEFS]) {
 
 /*
  */
-void lpe_minus_n_waves(const float w2nd[][N_COEFS], const double ts,
-                       const double lat, double* tlp) {
-#define N_WAVES_3RD        17
+void
+lpe_minus_n_waves(const float w2nd[][N_COEFS],
+                  const double ts,
+                  const double lat,
+                  double* tlp)
+{
+#define N_WAVES_3RD 17
 
   int ix;
   double td;
@@ -708,23 +768,23 @@ void lpe_minus_n_waves(const float w2nd[][N_COEFS], const double ts,
   double c30;
 
   static const float w3rd[N_WAVES_3RD][N_COEFS] = {
-    {/* 0,*/0, 0, 1, 0, 0, -0.00021f },
-    {/* 0,*/0, 2, -1, 0, 0, -0.00004f },
-    {/* 0,*/1, -2, 0, 0, 0, 0.00004f },
-    {/* 0,*/1, 0, 0, -1, 0, 0.00019f },
-    {/* 0,*/1, 0, 0, 0, 0, -0.00375f },
-    {/* 0,*/1, 0, 0, 1, 0, -0.00059f },
-    {/* 0,*/1, 0, 0, 2, 0, 0.00005f },
-    {/* 0,*/2, -2, 1, 0, 0, -0.00012f },
-    {/* 0,*/2, 0, -1, 0, 0, -0.00061f },
-    {/* 0,*/2, 0, -1, 1, 0, -0.00010f },
-    {/* 0,*/3, -2, 0, 0, 0, -0.00010f },
-    {/* 0,*/3, 0, -2, 0, 0, -0.00007f },
-    {/* 0,*/3, 0, 0, 0, 0, -0.00030f },
-    {/* 0,*/3, 0, 0, 1, 0, -0.00019f },
-    {/* 0,*/3, 0, 0, 2, 0, -0.00004f },
-    {/* 0,*/4, 0, -1, 0, 0, -0.00008f },
-    {/* 0,*/4, 0, -1, 1, 0, -0.00005f }
+    { /* 0,*/ 0, 0, 1, 0, 0, -0.00021f },
+    { /* 0,*/ 0, 2, -1, 0, 0, -0.00004f },
+    { /* 0,*/ 1, -2, 0, 0, 0, 0.00004f },
+    { /* 0,*/ 1, 0, 0, -1, 0, 0.00019f },
+    { /* 0,*/ 1, 0, 0, 0, 0, -0.00375f },
+    { /* 0,*/ 1, 0, 0, 1, 0, -0.00059f },
+    { /* 0,*/ 1, 0, 0, 2, 0, 0.00005f },
+    { /* 0,*/ 2, -2, 1, 0, 0, -0.00012f },
+    { /* 0,*/ 2, 0, -1, 0, 0, -0.00061f },
+    { /* 0,*/ 2, 0, -1, 1, 0, -0.00010f },
+    { /* 0,*/ 3, -2, 0, 0, 0, -0.00010f },
+    { /* 0,*/ 3, 0, -2, 0, 0, -0.00007f },
+    { /* 0,*/ 3, 0, 0, 0, 0, -0.00030f },
+    { /* 0,*/ 3, 0, 0, 1, 0, -0.00019f },
+    { /* 0,*/ 3, 0, 0, 2, 0, -0.00004f },
+    { /* 0,*/ 4, 0, -1, 0, 0, -0.00008f },
+    { /* 0,*/ 4, 0, -1, 1, 0, -0.00005f }
   };
 
   /* Compute 4 principal mean longitudes in radians at time TD */
@@ -739,17 +799,16 @@ void lpe_minus_n_waves(const float w2nd[][N_COEFS], const double ts,
 
   /* Tidal potential V20 */
   for (ix = 0; ix < N_WAVES_2ND; ++ix) {
-    tmp = w2nd[ix][0] * shpn[0] + w2nd[ix][1] * shpn[1]
-        + w2nd[ix][2] * shpn[2] + w2nd[ix][3] * shpn[3]
-        + w2nd[ix][4] * shpn[4];
+    tmp = w2nd[ix][0] * shpn[0] + w2nd[ix][1] * shpn[1] +
+          w2nd[ix][2] * shpn[2] + w2nd[ix][3] * shpn[3] + w2nd[ix][4] * shpn[4];
 
     h20 += cos(tmp) * w2nd[ix][5];
   }
 
   /* Tidal potential V30 */
   for (ix = 0; ix < N_WAVES_3RD; ++ix) {
-    tmp = w3rd[ix][0] * shpn[0] + w3rd[ix][1] * shpn[1]+ w3rd[ix][2] * shpn[2]
-        + w3rd[ix][3] * shpn[3] + w3rd[ix][4] * shpn[4];
+    tmp = w3rd[ix][0] * shpn[0] + w3rd[ix][1] * shpn[1] +
+          w3rd[ix][2] * shpn[2] + w3rd[ix][3] * shpn[3] + w3rd[ix][4] * shpn[4];
 
     h30 += sin(tmp) * w3rd[ix][5];
   }
@@ -760,9 +819,10 @@ void lpe_minus_n_waves(const float w2nd[][N_COEFS], const double ts,
   c30 = sqrt(7.0 / (4.0 * M_PI)) * (2.5 * SQR(tmp) - 1.5) * tmp;
 
   /* m -> cm */
+  /* clang-format off */
   *tlp = ((1.0 - 0.609 /* H2 */+ 0.302 /* K2 */) * c20 * h20 + (1.0 - 0.291
   /* H3 */+ 0.093 /* K3 */) * c30 * h30) * 1e2;
-
+  /* clang-format on */
 }
 
 /*
@@ -777,11 +837,18 @@ void lpe_minus_n_waves(const float w2nd[][N_COEFS], const double ts,
  n longitude of moon's ascending node
  p1 longitude of sun's perigee
  */
-static double _frequency(const short t, const short s, const short h,
-                         const short p, const short n, const short p1) {
-  return ((tau_frequency() + s_frequency() - h_frequency()) * t
-      + s_frequency() * s + h_frequency() * h + p_frequency() * p
-      + n_frequency() * n + p1_frequency() * p1) * 360;
+static double
+_frequency(const short t,
+           const short s,
+           const short h,
+           const short p,
+           const short n,
+           const short p1)
+{
+  return ((tau_frequency() + s_frequency() - h_frequency()) * t +
+          s_frequency() * s + h_frequency() * h + p_frequency() * p +
+          n_frequency() * n + p1_frequency() * p1) *
+         360;
 }
 
 /*
@@ -802,19 +869,29 @@ static double _frequency(const short t, const short s, const short h,
  nuprim Coefficient for the term in argument of lunisolar constituent K₁
  nusec Coefficient for the term in argument of lunisolar constituent K₂
  */
-static void _init_wave(const char* const name, const int admittance,
-                       const short t, const short s, const short h,
-                       const short p, const short n, const short p1,
-                       const short shift, const short eps, const short nu,
-                       const short nuprim, const short nusec,
-                       fes_enum_period_type type,
-                       double (*f_function)(const _fes_astronomic_angle* const),
-                       fes_wave* const w) {
+static void
+_init_wave(const char* const name,
+           const int admittance,
+           const short t,
+           const short s,
+           const short h,
+           const short p,
+           const short n,
+           const short p1,
+           const short shift,
+           const short eps,
+           const short nu,
+           const short nuprim,
+           const short nusec,
+           fes_enum_period_type type,
+           double (*f_function)(const _fes_astronomic_angle* const),
+           fes_wave* const w)
+{
 
   w->admittance = admittance;
   w->f_function = f_function;
   w->freq = _frequency(t, s, h, p, n, p1) * RAD;
-  w->name = (char*) name;
+  w->name = (char*)name;
   w->type = type;
 
   w->argument[0] = t;
@@ -832,7 +909,9 @@ static void _init_wave(const char* const name, const int admittance,
 
 /*
  */
-void set_waves(fes_wave* const w) {
+void
+set_waves(fes_wave* const w)
+{
   memset(w, 0, sizeof(fes_wave) * N_WAVES);
 
   /*
@@ -858,8 +937,8 @@ void set_waves(fes_wave* const w) {
    * u = -2ξ
    * f = f(Mf)
    */
-  _init_wave("MTM", 0, 0, 3, 0, -1, 0, 0, 0, -2, 0, 0, 0, LP_TIDE, _f_mf,
-             &w[MTM]);
+  _init_wave(
+    "MTM", 0, 0, 3, 0, -1, 0, 0, 0, -2, 0, 0, 0, LP_TIDE, _f_mf, &w[MTM]);
   /*
    * Msqm
    *
@@ -867,8 +946,8 @@ void set_waves(fes_wave* const w) {
    * u = -2ξ
    * f = f(Mf)
    */
-  _init_wave("MSQM", 0, 0, 4, -2, 0, 0, 0, 0, -2, 0, 0, 0, LP_TIDE, _f_mf,
-             &w[MSQM]);
+  _init_wave(
+    "MSQM", 0, 0, 4, -2, 0, 0, 0, 0, -2, 0, 0, 0, LP_TIDE, _f_mf, &w[MSQM]);
   /*
    * Ssa
    *
@@ -892,8 +971,8 @@ void set_waves(fes_wave* const w) {
    * u = +2ξ - ν
    * f = f(O₁)
    */
-  _init_wave("2Q1", 1, 1, -4, 1, 2, 0, 0, 1, 2, -1, 0, 0, SP_TIDE, _f_o1,
-             &w[_2Q1]);
+  _init_wave(
+    "2Q1", 1, 1, -4, 1, 2, 0, 0, 1, 2, -1, 0, 0, SP_TIDE, _f_o1, &w[_2Q1]);
   /*
    * σ₁
    *
@@ -901,8 +980,8 @@ void set_waves(fes_wave* const w) {
    * u = +2ξ - ν
    * f = f(O₁)
    */
-  _init_wave("SIGMA1", 1, 1, -4, 3, 0, 0, 0, 1, 2, -1, 0, 0, SP_TIDE, _f_o1,
-             &w[SIGMA1]);
+  _init_wave(
+    "SIGMA1", 1, 1, -4, 3, 0, 0, 0, 1, 2, -1, 0, 0, SP_TIDE, _f_o1, &w[SIGMA1]);
   /*
    * Q₁
    *
@@ -910,8 +989,8 @@ void set_waves(fes_wave* const w) {
    * u = +2ξ - ν
    * f = f(O₁)
    */
-  _init_wave("Q1", 0, 1, -3, 1, 1, 0, 0, 1, 2, -1, 0, 0, SP_TIDE, _f_o1,
-             &w[Q1]);
+  _init_wave(
+    "Q1", 0, 1, -3, 1, 1, 0, 0, 1, 2, -1, 0, 0, SP_TIDE, _f_o1, &w[Q1]);
   /*
    * ρ₁
    *
@@ -919,8 +998,8 @@ void set_waves(fes_wave* const w) {
    * u = +2ξ - ν
    * f = f(O₁)
    */
-  _init_wave("RHO1", 1, 1, -3, 3, -1, 0, 0, 1, 2, -1, 0, 0, SP_TIDE, _f_o1,
-             &w[RHO1]);
+  _init_wave(
+    "RHO1", 1, 1, -3, 3, -1, 0, 0, 1, 2, -1, 0, 0, SP_TIDE, _f_o1, &w[RHO1]);
   /*
    * O₁
    *
@@ -929,8 +1008,8 @@ void set_waves(fes_wave* const w) {
    * f = f(O₁)
    *
    */
-  _init_wave("O1", 0, 1, -2, 1, 0, 0, 0, 1, 2, -1, 0, 0, SP_TIDE, _f_o1,
-             &w[O1]);
+  _init_wave(
+    "O1", 0, 1, -2, 1, 0, 0, 0, 1, 2, -1, 0, 0, SP_TIDE, _f_o1, &w[O1]);
   /*
    * MP₁
    *
@@ -938,8 +1017,8 @@ void set_waves(fes_wave* const w) {
    * u = -ν
    * f = f(J₁)
    */
-  _init_wave("MP1", 0, 1, -2, 3, 0, 0, 0, -1, 0, -1, 0, 0, SP_TIDE, _f_j1,
-             &w[MP1]);
+  _init_wave(
+    "MP1", 0, 1, -2, 3, 0, 0, 0, -1, 0, -1, 0, 0, SP_TIDE, _f_j1, &w[MP1]);
   /*
    * M₁₂ (Formula A16)
    *
@@ -947,8 +1026,8 @@ void set_waves(fes_wave* const w) {
    * u = +2ξ - ν
    * f = f(O₁)
    */
-  _init_wave("M12", 1, 1, -1, 1, -1, 0, 0, -1, 2, -1, 0, 0, SP_TIDE, _f_o1,
-             &w[M12]);
+  _init_wave(
+    "M12", 1, 1, -1, 1, -1, 0, 0, -1, 2, -1, 0, 0, SP_TIDE, _f_o1, &w[M12]);
   /*
    * M13 (=M11 + M12)
    *
@@ -956,8 +1035,8 @@ void set_waves(fes_wave* const w) {
    * u = -ν
    * f = f(M₁₃)
    */
-  _init_wave("M13", 0, 1, -1, 1, 1, 0, 0, -1, 0, -1, 0, 0, SP_TIDE, _f_m13,
-             &w[M13]);
+  _init_wave(
+    "M13", 0, 1, -1, 1, 1, 0, 0, -1, 0, -1, 0, 0, SP_TIDE, _f_m13, &w[M13]);
   /*
    * M₁₁ (Formula A23)
    *
@@ -965,8 +1044,8 @@ void set_waves(fes_wave* const w) {
    * u = -ν
    * f = f(J₁)
    */
-  _init_wave("M11", 1, 1, -1, 1, 1, 0, 0, -1, 0, -1, 0, 0, SP_TIDE, _f_j1,
-             &w[M11]);
+  _init_wave(
+    "M11", 1, 1, -1, 1, 1, 0, 0, -1, 0, -1, 0, 0, SP_TIDE, _f_j1, &w[M11]);
   /*
    * χ₁
    *
@@ -974,8 +1053,8 @@ void set_waves(fes_wave* const w) {
    * u = -ν
    * f = f(J₁)
    */
-  _init_wave("CHI1", 1, 1, -1, 3, -1, 0, 0, -1, 0, -1, 0, 0, SP_TIDE, _f_j1,
-             &w[CHI1]);
+  _init_wave(
+    "CHI1", 1, 1, -1, 3, -1, 0, 0, -1, 0, -1, 0, 0, SP_TIDE, _f_j1, &w[CHI1]);
   /*
    * π₁
    *
@@ -983,8 +1062,8 @@ void set_waves(fes_wave* const w) {
    * u = 0
    * f = 1
    */
-  _init_wave("PI1", 1, 1, 0, -2, 0, 0, 1, 1, 0, 0, 0, 0, SP_TIDE, _f_1,
-             &w[PI1]);
+  _init_wave(
+    "PI1", 1, 1, 0, -2, 0, 0, 1, 1, 0, 0, 0, 0, SP_TIDE, _f_1, &w[PI1]);
   /*
    * P₁
    *
@@ -1008,8 +1087,8 @@ void set_waves(fes_wave* const w) {
    * u = - ν'
    * f = f(k₁)
    */
-  _init_wave("K1", 0, 1, 0, 1, 0, 0, 0, -1, 0, 0, -1, 0, SP_TIDE, _f_k1,
-             &w[K1]);
+  _init_wave(
+    "K1", 0, 1, 0, 1, 0, 0, 0, -1, 0, 0, -1, 0, SP_TIDE, _f_k1, &w[K1]);
   /*
    * ψ₁
    *
@@ -1017,8 +1096,8 @@ void set_waves(fes_wave* const w) {
    * u = 0
    * f = 1
    */
-  _init_wave("PSI1", 0, 1, 0, 2, 0, 0, -1, -1, 0, 0, 0, 0, SP_TIDE, _f_1,
-             &w[PSI1]);
+  _init_wave(
+    "PSI1", 0, 1, 0, 2, 0, 0, -1, -1, 0, 0, 0, 0, SP_TIDE, _f_1, &w[PSI1]);
   /*
    * φ₁
    *
@@ -1026,8 +1105,8 @@ void set_waves(fes_wave* const w) {
    * u = 0
    * f = 1
    */
-  _init_wave("PHI1", 1, 1, 0, 3, 0, 0, 0, -1, 0, 0, 0, 0, SP_TIDE, _f_1,
-             &w[PHI1]);
+  _init_wave(
+    "PHI1", 1, 1, 0, 3, 0, 0, 0, -1, 0, 0, 0, 0, SP_TIDE, _f_1, &w[PHI1]);
   /*
    * θ₁
    *
@@ -1035,7 +1114,21 @@ void set_waves(fes_wave* const w) {
    * u = -ν
    * f = f(J₁)
    */
-  _init_wave("THETA1", 1, 1, 1, -1, 1, 0, 0, -1, 0, -1, 0, 0, SP_TIDE, _f_j1,
+  _init_wave("THETA1",
+             1,
+             1,
+             1,
+             -1,
+             1,
+             0,
+             0,
+             -1,
+             0,
+             -1,
+             0,
+             0,
+             SP_TIDE,
+             _f_j1,
              &w[THETA1]);
   /*
    * J₁
@@ -1044,8 +1137,8 @@ void set_waves(fes_wave* const w) {
    * u = -ν
    * f = f(J₁)
    */
-  _init_wave("J1", 1, 1, 1, 1, -1, 0, 0, -1, 0, -1, 0, 0, SP_TIDE, _f_j1,
-             &w[J1]);
+  _init_wave(
+    "J1", 1, 1, 1, 1, -1, 0, 0, -1, 0, -1, 0, 0, SP_TIDE, _f_j1, &w[J1]);
   /*
    * OO₁
    *
@@ -1053,8 +1146,8 @@ void set_waves(fes_wave* const w) {
    * u = -2ξ - ν
    * f = f(OO₁)
    */
-  _init_wave("OO1", 1, 1, 2, 1, 0, 0, 0, -1, -2, -1, 0, 0, SP_TIDE, _f_oo1,
-             &w[OO1]);
+  _init_wave(
+    "OO1", 1, 1, 2, 1, 0, 0, 0, -1, -2, -1, 0, 0, SP_TIDE, _f_oo1, &w[OO1]);
   /*
    * MNS₂ = M₂ + N₂ + S₂
    *
@@ -1062,8 +1155,8 @@ void set_waves(fes_wave* const w) {
    * u = +4ξ - 4ν
    * f = f(M₂)²
    */
-  _init_wave("MNS2", 0, 2, -5, 4, 1, 0, 0, 0, 4, -4, 0, 0, SP_TIDE, _f_m22,
-             &w[MNS2]);
+  _init_wave(
+    "MNS2", 0, 2, -5, 4, 1, 0, 0, 0, 4, -4, 0, 0, SP_TIDE, _f_m22, &w[MNS2]);
   /*
    * ε₂
    *
@@ -1071,8 +1164,8 @@ void set_waves(fes_wave* const w) {
    * u = +2ξ - 2ν
    * f = f(M₂)
    */
-  _init_wave("EPS2", 1, 2, -5, 4, 1, 0, 0, 0, 2, -2, 0, 0, SP_TIDE, _f_m2,
-             &w[EPS2]);
+  _init_wave(
+    "EPS2", 1, 2, -5, 4, 1, 0, 0, 0, 2, -2, 0, 0, SP_TIDE, _f_m2, &w[EPS2]);
   /*
    * 2N₂
    *
@@ -1080,8 +1173,8 @@ void set_waves(fes_wave* const w) {
    * u = +2ξ - 2ν
    * f = f(M₂)
    */
-  _init_wave("2N2", 1, 2, -4, 2, 2, 0, 0, 0, 2, -2, 0, 0, SP_TIDE, _f_m2,
-             &w[_2N2]);
+  _init_wave(
+    "2N2", 1, 2, -4, 2, 2, 0, 0, 0, 2, -2, 0, 0, SP_TIDE, _f_m2, &w[_2N2]);
   /*
    * µ₂
    *
@@ -1089,8 +1182,8 @@ void set_waves(fes_wave* const w) {
    * u = +2ξ - 2ν
    * f = f(M₂)
    */
-  _init_wave("MU2", 1, 2, -4, 4, 0, 0, 0, 0, 2, -2, 0, 0, SP_TIDE, _f_m2,
-             &w[MU2]);
+  _init_wave(
+    "MU2", 1, 2, -4, 4, 0, 0, 0, 0, 2, -2, 0, 0, SP_TIDE, _f_m2, &w[MU2]);
   /*
    * 2MS₂ = 2M₂ - S₂
    *
@@ -1098,8 +1191,8 @@ void set_waves(fes_wave* const w) {
    * u = +4ξ - 4ν
    * f = f(M₂)²
    */
-  _init_wave("2MS2", 0, 2, -4, 4, 0, 0, 0, 0, 4, -4, 0, 0, SP_TIDE, _f_m22,
-             &w[_2MS2]);
+  _init_wave(
+    "2MS2", 0, 2, -4, 4, 0, 0, 0, 0, 4, -4, 0, 0, SP_TIDE, _f_m22, &w[_2MS2]);
   /*
    * N₂
    *
@@ -1107,8 +1200,8 @@ void set_waves(fes_wave* const w) {
    * u = +2ξ - 2ν
    * f = f(M₂)
    */
-  _init_wave("N2", 0, 2, -3, 2, 1, 0, 0, 0, 2, -2, 0, 0, SP_TIDE, _f_m2,
-             &w[N2]);
+  _init_wave(
+    "N2", 0, 2, -3, 2, 1, 0, 0, 0, 2, -2, 0, 0, SP_TIDE, _f_m2, &w[N2]);
   /*
    * ν₂
    *
@@ -1116,8 +1209,8 @@ void set_waves(fes_wave* const w) {
    * u = +2ξ - 2ν
    * f = f(M₂)
    */
-  _init_wave("NU2", 1, 2, -3, 4, -1, 0, 0, 0, 2, -2, 0, 0, SP_TIDE, _f_m2,
-             &w[NU2]);
+  _init_wave(
+    "NU2", 1, 2, -3, 4, -1, 0, 0, 0, 2, -2, 0, 0, SP_TIDE, _f_m2, &w[NU2]);
   /*
    * M₂
    *
@@ -1125,8 +1218,8 @@ void set_waves(fes_wave* const w) {
    * u = +2ξ - 2ν
    * f = f(M₂)
    */
-  _init_wave("M2", 0, 2, -2, 2, 0, 0, 0, 0, 2, -2, 0, 0, SP_TIDE, _f_m2,
-             &w[M2]);
+  _init_wave(
+    "M2", 0, 2, -2, 2, 0, 0, 0, 0, 2, -2, 0, 0, SP_TIDE, _f_m2, &w[M2]);
   /*
    * MKS₂ = M₂ + K₂ - S₂
    *
@@ -1134,8 +1227,8 @@ void set_waves(fes_wave* const w) {
    * u = +2ξ - 2ν -2ν''
    * f = f(M₂) × f(K₂)
    */
-  _init_wave("MKS2", 0, 2, -2, 4, 0, 0, 0, 0, 2, -2, 0, -2, SP_TIDE, _f_m2_k2,
-             &w[MKS2]);
+  _init_wave(
+    "MKS2", 0, 2, -2, 4, 0, 0, 0, 0, 2, -2, 0, -2, SP_TIDE, _f_m2_k2, &w[MKS2]);
   /*
    * λ₂
    *
@@ -1143,7 +1236,21 @@ void set_waves(fes_wave* const w) {
    * u = +2ξ - 2ν
    * f = f(M₂)
    */
-  _init_wave("LAMBDA2", 1, 2, -1, 0, 1, 0, 0, 2, 2, -2, 0, 0, SP_TIDE, _f_m2,
+  _init_wave("LAMBDA2",
+             1,
+             2,
+             -1,
+             0,
+             1,
+             0,
+             0,
+             2,
+             2,
+             -2,
+             0,
+             0,
+             SP_TIDE,
+             _f_m2,
              &w[LAMBDA2]);
   /*
    * L₂
@@ -1152,8 +1259,8 @@ void set_waves(fes_wave* const w) {
    * u = +2ξ - 2ν - R
    * f = f(L₂)
    */
-  _init_wave("L2", 1, 2, -1, 2, -1, 0, 0, 2, 2, -2, 0, 0, SP_TIDE, _f_l2,
-             &w[L2]);
+  _init_wave(
+    "L2", 1, 2, -1, 2, -1, 0, 0, 2, 2, -2, 0, 0, SP_TIDE, _f_l2, &w[L2]);
   /*
    * 2MN₂ = 2M₂ - N₂
    *
@@ -1161,8 +1268,8 @@ void set_waves(fes_wave* const w) {
    * u = +2ξ - 2ν
    * f = f(M₂)³
    */
-  _init_wave("2MN2", 0, 2, -1, 2, -1, 0, 0, 2, 2, -2, 0, 0, SP_TIDE, _f_m23,
-             &w[_2MN2]);
+  _init_wave(
+    "2MN2", 0, 2, -1, 2, -1, 0, 0, 2, 2, -2, 0, 0, SP_TIDE, _f_m23, &w[_2MN2]);
   /*
    * T₂
    *
@@ -1202,8 +1309,8 @@ void set_waves(fes_wave* const w) {
    * u = 0
    * f = f(M₂)²
    */
-  _init_wave("MSN2", 0, 2, 1, 0, -1, 0, 0, 0, 0, 0, 0, 0, SP_TIDE, _f_m22,
-             &w[MSN2]);
+  _init_wave(
+    "MSN2", 0, 2, 1, 0, -1, 0, 0, 0, 0, 0, 0, 0, SP_TIDE, _f_m22, &w[MSN2]);
   /*
    * η₂ = KJ₂
    *
@@ -1211,8 +1318,8 @@ void set_waves(fes_wave* const w) {
    * u = -2ν
    * f = f(KJ₂)
    */
-  _init_wave("ETA2", 1, 2, 1, 2, -1, 0, 0, 0, 0, -2, 0, 0, SP_TIDE, _f_kj2,
-             &w[ETA2]);
+  _init_wave(
+    "ETA2", 1, 2, 1, 2, -1, 0, 0, 0, 0, -2, 0, 0, SP_TIDE, _f_kj2, &w[ETA2]);
   /*
    * 2SM₂ = 2S₂ - M₂
    *
@@ -1220,8 +1327,8 @@ void set_waves(fes_wave* const w) {
    * u = -2ξ + 2ν
    * f = f(M₂)
    */
-  _init_wave("2SM2", 0, 2, 2, -2, 0, 0, 0, 0, 2, -2, 0, 0, SP_TIDE, _f_m2,
-             &w[_2SM2]);
+  _init_wave(
+    "2SM2", 0, 2, 2, -2, 0, 0, 0, 0, 2, -2, 0, 0, SP_TIDE, _f_m2, &w[_2SM2]);
   /*
    * MO₃ = M₂ + O₁
    *
@@ -1229,8 +1336,8 @@ void set_waves(fes_wave* const w) {
    * u = 4ξ - 3ν
    * f = f(M₂) × f(O₁)
    */
-  _init_wave("MO3", 0, 3, -4, 3, 0, 0, 0, 1, 4, -3, 0, 0, SP_TIDE, _f_m2_o1,
-             &w[MO3]);
+  _init_wave(
+    "MO3", 0, 3, -4, 3, 0, 0, 0, 1, 4, -3, 0, 0, SP_TIDE, _f_m2_o1, &w[MO3]);
   /*
    * 2MK₃ = 2M₂ - K₁
    *
@@ -1238,7 +1345,21 @@ void set_waves(fes_wave* const w) {
    * u = 4ξ - 4ν + ν′
    * f = f(M₂)² × f(K₁)
    */
-  _init_wave("2MK3", 0, 3, -4, 3, 0, 0, 0, 1, 4, -4, 1, 0, SP_TIDE, _f_m22_k1,
+  _init_wave("2MK3",
+             0,
+             3,
+             -4,
+             3,
+             0,
+             0,
+             0,
+             1,
+             4,
+             -4,
+             1,
+             0,
+             SP_TIDE,
+             _f_m22_k1,
              &w[_2MK3]);
   /*
    * M₃
@@ -1247,8 +1368,8 @@ void set_waves(fes_wave* const w) {
    * u = +3ξ - 3ν
    * f = f(M₃)
    */
-  _init_wave("M3", 0, 3, -3, 3, 0, 0, 0, 0, 3, -3, 0, 0, SP_TIDE, _f_m3,
-             &w[M3]);
+  _init_wave(
+    "M3", 0, 3, -3, 3, 0, 0, 0, 0, 3, -3, 0, 0, SP_TIDE, _f_m3, &w[M3]);
   /*
    * MK₃ = M₂ + K₁
    *
@@ -1256,8 +1377,8 @@ void set_waves(fes_wave* const w) {
    * u = 2ξ - 2ν - ν′
    * f = f(M₂) × f(K₁)
    */
-  _init_wave("MK3", 0, 3, -2, 3, 0, 0, 0, -1, 2, -2, -1, 0, SP_TIDE, _f_m2_k1,
-             &w[MK3]);
+  _init_wave(
+    "MK3", 0, 3, -2, 3, 0, 0, 0, -1, 2, -2, -1, 0, SP_TIDE, _f_m2_k1, &w[MK3]);
   /*
    * N4 = N₂ + N₂
    *
@@ -1265,8 +1386,8 @@ void set_waves(fes_wave* const w) {
    * u = +4ξ - 4ν
    * f = f(M₂)²
    */
-  _init_wave("N4", 0, 4, -6, 4, 2, 0, 0, 0, 4, -4, 0, 0, SP_TIDE, _f_m22,
-             &w[N4]);
+  _init_wave(
+    "N4", 0, 4, -6, 4, 2, 0, 0, 0, 4, -4, 0, 0, SP_TIDE, _f_m22, &w[N4]);
   /*
    * MN₄ = M₂ + N₂
    *
@@ -1274,8 +1395,8 @@ void set_waves(fes_wave* const w) {
    * u = +4ξ - 4ν
    * f = f(M₂)²
    */
-  _init_wave("MN4", 0, 4, -5, 4, 1, 0, 0, 0, 4, -4, 0, 0, SP_TIDE, _f_m22,
-             &w[MN4]);
+  _init_wave(
+    "MN4", 0, 4, -5, 4, 1, 0, 0, 0, 4, -4, 0, 0, SP_TIDE, _f_m22, &w[MN4]);
   /*
    * M₄ = 2M₂
    *
@@ -1283,8 +1404,8 @@ void set_waves(fes_wave* const w) {
    * u = +4ξ - 4ν
    * f = f²(M₂)
    */
-  _init_wave("M4", 0, 4, -4, 4, 0, 0, 0, 0, 4, -4, 0, 0, SP_TIDE, _f_m22,
-             &w[M4]);
+  _init_wave(
+    "M4", 0, 4, -4, 4, 0, 0, 0, 0, 4, -4, 0, 0, SP_TIDE, _f_m22, &w[M4]);
   /*
    * SN₄ = S₂ + N₂
    *
@@ -1292,8 +1413,8 @@ void set_waves(fes_wave* const w) {
    * u = 2ξ - 2ν
    * f = f(M₂)
    */
-  _init_wave("SN4", 0, 4, -3, 2, 1, 0, 0, 0, 2, -2, 0, 0, SP_TIDE, _f_m2,
-             &w[SN4]);
+  _init_wave(
+    "SN4", 0, 4, -3, 2, 1, 0, 0, 0, 2, -2, 0, 0, SP_TIDE, _f_m2, &w[SN4]);
   /*
    * MS₄ = M₂ + S₂
    *
@@ -1301,8 +1422,8 @@ void set_waves(fes_wave* const w) {
    * u = +2ξ - 2ν
    * f = f(M₂)
    */
-  _init_wave("MS4", 0, 4, -2, 2, 0, 0, 0, 0, 2, -2, 0, 0, SP_TIDE, _f_m2,
-             &w[MS4]);
+  _init_wave(
+    "MS4", 0, 4, -2, 2, 0, 0, 0, 0, 2, -2, 0, 0, SP_TIDE, _f_m2, &w[MS4]);
   /*
    * MK₄ = M₂ + K₂
    *
@@ -1310,8 +1431,8 @@ void set_waves(fes_wave* const w) {
    * u = 2ξ - 2ν - 2ν''
    * f = f(MK₄)
    */
-  _init_wave("MK4", 0, 4, -2, 4, 0, 0, 0, 0, 2, -2, -2, 0, SP_TIDE, _f_m2_k2,
-             &w[MK4]);
+  _init_wave(
+    "MK4", 0, 4, -2, 4, 0, 0, 0, 0, 2, -2, -2, 0, SP_TIDE, _f_m2_k2, &w[MK4]);
   /*
    * S₄ = S₂ + S₂
    *
@@ -1327,8 +1448,8 @@ void set_waves(fes_wave* const w) {
    * u = -2ν''
    * f = f(K₂)
    */
-  _init_wave("SK4", 0, 4, 0, 2, 0, 0, 0, 0, 0, 0, 0, -2, SP_TIDE, _f_k2,
-             &w[SK4]);
+  _init_wave(
+    "SK4", 0, 4, 0, 2, 0, 0, 0, 0, 0, 0, 0, -2, SP_TIDE, _f_k2, &w[SK4]);
   /*
    * R₄ = R₂ + R₂
    *
@@ -1344,8 +1465,8 @@ void set_waves(fes_wave* const w) {
    * u = 6ξ - 6ν
    * f = f(M₂)³
    */
-  _init_wave("2MN6", 0, 6, -7, 6, 1, 0, 0, 0, 6, -6, 0, 0, SP_TIDE, _f_m23,
-             &w[_2MN6]);
+  _init_wave(
+    "2MN6", 0, 6, -7, 6, 1, 0, 0, 0, 6, -6, 0, 0, SP_TIDE, _f_m23, &w[_2MN6]);
   /*
    * M₆ = 3M₂
    *
@@ -1353,8 +1474,8 @@ void set_waves(fes_wave* const w) {
    * u = +6ξ - 6ν
    * f = f(M₂)³
    */
-  _init_wave("M6", 0, 6, -6, 6, 0, 0, 0, 0, 6, -6, 0, 0, SP_TIDE, _f_m23,
-             &w[M6]);
+  _init_wave(
+    "M6", 0, 6, -6, 6, 0, 0, 0, 0, 6, -6, 0, 0, SP_TIDE, _f_m23, &w[M6]);
   /*
    * MSN₆ = M₂ + S₂ + N₂
    *
@@ -1362,8 +1483,8 @@ void set_waves(fes_wave* const w) {
    * u = 4ξ - 4ν
    * f = f(M₂)²
    */
-  _init_wave("MSN6", 0, 6, -5, 4, 1, 0, 0, 0, 4, -4, 0, 0, SP_TIDE, _f_m22,
-             &w[MSN6]);
+  _init_wave(
+    "MSN6", 0, 6, -5, 4, 1, 0, 0, 0, 4, -4, 0, 0, SP_TIDE, _f_m22, &w[MSN6]);
   /*
    * 2MS₆ = 2M₂ + S₂
    *
@@ -1371,8 +1492,8 @@ void set_waves(fes_wave* const w) {
    * u = 4ξ - 4ν
    * f = f(M₂)²
    */
-  _init_wave("2MS6", 0, 6, -4, 4, 0, 0, 0, 0, 4, -4, 0, 0, SP_TIDE, _f_m22,
-             &w[_2MS6]);
+  _init_wave(
+    "2MS6", 0, 6, -4, 4, 0, 0, 0, 0, 4, -4, 0, 0, SP_TIDE, _f_m22, &w[_2MS6]);
   /*
    * 2MK₆ = 2M₂ + K₂
    *
@@ -1380,7 +1501,21 @@ void set_waves(fes_wave* const w) {
    * u = 4ξ - 4ν - 2ν''
    * f = f(M₂)² × f(K₂)
    */
-  _init_wave("2MK6", 0, 6, -4, 6, 0, 0, 0, 0, 4, -4, 0, -2, SP_TIDE, _f_m23_k2,
+  _init_wave("2MK6",
+             0,
+             6,
+             -4,
+             6,
+             0,
+             0,
+             0,
+             0,
+             4,
+             -4,
+             0,
+             -2,
+             SP_TIDE,
+             _f_m23_k2,
              &w[_2MK6]);
   /*
    * 2SM₆ = 2S₂ + M₂
@@ -1389,8 +1524,8 @@ void set_waves(fes_wave* const w) {
    * u = 2ξ - 2ν
    * f = f(M₂)
    */
-  _init_wave("2SM6", 0, 6, -2, 2, 0, 0, 0, 0, 2, -2, 0, 0, SP_TIDE, _f_m2,
-             &w[_2SM6]);
+  _init_wave(
+    "2SM6", 0, 6, -2, 2, 0, 0, 0, 0, 2, -2, 0, 0, SP_TIDE, _f_m2, &w[_2SM6]);
   /*
    * MSK₆ = M₂ + K₂ + S₂
    *
@@ -1398,8 +1533,8 @@ void set_waves(fes_wave* const w) {
    * u = 2ξ - 2ν - 2ν''
    * f = f(M₂) × f(K₂)
    */
-  _init_wave("MSK6", 0, 6, -2, 4, 0, 0, 0, 0, 2, -2, -2, 0, SP_TIDE, _f_m2_k2,
-             &w[MSK6]);
+  _init_wave(
+    "MSK6", 0, 6, -2, 4, 0, 0, 0, 0, 2, -2, -2, 0, SP_TIDE, _f_m2_k2, &w[MSK6]);
   /*
    * S₆ = 3S₂
    *
@@ -1415,8 +1550,8 @@ void set_waves(fes_wave* const w) {
    * u = 8ξ - 8ν
    * f = f(M₂)⁴
    */
-  _init_wave("M8", 0, 8, -8, 8, 0, 0, 0, 0, 8, -8, 0, 0, SP_TIDE, _f_m24,
-             &w[M8]);
+  _init_wave(
+    "M8", 0, 8, -8, 8, 0, 0, 0, 0, 8, -8, 0, 0, SP_TIDE, _f_m24, &w[M8]);
   /*
    * MSf = M₂ - S₂
    * WARNING: Same frequency as MSf LP : 2s -2h
@@ -1424,6 +1559,6 @@ void set_waves(fes_wave* const w) {
    * u = 2ξ - 2ν (=celui de M₂ - S₂)
    * f = f(M₂) * f(S2) = f(M₂)
    */
-  _init_wave("MSF", 0, 0, 2, -2, 0, 0, 0, 0, 2, -2, 0, 0, LP_TIDE, _f_m2,
-             &w[MSF]);
+  _init_wave(
+    "MSF", 0, 0, 2, -2, 0, 0, 0, 0, 2, -2, 0, 0, LP_TIDE, _f_m2, &w[MSF]);
 }

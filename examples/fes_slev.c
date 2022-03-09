@@ -14,8 +14,8 @@
    along with FES.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "fes.h"
 
@@ -28,7 +28,9 @@
 #define FES_DATA "../test/data"
 #endif
 
-int main(void) {
+int
+main(void)
+{
   // The return code
   int rc = 0;
   // The hour of the estimate.
@@ -71,8 +73,15 @@ int main(void) {
     goto error;
   }
 
-  printf("%12s %5s %9s %9s %9s %9s %9s %9s %9s\n", "JulDay", "Hour", "Latitude",
-         "Longitude", "Short_tid", "LP_tid", "Pure_Tide", "Geo_Tide",
+  printf("%12s %5s %9s %9s %9s %9s %9s %9s %9s\n",
+         "JulDay",
+         "Hour",
+         "Latitude",
+         "Longitude",
+         "Short_tid",
+         "LP_tid",
+         "Pure_Tide",
+         "Geo_Tide",
          "Rad_Tide");
 
   for (hour = 0, time = 12053; hour < 24; hour++, time += 1 / 24.0) {
@@ -102,8 +111,16 @@ int main(void) {
 
     // tide + lp        = pure tide (as seen by a tide gauge)
     // tide + lp + load = geocentric tide (as seen by a satellite)
-    printf("%12.5f %5d %9.3f %9.3f %9.3f %9.3f %9.3f %9.3f %9.3f\n", time, hour,
-           lat, lon, tide, lp, tide + lp, tide + lp + load, load);
+    printf("%12.5f %5d %9.3f %9.3f %9.3f %9.3f %9.3f %9.3f %9.3f\n",
+           time,
+           hour,
+           lat,
+           lon,
+           tide,
+           lp,
+           tide + lp,
+           tide + lp + load,
+           load);
   }
 
   goto finish;

@@ -24,11 +24,12 @@
 #include "dlist.h"
 
 fes_cache_item*
-fes_new_cache_item(fes_grid* const grid, const size_t index) {
+fes_new_cache_item(fes_grid* const grid, const size_t index)
+{
   fes_cache_item* item;
 
   // Allocate the new cache item
-  if ((item = (fes_cache_item*) malloc(sizeof(fes_cache_item))) == NULL)
+  if ((item = (fes_cache_item*)malloc(sizeof(fes_cache_item))) == NULL)
     return NULL;
 
   // Promote this new item in the queue
@@ -37,8 +38,8 @@ fes_new_cache_item(fes_grid* const grid, const size_t index) {
   // Update the properties of this item
   item->filled = 0;
   item->index = index;
-  item->value = (fes_double_complex*) malloc(
-      grid->n_grids * sizeof(fes_double_complex));
+  item->value =
+    (fes_double_complex*)malloc(grid->n_grids * sizeof(fes_double_complex));
   item->list_item = dlist_head(&grid->buffer->list);
 
   // Saves the new entry in the associative array
@@ -47,20 +48,26 @@ fes_new_cache_item(fes_grid* const grid, const size_t index) {
   return item;
 }
 
-void fes_delete_cache_item(void* ptr) {
-  fes_cache_item* item = (fes_cache_item*) ptr;
+void
+fes_delete_cache_item(void* ptr)
+{
+  fes_cache_item* item = (fes_cache_item*)ptr;
 
   free(item->value);
   free(item);
 }
 
-int fes_get_cache(fes_grid* const grid, const size_t i_lon, const size_t i_lat,
-                  const size_t n, fes_double_complex* value) {
+int
+fes_get_cache(fes_grid* const grid,
+              const size_t i_lon,
+              const size_t i_lat,
+              const size_t n,
+              fes_double_complex* value)
+{
   fes_cache_item* item;
 
-  size_t index =
-      grid->transpose ?
-          i_lon * grid->lat_dim + i_lat : i_lat * grid->lon_dim + i_lon;
+  size_t index = grid->transpose ? i_lon * grid->lat_dim + i_lat
+                                 : i_lat * grid->lon_dim + i_lon;
 
   // Search this index in the cache
   HASH_FIND_INT(grid->buffer->values, &index, item);
@@ -75,20 +82,24 @@ int fes_get_cache(fes_grid* const grid, const size_t i_lon, const size_t i_lat,
   return 0;
 }
 
-int fes_set_cache(fes_grid* const grid, const size_t i_lon, const size_t i_lat,
-                  const size_t n, const fes_double_complex* value) {
+int
+fes_set_cache(fes_grid* const grid,
+              const size_t i_lon,
+              const size_t i_lat,
+              const size_t n,
+              const fes_double_complex* value)
+{
   fes_cache_item *item, *tail;
 
-  size_t index =
-      grid->transpose ?
-          i_lon * grid->lat_dim + i_lat : i_lat * grid->lon_dim + i_lon;
+  size_t index = grid->transpose ? i_lon * grid->lat_dim + i_lat
+                                 : i_lat * grid->lon_dim + i_lon;
 
   // Is it a new cache entry ?
   HASH_FIND_INT(grid->buffer->values, &index, item);
   if (item == NULL) {
     // If the buffer is full, the last item stored is deleted.
     if (dlist_size(&grid->buffer->list) > grid->buffer->max_size) {
-      dlist_pop_back(&grid->buffer->list, (void**) &tail);
+      dlist_pop_back(&grid->buffer->list, (void**)&tail);
       HASH_DEL(grid->buffer->values, tail);
       fes_delete_cache_item(tail);
     }

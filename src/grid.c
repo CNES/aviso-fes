@@ -44,7 +44,9 @@
 
  Returns standardized longitude.
  */
-static double _normalize_longitude(const double base, const double lon) {
+static double
+_normalize_longitude(const double base, const double lon)
+{
   register double result = lon;
 
   while (result >= ((base + 360.0) - EPSILON))
@@ -66,7 +68,9 @@ static double _normalize_longitude(const double base, const double lon) {
 
  Returns whole part.
  */
-static double _nearest_integer(const double x) {
+static double
+_nearest_integer(const double x)
+{
   double integral;
 
   modf(x, &integral);
@@ -85,9 +89,10 @@ static double _nearest_integer(const double x) {
 
  Returns computed index.
  */
-static size_t _get_index(const double min, const double value,
-                         const double step) {
-  return (size_t) (_nearest_integer((value - min) / step));
+static size_t
+_get_index(const double min, const double value, const double step)
+{
+  return (size_t)(_nearest_integer((value - min) / step));
 }
 
 /*
@@ -101,7 +106,9 @@ static size_t _get_index(const double min, const double value,
 
  Returns computed value
  */
-double _get_value(const size_t idx, const double min, const double step) {
+double
+_get_value(const size_t idx, const double min, const double step)
+{
   return min + (step * idx);
 }
 
@@ -118,9 +125,13 @@ double _get_value(const size_t idx, const double min, const double step) {
 
  @return If an error occurs, the return value is 1, otherwise 0.
  */
-static int _read_grid_value(fes_handler* const fes, const size_t i_lon,
-                            const size_t i_lat, const size_t n,
-                            fes_double_complex* value) {
+static int
+_read_grid_value(fes_handler* const fes,
+                 const size_t i_lon,
+                 const size_t i_lat,
+                 const size_t n,
+                 fes_double_complex* value)
+{
   fes_float_complex z;
   fes_grid* const grid = &fes->grid;
 
@@ -136,24 +147,24 @@ static int _read_grid_value(fes_handler* const fes, const size_t i_lon,
 
     size_t count[2] = { 1, 1 };
     size_t start[2];
-    ptrdiff_t stride[2] = {1, 1};
+    ptrdiff_t stride[2] = { 1, 1 };
 
     start[0] = grid->transpose ? i_lon : i_lat;
     start[1] = grid->transpose ? i_lat : i_lon;
 
-    rc = nc_get_vars_float(grid->file[n].id, grid->file[n].amp_id, start, count,
-                           stride, &amp);
+    rc = nc_get_vars_float(
+      grid->file[n].id, grid->file[n].amp_id, start, count, stride, &amp);
     if (rc) {
-      set_fes_extended_error(fes, FES_NETCDF_ERROR, "%s (%s)", nc_strerror(rc),
-                             grid->file[n].amp);
+      set_fes_extended_error(
+        fes, FES_NETCDF_ERROR, "%s (%s)", nc_strerror(rc), grid->file[n].amp);
       return 1;
     }
 
-    rc = nc_get_vars_float(grid->file[n].id, grid->file[n].pha_id, start, count,
-                           stride, &pha);
+    rc = nc_get_vars_float(
+      grid->file[n].id, grid->file[n].pha_id, start, count, stride, &pha);
     if (rc) {
-      set_fes_extended_error(fes, FES_NETCDF_ERROR, "%s (%s)", nc_strerror(rc),
-                             grid->file[n].pha);
+      set_fes_extended_error(
+        fes, FES_NETCDF_ERROR, "%s (%s)", nc_strerror(rc), grid->file[n].pha);
       return 1;
     }
 
@@ -173,9 +184,8 @@ static int _read_grid_value(fes_handler* const fes, const size_t i_lon,
   }
   /* reading values from memory */
   else {
-    z = grid->transpose ?
-        grid->values[n][i_lon * grid->lat_dim + i_lat] :
-        grid->values[n][i_lat * grid->lon_dim + i_lon];
+    z = grid->transpose ? grid->values[n][i_lon * grid->lat_dim + i_lat]
+                        : grid->values[n][i_lat * grid->lon_dim + i_lon];
 
     if (z.re == grid->undef || z.im == grid->undef) {
       value->re = DV;
@@ -199,13 +209,14 @@ static int _read_grid_value(fes_handler* const fes, const size_t i_lon,
 
  Returns 0 on success otherwise an error status.
  */
-static int _get_nearest_points(fes_handler* const fes, const double lat,
-                               const double lon) {
+static int
+_get_nearest_points(fes_handler* const fes, const double lat, const double lon)
+{
   double n_lon = _normalize_longitude(fes->grid.lon_min, lon);
 
   /* Check if asked position is in the grid */
-  if ((!CONTAINS(fes->grid.lat_min, lat, fes->grid.lat_max))
-      || (!CONTAINS(fes->grid.lon_min, n_lon, fes->grid.lon_max))) {
+  if ((!CONTAINS(fes->grid.lat_min, lat, fes->grid.lat_max)) ||
+      (!CONTAINS(fes->grid.lon_min, n_lon, fes->grid.lon_max))) {
     fes->in_grid = 0;
   } else {
     size_t i_lat1 = _get_index(fes->grid.lat_min, lat, fes->grid.lat_step);
@@ -244,7 +255,7 @@ static int _get_nearest_points(fes_handler* const fes, const double lat,
     i_lon1 %= fes->grid.lon_dim;
     i_lon2 %= fes->grid.lon_dim;
 
-    for (n = 0; n < (size_t) (fes->grid.n_grids); ++n) {
+    for (n = 0; n < (size_t)(fes->grid.n_grids); ++n) {
       if (_read_grid_value(fes, i_lon1, i_lat1, n, &fes->sw[n]))
         return 1;
 
@@ -284,12 +295,20 @@ static int _get_nearest_points(fes_handler* const fes, const double lat,
 
  Returns 0 on success otherwise an error status.
  */
-int _open_grid(const char* const path, fes_handler* const fes,
-               fes_cdf_file* const nc, size_t* const lon_dim,
-               size_t* const lat_dim, double* const lon_min,
-               double* const lat_min, double* const lon_max,
-               double* const lat_max, double* const lon_step,
-               double* const lat_step, double* const undef) {
+int
+_open_grid(const char* const path,
+           fes_handler* const fes,
+           fes_cdf_file* const nc,
+           size_t* const lon_dim,
+           size_t* const lat_dim,
+           double* const lon_min,
+           double* const lat_min,
+           double* const lon_max,
+           double* const lat_max,
+           double* const lon_step,
+           double* const lat_step,
+           double* const undef)
+{
   int rc;
   int x_id;
   int y_id;
@@ -306,66 +325,66 @@ int _open_grid(const char* const path, fes_handler* const fes,
   /* Open the NetCDF file */
   rc = nc_open(path, NC_NOWRITE, &nc->id);
   if (rc) {
-    set_fes_extended_error(fes, FES_NETCDF_ERROR, "%s : %s", nc_strerror(rc),
-                           path);
+    set_fes_extended_error(
+      fes, FES_NETCDF_ERROR, "%s : %s", nc_strerror(rc), path);
     return 1;
   }
 
   /* Reading latitude, longitude samples */
   rc = nc_inq_dimid(nc->id, nc->lon, &lon_id);
   if (rc) {
-    set_fes_extended_error(fes, FES_NETCDF_ERROR, "%s (%s): %s",
-                           nc_strerror(rc), nc->lon, path);
+    set_fes_extended_error(
+      fes, FES_NETCDF_ERROR, "%s (%s): %s", nc_strerror(rc), nc->lon, path);
     return 1;
   }
 
   rc = nc_inq_dimid(nc->id, nc->lat, &lat_id);
   if (rc) {
-    set_fes_extended_error(fes, FES_NETCDF_ERROR, "%s (%s): %s",
-                           nc_strerror(rc), nc->lat, path);
+    set_fes_extended_error(
+      fes, FES_NETCDF_ERROR, "%s (%s): %s", nc_strerror(rc), nc->lat, path);
     return 1;
   }
 
   rc = nc_inq_dimlen(nc->id, lon_id, lon_dim);
   if (rc) {
-    set_fes_extended_error(fes, FES_NETCDF_ERROR, "%s (%s): %s",
-                           nc_strerror(rc), nc->lon, path);
+    set_fes_extended_error(
+      fes, FES_NETCDF_ERROR, "%s (%s): %s", nc_strerror(rc), nc->lon, path);
     return 1;
   }
 
   rc = nc_inq_dimlen(nc->id, lat_id, lat_dim);
   if (rc) {
-    set_fes_extended_error(fes, FES_NETCDF_ERROR, "%s (%s): %s",
-                           nc_strerror(rc), nc->lat, path);
+    set_fes_extended_error(
+      fes, FES_NETCDF_ERROR, "%s (%s): %s", nc_strerror(rc), nc->lat, path);
     return 1;
   }
 
   /* Read the coordinate variable data. */
   rc = nc_inq_varid(nc->id, nc->lon, &x_id);
   if (rc) {
-    set_fes_extended_error(fes, FES_NETCDF_ERROR, "%s (%s): %s",
-                           nc_strerror(rc), nc->lon, path);
+    set_fes_extended_error(
+      fes, FES_NETCDF_ERROR, "%s (%s): %s", nc_strerror(rc), nc->lon, path);
     return 1;
   }
 
   rc = nc_inq_varid(nc->id, nc->lat, &y_id);
   if (rc) {
-    set_fes_extended_error(fes, FES_NETCDF_ERROR, "%s (%s): %s",
-                           nc_strerror(rc), nc->lat, path);
+    set_fes_extended_error(
+      fes, FES_NETCDF_ERROR, "%s (%s): %s", nc_strerror(rc), nc->lat, path);
     return 1;
   }
 
   rc = nc_get_vara_float(nc->id, x_id, &start, &count, &x[0]);
   if (rc) {
-    set_fes_extended_error(fes, FES_NETCDF_ERROR, "%s (%s): %s",
-                           nc_strerror(rc), nc->lon, path);
+    set_fes_extended_error(
+      fes, FES_NETCDF_ERROR, "%s (%s): %s", nc_strerror(rc), nc->lon, path);
     return 1;
   }
 
   rc = nc_get_vara_float(nc->id, y_id, &start, &count, &y[0]);
   if (rc) {
-    set_fes_extended_error(fes, FES_NETCDF_ERROR, "%s (%s): %s",
-                           nc_strerror(rc), nc->lat, path);
+    set_fes_extended_error(
+      fes, FES_NETCDF_ERROR, "%s (%s): %s", nc_strerror(rc), nc->lat, path);
     return 1;
   }
 
@@ -390,23 +409,23 @@ int _open_grid(const char* const path, fes_handler* const fes,
   /* Get the varids of the amplitude and phase NetCDF variables. */
   rc = nc_inq_varid(nc->id, nc->amp, &nc->amp_id);
   if (rc) {
-    set_fes_extended_error(fes, FES_NETCDF_ERROR, "%s (%s): %s",
-                           nc_strerror(rc), nc->amp, path);
+    set_fes_extended_error(
+      fes, FES_NETCDF_ERROR, "%s (%s): %s", nc_strerror(rc), nc->amp, path);
     return 1;
   }
 
   rc = nc_inq_varid(nc->id, nc->pha, &nc->pha_id);
   if (rc) {
-    set_fes_extended_error(fes, FES_NETCDF_ERROR, "%s (%s): %s",
-                           nc_strerror(rc), nc->pha, path);
+    set_fes_extended_error(
+      fes, FES_NETCDF_ERROR, "%s (%s): %s", nc_strerror(rc), nc->pha, path);
     return 1;
   }
 
   /* Get variable dimension IDs */
   rc = nc_inq_vardimid(nc->id, nc->pha_id, var_id);
   if (rc) {
-    set_fes_extended_error(fes, FES_NETCDF_ERROR, "%s (%s): %s",
-                           nc_strerror(rc), nc->pha, path);
+    set_fes_extended_error(
+      fes, FES_NETCDF_ERROR, "%s (%s): %s", nc_strerror(rc), nc->pha, path);
     return 1;
   }
 
@@ -416,37 +435,45 @@ int _open_grid(const char* const path, fes_handler* const fes,
   /* Get variable dimension IDs */
   rc = nc_inq_vardimid(nc->id, nc->amp_id, var_id);
   if (rc) {
-    set_fes_extended_error(fes, FES_NETCDF_ERROR, "%s (%s): %s",
-                           nc_strerror(rc), nc->pha, path);
+    set_fes_extended_error(
+      fes, FES_NETCDF_ERROR, "%s (%s): %s", nc_strerror(rc), nc->pha, path);
     return 1;
   }
 
   /* Check dimension for phase variable */
   if (fes->grid.transpose == 0 && var_id[0] == lon_id && var_id[1] == lat_id) {
     set_fes_extended_error(
-        fes, FES_NETCDF_ERROR,
-        "found %s(dim #%d, dim %d) expected %s(dim #%d, dim %d) : %s", nc->pha,
-        var_id[0], var_id[1], nc->pha, lat_id, lon_id, path);
+      fes,
+      FES_NETCDF_ERROR,
+      "found %s(dim #%d, dim %d) expected %s(dim #%d, dim %d) : %s",
+      nc->pha,
+      var_id[0],
+      var_id[1],
+      nc->pha,
+      lat_id,
+      lon_id,
+      path);
     return 1;
   }
 
   /* Reading default value */
   rc = nc_get_att_float(nc->id, nc->amp_id, FILL_VALUES, &undef1);
   if (rc) {
-    set_fes_extended_error(fes, FES_NETCDF_ERROR, "%s (%s): %s",
-                           nc_strerror(rc), nc->amp, path);
+    set_fes_extended_error(
+      fes, FES_NETCDF_ERROR, "%s (%s): %s", nc_strerror(rc), nc->amp, path);
     return 1;
   }
 
   rc = nc_get_att_float(nc->id, nc->pha_id, FILL_VALUES, &undef2);
   if (rc) {
-    set_fes_extended_error(fes, FES_NETCDF_ERROR, "%s (%s): %s",
-                           nc_strerror(rc), nc->pha, path);
+    set_fes_extended_error(
+      fes, FES_NETCDF_ERROR, "%s (%s): %s", nc_strerror(rc), nc->pha, path);
     return 1;
   }
 
   if (undef1 != undef2) {
-    set_fes_extended_error(fes, FES_NETCDF_ERROR,
+    set_fes_extended_error(fes,
+                           FES_NETCDF_ERROR,
                            "The definition of _fillValue is not constant : %s",
                            path);
     return 1;
@@ -459,14 +486,15 @@ int _open_grid(const char* const path, fes_handler* const fes,
 
 /*
  */
-int interp(fes_handler* fes, const double lat, const double lon) {
+int
+interp(fes_handler* fes, const double lat, const double lon)
+{
   int number;
   size_t n;
   fes_double_complex c;
 
-  if (!CONTAINS(
-      fes->west_lon, lon,
-      fes->east_lon) || !CONTAINS (fes->south_lat, lat, fes->north_lat)) {
+  if (!CONTAINS(fes->west_lon, lon, fes->east_lon) ||
+      !CONTAINS(fes->south_lat, lat, fes->north_lat)) {
     if (_get_nearest_points(fes, lat, lon))
       return 1;
   }
@@ -479,34 +507,38 @@ int interp(fes_handler* fes, const double lat, const double lon) {
 
   /* Interpolation */
   for (n = 0; n < fes->grid.n_grids; ++n) {
-    if (fes->sw[n].re == DV && fes->se[n].re == DV && fes->nw[n].re == DV
-        && fes->ne[n].re == DV)
+    if (fes->sw[n].re == DV && fes->se[n].re == DV && fes->nw[n].re == DV &&
+        fes->ne[n].re == DV)
       goto no_data;
 
-    number = bilinear_interp(fes->west_lon, /* X1 */
-                             fes->east_lon, /* X2 */
+    number = bilinear_interp(fes->west_lon,  /* X1 */
+                             fes->east_lon,  /* X2 */
                              fes->south_lat, /* Y1 */
                              fes->north_lat, /* Y2 */
-                             fes->sw[n].re, /* X1, Y1 */
-                             fes->se[n].re, /* X2, Y1 */
-                             fes->nw[n].re, /* X1, Y2 */
-                             fes->ne[n].re, /* X2, Y2 */
-                             lon, lat, &c.re);
+                             fes->sw[n].re,  /* X1, Y1 */
+                             fes->se[n].re,  /* X2, Y1 */
+                             fes->nw[n].re,  /* X1, Y2 */
+                             fes->ne[n].re,  /* X2, Y2 */
+                             lon,
+                             lat,
+                             &c.re);
 
     if (c.re == DV)
       goto no_data;
 
     fes->min_number = MIN(fes->min_number, number);
 
-    number = bilinear_interp(fes->west_lon, /* X1 */
-                             fes->east_lon, /* X2 */
+    number = bilinear_interp(fes->west_lon,  /* X1 */
+                             fes->east_lon,  /* X2 */
                              fes->south_lat, /* Y1 */
                              fes->north_lat, /* Y2 */
-                             fes->sw[n].im, /* X1, Y1 */
-                             fes->se[n].im, /* X2, Y1 */
-                             fes->nw[n].im, /* X1, Y2 */
-                             fes->ne[n].im, /* X2, Y2 */
-                             lon, lat, &c.im);
+                             fes->sw[n].im,  /* X1, Y1 */
+                             fes->se[n].im,  /* X2, Y1 */
+                             fes->nw[n].im,  /* X1, Y2 */
+                             fes->ne[n].im,  /* X2, Y2 */
+                             lon,
+                             lat,
+                             &c.im);
 
     if (c.im == DV)
       goto no_data;
@@ -518,15 +550,20 @@ int interp(fes_handler* fes, const double lat, const double lon) {
   fes->is_data = 1;
   return 0;
 
-  no_data: fes->is_data = 0;
+no_data:
+  fes->is_data = 0;
   fes->min_number = 0;
   return 0;
 }
 
 /*
  */
-int load_grid(const char* const path, const unsigned int n,
-              fes_cdf_file* const nc, fes_handler* const fes) {
+int
+load_grid(const char* const path,
+          const unsigned int n,
+          fes_cdf_file* const nc,
+          fes_handler* const fes)
+{
   int rc;
   size_t lon_dim;
   size_t lat_dim;
@@ -538,8 +575,18 @@ int load_grid(const char* const path, const unsigned int n,
   double lat_step;
   double undef;
 
-  if (_open_grid(path, fes, nc, &lon_dim, &lat_dim, &lon_min, &lat_min,
-                 &lon_max, &lat_max, &lon_step, &lat_step, &undef))
+  if (_open_grid(path,
+                 fes,
+                 nc,
+                 &lon_dim,
+                 &lat_dim,
+                 &lon_min,
+                 &lat_min,
+                 &lon_max,
+                 &lat_max,
+                 &lon_step,
+                 &lat_step,
+                 &undef))
     return 1;
 
   /* First call */
@@ -553,13 +600,13 @@ int load_grid(const char* const path, const unsigned int n,
     fes->grid.lat_dim = lat_dim;
     fes->grid.lon_dim = lon_dim;
     fes->grid.undef = undef;
-  } else if (fes->grid.lat_min != lat_min || fes->grid.lon_min != lon_min
-      || fes->grid.lat_max != lat_max || fes->grid.lon_max != lon_max
-      || fes->grid.lat_step != lat_step || fes->grid.lon_step != lon_step
-      || fes->grid.lat_dim != lat_dim || fes->grid.lon_dim != lon_dim
-      || fes->grid.undef != undef) {
-    set_fes_extended_error(fes, FES_IO_ERROR,
-                           "The definition of grids isn't constant : %s", path);
+  } else if (fes->grid.lat_min != lat_min || fes->grid.lon_min != lon_min ||
+             fes->grid.lat_max != lat_max || fes->grid.lon_max != lon_max ||
+             fes->grid.lat_step != lat_step || fes->grid.lon_step != lon_step ||
+             fes->grid.lat_dim != lat_dim || fes->grid.lon_dim != lon_dim ||
+             fes->grid.undef != undef) {
+    set_fes_extended_error(
+      fes, FES_IO_ERROR, "The definition of grids isn't constant : %s", path);
   }
 
   /* Loading grid into memory */
@@ -570,14 +617,14 @@ int load_grid(const char* const path, const unsigned int n,
     float* pha;
 
     /* Allocate the current grid */
-    if ((fes->grid.values[n] = (fes_float_complex*) calloc(
-        size, sizeof(fes_float_complex))) == NULL) {
+    if ((fes->grid.values[n] = (fes_float_complex*)calloc(
+           size, sizeof(fes_float_complex))) == NULL) {
       set_fes_error(fes, FES_NO_MEMORY);
       return 1;
     }
 
-    amp = (float*) calloc(size, sizeof(float));
-    pha = (float*) calloc(size, sizeof(float));
+    amp = (float*)calloc(size, sizeof(float));
+    pha = (float*)calloc(size, sizeof(float));
     if (amp == NULL || pha == NULL) {
       free(amp);
       free(pha);
@@ -588,13 +635,17 @@ int load_grid(const char* const path, const unsigned int n,
     /* reading all values */
     rc = nc_get_var_float(nc->id, nc->amp_id, amp);
     if (rc) {
-      set_fes_extended_error(fes, FES_NETCDF_ERROR, "%s (%s) : %s",
-                             nc_strerror(rc), nc->amp, path);
+      set_fes_extended_error(
+        fes, FES_NETCDF_ERROR, "%s (%s) : %s", nc_strerror(rc), nc->amp, path);
     } else {
       rc = nc_get_var_float(nc->id, nc->pha_id, pha);
       if (rc)
-        set_fes_extended_error(fes, FES_NETCDF_ERROR, "%s (%s) : %s",
-                               nc_strerror(rc), nc->pha, path);
+        set_fes_extended_error(fes,
+                               FES_NETCDF_ERROR,
+                               "%s (%s) : %s",
+                               nc_strerror(rc),
+                               nc->pha,
+                               path);
     }
 
     /* if an error was caught */
@@ -606,11 +657,11 @@ int load_grid(const char* const path, const unsigned int n,
 
     for (ix = 0; ix < size; ++ix) {
       if (amp[ix] != undef && pha[ix] != undef) {
-        fes->grid.values[n][ix].re = amp[ix] * (float) (cos(pha[ix] * RAD));
-        fes->grid.values[n][ix].im = amp[ix] * (float) (sin(pha[ix] * RAD));
+        fes->grid.values[n][ix].re = amp[ix] * (float)(cos(pha[ix] * RAD));
+        fes->grid.values[n][ix].im = amp[ix] * (float)(sin(pha[ix] * RAD));
       } else {
-        fes->grid.values[n][ix].re = (float) (undef);
-        fes->grid.values[n][ix].im = (float) (undef);
+        fes->grid.values[n][ix].re = (float)(undef);
+        fes->grid.values[n][ix].im = (float)(undef);
       }
     }
 

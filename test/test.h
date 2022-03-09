@@ -19,25 +19,25 @@
 
 #define CHECK_INT(a, b) ((a) != (b))
 #define CHECK_FLOAT(a, b) (EQUALS((a), (b)) != 1)
-#define SUMMARIZE_ERR                                    \
-  do {                                                   \
-    if (err) {                                           \
-      printf("%d failures at line %d\n", err, __LINE__); \
-      total_err += err;                                  \
-      err = 0;                                           \
-    }                                                    \
+#define SUMMARIZE_ERR                                                          \
+  do {                                                                         \
+    if (err) {                                                                 \
+      printf("%d failures at line %d\n", err, __LINE__);                       \
+      total_err += err;                                                        \
+      err = 0;                                                                 \
+    }                                                                          \
   } while (0)
-#define FINAL_RESULTS                              \
-  do {                                             \
-    if (total_err) {                               \
-      printf("%d errors detected !\n", total_err); \
-      return 2;                                    \
-    }                                              \
-    printf("*** Tests successful!\n");             \
-    return 0;                                      \
+#define FINAL_RESULTS                                                          \
+  do {                                                                         \
+    if (total_err) {                                                           \
+      printf("%d errors detected !\n", total_err);                             \
+      return 2;                                                                \
+    }                                                                          \
+    printf("*** Tests successful!\n");                                         \
+    return 0;                                                                  \
   } while (0)
-#define DIE                           \
-  do {                                \
-    fprintf(stderr, "FATAL ERROR !"); \
-    return 3;                         \
+#define DIE                                                                    \
+  do {                                                                         \
+    fprintf(stderr, "FATAL ERROR !");                                          \
+    return 3;                                                                  \
   } while (0)

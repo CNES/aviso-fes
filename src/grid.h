@@ -46,5 +46,7 @@ interp(fes_handler* fes, const double lat, const double lon);
  @return 0 on success or 1 on failure.
  */
 int
-load_grid(const char* const path, const unsigned int n, fes_cdf_file* const nc,
+load_grid(const char* const path,
+          const unsigned int n,
+          fes_cdf_file* const nc,
           fes_handler* const fes);

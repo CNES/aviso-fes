@@ -22,19 +22,23 @@
 /// days prior to 1970-01-01.
 ///
 /// http://howardhinnant.github.io/date_algorithms.html
-static inline int64_t days_from_civil(int y, unsigned m, unsigned d) {
+static inline int64_t
+days_from_civil(int y, unsigned m, unsigned d)
+{
   y -= static_cast<int>(m <= 2);
   const auto era = (y >= 0 ? y : y - 399) / 400;
-  const auto yoe = static_cast<unsigned>(y - era * 400);            // [0, 399]
-  const auto doy = (153 * (m + (m > 2 ? -3 : 9)) + 2) / 5 + d - 1;  // [0, 365]
-  const auto doe = yoe * 365 + yoe / 4 - yoe / 100 + doy;  // [0, 146096]
+  const auto yoe = static_cast<unsigned>(y - era * 400);           // [0, 399]
+  const auto doy = (153 * (m + (m > 2 ? -3 : 9)) + 2) / 5 + d - 1; // [0, 365]
+  const auto doe = yoe * 365 + yoe / 4 - yoe / 100 + doy; // [0, 146096]
   return era * 146097LL + static_cast<int64_t>(doe) - 719468LL;
 }
 
-std::chrono::system_clock::time_point timestamp(pybind11::handle datetime) {
+std::chrono::system_clock::time_point
+timestamp(pybind11::handle datetime)
+{
   if (!datetime) {
     throw std::invalid_argument(
-        "a datetime.datetime is required (got type null)");
+      "a datetime.datetime is required (got type null)");
   }
 
   if (!PyDateTimeAPI) {
@@ -44,7 +48,7 @@ std::chrono::system_clock::time_point timestamp(pybind11::handle datetime) {
   if (PyDateTime_Check(datetime.ptr())) {
     if (reinterpret_cast<_PyDateTime_BaseTZInfo*>(datetime.ptr())->hastzinfo) {
       throw std::invalid_argument(
-          "only the naive datetime object can be converted to timestamp");
+        "only the naive datetime object can be converted to timestamp");
     }
 
     auto sec = days_from_civil(PyDateTime_GET_YEAR(datetime.ptr()),
@@ -58,27 +62,30 @@ std::chrono::system_clock::time_point timestamp(pybind11::handle datetime) {
 
     return std::chrono::system_clock::from_time_t(sec) +
            std::chrono::microseconds(
-               PyDateTime_DATE_GET_MICROSECOND(datetime.ptr()));
+             PyDateTime_DATE_GET_MICROSECOND(datetime.ptr()));
   }
 
   throw std::invalid_argument(
-      "a datetime.datetime is required (got type " +
-      std::string(pybind11::str(datetime.get_type().attr("__name__"))) + ")");
+    "a datetime.datetime is required (got type " +
+    std::string(pybind11::str(datetime.get_type().attr("__name__"))) + ")");
 }
 
-void Handler::check(const int status) const {
+void
+Handler::check(const int status) const
+{
   if (status != FES_SUCCESS) {
     throw std::runtime_error(fes_error(fes_));
   }
 }
 
-std::vector<std::chrono::system_clock::time_point> Handler::cast_datetime(
-    pybind11::array& array) const {
+std::vector<std::chrono::system_clock::time_point>
+Handler::cast_datetime(pybind11::array& array) const
+{
   auto result = std::vector<std::chrono::system_clock::time_point>();
   auto size = array.size();
   result.reserve(size);
   auto type_num =
-      pybind11::detail::array_descriptor_proxy(array.dtype().ptr())->type_num;
+    pybind11::detail::array_descriptor_proxy(array.dtype().ptr())->type_num;
   if (type_num == pybind11::detail::npy_api::NPY_OBJECT_) {
     for (auto& item : array) {
       result.emplace_back(timestamp(item));
@@ -87,24 +94,26 @@ std::vector<std::chrono::system_clock::time_point> Handler::cast_datetime(
     auto dtype = std::string(pybind11::str(array.dtype()));
     if (dtype != "datetime64[us]") {
       throw std::invalid_argument(
-          "date has wrong datetime unit, expected datetime64[us], "
-          "got " +
-          dtype);
+        "date has wrong datetime unit, expected datetime64[us], "
+        "got " +
+        dtype);
     }
     pybind11::array_t<int64_t> data = array;
     auto _data = data.unchecked<1>();
     for (pybind11::ssize_t ix = 0; ix < size; ++ix) {
       auto epoch = _data[ix];
       result.emplace_back(
-          std::chrono::system_clock::from_time_t(epoch / 1'000'000) +
-          std::chrono::microseconds(epoch % 1'000'000));
+        std::chrono::system_clock::from_time_t(epoch / 1'000'000) +
+        std::chrono::microseconds(epoch % 1'000'000));
     }
   }
   return result;
 }
 
-Handler::Handler(const std::string& tide, const std::string& mode,
-                 const std::string& path) {
+Handler::Handler(const std::string& tide,
+                 const std::string& mode,
+                 const std::string& path)
+{
   fes_enum_access access_mode;
   fes_enum_tide_type tide_type;
 
@@ -133,28 +142,33 @@ Handler::Handler(const std::string& tide, const std::string& mode,
   check(status);
 }
 
-std::tuple<double, double, int> Handler::calculate(
-    const double lon, const double lat,
-    const std::chrono::system_clock::time_point& date) const {
+std::tuple<double, double, int>
+Handler::calculate(const double lon,
+                   const double lat,
+                   const std::chrono::system_clock::time_point& date) const
+{
   double h, h_long_period;
   auto epoch = std::chrono::duration_cast<std::chrono::microseconds>(
-                   date.time_since_epoch())
-                   .count();
-  auto status = fes_core(fes_, lat, lon, ((epoch * 1e-6) / 86400.0) + 7305, &h,
-                         &h_long_period);
+                 date.time_since_epoch())
+                 .count();
+  auto status = fes_core(
+    fes_, lat, lon, ((epoch * 1e-6) / 86400.0) + 7305, &h, &h_long_period);
   if (status == 1) {
     if (fes_errno(fes_) == FES_NO_DATA) {
       return std::make_tuple(std::numeric_limits<double>::quiet_NaN(),
-                             std::numeric_limits<double>::quiet_NaN(), 0);
+                             std::numeric_limits<double>::quiet_NaN(),
+                             0);
     }
     throw std::runtime_error(fes_error(fes_));
   }
   return std::make_tuple(h, h_long_period, fes_min_number(fes_));
 }
 
-pybind11::tuple Handler::calculate(pybind11::array_t<double>& lon,
-                                   pybind11::array_t<double>& lat,
-                                   pybind11::array& date) {
+pybind11::tuple
+Handler::calculate(pybind11::array_t<double>& lon,
+                   pybind11::array_t<double>& lat,
+                   pybind11::array& date)
+{
   std::unique_lock<std::mutex> lock(mutex_);
   // arrays must one-dimensionnal
   if (lon.ndim() != 1) {
@@ -172,31 +186,31 @@ pybind11::tuple Handler::calculate(pybind11::array_t<double>& lon,
   // arrays must have identical dimensions
   if (size != lat.size()) {
     throw std::invalid_argument(
-        "lon, lat couldn't be broadcast together with shape (" +
-        std::to_string(size) + ",) (" + std::to_string(lat.size()) + ",)");
+      "lon, lat couldn't be broadcast together with shape (" +
+      std::to_string(size) + ",) (" + std::to_string(lat.size()) + ",)");
   }
   if (size != date.size()) {
     throw std::invalid_argument(
-        "lon, date couldn't be broadcast together with shape (" +
-        std::to_string(size) + ",) (" + std::to_string(date.size()) + ",)");
+      "lon, date couldn't be broadcast together with shape (" +
+      std::to_string(size) + ",) (" + std::to_string(date.size()) + ",)");
   }
 
   // Cast python date to C++ objects
   auto _date = cast_datetime(date);
   if (_date.size() == 0) {
     throw std::invalid_argument(
-        "Incompatible arguments:\n"
-        " 1. calculate(self, numpy.ndarray[m, 1], numpy.ndarray[m, 1], "
-        "numpy.ndarray[datetime.datetime[m, 1]])\n"
-        " 2. calculate(self, numpy.ndarray[m, 1], numpy.ndarray[m, 1], "
-        "numpy.ndarray[datetime64[us][m, 1]])");
+      "Incompatible arguments:\n"
+      " 1. calculate(self, numpy.ndarray[m, 1], numpy.ndarray[m, 1], "
+      "numpy.ndarray[datetime.datetime[m, 1]])\n"
+      " 2. calculate(self, numpy.ndarray[m, 1], numpy.ndarray[m, 1], "
+      "numpy.ndarray[datetime64[us][m, 1]])");
   }
 
   // Allocates results
-  pybind11::array_t<double> h(pybind11::array::ShapeContainer{size});
+  pybind11::array_t<double> h(pybind11::array::ShapeContainer{ size });
   pybind11::array_t<double> h_long_period(
-      pybind11::array::ShapeContainer{size});
-  pybind11::array_t<double> samples(pybind11::array::ShapeContainer{size});
+    pybind11::array::ShapeContainer{ size });
+  pybind11::array_t<double> samples(pybind11::array::ShapeContainer{ size });
 
   auto _lon = lon.unchecked<1>();
   auto _lat = lat.unchecked<1>();
@@ -208,7 +222,7 @@ pybind11::tuple Handler::calculate(pybind11::array_t<double>& lon,
 
     for (pybind11::ssize_t ix = 0; ix < size; ++ix) {
       std::tie(_h(ix), _h_long_period(ix), _samples(ix)) =
-          calculate(_lon[ix], _lat[ix], _date[ix]);
+        calculate(_lon[ix], _lat[ix], _date[ix]);
     }
   }
   return pybind11::make_tuple(h, h_long_period, samples);

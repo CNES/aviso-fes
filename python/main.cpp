@@ -18,17 +18,19 @@
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(pyfes, m) {
+PYBIND11_MODULE(pyfes, m)
+{
   py::class_<Handler>(m, "Handler")
-      .def(py::init<const std::string&, const std::string&,
-                    const std::string&>())
-      .def_static("dump_template", &Handler::dump_template, py::arg("path"))
-      .def("set_buffer_size", &Handler::set_buffer_size, py::arg("size"))
-      .def("calculate",
-           [](Handler& self, py::array_t<double>& lon, py::array_t<double>& lat,
-              py::array& date) -> py::tuple {
-             return self.calculate(lon, lat, date);
-           });
+    .def(py::init<const std::string&, const std::string&, const std::string&>())
+    .def_static("dump_template", &Handler::dump_template, py::arg("path"))
+    .def("set_buffer_size", &Handler::set_buffer_size, py::arg("size"))
+    .def("calculate",
+         [](Handler& self,
+            py::array_t<double>& lon,
+            py::array_t<double>& lat,
+            py::array& date) -> py::tuple {
+           return self.calculate(lon, lat, date);
+         });
 
   m.attr("__version__") = "2.9.3";
 }

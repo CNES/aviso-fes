@@ -20,7 +20,9 @@
 #include "prediction.c"
 #include "test.h"
 
-static int test_admittance(const double r, const int ix, fes_wave* w) {
+static int
+test_admittance(const double r, const int ix, fes_wave* w)
+{
   int rc;
 
   admittance(w);
@@ -40,7 +42,9 @@ static int test_admittance(const double r, const int ix, fes_wave* w) {
   return rc;
 }
 
-int main(void) {
+int
+main(void)
+{
   int total_err = 0;
   int err;
   int i;
@@ -1182,8 +1186,8 @@ int main(void) {
   err = test_admittance(0.2387, _2N2, w);
   SUMMARIZE_ERR;
 
-  err = test_admittance(0.094151295, EPS2,
-                        w); /*cas ou 2N2 calculee par admittance auparavant */
+  err = test_admittance(
+    0.094151295, EPS2, w); /*cas ou 2N2 calculee par admittance auparavant */
   SUMMARIZE_ERR;
 
   w[_2N2].admittance = 0; /* on force 2N2 a etre calcule en dynamique */

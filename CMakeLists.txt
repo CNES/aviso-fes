@@ -171,7 +171,7 @@ import sysconfig
 import sys
 sys.stdout.write(os.path.dirname(sysconfig.get_config_h_filename()))
 ]=] OUTPUT_VARIABLE PYTHON_INCLUDE_DIR)
-  execute_process ( 
+  execute_process (
    COMMAND ${PYTHON_EXECUTABLE} -c [=[import site
 import sys
 sys.stdout.write(site.getsitepackages()[-1])

@@ -54,8 +54,11 @@ fes_delete_cache_item(void* ptr);
  @return 1 if the value was read from the cache otherwise 0.
  */
 int
-fes_get_cache(fes_grid* const grid, const size_t i_lon, const size_t i_lat,
-              const size_t n, fes_double_complex* value);
+fes_get_cache(fes_grid* const grid,
+              const size_t i_lon,
+              const size_t i_lat,
+              const size_t n,
+              fes_double_complex* value);
 
 /**
  @brief Store a value read in the buffer
@@ -69,5 +72,8 @@ fes_get_cache(fes_grid* const grid, const size_t i_lon, const size_t i_lat,
  @return 1 if an error was thrown otherwise 0
  */
 int
-fes_set_cache(fes_grid* const grid, const size_t i_lon, const size_t i_lat,
-              const size_t n, const fes_double_complex* value);
+fes_set_cache(fes_grid* const grid,
+              const size_t i_lon,
+              const size_t i_lat,
+              const size_t n,
+              const fes_double_complex* value);

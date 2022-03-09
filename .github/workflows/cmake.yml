@@ -16,7 +16,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    
+
     - name: Install prerequiste
       run: sudo apt install cmake libnetcdf-dev uthash-dev python3 python3-dev -q -y
 
@@ -32,4 +32,3 @@ jobs:
     - name: Test
       working-directory: ${{github.workspace}}/build
       run: ctest -C ${{env.BUILD_TYPE}}
-      

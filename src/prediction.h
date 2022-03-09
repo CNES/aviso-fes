@@ -24,8 +24,8 @@
 #include "fes_int.h"
 
 /**
- @brief Compute waves by admittance from these 7 major ones : O1, Q1, K1, 2n2, N2,
- M2, K2.
+ @brief Compute waves by admittance from these 7 major ones : O1, Q1, K1, 2n2,
+ N2, M2, K2.
 
  @param waves Pointer to the array which contains waves definition.
  */
@@ -88,8 +88,10 @@ set_w2nd(const fes_wave* const w, float w2nd[][N_COEFS]);
  @param tlp Computed long-period tide, in centimeters.
  */
 void
-lpe_minus_n_waves(const float w2nd[][N_COEFS], const double ts,
-                  const double lat, double* tlp);
+lpe_minus_n_waves(const float w2nd[][N_COEFS],
+                  const double ts,
+                  const double lat,
+                  double* tlp);
 
 /**
  @brief Set Waves properties.
