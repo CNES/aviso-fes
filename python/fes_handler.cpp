@@ -74,7 +74,7 @@ void
 Handler::check(const int status) const
 {
   if (status != FES_SUCCESS) {
-    throw std::runtime_error(fes_error(fes_));
+    throw std::runtime_error(fes_error(fes_.get()));
   }
 }
 
@@ -135,10 +135,13 @@ Handler::Handler(const std::string& tide,
                                 "'");
   }
 
-  auto status = fes_new(&fes_, tide_type, access_mode, path.c_str());
-  if (fes_ == nullptr) {
+  FES fes;
+
+  auto status = fes_new(&fes, tide_type, access_mode, path.c_str());
+  if (fes == nullptr) {
     throw std::runtime_error("not enough memory to allocate the FES handler");
   }
+  fes_ = std::shared_ptr<void>(fes, [](FES fes) { fes_delete(fes); });
   check(status);
 }
 
@@ -151,17 +154,21 @@ Handler::calculate(const double lon,
   auto epoch = std::chrono::duration_cast<std::chrono::microseconds>(
                  date.time_since_epoch())
                  .count();
-  auto status = fes_core(
-    fes_, lat, lon, ((epoch * 1e-6) / 86400.0) + 7305, &h, &h_long_period);
+  auto status = fes_core(fes_.get(),
+                         lat,
+                         lon,
+                         ((epoch * 1e-6) / 86400.0) + 7305,
+                         &h,
+                         &h_long_period);
   if (status == 1) {
-    if (fes_errno(fes_) == FES_NO_DATA) {
+    if (fes_errno(fes_.get()) == FES_NO_DATA) {
       return std::make_tuple(std::numeric_limits<double>::quiet_NaN(),
                              std::numeric_limits<double>::quiet_NaN(),
                              0);
     }
-    throw std::runtime_error(fes_error(fes_));
+    throw std::runtime_error(fes_error(fes_.get()));
   }
-  return std::make_tuple(h, h_long_period, fes_min_number(fes_));
+  return std::make_tuple(h, h_long_period, fes_min_number(fes_.get()));
 }
 
 pybind11::tuple
@@ -169,7 +176,7 @@ Handler::calculate(pybind11::array_t<double>& lon,
                    pybind11::array_t<double>& lat,
                    pybind11::array& date)
 {
-  std::unique_lock<std::mutex> lock(mutex_);
+  // std::unique_lock<std::mutex> lock(mutex_);
   // arrays must one-dimensionnal
   if (lon.ndim() != 1) {
     throw std::invalid_argument("lon must be a one-dimensional array");

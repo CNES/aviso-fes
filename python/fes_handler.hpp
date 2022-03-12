@@ -15,7 +15,6 @@
 #pragma once
 #include "fes.h"
 #include <chrono>
-#include <mutex>
 #include <pybind11/chrono.h>
 #include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
@@ -27,7 +26,7 @@ class Handler
 {
 private:
   std::mutex mutex_{};
-  FES fes_{ nullptr };
+  std::shared_ptr<void> fes_{ nullptr };
 
   void check(int status) const;
 
@@ -44,12 +43,7 @@ public:
           const std::string& mode,
           const std::string& path);
 
-  virtual ~Handler()
-  {
-    if (fes_ != nullptr) {
-      fes_delete(fes_);
-    }
-  }
+  virtual ~Handler() = default;
 
   Handler(const Handler&) = delete;
   Handler(Handler&&) = delete;
@@ -68,8 +62,7 @@ public:
 
   void set_buffer_size(size_t size)
   {
-    std::unique_lock<std::mutex> lock(mutex_);
-    check(fes_set_buffer_size(fes_, size));
+    check(fes_set_buffer_size(fes_.get(), size));
   }
 
   pybind11::tuple calculate(pybind11::array_t<double>& lon,
