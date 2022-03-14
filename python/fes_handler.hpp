@@ -15,6 +15,7 @@
 #pragma once
 #include "fes.h"
 #include <chrono>
+#include <mutex>
 #include <pybind11/chrono.h>
 #include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
@@ -62,6 +63,7 @@ public:
 
   void set_buffer_size(size_t size)
   {
+    std::unique_lock<std::mutex> lock(mutex_);
     check(fes_set_buffer_size(fes_.get(), size));
   }
 
