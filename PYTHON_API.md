@@ -16,6 +16,17 @@ The Python library provides an interface to control the C API library.
     all NetCDF grids into memory.
   * ``path`` defines the path to the configuration file to use.
 
+> **_NOTE_**
+>
+>    If you want to use the library in a multi-threaded environment it
+>    is necessary to create as many ``Handler`` that you have threads.
+
+> **_WARNING_**
+>
+>    Since the C library is not "thread-safe", the Python class uses a
+>    synchronization method to make it "thread-safe": an instance cannot
+>    perform more than one task at a time within several threads.
+
 ### Instance methods:
 
 **fes.Handler.calculate** (*lon: numpy.ndarray, lat: numpy.ndarray, date: numpy.ndarray*) -> tuple

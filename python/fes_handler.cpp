@@ -176,7 +176,6 @@ Handler::calculate(pybind11::array_t<double>& lon,
                    pybind11::array_t<double>& lat,
                    pybind11::array& date)
 {
-  // std::unique_lock<std::mutex> lock(mutex_);
   // arrays must one-dimensionnal
   if (lon.ndim() != 1) {
     throw std::invalid_argument("lon must be a one-dimensional array");
@@ -226,6 +225,7 @@ Handler::calculate(pybind11::array_t<double>& lon,
   auto _samples = samples.mutable_unchecked<1>();
   {
     pybind11::gil_scoped_release gil;
+    std::unique_lock<std::mutex> lock(mutex_);
 
     for (pybind11::ssize_t ix = 0; ix < size; ++ix) {
       std::tie(_h(ix), _h_long_period(ix), _samples(ix)) =
