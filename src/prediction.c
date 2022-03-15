@@ -334,6 +334,14 @@ _f_m23_k2(const _fes_astronomic_angle* const a)
 {
   return _f_m23(a) * _f_k2(a);
 }
+/*
+ _f_141 = (sin I - (sin³I)*5/4)/0.3192
+
+ a Astronomic angle
+ */
+static double _f_141(const _fes_astronomic_angle* const a) {
+  return (sin(a->I) - POW3(sin(a->I))*5./4.)/0.3192;
+}
 
 /*
  _nodal_a
@@ -609,18 +617,18 @@ set_w2nd(const fes_wave* const w, float w2nd[][N_COEFS])
     { /* 0,*/ 0, 0, 0, 1, 0, 0.02793f },     /*   0 */
     { /* 0,*/ 0, 0, 0, 2, 0, -0.00027f },    /*   1 */
     { /* 0,*/ 0, 0, 2, 1, 0, 0.00004f },     /*   2 */
-    { /* 0,*/ 0, 1, 0, -1, -1, -0.00004f },  /*   3 */
-    { /* 0,*/ 0, 1, 0, 0, -1, -0.00492f },   /*   4 */
+    { /* 0,*/ 0, 1, 0, -1, -1, -0.00004f },  /*   3 - Sa_1 */
+    { /* 0,*/ 0, 1, 0, 0, -1, -0.00492f },   /*   4 - Sa_1 */
     { /* 0,*/ 0, 1, 0, 0, 1, 0.00026f },     /*   5 */
-    { /* 0,*/ 0, 1, 0, 1, -1, 0.00005f },    /*   6 */
+    { /* 0,*/ 0, 1, 0, 1, -1, 0.00005f },    /*   6 - Sa_1 */
     { /* 0,*/ 0, 2, -2, -1, 0, 0.00002f },   /*   7 */
     { /* 0,*/ 0, 2, -2, 0, 0, -0.00031f },   /*   8 */
     { /* 0,*/ 0, 2, 0, 0, 0, -0.03095f },    /*   9 - ssa */
     { /* 0,*/ 0, 2, 0, 0, -2, -0.00008f },   /*  10 */
     { /* 0,*/ 0, 2, 0, 1, 0, 0.00077f },     /*  11 - ssa */
     { /* 0,*/ 0, 2, 0, 2, 0, 0.00017f },     /*  12 - ssa */
-    { /* 0,*/ 0, 3, 0, 0, -1, -0.00181f },   /*  13 */
-    { /* 0,*/ 0, 3, 0, 1, -1, 0.00003f },    /*  14 */
+    { /* 0,*/ 0, 3, 0, 0, -1, -0.00181f },   /*  13 - Sta */
+    { /* 0,*/ 0, 3, 0, 1, -1,  0.00003f },   /*  14 - Sta */
     { /* 0,*/ 0, 4, 0, 0, -2, -0.00007f },   /*  15 */
     { /* 0,*/ 1, -3, 1, -1, 1, 0.00002f },   /*  16 */
     { /* 0,*/ 1, -3, 1, 0, 1, -0.00029f },   /*  17 */
@@ -639,9 +647,9 @@ set_w2nd(const fes_wave* const w, float w2nd[][N_COEFS])
     { /* 0,*/ 1, 0, -1, -1, 0, 0.00231f },   /*  30 - Mm for FES2014 */
     { /* 0,*/ 1, 0, -1, 0, 0, -0.03518f },   /*  31 - Mm */
     { /* 0,*/ 1, 0, -1, 1, 0, 0.00228f },    /*  32 - Mm */
-    { /* 0,*/ 1, 0, 1, 0, 0, 0.00189f },     /*  33 */
-    { /* 0,*/ 1, 0, 1, 1, 0, 0.00077f },     /*  34 */
-    { /* 0,*/ 1, 0, 1, 2, 0, 0.00021f },     /*  35 */
+    { /* 0,*/ 1, 0, 1, 0, 0, 0.00189f },     /*  33 - Mm_1 */
+    { /* 0,*/ 1, 0, 1, 1, 0, 0.00077f },     /*  34 - Mm_1 */
+    { /* 0,*/ 1, 0, 1, 2, 0, 0.00021f },     /*  35 - Mm_1 */
     { /* 0,*/ 1, 1, -1, 0, -1, 0.00018f },   /*  36 */
     { /* 0,*/ 1, 2, -1, 0, 0, 0.00049f },    /*  37 */
     { /* 0,*/ 1, 2, -1, 1, 0, 0.00024f },    /*  38 */
@@ -650,18 +658,18 @@ set_w2nd(const fes_wave* const w, float w2nd[][N_COEFS])
     { /* 0,*/ 2, -4, 2, 0, 0, -0.00011f },   /*  41 */
     { /* 0,*/ 2, -3, 0, 0, 1, -0.00038f },   /*  42 */
     { /* 0,*/ 2, -3, 0, 1, 1, 0.00002f },    /*  43 */
-    { /* 0,*/ 2, -2, 0, -1, 0, -0.00042f },  /*  44 */
-    { /* 0,*/ 2, -2, 0, 0, 0, -0.00582f },   /*  45 */
-    { /* 0,*/ 2, -2, 0, 1, 0, 0.00037f },    /*  46 */
+    { /* 0,*/ 2, -2, 0, -1, 0, -0.00042f },  /*  44 - MSf */
+    { /* 0,*/ 2, -2, 0, 0, 0, -0.00582f },   /*  45 - MSf */
+    { /* 0,*/ 2, -2, 0, 1, 0, 0.00037f },    /*  46 - MSf */
     { /* 0,*/ 2, -2, 2, 0, 0, 0.00004f },    /*  47 */
     { /* 0,*/ 2, -1, -2, 0, 1, -0.00004f },  /*  48 */
     { /* 0,*/ 2, -1, -1, 0, 0, 0.00003f },   /*  49 */
     { /* 0,*/ 2, -1, 0, 0, -1, 0.00007f },   /*  50 */
     { /* 0,*/ 2, -1, 0, 0, 1, -0.00020f },   /*  51 */
     { /* 0,*/ 2, -1, 0, 1, 1, -0.00004f },   /*  52 */
-    { /* 0,*/ 2, 0, -2, -1, 0, 0.00015f },   /*  53 */
-    { /* 0,*/ 2, 0, -2, 0, 0, -0.00288f },   /*  54 */
-    { /* 0,*/ 2, 0, -2, 1, 0, 0.00019f },    /*  55 */
+    { /* 0,*/ 2, 0, -2, -1, 0, 0.00015f },   /*  53 - Mf_1 */
+    { /* 0,*/ 2, 0, -2, 0, 0, -0.00288f },   /*  54 - Mf_1 */
+    { /* 0,*/ 2, 0, -2, 1, 0, 0.00019f },    /*  55 - Mf_1 */
     { /* 0,*/ 2, 0, 0, 0, 0, -0.06662f },    /*  56 - Mf */
     { /* 0,*/ 2, 0, 0, 1, 0, -0.02762f },    /*  57 - Mf */
     { /* 0,*/ 2, 0, 0, 2, 0, -0.00258f },    /*  58 - Mf */
@@ -746,17 +754,97 @@ set_w2nd(const fes_wave* const w, float w2nd[][N_COEFS])
     memset(w2nd[11], 0, sizeof(float) * N_COEFS);
     memset(w2nd[12], 0, sizeof(float) * N_COEFS);
   }
+
+  /* FES14C: removing new long period waves hereafter */
+  if (w[SA_1].dynamic == 1) {
+    // memset(w2nd[3], 0, sizeof(float) * N_COEFS);
+    memset(w2nd[4], 0, sizeof(float) * N_COEFS);
+    // memset(w2nd[6], 0, sizeof(float) * N_COEFS);
+  }
+  if (w[STA].dynamic == 1) {
+    memset(w2nd[13], 0, sizeof(float) * N_COEFS);
+    // memset(w2nd[14], 0, sizeof(float) * N_COEFS);
+  }
+  if (w[MM_1].dynamic == 1) {
+    memset(w2nd[33], 0, sizeof(float) * N_COEFS);
+    memset(w2nd[34], 0, sizeof(float) * N_COEFS);
+    memset(w2nd[35], 0, sizeof(float) * N_COEFS);
+  }
+  if (w[MF_1].dynamic == 1) {
+    memset(w2nd[53], 0, sizeof(float) * N_COEFS);
+    memset(w2nd[54], 0, sizeof(float) * N_COEFS);
+    memset(w2nd[55], 0, sizeof(float) * N_COEFS);
+  }
+  if (w[MSF_LP].dynamic == 1) {
+    memset(w2nd[44], 0, sizeof(float) * N_COEFS);
+    memset(w2nd[45], 0, sizeof(float) * N_COEFS);
+    memset(w2nd[46], 0, sizeof(float) * N_COEFS);
+  }
+/*  if (w[M0].dynamic == 1) {
+    memset(w2nd[0], 0, sizeof(float) * N_COEFS);
+    memset(w2nd[1], 0, sizeof(float) * N_COEFS);
+  } */
 }
+
+/*
+ */
+void set_w3rd(const fes_wave* const w, float w3rd[][N_COEFS]) {
+  // Table below = Doodson coefficients
+  // tau s   h   p   N'  p1  coef  => Doodson = several combination for
+  //    waves/secondary waves = variation for N' factor in comparison with
+  //    Darwin
+  // T   s   h   p   p1      coef  => Darwin = only combination for each
+  //    waves, secondary waves are not explicitely described
+  static const float cst_w3rd[N_WAVES_3RD][N_COEFS] = {
+    {/* 0,*/0, 0, 1, 0, 0, -0.00021f },  /* 0 */
+    {/* 0,*/0, 2, -1, 0, 0, -0.00004f }, /* 1 */
+    {/* 0,*/1, -2, 0, 0, 0, 0.00004f },  /* 2 */
+    {/* 0,*/1, 0, 0, -1, 0, 0.00019f },  /* 3 - Mm_2 */
+    {/* 0,*/1, 0, 0, 0, 0, -0.00375f },  /* 4 - Mm_2 */
+    {/* 0,*/1, 0, 0, 1, 0, -0.00059f },  /* 5 - Mm_2 */
+    {/* 0,*/1, 0, 0, 2, 0, 0.00005f },   /* 6 - Mm_2 */
+    {/* 0,*/2, -2, 1, 0, 0, -0.00012f }, /* 7 */
+    {/* 0,*/2, 0, -1, 0, 0, -0.00061f }, /* 8 - Mf_2 */
+    {/* 0,*/2, 0, -1, 1, 0, -0.00010f }, /* 9 - Mf_2 */
+    {/* 0,*/3, -2, 0, 0, 0, -0.00010f }, /* 10 */
+    {/* 0,*/3, 0, -2, 0, 0, -0.00007f }, /* 11 */
+    {/* 0,*/3, 0, 0, 0, 0, -0.00030f },  /* 12 */
+    {/* 0,*/3, 0, 0, 1, 0, -0.00019f },  /* 13 */
+    {/* 0,*/3, 0, 0, 2, 0, -0.00004f },  /* 14 */
+    {/* 0,*/4, 0, -1, 0, 0, -0.00008f }, /* 15 */
+    {/* 0,*/4, 0, -1, 1, 0, -0.00005f }  /* 16 */
+  };
+
+
+  int ix;
+
+  for (ix = 0; ix < N_WAVES_3RD; ix++) {
+    memcpy(w3rd[ix], cst_w3rd[ix], sizeof(float) * N_COEFS);
+  }
+
+  /* FES14C: removing 2 waves hereafter */
+  if (w[MM_2].dynamic == 1) {
+    memset(w3rd[3], 0, sizeof(float) * N_COEFS);
+    memset(w3rd[4], 0, sizeof(float) * N_COEFS);
+    memset(w3rd[5], 0, sizeof(float) * N_COEFS);
+    memset(w3rd[6], 0, sizeof(float) * N_COEFS);
+  }
+  if (w[MF_2].dynamic == 1) {
+    memset(w3rd[8], 0, sizeof(float) * N_COEFS);
+    memset(w3rd[9], 0, sizeof(float) * N_COEFS);
+  }
+}
+
 
 /*
  */
 void
 lpe_minus_n_waves(const float w2nd[][N_COEFS],
+                  const float w3rd[][N_COEFS],
                   const double ts,
                   const double lat,
                   double* tlp)
 {
-#define N_WAVES_3RD 17
 
   int ix;
   double td;
@@ -766,26 +854,6 @@ lpe_minus_n_waves(const float w2nd[][N_COEFS],
   double h30 = 0.0;
   double c20;
   double c30;
-
-  static const float w3rd[N_WAVES_3RD][N_COEFS] = {
-    { /* 0,*/ 0, 0, 1, 0, 0, -0.00021f },
-    { /* 0,*/ 0, 2, -1, 0, 0, -0.00004f },
-    { /* 0,*/ 1, -2, 0, 0, 0, 0.00004f },
-    { /* 0,*/ 1, 0, 0, -1, 0, 0.00019f },
-    { /* 0,*/ 1, 0, 0, 0, 0, -0.00375f },
-    { /* 0,*/ 1, 0, 0, 1, 0, -0.00059f },
-    { /* 0,*/ 1, 0, 0, 2, 0, 0.00005f },
-    { /* 0,*/ 2, -2, 1, 0, 0, -0.00012f },
-    { /* 0,*/ 2, 0, -1, 0, 0, -0.00061f },
-    { /* 0,*/ 2, 0, -1, 1, 0, -0.00010f },
-    { /* 0,*/ 3, -2, 0, 0, 0, -0.00010f },
-    { /* 0,*/ 3, 0, -2, 0, 0, -0.00007f },
-    { /* 0,*/ 3, 0, 0, 0, 0, -0.00030f },
-    { /* 0,*/ 3, 0, 0, 1, 0, -0.00019f },
-    { /* 0,*/ 3, 0, 0, 2, 0, -0.00004f },
-    { /* 0,*/ 4, 0, -1, 0, 0, -0.00008f },
-    { /* 0,*/ 4, 0, -1, 1, 0, -0.00005f }
-  };
 
   /* Compute 4 principal mean longitudes in radians at time TD */
   td = ((ts + 33282.0) * 86400.0 - 4043174400.0) / 86400.0;
@@ -815,8 +883,12 @@ lpe_minus_n_waves(const float w2nd[][N_COEFS],
 
   tmp = sin(lat * RAD);
 
-  c20 = sqrt(5.0 / (4.0 * M_PI)) * (1.5 * SQR(tmp) - 0.5);
-  c30 = sqrt(7.0 / (4.0 * M_PI)) * (2.5 * SQR(tmp) - 1.5) * tmp;
+  /* FES14C: mass conservation for LP equil */
+  /* mean substraction on ocean with c20 and c30, for mass conservation */
+  /* mean_c20 = -0.014432247 */
+  /* mean_c30 = 0.012469818  */
+  c20 = sqrt(5.0 / (4.0 * M_PI)) * (1.5 * SQR(tmp) - 0.5) + 0.014432247 ;
+  c30 = sqrt(7.0 / (4.0 * M_PI)) * (2.5 * SQR(tmp) - 1.5) * tmp - 0.012469818;
 
   /* m -> cm */
   /* clang-format off */
@@ -1561,4 +1633,106 @@ set_waves(fes_wave* const w)
    */
   _init_wave(
     "MSF", 0, 0, 2, -2, 0, 0, 0, 0, 2, -2, 0, 0, LP_TIDE, _f_m2, &w[MSF]);
+
+  /* FES14C: add new LP waves hereafter */
+  /* these are LP equil waves, but an atlas (equilibrium or not) can be given as input */
+ /*
+   * MSf_LP = 2nd order LP equi in atlas FES2014c
+   * WARNING: Same frequency as MSf Non Linear wave : 2s -2h
+   * ref Shureman = A5
+   * [corresponds to waves 44 45 46 in w2nd()]
+   * V = 2s - 2h
+   * u = 0
+   * f = formula 73 = _f_mm
+   */
+   /*                 adm t  s  h   p  n  p1 shift eps nu nuprim nusec type f */
+  _init_wave("MSF_LP", 0, 0, 2, -2, 0, 0, 0, 0, 0, 0, 0, 0, LP_TIDE, _f_mm,
+             &w[MSF_LP]);
+
+  /*
+   * Sa_1 = 2nd order LP equi in atlas FES2014c
+   * ref Shureman = B2
+   * [corresponds to waves 3, 4 and 6 in w2nd()]
+   * V = h - p1
+   * u = 0
+   * f = 1
+   */
+   /*               adm t  s  h   p  n  p1 shift eps nu nuprim nusec type f */
+  _init_wave("SA_1", 0, 0, 0, 1,  0, 0, -1, 0, 0, 0, 0, 0, LP_TIDE, _f_1,
+             &w[SA_1]);
+
+  /*
+   * Sta = 2nd order LP equi in atlas FES2014c
+   * ref Shureman = B7
+   * [corresponds to waves 13 and 14 in w2nd()]
+   * V = 3h - p1
+   * u = 0
+   * f = 1
+   */
+   /*               adm t  s  h   p  n  p1 shift eps nu nuprim nusec type f */
+  _init_wave("STA", 0, 0, 0, 3,  0, 0, -1, 0, 0, 0, 0, 0, LP_TIDE, _f_1,
+             &w[STA]);
+
+  /*
+   * Mm_2 = 3rd order LP equi in atlas FES2014c
+   * ref Shureman = A64
+   * [corresponds to lines 714 - 717 in w3rd()]
+   * V = s - 90
+   * u = -ξ
+   * f = formule 141
+   */
+   /*               adm t  s  h   p  n  p1 shift eps nu nuprim nusec type f */
+  _init_wave("MM_2", 0, 0, 1, 0,  0, 0, 0, -1, -1, 0, 0, 0, LP_TIDE, _f_141,
+             &w[MM_2]);
+
+  /*
+   * Mm_1 = 2nd order LP equi in atlas FES2014c
+   * ref Shureman = A8
+   * [corresponds to waves 33 34 35 in w2nd()]
+   * V = s + p + 180
+   * u = -2ξ
+   * f = formule 74 =  _f_mf
+   */
+   /*               adm t  s  h   p  n  p1 shift eps nu nuprim nusec type f */
+  _init_wave("MM_1", 0, 0, 1, 0,  1, 0, 0,   2, -2, 0, 0, 0, LP_TIDE, _f_mf,
+             &w[MM_1]);
+
+  /*
+   * Mf_1 = 2nd order LP equi in atlas FES2014c
+   * ref Shureman = A3
+   * [corresponds to waves  53 .. 55 in w2nd()]
+   * V = 2s - 2p
+   * u = 0
+   * f = formule 73  = _f_mm
+   */
+   /*               adm t  s  h   p  n  p1 shift eps nu nuprim nusec type f */
+  _init_wave("MF_1", 0, 0, 2, 0, -2, 0, 0,   0,   0, 0, 0, 0, LP_TIDE, _f_mm,
+             &w[MF_1]);
+
+  /*
+   * Mf_2 = 3rd order LP equi in atlas FES2014c
+   * ref Shureman = A65
+   * [corresponds to lines 719-720 in w3rd()]
+   * V = 2s - p - 90
+   * u = -ξ
+   * f = formule 141
+   */
+   /*               adm t  s  h   p  n  p1 shift eps nu nuprim nusec type f */
+  _init_wave("MF_2", 0, 0, 2, 0, -1, 0, 0,  -1,   -1, 0, 0, 0, LP_TIDE, _f_141,
+             &w[MF_2]);
+
+  /*
+   * M0 = permanent term only defined because its nodal correction gives Omega1 (18.6y variations)
+   * NOTE : there are other permanent terms: radiative (Z0) and solar, without nodal correction, so not coded
+   * ref Shureman = A1
+   * [satellites'waves/nodal effects can also be included in the prediction via = waves 0 and 1 in w2nd()] => c'est la meilleure solution ici, la plus simple ...
+   * V = 0
+   * u = 0
+   * f = formule 73 = _f_mm
+   */
+   /*               adm t  s  h   p  n  p1 shift eps nu nuprim nusec type f */
+  _init_wave("M0",   0, 0, 0, 0,  0, 0, 0,  0,   0, 0, 0, 0, LP_TIDE, _f_mm,
+             &w[M0]);
+
+
 }

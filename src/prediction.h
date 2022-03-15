@@ -62,6 +62,16 @@ void
 set_w2nd(const fes_wave* const w, float w2nd[][N_COEFS]);
 
 /**
+ @brief Set wave order 3 coefficients values to compute the long-period
+ equilibrium ocean tides.
+
+ @param w Pointer to the array which contains waves definition.
+ @param w3rd Pointer to the array which contains waves order 3 definition.
+ */
+void
+set_w3rd(const fes_wave* const w, float w3rd[][N_COEFS]);
+
+/**
  @brief Computes the long-period equilibrium ocean tides.
 
  The complete tidal spectral lines from the Cartwright-Tayler-Edden
@@ -81,6 +91,7 @@ set_w2nd(const fes_wave* const w, float w2nd[][N_COEFS]);
  - Tamura Y., Bull. d'information des marees terrestres, Vol. 99, 1987.
 
  @param w2nd Pointer to the array which contains waves order 2 definition.
+ @param w3rd Pointer to the array which contains waves order 3 definition.
  @param ts Julian day, in seconds, denoting time at which tide is to be
  computed.
  @param lat Latitude in degrees (positive north) for the position at which
@@ -89,6 +100,7 @@ set_w2nd(const fes_wave* const w, float w2nd[][N_COEFS]);
  */
 void
 lpe_minus_n_waves(const float w2nd[][N_COEFS],
+                  const float w3rd[][N_COEFS],
                   const double ts,
                   const double lat,
                   double* tlp);

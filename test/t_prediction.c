@@ -26,6 +26,9 @@ test_admittance(const double r, const int ix, fes_wave* w)
   int rc;
 
   admittance(w);
+
+  // printf("test admittance re=%f, im=%f  => %f\n", w[ix].c.re, w[ix].c.im, r);
+
   rc = CHECK_FLOAT(w[ix].c.re, r) && CHECK_FLOAT(w[ix].c.im, r);
 
   w[ix].admittance = 0;
@@ -49,6 +52,7 @@ main(void)
   int err;
   int i;
   float w2nd[N_WAVES_2ND][N_COEFS];
+  float w3rd[N_WAVES_3RD][N_COEFS];
   double hlp = 0;
   _fes_astronomic_angle a;
   fes_wave w[N_WAVES];
@@ -1136,6 +1140,7 @@ main(void)
   SUMMARIZE_ERR;
 
   err = test_admittance(0.2706, SIGMA1, w);
+  // err = test_admittance(0.14194070, SIGMA1, w);
   SUMMARIZE_ERR;
 
   err = test_admittance(0.1688, RHO1, w);
@@ -1148,6 +1153,7 @@ main(void)
   SUMMARIZE_ERR;
 
   err = test_admittance(0.0124, CHI1, w);
+  // err = test_admittance(0.00929888, CHI1, w);
   SUMMARIZE_ERR;
 
   err = test_admittance(0.0201, PI1, w);
@@ -1157,6 +1163,7 @@ main(void)
   SUMMARIZE_ERR;
 
   err = test_admittance(0.009, THETA1, w);
+  // err = test_admittance(0.00653326, THETA1, w);
   SUMMARIZE_ERR;
 
   err = test_admittance(0.0447, J1, w);
@@ -1202,10 +1209,12 @@ main(void)
   w[MSQM].dynamic = 1;
 
   set_w2nd(w, w2nd);
+  set_w3rd(w, w3rd);
 
   printf("*** testing lpe_minus_5_waves\n");
-  lpe_minus_n_waves((const float(*)[N_COEFS])(w2nd), 1, 1, &hlp);
-  err = CHECK_FLOAT(hlp, -1.124059213786);
+  lpe_minus_n_waves((const float (*)[N_COEFS])(w2nd), (const float (*)[N_COEFS])(w3rd), 1, 1, &hlp);
+  //err = CHECK_FLOAT(hlp, -1.124059213786);
+  err = CHECK_FLOAT(hlp, -1.069196011706);
   SUMMARIZE_ERR;
 
   FINAL_RESULTS;
