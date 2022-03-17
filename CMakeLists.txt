@@ -30,10 +30,8 @@ option(BUILD_PYTHON "Build python extension" OFF)
 
 # Version
 find_package (Python3 COMPONENTS Interpreter Development)
-execute_process(
-  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/setup.py revision
-  OUTPUT_VARIABLE VERSION)
-string(REGEX MATCH "[0-9]+\\.[0-9]+\\.[0-9]+" VERSION ${VERSION})
+file( STRINGS "${CMAKE_SOURCE_DIR}/include/fes.h" VERSION REGEX "define FES_VERSION" )
+string(REGEX REPLACE ".*([0-9]\\.[0-9]\\.[0-9]).*" "\\1" VERSION ${VERSION} )
 string(REPLACE "." ";" VERSION_LIST ${VERSION})
 list(GET VERSION_LIST 0 LIB_VERSION_MAJOR)
 list(GET VERSION_LIST 1 LIB_VERSION_MINOR)
