@@ -1,65 +1,368 @@
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python3
+# This file is part of FES library.
+#
+# FES is free software: you can redistribute it and/or modify
+# it under the terms of the GNU LESSER GENERAL PUBLIC LICENSE as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# FES is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU LESSER GENERAL PUBLIC LICENSE for more details.
+#
+# You should have received a copy of the GNU LESSER GENERAL PUBLIC LICENSE
+# along with FES.  If not, see <http://www.gnu.org/licenses/>.
+"""This script is the entry point for building, distributing and installing
+this module using distutils/setuptools."""
+from typing import ClassVar, List, Optional
 import os
 import pathlib
+import platform
+import re
+import setuptools
+import setuptools.command.build_ext
+import setuptools.command.install
+import subprocess
 import sys
-from subprocess import check_call
+import sysconfig
+# The setuptools must be imported before distutils
+import distutils.command.build
 
-from setuptools import Extension, setup, find_packages
-from setuptools.command.build_ext import build_ext
+# Check Python requirement
+MAJOR = sys.version_info[0]
+MINOR = sys.version_info[1]
+if not (MAJOR >= 3 and MINOR >= 6):
+    raise RuntimeError("Python %d.%d is not supported, "
+                       "you need at least Python 3.6." % (MAJOR, MINOR))
+# Versionning tag
+PATTERN = "#define FES_VERSION"
+
+# Working directory
+WORKING_DIRECTORY = pathlib.Path(__file__).parent.absolute()
 
 
-class CMakeExtension(Extension):
-    def __init__(self, name, sourcedir=""):
-        Extension.__init__(self, name, sources=[])
-        self.sourcedir = os.path.abspath(sourcedir)
+def build_dirname(extname=None):
+    """Returns the name of the build directory"""
+    extname = '' if extname is None else os.sep.join(extname.split(".")[:-1])
+    return str(
+        pathlib.Path(WORKING_DIRECTORY, "build",
+                     "lib.%s-%d.%d" % (sysconfig.get_platform(), MAJOR, MINOR),
+                     extname))
 
 
-class CMakeBuild(build_ext):
-    def build_extension(self, ext):
-        # Download submodules
-        base_dir = pathlib.Path(__file__).parent
-        check_call(['git', 'submodule', 'update', '--init', '--recursive'], cwd=base_dir)
+def execute(cmd):
+    """Executes a command and returns the lines displayed on the standard
+    output"""
+    process = subprocess.Popen(cmd,
+                               shell=True,
+                               stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE)
+    stream = process.stdout
+    assert stream is not None
+    return stream.read().decode()
 
-        extdir = os.path.abspath(os.path.dirname(self.get_ext_fullpath(ext.name)))
 
-        # required for auto-detection & inclusion of auxiliary "native" libs
-        if not extdir.endswith(os.path.sep):
-            extdir += os.path.sep
+def update_version(path, version, pattern, replaced_line):
+    """Updating the version number description"""
+    with open(path, "r") as stream:
+        lines = stream.readlines()
+    pattern = re.compile(pattern)
 
-        debug = int(os.environ.get("DEBUG", 0)) if self.debug is None else self.debug
-        cfg = "Debug" if debug else "Release"
+    for idx, line in enumerate(lines):
+        match = pattern.search(line)
+        if match is not None:
+            lines[idx] = replaced_line % version
 
-        if not os.path.exists(self.build_temp):
-            os.makedirs(self.build_temp)
+    with open(path, "w") as stream:
+        stream.write("".join(lines))
 
-        check_call(
-            [
-                "cmake", "-B", self.build_temp,
-                "-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={}".format(extdir),
-                "-DBUILD_PYTHON=on",
-                "-DPYTHON_EXECUTABLE={}".format(sys.executable),
-                "-DCMAKE_BUILD_TYPE={}".format(cfg),
-                "-DBUILD_SHARED_LIBS=on",
+
+def update_meta(path, version):
+    """Updating the version number description in conda/meta.yaml."""
+    update_version(path, version, r'{% set version = ".*" %}',
+                   '{%% set version = "%s" %%}\n')
+
+
+def update_python_module(path, version):
+    """Updating the version number in the python module."""
+    update_version(path, version, r'm\.attr\("__version__"\) = "([\d\.]+)";',
+                   'm.attr("__version__") = "%s";\n')
+
+
+def revision():
+    """Returns the software version."""
+    os.chdir(WORKING_DIRECTORY)
+    path = pathlib.Path(__file__).parent.joinpath("include", "fes.h")
+
+    # If the ".git" directory exists, this function is executed in the
+    # development environment, otherwise it's a release.
+    if not pathlib.Path(WORKING_DIRECTORY, '.git').exists():
+        pattern = re.compile(PATTERN + r' "(.*)"').search
+        with open(path, "r") as stream:
+            for line in stream:
+                match = pattern(line)
+                if match is not None:
+                    return match.group(1)
+        raise AssertionError()
+
+    stdout = execute("git describe --tags --dirty --long --always").strip()
+    pattern = re.compile(r'([\w\d\.]+)-(\d+)-g[\w\d]+(?:-(dirty))?')
+    match = pattern.search(stdout)
+    if match is None:
+        # No tag found, use the last commit
+        pattern = re.compile(r'[\w\d]+(?:-(dirty))?')
+        match = pattern.search(stdout)
+        assert match is not None, f"Unable to parse git output {stdout!r}"
+        version = "0.0"
+    else:
+        version = match.group(1)
+        commits = int(match.group(2))
+        if commits != 0:
+            version += f".dev{commits}"
+
+    with open(path, "r") as stream:
+        lines = stream.readlines()
+
+    for idx, line in enumerate(lines):
+        if PATTERN in line:
+            lines[idx] = PATTERN + " \"%s\"\n" % version
+
+    with open(path, "w") as stream:
+        stream.writelines(lines)
+
+    update_meta(WORKING_DIRECTORY.joinpath("conda", "meta.yaml"), version)
+    update_python_module(WORKING_DIRECTORY.joinpath("python", "main.cpp"),
+                         version)
+    return version
+
+
+class CMakeExtension(setuptools.Extension):
+    """Python extension to build"""
+    def __init__(self, name):
+        super(CMakeExtension, self).__init__(name, sources=[])
+
+
+class BuildExt(setuptools.command.build_ext.build_ext):
+    """Build the Python extension using cmake"""
+
+    #: Preferred C++ compiler
+    CXX_COMPILER: ClassVar[Optional[str]] = None
+
+    #: Selected CMAKE generator
+    GENERATOR: ClassVar[Optional[str]] = None
+
+    #: Preferred MKL root
+    NETCDF_ROOT: ClassVar[Optional[str]] = None
+
+    #: Run CMake to configure this project
+    RECONFIGURE: ClassVar[Optional[bool]] = None
+
+    def run(self):
+        """A command's raison d'etre: carry out the action"""
+        for ext in self.extensions:
+            self.build_cmake(ext)
+        super().run()
+
+    @staticmethod
+    def is_conda():
+        """Detect if the Python interpreter is part of a conda distribution."""
+        result = pathlib.Path(sys.prefix, 'conda-meta').exists()
+        if not result:
+            try:
+                # pylint: disable=unused-import
+                import conda
+                # pylint: enable=unused-import
+            except ImportError:
+                result = False
+            else:
+                result = True
+        return result
+
+    def set_cmake_user_options(self):
+        """Sets the options defined by the user."""
+        is_conda = self.is_conda()
+        result = []
+
+        if self.CXX_COMPILER is not None:
+            result.append("-DCMAKE_CXX_COMPILER=" + self.CXX_COMPILER)
+
+        if self.NETCDF_ROOT is not None:
+            result.append("-DNETCDF_INCLUDE_DIR=" +
+                          os.path.join(self.NETCDF_ROOT, "include"))
+            result.append(
+                "-DNETCDF_LIBRARY=" +
+                os.path.join(self.NETCDF_ROOT, "lib", "libnetcdf.so"))
+        elif is_conda:
+            result.append("-DCMAKE_PREFIX_PATH=" + sys.prefix)
+
+        return result
+
+    def get_cmake_args(self, cfg: str, extdir: str) -> List[str]:
+        """build cmake arguments.
+
+        # Args:
+        * `cfg`: config, one of {"debug", "release"}
+        * `extdir`: output directory.
+        """
+        cmake_args = [
+            "-DBUILD_PYTHON=on",
+            "-DBUILD_SHARED_LIBS=on",
+            "-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=" + str(extdir),
+            "-DCMAKE_PREFIX_PATH=" + sys.prefix,
+            "-DPYTHON_EXECUTABLE=" + sys.executable,
+        ] + self.set_cmake_user_options()
+
+        is_windows = platform.system() == "Windows"
+
+        if self.GENERATOR is not None:
+            cmake_args.append("-G" + self.GENERATOR)
+        elif is_windows:
+            cmake_args.append("-G" + "Visual Studio 16 2019")
+
+        if is_windows:
+            cmake_args += [
+                "-DCMAKE_GENERATOR_PLATFORM=x64",
+                "-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_{}={}".format(
+                    cfg.upper(), extdir),
             ]
-        )
+        else:
+            cmake_args += ["-DCMAKE_BUILD_TYPE=" + cfg]
+            if platform.system() == "Darwin":
+                cmake_args += ["-DCMAKE_OSX_DEPLOYMENT_TARGET=10.14"]
+        return cmake_args
 
-        check_call(["cmake", "--build", self.build_temp, "--config", cfg])
+    def get_build_args(self, cfg: str) -> List[str]:
+        """make compiler build arguments.
+
+        # Args:
+        * `cfg`: config, one of {"debug", "release"}
+        """
+        build_args = ["--config", cfg]
+        is_windows = platform.system() == "windows"
+        if is_windows:
+            if self.verbose:  # type: ignore
+                build_args += ["/verbosity:n"]
+        else:
+            build_args += ["--", "-j%d" % os.cpu_count()]
+        if self.verbose:  # type: ignore
+            build_args.insert(0, "--verbose")
+        return build_args
+
+    def build_cmake(self, ext):
+        """execute cmake to build the python extension"""
+        # these dirs will be created in build_py, so if you don't have
+        # any python sources to bundle, the dirs will be missing
+        build_temp = pathlib.Path(WORKING_DIRECTORY, self.build_temp)
+        build_temp.mkdir(parents=True, exist_ok=True)
+        extdir = build_dirname(ext.name)
+
+        cfg = "debug" if self.debug else "release"
+
+        os.chdir(str(build_temp))
+
+        # Has CMake ever been executed?
+        if pathlib.Path(build_temp, "CMakeFiles",
+                        "TargetDirectories.txt").exists():
+            # The user must force the reconfiguration
+            configure = self.RECONFIGURE is not None
+        else:
+            configure = True
+
+        if configure:
+            cmake_args = self.get_cmake_args(cfg, extdir)
+            self.spawn(["cmake", str(WORKING_DIRECTORY)] + cmake_args)
+        if not self.dry_run:  # type: ignore
+            build_args = self.get_build_args(cfg)
+            self.spawn(["cmake", "--build", ".", "--target", "pyfes"] +
+                       build_args)
+        os.chdir(str(WORKING_DIRECTORY))
 
 
-setup(
-    name="pyfes",
-    version="2.9.3",
-    author="""Fabien Lefevre (flevere@cls.fr)
-Frederic Briol (fbriol@cls.fr)
-Loren Carrere (lcarrere@cls.fr)""",
-    packages=find_packages(),
-    description="FES2014 prediction software",
-    long_description="""This package is the fully revised version of the FES2014 distribution.
-This distribution includes the FES2014 tidal prediction software and
-the FES2014 tides databases""",
-    ext_modules=[CMakeExtension("pyfes")],
-    cmdclass={
-        "build_ext": CMakeBuild
-    },
-    zip_safe=False,
-)
+class Revision(setuptools.Command):
+    """Get the current git revision"""
+
+    description = "get the current git revision"
+    user_options = []
+
+    def initialize_options(self):
+        """initialize options"""
+        pass
+
+    def finalize_options(self):
+        """finalize options"""
+        pass
+
+    def run(self):
+        """A command's raison d'etre: carry out the action"""
+        print(revision())
+
+
+class Build(distutils.command.build.build):
+    """Build everything needed to install"""
+    user_options = distutils.command.build.build.user_options
+    user_options += [
+        ('cxx-compiler=', None, 'Preferred C++ compiler'),
+        ('generator=', None, 'Selected CMake generator'),
+        ('netcdf-root=', None, 'Preferred NetCDF include directory'),
+        ('reconfigure', None, 'Forces CMake to reconfigure this project')
+    ]
+
+    def initialize_options(self):
+        """Set default values for all the options that this command supports"""
+        super().initialize_options()
+        self.cxx_compiler = None
+        self.generator = None
+        self.netcdf_root = None
+        self.reconfigure = None
+
+    def run(self):
+        """A command's raison d'etre: carry out the action"""
+        if self.cxx_compiler is not None:
+            BuildExt.CXX_COMPILER = self.cxx_compiler
+        if self.netcdf_root is not None:
+            BuildExt.NETCDF_ROOT = self.netcdf_root
+        if self.generator is not None:
+            BuildExt.GENERATOR = self.generator
+        if self.reconfigure is not None:
+            BuildExt.RECONFIGURE = True
+        super().run()
+
+
+def main():
+    setuptools.setup(
+        name='pyfes',
+        version=revision(),
+        classifiers=[
+            "Development Status :: 3 - Stable",
+            "Topic :: Scientific/Engineering :: Physics",
+            "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+            "Natural Language :: English",
+            "Operating System :: POSIX",
+            "Operating System :: MacOS",
+            "Operating System :: Microsoft :: Windows",
+            "Programming Language :: Python :: 3.6",
+            "Programming Language :: Python :: 3.7",
+            "Programming Language :: Python :: 3.8",
+            "Programming Language :: Python :: 3.9",
+        ],
+        description='FES2014 prediction software.',
+        url='https://github.com/CNES/aviso-fes',
+        author='NES/CLS/LEGOS',
+        license="GNU General Public License v3 (GPLv3)",
+        ext_modules=[CMakeExtension(name="pyfes")],
+        setup_requires=[],
+        # install_requires=["numpy"],
+        # tests_require=["netCDF4", "numpy"],
+        # package_dir={'': 'src'},
+        # packages=setuptools.find_packages(where="src"),
+        cmdclass={
+            'build': Build,
+            'build_ext': BuildExt,
+            'revision': Revision
+        },  # type: ignore
+        zip_safe=False)
+
+
+if __name__ == "__main__":
+    main()
