@@ -30,16 +30,15 @@ option(BUILD_PYTHON "Build python extension" OFF)
 
 # Version
 find_package (Python3 COMPONENTS Interpreter Development)
-execute_process(
-  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/version.py
-  OUTPUT_VARIABLE VERSION)
-string(REPLACE " " ";" VERSION_LIST ${VERSION})
+file( STRINGS "${CMAKE_SOURCE_DIR}/include/fes.h" VERSION REGEX "define FES_VERSION" )
+string(REGEX REPLACE ".*([0-9]\\.[0-9]\\.[0-9]).*" "\\1" VERSION ${VERSION} )
+string(REPLACE "." ";" VERSION_LIST ${VERSION})
 list(GET VERSION_LIST 0 LIB_VERSION_MAJOR)
 list(GET VERSION_LIST 1 LIB_VERSION_MINOR)
 list(GET VERSION_LIST 2 LIB_VERSION_PATCH)
 set(LIB_VERSION "${LIB_VERSION_MAJOR}.${LIB_VERSION_MINOR}.${LIB_VERSION_PATCH}")
 
-message("-- FES version: ${LIB_VERSION}")
+message(STATUS "FES version: ${LIB_VERSION}")
 
 if (POLICY CMP0042)
   cmake_policy(SET CMP0042 NEW)
@@ -75,7 +74,7 @@ set(
 if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE RELWITHDEBINFO)
 endif()
-message("-- Build type: ${CMAKE_BUILD_TYPE}")
+message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 
 if (BUILD_PYTHON)
   # The library must be built using C++14 compiler.
@@ -149,6 +148,9 @@ enable_testing()
 
 # NetCDF
 find_package(NetCDF 4.1.1 REQUIRED)
+if (NOT EXISTS ${NETCDF_INCLUDE_DIRS}/netcdf.h)
+  message(FATAL_ERROR "Unable to find NetCDF C-Header files")
+endif()
 include_directories(${NETCDF_INCLUDE_DIRS})
 
 # uthash
