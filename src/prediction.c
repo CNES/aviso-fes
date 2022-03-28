@@ -884,7 +884,7 @@ lpe_minus_n_waves(const float w2nd[][N_COEFS],
   tmp = sin(lat * RAD);
 
   /* FES14C: mass conservation for LP equil */
-  /* mean substraction on ocean with c20 and c30, for mass conservation */
+  /* substraction of the mean of c20 and c30 on ocean, for mass conservation */
   /* mean_c20 = -0.014432247 */
   /* mean_c30 = 0.012469818  */
   c20 = sqrt(5.0 / (4.0 * M_PI)) * (1.5 * SQR(tmp) - 0.5) + 0.014432247 ;
@@ -1632,7 +1632,7 @@ set_waves(fes_wave* const w)
    * f = f(M₂) * f(S2) = f(M₂)
    */
   _init_wave(
-    "MSF", 0, 0, 2, -2, 0, 0, 0, 0, 2, -2, 0, 0, LP_TIDE, _f_m2, &w[MSF]);
+    "MSF", 0, 0, 2, -2, 0, 0, 0, 0, 2, -2, 0, 0, SP_TIDE, _f_m2, &w[MSF]);
 
   /* FES14C: add new LP waves hereafter */
   /* these are LP equil waves, but an atlas (equilibrium or not) can be given as input */
