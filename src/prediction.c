@@ -1630,7 +1630,7 @@ set_waves(fes_wave* const w)
    * MSf = M₂ - S₂
    * WARNING: Same frequency as MSf LP : 2s -2h
    * V = 2s - 2h
-   * u = 2ξ - 2ν (=celui de M₂ - S₂)
+   * u = 2ξ - 2ν (= M₂ - S₂)
    * f = f(M₂) * f(S2) = f(M₂)
    */
   _init_wave(
@@ -1648,7 +1648,6 @@ set_waves(fes_wave* const w)
    * u = 0
    * f = formula 73 = _f_mm
    */
-  /*                 adm t  s  h   p  n  p1 shift eps nu nuprim nusec type f */
   _init_wave(
     "MSF_LP", 0, 0, 2, -2, 0, 0, 0, 0, 0, 0, 0, 0, LP_TIDE, _f_mm, &w[MSF_LP]);
 
@@ -1660,7 +1659,6 @@ set_waves(fes_wave* const w)
    * u = 0
    * f = 1
    */
-  /*               adm t  s  h   p  n  p1 shift eps nu nuprim nusec type f */
   _init_wave(
     "SA_1", 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, LP_TIDE, _f_1, &w[SA_1]);
 
@@ -1672,7 +1670,6 @@ set_waves(fes_wave* const w)
    * u = 0
    * f = 1
    */
-  /*               adm t  s  h   p  n  p1 shift eps nu nuprim nusec type f */
   _init_wave(
     "STA", 0, 0, 0, 3, 0, 0, -1, 0, 0, 0, 0, 0, LP_TIDE, _f_1, &w[STA]);
 
@@ -1684,7 +1681,6 @@ set_waves(fes_wave* const w)
    * u = -ξ
    * f = formule 141
    */
-  /*               adm t  s  h   p  n  p1 shift eps nu nuprim nusec type f */
   _init_wave(
     "MM_2", 0, 0, 1, 0, 0, 0, 0, -1, -1, 0, 0, 0, LP_TIDE, _f_141, &w[MM_2]);
 
@@ -1696,7 +1692,6 @@ set_waves(fes_wave* const w)
    * u = -2ξ
    * f = formule 74 =  _f_mf
    */
-  /*               adm t  s  h   p  n  p1 shift eps nu nuprim nusec type f */
   _init_wave(
     "MM_1", 0, 0, 1, 0, 1, 0, 0, 2, -2, 0, 0, 0, LP_TIDE, _f_mf, &w[MM_1]);
 
@@ -1708,7 +1703,6 @@ set_waves(fes_wave* const w)
    * u = 0
    * f = formule 73  = _f_mm
    */
-  /*               adm t  s  h   p  n  p1 shift eps nu nuprim nusec type f */
   _init_wave(
     "MF_1", 0, 0, 2, 0, -2, 0, 0, 0, 0, 0, 0, 0, LP_TIDE, _f_mm, &w[MF_1]);
 
@@ -1720,18 +1714,22 @@ set_waves(fes_wave* const w)
    * u = -ξ
    * f = formule 141
    */
-  /*               adm t  s  h   p  n  p1 shift eps nu nuprim nusec type f */
   _init_wave(
     "MF_2", 0, 0, 2, 0, -1, 0, 0, -1, -1, 0, 0, 0, LP_TIDE, _f_141, &w[MF_2]);
 
   /*
    * M0 = permanent term only defined because its nodal correction gives Omega1
-   * (18.6y variations) NOTE : there are other permanent terms: radiative (Z0)
-   * and solar, without nodal correction, so not coded ref Shureman = A1
-   * [satellites'waves/nodal effects can also be included in the prediction via
-   * = waves 0 and 1 in w2nd()] => c'est la meilleure solution ici, la plus
-   * simple ... V = 0 u = 0 f = formule 73 = _f_mm
+   * (18.6y variations)
+   *
+   * NOTE: there are other permanent terms: radiative (Z0) and solar, without
+   * nodal correction, so not coded
+   * ref Shureman = A1
+   *
+   * [satellites waves/nodal effects can also be included in the prediction via
+   * = waves 0 and 1 in w2nd()] => It's the best solution here, the easiest one.
+   * V = 0
+   * u = 0
+   * f = formule 73 = _f_mm
    */
-  /*               adm t  s  h   p  n  p1 shift eps nu nuprim nusec type f */
   _init_wave("M0", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LP_TIDE, _f_mm, &w[M0]);
 }
