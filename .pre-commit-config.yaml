@@ -1,16 +1,29 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.4.0
+    rev: v4.2.0
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
+      - id: debug-statements
       - id: mixed-line-ending
         args: [--fix=lf]
         exclude: docs/make.bat
       - id: check-yaml
         exclude: conda/meta.yaml
   - repo: https://github.com/pre-commit/mirrors-clang-format
-    rev: v13.0.0
+    rev: v14.0.0
     hooks:
       - id: clang-format
         args: ["--style", "Mozilla", "-i"]
+  - repo: https://github.com/codespell-project/codespell
+    rev: "v2.1.0"
+    hooks:
+    - id: codespell
+  - repo: https://github.com/cheshirekow/cmake-format-precommit
+    rev: "v0.6.13"
+    hooks:
+    - id: cmake-lint
+    - id: cmake-format
+      additional_dependencies: [pyyaml]
+      types: [file]
+      files: CMakeLists.txt

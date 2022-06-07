@@ -32,5 +32,5 @@ PYBIND11_MODULE(pyfes, m)
            return self.calculate(lon, lat, date);
          });
 
-  m.attr("__version__") = "2.9.3";
+  m.attr("__version__") = "2.9.4.dev13";
 }

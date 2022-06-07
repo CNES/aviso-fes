@@ -20,22 +20,21 @@ import os
 import pathlib
 import platform
 import re
+import packaging.version
 import setuptools
 import setuptools.command.build_ext
 import setuptools.command.install
+import setuptools.command.sdist
+import setuptools.command.test
 import subprocess
 import sys
 import sysconfig
-# The setuptools must be imported before distutils
-import distutils.command.build
 
 # Check Python requirement
 MAJOR = sys.version_info[0]
 MINOR = sys.version_info[1]
-if not (MAJOR >= 3 and MINOR >= 6):
-    raise RuntimeError("Python %d.%d is not supported, "
-                       "you need at least Python 3.6." % (MAJOR, MINOR))
-# Versionning tag
+
+# Versioning tag
 PATTERN = "#define FES_VERSION"
 
 # Working directory
@@ -45,11 +44,14 @@ WORKING_DIRECTORY = pathlib.Path(__file__).parent.absolute()
 def build_dirname(extname=None):
     """Returns the name of the build directory"""
     extname = '' if extname is None else os.sep.join(extname.split(".")[:-1])
-    return str(
-        pathlib.Path(WORKING_DIRECTORY, "build",
-                     "lib.%s-%d.%d" % (sysconfig.get_platform(), MAJOR, MINOR),
-                     extname))
-
+    if packaging.version.parse(
+            setuptools.__version__) >= packaging.version.parse("62.1"):
+        return pathlib.Path(
+            WORKING_DIRECTORY, "build", f"lib.{sysconfig.get_platform()}-"
+            f"{sys.implementation.cache_tag}", extname)
+    return pathlib.Path(
+        WORKING_DIRECTORY, "build",
+        f"lib.{sysconfig.get_platform()}-{MAJOR}.{MINOR}", extname)
 
 def execute(cmd):
     """Executes a command and returns the lines displayed on the standard
@@ -145,21 +147,31 @@ class CMakeExtension(setuptools.Extension):
 
 class BuildExt(setuptools.command.build_ext.build_ext):
     """Build the Python extension using cmake"""
+    user_options = setuptools.command.build_ext.build_ext.user_options
+    user_options += [
+        ('c-compiler=', None, 'Preferred C compiler'),
+        ('cxx-compiler=', None, 'Preferred C++ compiler'),
+        ('generator=', None, 'Selected CMake generator'),
+        ('netcdf-root=', None, 'Preferred NetCDF installation prefix'),
+        ('reconfigure', None, 'Forces CMake to reconfigure this project')
+    ]
 
-    #: Preferred C++ compiler
-    CXX_COMPILER: ClassVar[Optional[str]] = None
+    def initialize_options(self) -> None:
+        """Set default values for all the options that this command
+        supports."""
+        super().initialize_options()
+        self.c_compiler = None
+        self.cxx_compiler = None
+        self.generator = None
+        self.netcdf_root = None
+        self.reconfigure = None
 
-    #: Selected CMAKE generator
-    GENERATOR: ClassVar[Optional[str]] = None
-
-    #: Preferred MKL root
-    NETCDF_ROOT: ClassVar[Optional[str]] = None
-
-    #: Run CMake to configure this project
-    RECONFIGURE: ClassVar[Optional[bool]] = None
+    def finalize_options(self) -> None:
+        """Set final values for all the options that this command supports."""
+        super().finalize_options()
 
     def run(self):
-        """A command's raison d'etre: carry out the action"""
+        """Carry out the action"""
         for ext in self.extensions:
             self.build_cmake(ext)
         super().run()
@@ -184,15 +196,15 @@ class BuildExt(setuptools.command.build_ext.build_ext):
         is_conda = self.is_conda()
         result = []
 
-        if self.CXX_COMPILER is not None:
-            result.append("-DCMAKE_CXX_COMPILER=" + self.CXX_COMPILER)
+        if self.c_compiler is not None:
+            result.append("-DCMAKE_C_COMPILER=" + self.c_compiler)
 
-        if self.NETCDF_ROOT is not None:
+        if self.netcdf_root is not None:
             result.append("-DNETCDF_INCLUDE_DIR=" +
-                          os.path.join(self.NETCDF_ROOT, "include"))
+                          os.path.join(self.netcdf_root, "include"))
             result.append(
                 "-DNETCDF_LIBRARY=" +
-                os.path.join(self.NETCDF_ROOT, "lib", "libnetcdf.so"))
+                os.path.join(self.netcdf_root, "lib", "libnetcdf.so"))
         elif is_conda:
             result.append("-DCMAKE_PREFIX_PATH=" + sys.prefix)
 
@@ -210,13 +222,13 @@ class BuildExt(setuptools.command.build_ext.build_ext):
             "-DBUILD_SHARED_LIBS=on",
             "-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=" + str(extdir),
             "-DCMAKE_PREFIX_PATH=" + sys.prefix,
-            "-DPYTHON_EXECUTABLE=" + sys.executable,
+            "-DPython3_EXECUTABLE=" + sys.executable,
         ] + self.set_cmake_user_options()
 
         is_windows = platform.system() == "Windows"
 
-        if self.GENERATOR is not None:
-            cmake_args.append("-G" + self.GENERATOR)
+        if self.generator is not None:
+            cmake_args.append("-G" + self.generator)
         elif is_windows:
             cmake_args.append("-G" + "Visual Studio 16 2019")
 
@@ -241,12 +253,10 @@ class BuildExt(setuptools.command.build_ext.build_ext):
         build_args = ["--config", cfg]
         is_windows = platform.system() == "windows"
         if is_windows:
-            if self.verbose:  # type: ignore
-                build_args += ["/verbosity:n"]
+            build_args += ['--', '/m']
         else:
             build_args += ["--", "-j%d" % os.cpu_count()]
-        if self.verbose:  # type: ignore
-            build_args.insert(0, "--verbose")
+
         return build_args
 
     def build_cmake(self, ext):
@@ -265,12 +275,12 @@ class BuildExt(setuptools.command.build_ext.build_ext):
         if pathlib.Path(build_temp, "CMakeFiles",
                         "TargetDirectories.txt").exists():
             # The user must force the reconfiguration
-            configure = self.RECONFIGURE is not None
+            configure = self.reconfigure is not None
         else:
             configure = True
 
         if configure:
-            cmake_args = self.get_cmake_args(cfg, extdir)
+            cmake_args = self.get_cmake_args(cfg, str(extdir))
             self.spawn(["cmake", str(WORKING_DIRECTORY)] + cmake_args)
         if not self.dry_run:  # type: ignore
             build_args = self.get_build_args(cfg)
@@ -294,39 +304,8 @@ class Revision(setuptools.Command):
         pass
 
     def run(self):
-        """A command's raison d'etre: carry out the action"""
+        """Carry out the action"""
         print(revision())
-
-
-class Build(distutils.command.build.build):
-    """Build everything needed to install"""
-    user_options = distutils.command.build.build.user_options
-    user_options += [
-        ('cxx-compiler=', None, 'Preferred C++ compiler'),
-        ('generator=', None, 'Selected CMake generator'),
-        ('netcdf-root=', None, 'Preferred NetCDF include directory'),
-        ('reconfigure', None, 'Forces CMake to reconfigure this project')
-    ]
-
-    def initialize_options(self):
-        """Set default values for all the options that this command supports"""
-        super().initialize_options()
-        self.cxx_compiler = None
-        self.generator = None
-        self.netcdf_root = None
-        self.reconfigure = None
-
-    def run(self):
-        """A command's raison d'etre: carry out the action"""
-        if self.cxx_compiler is not None:
-            BuildExt.CXX_COMPILER = self.cxx_compiler
-        if self.netcdf_root is not None:
-            BuildExt.NETCDF_ROOT = self.netcdf_root
-        if self.generator is not None:
-            BuildExt.GENERATOR = self.generator
-        if self.reconfigure is not None:
-            BuildExt.RECONFIGURE = True
-        super().run()
 
 
 def main():
@@ -357,7 +336,6 @@ def main():
         # package_dir={'': 'src'},
         # packages=setuptools.find_packages(where="src"),
         cmdclass={
-            'build': Build,
             'build_ext': BuildExt,
             'revision': Revision
         },  # type: ignore

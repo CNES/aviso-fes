@@ -32,13 +32,13 @@ def usage():
     parser.add_argument(
         'northward_velocity',
         help='Path to the configuration file that contains '
-        'the defintion of grids to use to compute the '
+        'the definition of grids to use to compute the '
         'northward velocity (V-component)',
         type=argparse.FileType('r'))
     parser.add_argument(
         'eastward_velocity',
         help='Path to the configuration file that contains '
-        'the defintion of grids to use to compute the '
+        'the definition of grids to use to compute the '
         'eastward velocity (U-component)',
         type=argparse.FileType('r'))
     parser.add_argument(

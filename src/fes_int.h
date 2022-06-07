@@ -372,14 +372,59 @@
 #define SA 66
 
 /**
- @brief The total number of waves known in the internal table.
+ @brief Index to access the wave Sa_1 in the internal table.
  */
-#define N_WAVES 67
+#define SA_1 67
 
 /**
- @brief The number of waves taken into account to compute long-period.
+ @brief Index to access the wave STA in the internal table.
+ */
+#define STA 68
+
+/**
+ @brief Index to access the wave MM_1 in the internal table.
+ */
+#define MM_1 69
+
+/**
+ @brief Index to access the wave MF_1 in the internal table.
+ */
+#define MF_1 70
+
+/**
+ @brief Index to access the wave MSF_LP in the internal table.
+ */
+#define MSF_LP 71
+
+/**
+ @brief Index to access the wave M0 in the internal table.
+ */
+#define M0 72
+
+/**
+ @brief Index to access the wave MM_2 in the internal table.
+ */
+#define MM_2 73
+
+/**
+ @brief Index to access the wave MF_2 in the internal table.
+ */
+#define MF_2 74
+
+/**
+ @brief The total number of waves known in the internal table.
+ */
+#define N_WAVES 75
+
+/**
+ @brief The number of 2nd order waves taken into account to compute long-period.
  */
 #define N_WAVES_2ND 106
+
+/**
+ @brief The number of 3rd order waves taken into account to compute long-period.
+ */
+#define N_WAVES_3RD 17
 
 /**
  @brief Number of coefficients
@@ -773,8 +818,11 @@ struct _fes_handler
   fes_double_complex ne[N_WAVES];
   /** Properties of waves computed */
   fes_wave waves[N_WAVES];
-  /** TODO */
+  /** table with 2nd order LPequi waves */
   float w2nd[N_WAVES_2ND][N_COEFS];
+  /** table with 3rd order LPequi waves */
+  float w3rd[N_WAVES_3RD][N_COEFS];
+
   /** Tide grids read */
   fes_grid grid;
 };

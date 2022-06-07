@@ -171,7 +171,7 @@ _get_entry(_ini* const ini, const char* const key)
 }
 
 /*
- Search a key in the configuraton fil loaded into memory
+ Search a key in the configuration fil loaded into memory
 
  Returns 1 if the key has been founded into the configuration file otherwise
  returns 0.

@@ -427,6 +427,9 @@ fes_new(FES* handle,
   /* Set wave order 2 to compute long-period equilibrium ocean tides */
   set_w2nd(fes->waves, fes->w2nd);
 
+  /* Set wave order 3 to compute long-period equilibrium ocean tides */
+  set_w3rd(fes->waves, fes->w3rd);
+
   /* Initializes the information of the cell containing the last data read
    * from the netCDF grid. This information is used to not always search the
    * properties to the cell of the matrix containing the data to interpolate.
@@ -532,8 +535,11 @@ fes_core(FES handle,
     *h = 0.0;
 
     if (fes->type == FES_TIDE) {
-      lpe_minus_n_waves(
-        (const float(*)[N_COEFS])(fes->w2nd), time, lat, h_long_period);
+      lpe_minus_n_waves((const float(*)[N_COEFS])(fes->w2nd),
+                        (const float(*)[N_COEFS])(fes->w3rd),
+                        time,
+                        lat,
+                        h_long_period);
     } else
       *h_long_period = 0;
 
@@ -557,8 +563,11 @@ fes_core(FES handle,
     *h = nan("nan");
 
     if (fes->type == FES_TIDE) {
-      lpe_minus_n_waves(
-        (const float(*)[N_COEFS])(fes->w2nd), time, lat, h_long_period);
+      lpe_minus_n_waves((const float(*)[N_COEFS])(fes->w2nd),
+                        (const float(*)[N_COEFS])(fes->w3rd),
+                        time,
+                        lat,
+                        h_long_period);
     } else
       *h_long_period = 0;
     set_fes_error(fes, FES_NO_DATA);
