@@ -49,6 +49,7 @@ main(void)
   int err;
   int i;
   float w2nd[N_WAVES_2ND][N_COEFS];
+  float w3rd[N_WAVES_3RD][N_COEFS];
   double hlp = 0;
   _fes_astronomic_angle a;
   fes_wave w[N_WAVES];
@@ -706,7 +707,7 @@ main(void)
         err = CHECK_FLOAT(w[i].freq, 1.01589578 * RAD);
         SUMMARIZE_ERR;
 
-        err = CHECK_INT(w[i].type, LP_TIDE);
+        err = CHECK_INT(w[i].type, SP_TIDE);
         SUMMARIZE_ERR;
         break;
       case SSA:
@@ -1202,10 +1203,15 @@ main(void)
   w[MSQM].dynamic = 1;
 
   set_w2nd(w, w2nd);
+  set_w3rd(w, w3rd);
 
   printf("*** testing lpe_minus_5_waves\n");
-  lpe_minus_n_waves((const float(*)[N_COEFS])(w2nd), 1, 1, &hlp);
-  err = CHECK_FLOAT(hlp, -1.124059213786);
+  lpe_minus_n_waves((const float(*)[N_COEFS])(w2nd),
+                    (const float(*)[N_COEFS])(w3rd),
+                    1,
+                    1,
+                    &hlp);
+  err = CHECK_FLOAT(hlp, -1.069196011706);
   SUMMARIZE_ERR;
 
   FINAL_RESULTS;

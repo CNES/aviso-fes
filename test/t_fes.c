@@ -90,7 +90,7 @@ test(fes_enum_access access)
       case 0:
         err = CHECK_TIDE(tide, -100.990629, 1E-5);
         SUMMARIZE_ERR;
-        err = CHECK_TIDE(lp, 0.903299, 1E-5);
+        err = CHECK_TIDE(lp, 0.916836, 1E-5);
         SUMMARIZE_ERR;
         err = CHECK_TIDE(load, 3.881161, 1E-5);
         SUMMARIZE_ERR;
@@ -98,7 +98,7 @@ test(fes_enum_access access)
       case 1:
         err = CHECK_TIDE(tide, -137.104223, 1E-5);
         SUMMARIZE_ERR;
-        err = CHECK_TIDE(lp, 0.876519, 1E-5);
+        err = CHECK_TIDE(lp, 0.890078, 1E-5);
         SUMMARIZE_ERR;
         err = CHECK_TIDE(load, 4.328335, 1E-5);
         SUMMARIZE_ERR;
@@ -106,7 +106,7 @@ test(fes_enum_access access)
       case 2:
         err = CHECK_TIDE(tide, -138.482412, 1E-5);
         SUMMARIZE_ERR;
-        err = CHECK_TIDE(lp, 0.849121, 1E-5);
+        err = CHECK_TIDE(lp, 0.862703, 1E-5);
         SUMMARIZE_ERR;
         err = CHECK_TIDE(load, 3.710694, 1E-5);
         SUMMARIZE_ERR;
@@ -114,7 +114,7 @@ test(fes_enum_access access)
       case 3:
         err = CHECK_TIDE(tide, -104.345361, 1E-5);
         SUMMARIZE_ERR;
-        err = CHECK_TIDE(lp, 0.821123, 1E-5);
+        err = CHECK_TIDE(lp, 0.834728, 1E-5);
         SUMMARIZE_ERR;
         err = CHECK_TIDE(load, 2.134257, 1E-5);
         SUMMARIZE_ERR;
@@ -122,7 +122,7 @@ test(fes_enum_access access)
       case 4:
         err = CHECK_TIDE(tide, -42.515586, 1E-5);
         SUMMARIZE_ERR;
-        err = CHECK_TIDE(lp, 0.792543, 1E-5);
+        err = CHECK_TIDE(lp, 0.806173, 1E-5);
         SUMMARIZE_ERR;
         err = CHECK_TIDE(load, -0.052047, 1E-5);
         SUMMARIZE_ERR;
@@ -130,7 +130,7 @@ test(fes_enum_access access)
       case 5:
         err = CHECK_TIDE(tide, 32.374755, 1E-5);
         SUMMARIZE_ERR;
-        err = CHECK_TIDE(lp, 0.763399, 1E-5);
+        err = CHECK_TIDE(lp, 0.777056, 1E-5);
         SUMMARIZE_ERR;
         err = CHECK_TIDE(load, -2.341404, 1E-5);
         SUMMARIZE_ERR;
@@ -138,7 +138,7 @@ test(fes_enum_access access)
       case 6:
         err = CHECK_TIDE(tide, 102.167627, 1E-5);
         SUMMARIZE_ERR;
-        err = CHECK_TIDE(lp, 0.733711, 1E-5);
+        err = CHECK_TIDE(lp, 0.747394, 1E-5);
         SUMMARIZE_ERR;
         err = CHECK_TIDE(load, -4.194242, 1E-5);
         SUMMARIZE_ERR;
@@ -146,7 +146,7 @@ test(fes_enum_access access)
       case 7:
         err = CHECK_TIDE(tide, 149.469495, 1E-5);
         SUMMARIZE_ERR;
-        err = CHECK_TIDE(lp, 0.703496, 1E-5);
+        err = CHECK_TIDE(lp, 0.717208, 1E-5);
         SUMMARIZE_ERR;
         err = CHECK_TIDE(load, -5.171971, 1E-5);
         SUMMARIZE_ERR;
@@ -154,7 +154,7 @@ test(fes_enum_access access)
       case 8:
         err = CHECK_TIDE(tide, 162.102726, 1E-5);
         SUMMARIZE_ERR;
-        err = CHECK_TIDE(lp, 0.672774, 1E-5);
+        err = CHECK_TIDE(lp, 0.686517, 1E-5);
         SUMMARIZE_ERR;
         err = CHECK_TIDE(load, -5.045669, 1E-5);
         SUMMARIZE_ERR;
@@ -162,7 +162,7 @@ test(fes_enum_access access)
       case 9:
         err = CHECK_TIDE(tide, 136.505573, 1E-5);
         SUMMARIZE_ERR;
-        err = CHECK_TIDE(lp, 0.641566, 1E-5);
+        err = CHECK_TIDE(lp, 0.655340, 1E-5);
         SUMMARIZE_ERR;
         err = CHECK_TIDE(load, -3.852375, 1E-5);
         SUMMARIZE_ERR;
@@ -170,7 +170,7 @@ test(fes_enum_access access)
       case 10:
         err = CHECK_TIDE(tide, 78.894879, 1E-5);
         SUMMARIZE_ERR;
-        err = CHECK_TIDE(lp, 0.609890, 1E-5);
+        err = CHECK_TIDE(lp, 0.623698, 1E-5);
         SUMMARIZE_ERR;
         err = CHECK_TIDE(load, -1.884925, 1E-5);
         SUMMARIZE_ERR;
@@ -178,7 +178,7 @@ test(fes_enum_access access)
       case 11:
         err = CHECK_TIDE(tide, 3.643044, 1E-5);
         SUMMARIZE_ERR;
-        err = CHECK_TIDE(lp, 0.577768, 1E-5);
+        err = CHECK_TIDE(lp, 0.591611, 1E-5);
         SUMMARIZE_ERR;
         err = CHECK_TIDE(load, 0.381964, 1E-5);
         SUMMARIZE_ERR;
@@ -186,7 +186,7 @@ test(fes_enum_access access)
       case 12:
         err = CHECK_TIDE(tide, -70.661218, 1E-5);
         SUMMARIZE_ERR;
-        err = CHECK_TIDE(lp, 0.545220, 1E-5);
+        err = CHECK_TIDE(lp, 0.559100, 1E-5);
         SUMMARIZE_ERR;
         err = CHECK_TIDE(load, 2.410565, 1E-5);
         SUMMARIZE_ERR;
@@ -194,7 +194,7 @@ test(fes_enum_access access)
       case 13:
         err = CHECK_TIDE(tide, -126.154394, 1E-5);
         SUMMARIZE_ERR;
-        err = CHECK_TIDE(lp, 0.512266, 1E-5);
+        err = CHECK_TIDE(lp, 0.526184, 1E-5);
         SUMMARIZE_ERR;
         err = CHECK_TIDE(load, 3.733913, 1E-5);
         SUMMARIZE_ERR;
@@ -202,7 +202,7 @@ test(fes_enum_access access)
       case 14:
         err = CHECK_TIDE(tide, -150.116619, 1E-5);
         SUMMARIZE_ERR;
-        err = CHECK_TIDE(lp, 0.478928, 1E-5);
+        err = CHECK_TIDE(lp, 0.492887, 1E-5);
         SUMMARIZE_ERR;
         err = CHECK_TIDE(load, 4.070741, 1E-5);
         SUMMARIZE_ERR;
@@ -210,7 +210,7 @@ test(fes_enum_access access)
       case 15:
         err = CHECK_TIDE(tide, -137.779885, 1E-5);
         SUMMARIZE_ERR;
-        err = CHECK_TIDE(lp, 0.445227, 1E-5);
+        err = CHECK_TIDE(lp, 0.459228, 1E-5);
         SUMMARIZE_ERR;
         err = CHECK_TIDE(load, 3.392764, 1E-5);
         SUMMARIZE_ERR;
@@ -218,7 +218,7 @@ test(fes_enum_access access)
       case 16:
         err = CHECK_TIDE(tide, -93.130691, 1E-5);
         SUMMARIZE_ERR;
-        err = CHECK_TIDE(lp, 0.411184, 1E-5);
+        err = CHECK_TIDE(lp, 0.425230, 1E-5);
         SUMMARIZE_ERR;
         err = CHECK_TIDE(load, 1.927624, 1E-5);
         SUMMARIZE_ERR;
@@ -226,7 +226,7 @@ test(fes_enum_access access)
       case 17:
         err = CHECK_TIDE(tide, -27.816052, 1E-5);
         SUMMARIZE_ERR;
-        err = CHECK_TIDE(lp, 0.376822, 1E-5);
+        err = CHECK_TIDE(lp, 0.390913, 1E-5);
         SUMMARIZE_ERR;
         err = CHECK_TIDE(load, 0.097163, 1E-5);
         SUMMARIZE_ERR;
@@ -234,7 +234,7 @@ test(fes_enum_access access)
       case 18:
         err = CHECK_TIDE(tide, 41.546661, 1E-5);
         SUMMARIZE_ERR;
-        err = CHECK_TIDE(lp, 0.342161, 1E-5);
+        err = CHECK_TIDE(lp, 0.356301, 1E-5);
         SUMMARIZE_ERR;
         err = CHECK_TIDE(load, -1.592943, 1E-5);
         SUMMARIZE_ERR;
@@ -242,7 +242,7 @@ test(fes_enum_access access)
       case 19:
         err = CHECK_TIDE(tide, 97.256195, 1E-5);
         SUMMARIZE_ERR;
-        err = CHECK_TIDE(lp, 0.307223, 1E-5);
+        err = CHECK_TIDE(lp, 0.321414, 1E-5);
         SUMMARIZE_ERR;
         err = CHECK_TIDE(load, -2.683946, 1E-5);
         SUMMARIZE_ERR;
@@ -250,7 +250,7 @@ test(fes_enum_access access)
       case 20:
         err = CHECK_TIDE(tide, 124.945282, 1E-5);
         SUMMARIZE_ERR;
-        err = CHECK_TIDE(lp, 0.272032, 1E-5);
+        err = CHECK_TIDE(lp, 0.286275, 1E-5);
         SUMMARIZE_ERR;
         err = CHECK_TIDE(load, -2.881870, 1E-5);
         SUMMARIZE_ERR;
@@ -258,7 +258,7 @@ test(fes_enum_access access)
       case 21:
         err = CHECK_TIDE(tide, 117.469330, 1E-5);
         SUMMARIZE_ERR;
-        err = CHECK_TIDE(lp, 0.236608, 1E-5);
+        err = CHECK_TIDE(lp, 0.250907, 1E-5);
         SUMMARIZE_ERR;
         err = CHECK_TIDE(load, -2.132584, 1E-5);
         SUMMARIZE_ERR;
@@ -266,7 +266,7 @@ test(fes_enum_access access)
       case 22:
         err = CHECK_TIDE(tide, 77.027699, 1E-5);
         SUMMARIZE_ERR;
-        err = CHECK_TIDE(lp, 0.200974, 1E-5);
+        err = CHECK_TIDE(lp, 0.215331, 1E-5);
         SUMMARIZE_ERR;
         err = CHECK_TIDE(load, -0.635177, 1E-5);
         SUMMARIZE_ERR;
@@ -274,7 +274,7 @@ test(fes_enum_access access)
       case 23:
         err = CHECK_TIDE(tide, 14.659386, 1E-5);
         SUMMARIZE_ERR;
-        err = CHECK_TIDE(lp, 0.165154, 1E-5);
+        err = CHECK_TIDE(lp, 0.179571, 1E-5);
         SUMMARIZE_ERR;
         err = CHECK_TIDE(load, 1.209534, 1E-5);
         SUMMARIZE_ERR;

@@ -17,7 +17,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Install prerequiste
+    - name: Install prerequisite
       run: sudo apt install cmake libnetcdf-dev uthash-dev python3 python3-dev -q -y
 
     - name: Initialize the submodules

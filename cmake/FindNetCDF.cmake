@@ -10,8 +10,8 @@
 #  NETCDF_F77         - require the F77 interface and link the fortran library
 #  NETCDF_F90         - require the F90 interface and link the fortran library
 #
-# Or equivalently by calling FindNetCDF with a COMPONENTS argument containing one or
-# more of "CXX;F77;F90".
+# Or equivalently by calling FindNetCDF with a COMPONENTS argument containing
+# one or more of "CXX;F77;F90".
 #
 # When interfaces are requested the user has access to interface specific hints:
 #
@@ -20,12 +20,14 @@
 #
 # This module returns these variables for the rest of the project to use.
 #
-#  NETCDF_FOUND          - True if NetCDF found including required interfaces (see below)
+#  NETCDF_FOUND          - True if NetCDF found including required interfaces
+#                          (see below)
 #  NETCDF_VERSION        - NetCDF version
 #  NETCDF_LIBRARIES      - All netcdf related libraries.
 #  NETCDF_INCLUDE_DIRS   - All directories to include.
 #  NETCDF_HAS_INTERFACES - Whether requested interfaces were found or not.
-#  NETCDF_${LANG}_INCLUDE_DIRS/NETCDF_${LANG}_LIBRARIES - C/C++/F70/F90 only interface
+#  NETCDF_${LANG}_INCLUDE_DIRS/NETCDF_${LANG}_LIBRARIES - C/C++/F70/F90 only
+#                                                         interface
 #
 # Normal usage would be:
 #  set (NETCDF_F90 "YES")
@@ -57,23 +59,25 @@ mark_as_advanced (NETCDF_LIBRARY)
 set (NETCDF_C_LIBRARIES ${NETCDF_LIBRARY})
 
 #start finding requested language components
-set (NetCDF_libs "")
-set (NetCDF_includes "${NETCDF_INCLUDE_DIR}")
+set (NETCDF_libs "")
+set (NETCDF_includes "${NETCDF_INCLUDE_DIR}")
 
 get_filename_component (NetCDF_lib_dirs "${NETCDF_LIBRARY}" PATH)
-set (NETCDF_HAS_INTERFACES "YES") # will be set to NO if we're missing any interfaces
+# Will be set to NO if we're missing any interfaces
+set (NETCDF_HAS_INTERFACES "YES")
 
+# Check NetCDF interfaces
 macro (NetCDF_check_interface lang header libs)
   if (NETCDF_${lang})
     #search starting from user modifiable cache var
     find_path (NETCDF_${lang}_INCLUDE_DIR NAMES ${header}
       HINTS "${NETCDF_INCLUDE_DIR}"
-      HINTS "${NETCDF_${lang}_ROOT}/include"
+            "${NETCDF_${lang}_ROOT}/include"
       ${USE_DEFAULT_PATHS})
 
     find_library (NETCDF_${lang}_LIBRARY NAMES ${libs}
       HINTS "${NetCDF_lib_dirs}"
-      HINTS "${NETCDF_${lang}_ROOT}/lib"
+            "${NETCDF_${lang}_ROOT}/lib"
       ${USE_DEFAULT_PATHS})
 
     mark_as_advanced (NETCDF_${lang}_INCLUDE_DIR NETCDF_${lang}_LIBRARY)
@@ -83,8 +87,8 @@ macro (NetCDF_check_interface lang header libs)
     set (NETCDF_${lang}_INCLUDE_DIRS ${NETCDF_${lang}_INCLUDE_DIR})
 
     if (NETCDF_${lang}_INCLUDE_DIR AND NETCDF_${lang}_LIBRARY)
-      list (APPEND NetCDF_libs ${NETCDF_${lang}_LIBRARY})
-      list (APPEND NetCDF_includes ${NETCDF_${lang}_INCLUDE_DIR})
+      list (APPEND NETCDF_libs ${NETCDF_${lang}_LIBRARY})
+      list (APPEND NETCDF_includes ${NETCDF_${lang}_INCLUDE_DIR})
     else ()
       set (NETCDF_HAS_INTERFACES "NO")
       message (STATUS "Failed to find NetCDF interface for ${lang}")
@@ -109,21 +113,23 @@ NetCDF_check_interface (F77 netcdf.inc  netcdff)
 NetCDF_check_interface (F90 netcdf.mod  netcdff)
 
 #export accumulated results to internal varS that rest of project can depend on
-list (APPEND NetCDF_libs "${NETCDF_C_LIBRARIES}")
-set (NETCDF_LIBRARIES ${NetCDF_libs})
-set (NETCDF_INCLUDE_DIRS ${NetCDF_includes})
-
+list (APPEND NETCDF_libs "${NETCDF_C_LIBRARIES}")
+set (NETCDF_LIBRARIES ${NETCDF_libs})
+set (NETCDF_INCLUDE_DIRS ${NETCDF_includes})
 
 if( EXISTS "${NETCDF_INCLUDE_DIRS}/netcdf_meta.h")
-  file( STRINGS "${NETCDF_INCLUDE_DIRS}/netcdf_meta.h" _version_contents REGEX "define NC_VERSION" )
-  string( REGEX REPLACE ".*([0-9]\\.[0-9]\\.[0-9]).*" "\\1" NETCDF_VERSION ${_version_contents} )
+  file( STRINGS "${NETCDF_INCLUDE_DIRS}/netcdf_meta.h"
+        _version_contents REGEX "define NC_VERSION" )
+  string( REGEX REPLACE ".*([0-9]\\.[0-9]\\.[0-9]).*" "\\1"
+          NETCDF_VERSION ${_version_contents} )
 else()
   find_program(_nc_config "nc-config")
   if( _nc_config)
     execute_process(
       COMMAND ${_nc_config} "--version"
       OUTPUT_VARIABLE _version_contents)
-    string( REGEX REPLACE ".*([0-9]\\.[0-9]\\.[0-9]).*" "\\1" NETCDF_VERSION ${_version_contents} )
+    string( REGEX REPLACE ".*([0-9]\\.[0-9]\\.[0-9]).*" "\\1"
+            NETCDF_VERSION ${_version_contents} )
   endif()
   unset(_nc_config)
 endif()
