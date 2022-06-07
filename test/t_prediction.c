@@ -1206,7 +1206,11 @@ main(void)
   set_w3rd(w, w3rd);
 
   printf("*** testing lpe_minus_5_waves\n");
-  lpe_minus_n_waves((const float (*)[N_COEFS])(w2nd), (const float (*)[N_COEFS])(w3rd), 1, 1, &hlp);
+  lpe_minus_n_waves((const float(*)[N_COEFS])(w2nd),
+                    (const float(*)[N_COEFS])(w3rd),
+                    1,
+                    1,
+                    &hlp);
   err = CHECK_FLOAT(hlp, -1.069196011706);
   SUMMARIZE_ERR;
 

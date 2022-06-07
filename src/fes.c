@@ -535,8 +535,11 @@ fes_core(FES handle,
     *h = 0.0;
 
     if (fes->type == FES_TIDE) {
-      lpe_minus_n_waves(
-        (const float(*)[N_COEFS])(fes->w2nd), (const float(*)[N_COEFS])(fes->w3rd), time, lat, h_long_period);
+      lpe_minus_n_waves((const float(*)[N_COEFS])(fes->w2nd),
+                        (const float(*)[N_COEFS])(fes->w3rd),
+                        time,
+                        lat,
+                        h_long_period);
     } else
       *h_long_period = 0;
 
@@ -560,8 +563,11 @@ fes_core(FES handle,
     *h = nan("nan");
 
     if (fes->type == FES_TIDE) {
-      lpe_minus_n_waves(
-        (const float(*)[N_COEFS])(fes->w2nd), (const float(*)[N_COEFS])(fes->w3rd), time, lat, h_long_period);
+      lpe_minus_n_waves((const float(*)[N_COEFS])(fes->w2nd),
+                        (const float(*)[N_COEFS])(fes->w3rd),
+                        time,
+                        lat,
+                        h_long_period);
     } else
       *h_long_period = 0;
     set_fes_error(fes, FES_NO_DATA);
