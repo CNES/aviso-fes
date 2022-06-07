@@ -614,7 +614,7 @@ set_w2nd(const fes_wave* const w, float w2nd[][N_COEFS])
   //    waves/secondary waves = variation for N' factor in comparison with
   //    Darwin
   // T   s   h   p   p1      coef  => Darwin = only combination for each
-  //    waves, secondary waves are not explicitely described
+  //    waves, secondary waves are not explicitly described
   static const float cst_w2nd[N_WAVES_2ND][N_COEFS] = {
     { /* 0,*/ 0, 0, 0, 1, 0, 0.02793f },     /*   0 */
     { /* 0,*/ 0, 0, 0, 2, 0, -0.00027f },    /*   1 */
@@ -798,7 +798,7 @@ set_w3rd(const fes_wave* const w, float w3rd[][N_COEFS])
   //    waves/secondary waves = variation for N' factor in comparison with
   //    Darwin
   // T   s   h   p   p1      coef  => Darwin = only combination for each
-  //    waves, secondary waves are not explicitely described
+  //    waves, secondary waves are not explicitly described
   static const float cst_w3rd[N_WAVES_3RD][N_COEFS] = {
     { /* 0,*/ 0, 0, 1, 0, 0, -0.00021f },  /* 0 */
     { /* 0,*/ 0, 2, -1, 0, 0, -0.00004f }, /* 1 */
@@ -886,7 +886,7 @@ lpe_minus_n_waves(const float w2nd[][N_COEFS],
   tmp = sin(lat * RAD);
 
   /* FES14C: mass conservation for LP equil */
-  /* substraction of the mean of c20 and c30 on ocean, for mass conservation */
+  /* subtraction of the mean of c20 and c30 on ocean, for mass conservation */
   /* mean_c20 = -0.014432247 */
   /* mean_c30 = 0.012469818  */
   c20 = sqrt(5.0 / (4.0 * M_PI)) * (1.5 * SQR(tmp) - 0.5) + 0.014432247;
@@ -1679,7 +1679,7 @@ set_waves(fes_wave* const w)
    * [corresponds to lines 714 - 717 in w3rd()]
    * V = s - 90
    * u = -ξ
-   * f = formule 141
+   * f = formula 141
    */
   _init_wave(
     "MM_2", 0, 0, 1, 0, 0, 0, 0, -1, -1, 0, 0, 0, LP_TIDE, _f_141, &w[MM_2]);
@@ -1690,7 +1690,7 @@ set_waves(fes_wave* const w)
    * [corresponds to waves 33 34 35 in w2nd()]
    * V = s + p + 180
    * u = -2ξ
-   * f = formule 74 =  _f_mf
+   * f = formula 74 =  _f_mf
    */
   _init_wave(
     "MM_1", 0, 0, 1, 0, 1, 0, 0, 2, -2, 0, 0, 0, LP_TIDE, _f_mf, &w[MM_1]);
@@ -1701,7 +1701,7 @@ set_waves(fes_wave* const w)
    * [corresponds to waves  53 .. 55 in w2nd()]
    * V = 2s - 2p
    * u = 0
-   * f = formule 73  = _f_mm
+   * f = formula 73  = _f_mm
    */
   _init_wave(
     "MF_1", 0, 0, 2, 0, -2, 0, 0, 0, 0, 0, 0, 0, LP_TIDE, _f_mm, &w[MF_1]);
@@ -1712,7 +1712,7 @@ set_waves(fes_wave* const w)
    * [corresponds to lines 719-720 in w3rd()]
    * V = 2s - p - 90
    * u = -ξ
-   * f = formule 141
+   * f = formula 141
    */
   _init_wave(
     "MF_2", 0, 0, 2, 0, -1, 0, 0, -1, -1, 0, 0, 0, LP_TIDE, _f_141, &w[MF_2]);
@@ -1729,7 +1729,7 @@ set_waves(fes_wave* const w)
    * = waves 0 and 1 in w2nd()] => It's the best solution here, the easiest one.
    * V = 0
    * u = 0
-   * f = formule 73 = _f_mm
+   * f = formula 73 = _f_mm
    */
   _init_wave("M0", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LP_TIDE, _f_mm, &w[M0]);
 }

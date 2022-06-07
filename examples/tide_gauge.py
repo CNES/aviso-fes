@@ -30,12 +30,12 @@ def usage():
         description='Program example using the Python API for FES.')
     parser.add_argument('ocean',
                         help='Path to the configuration file that contains '
-                        'the defintion of grids to use to compute the '
+                        'the definition of grids to use to compute the '
                         'ocean tide',
                         type=argparse.FileType('r'))
     parser.add_argument('load',
                         help='Path to the configuration file that contains '
-                        'the defintion of grids to use to compute the '
+                        'the definition of grids to use to compute the '
                         'load tide',
                         type=argparse.FileType('r'))
     parser.add_argument('--date',

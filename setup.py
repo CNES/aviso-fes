@@ -35,7 +35,7 @@ MINOR = sys.version_info[1]
 if not (MAJOR >= 3 and MINOR >= 6):
     raise RuntimeError("Python %d.%d is not supported, "
                        "you need at least Python 3.6." % (MAJOR, MINOR))
-# Versionning tag
+# Versioning tag
 PATTERN = "#define FES_VERSION"
 
 # Working directory
@@ -159,7 +159,7 @@ class BuildExt(setuptools.command.build_ext.build_ext):
     RECONFIGURE: ClassVar[Optional[bool]] = None
 
     def run(self):
-        """A command's raison d'etre: carry out the action"""
+        """Carry out the action"""
         for ext in self.extensions:
             self.build_cmake(ext)
         super().run()
@@ -294,7 +294,7 @@ class Revision(setuptools.Command):
         pass
 
     def run(self):
-        """A command's raison d'etre: carry out the action"""
+        """Carry out the action"""
         print(revision())
 
 
@@ -317,7 +317,7 @@ class Build(distutils.command.build.build):
         self.reconfigure = None
 
     def run(self):
-        """A command's raison d'etre: carry out the action"""
+        """Carry out the action"""
         if self.cxx_compiler is not None:
             BuildExt.CXX_COMPILER = self.cxx_compiler
         if self.netcdf_root is not None:

@@ -1,17 +1,17 @@
 # This file is part of FES library.
 #
-# FES is free software: you can redistribute it and/or modify
-# it under the terms of the GNU LESSER GENERAL PUBLIC LICENSE as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# FES is free software: you can redistribute it and/or modify it under the terms
+# of the GNU LESSER GENERAL PUBLIC LICENSE as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
 #
-# FES is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU LESSER GENERAL PUBLIC LICENSE for more details.
+# FES is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU LESSER GENERAL PUBLIC LICENSE for more
+# details.
 #
-# You should have received a copy of the GNU LESSER GENERAL PUBLIC LICENSE
-# along with FES.  If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU LESSER GENERAL PUBLIC LICENSE along
+# with FES.  If not, see <http://www.gnu.org/licenses/>.
 cmake_minimum_required(VERSION 2.8.12)
 
 project(fes)
@@ -29,54 +29,53 @@ option(BUILD_DOC "Build documentation" OFF)
 option(BUILD_PYTHON "Build python extension" OFF)
 
 # Version
-find_package (Python3 COMPONENTS Interpreter Development)
-file( STRINGS "${CMAKE_SOURCE_DIR}/include/fes.h" VERSION REGEX "define FES_VERSION" )
-string(REGEX REPLACE ".*([0-9]\\.[0-9]\\.[0-9]).*" "\\1" VERSION ${VERSION} )
+find_package(Python3 COMPONENTS Interpreter Development)
+file(STRINGS "${CMAKE_SOURCE_DIR}/include/fes.h" VERSION
+     REGEX "define FES_VERSION")
+string(REGEX REPLACE ".*([0-9]\\.[0-9]\\.[0-9]).*" "\\1" VERSION ${VERSION})
 string(REPLACE "." ";" VERSION_LIST ${VERSION})
 list(GET VERSION_LIST 0 LIB_VERSION_MAJOR)
 list(GET VERSION_LIST 1 LIB_VERSION_MINOR)
 list(GET VERSION_LIST 2 LIB_VERSION_PATCH)
-set(LIB_VERSION "${LIB_VERSION_MAJOR}.${LIB_VERSION_MINOR}.${LIB_VERSION_PATCH}")
+set(LIB_VERSION
+    "${LIB_VERSION_MAJOR}.${LIB_VERSION_MINOR}.${LIB_VERSION_PATCH}")
 
 message(STATUS "FES version: ${LIB_VERSION}")
 
-if (POLICY CMP0042)
+if(POLICY CMP0042)
   cmake_policy(SET CMP0042 NEW)
-endif ()
+endif()
 
 cmake_policy(SET CMP0048 NEW)
-if (BUILD_PYTHON)
+if(BUILD_PYTHON)
   project(fes LANGUAGES C CXX)
 else()
   project(fes LANGUAGES C)
 endif()
 
-if (POLICY CMP0063)
+if(POLICY CMP0063)
   cmake_policy(SET CMP0063 NEW)
-endif ()
+endif()
 
-if (POLICY CMP0074)
+if(POLICY CMP0074)
   cmake_policy(SET CMP0074 NEW) # CMake 3.12
-endif ()
+endif()
 
-if (POLICY CMP0077)
+if(POLICY CMP0077)
   cmake_policy(SET CMP0077 NEW)
-endif ()
+endif()
 
 # CMake module search path
-set(
-  CMAKE_MODULE_PATH
-  "${CMAKE_CURRENT_SOURCE_DIR}/cmake;"
-  "${CMAKE_MODULE_PATH}"
-)
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake;"
+                      "${CMAKE_MODULE_PATH}")
 
 # By default, build type is set to release, with debugging information.
-if (NOT CMAKE_BUILD_TYPE)
+if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE RELWITHDEBINFO)
 endif()
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 
-if (BUILD_PYTHON)
+if(BUILD_PYTHON)
   # The library must be built using C++14 compiler.
   set(CMAKE_CXX_STANDARD 14)
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -89,23 +88,28 @@ if (BUILD_PYTHON)
     message(FATAL_ERROR "Unsupported compiler -- requires C++14 support!")
   endif()
 
-  macro(CHECK_CXX_COMPILER_AND_LINKER_FLAGS _RESULT _CXX_FLAGS _LINKER_FLAGS)
-    set(CMAKE_REQUIRED_FLAGS ${_CXX_FLAGS})
-    set(CMAKE_REQUIRED_LIBRARIES ${_LINKER_FLAGS})
+  # Check CXX compiler and linker flags
+  macro(CHECK_CXX_COMPILER_AND_LINKER_FLAGS result cpp_flags linker_flags)
+    set(CMAKE_REQUIRED_FLAGS ${cpp_flags})
+    set(CMAKE_REQUIRED_LIBRARIES ${linker_flags})
     set(CMAKE_REQUIRED_QUIET TRUE)
-    check_cxx_source_runs("int main(int argc, char **argv) { return 0; }" ${_RESULT})
+    check_cxx_source_runs("int main(int argc, char **argv) { return 0; }"
+                          ${result})
     set(CMAKE_REQUIRED_FLAGS "")
     set(CMAKE_REQUIRED_LIBRARIES "")
   endmacro()
 
   # Always use libc++ on Clang
-  if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    CHECK_CXX_COMPILER_AND_LINKER_FLAGS(HAS_LIBCPP "-stdlib=libc++" "-stdlib=libc++")
-    if (HAS_LIBCPP)
+  if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    check_cxx_compiler_and_linker_flags(HAS_LIBCPP "-stdlib=libc++"
+                                        "-stdlib=libc++")
+    if(HAS_LIBCPP)
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
       set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
-      set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -stdlib=libc++")
-      CHECK_CXX_COMPILER_AND_LINKER_FLAGS(HAS_LIBCPPABI "-stdlib=libc++" "-stdlib=libc++ -lc++abi")
+      set(CMAKE_SHARED_LINKER_FLAGS
+          "${CMAKE_SHARED_LINKER_FLAGS} -stdlib=libc++")
+      check_cxx_compiler_and_linker_flags(HAS_LIBCPPABI "-stdlib=libc++"
+                                          "-stdlib=libc++ -lc++abi")
       if(HAS_LIBCPPABI)
         set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lc++abi")
         set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -lc++abi")
@@ -114,26 +118,29 @@ if (BUILD_PYTHON)
   endif()
 endif()
 
-if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
+if(${CMAKE_BUILD_TYPE} MATCHES "Debug")
   set(CMAKE_DEBUG_POSTFIX "-d")
-endif ()
+endif()
 
 if(NOT WIN32)
   if(NOT CMAKE_CXX_FLAGS MATCHES "-Wall$")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
   endif()
-  if(NOT CMAKE_CXX_COMPILER MATCHES "icpc$" AND NOT CMAKE_CXX_FLAGS MATCHES "-Wpedantic$")
+  if(NOT CMAKE_CXX_COMPILER MATCHES "icpc$" AND NOT CMAKE_CXX_FLAGS MATCHES
+                                                "-Wpedantic$")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wpedantic")
   endif()
 endif()
 
-CHECK_FUNCTION_EXISTS(pow POW_FUNCTION_EXISTS)
+check_function_exists(pow POW_FUNCTION_EXISTS)
 if(NOT POW_FUNCTION_EXISTS)
   unset(POW_FUNCTION_EXISTS CACHE)
   list(APPEND CMAKE_REQUIRED_LIBRARIES m)
-  CHECK_FUNCTION_EXISTS(pow POW_FUNCTION_EXISTS)
+  check_function_exists(pow POW_FUNCTION_EXISTS)
   if(POW_FUNCTION_EXISTS)
-    set(MATH_LIBRARY m CACHE STRING "" FORCE)
+    set(MATH_LIBRARY
+        m
+        CACHE STRING "" FORCE)
   else()
     message(FATAL_ERROR "Failed making the pow() function available")
   endif()
@@ -141,14 +148,11 @@ endif()
 
 enable_testing()
 
-# API documentation
-# if (BUILD_DOC)
-#   add_subdirectory(docs)
-# endif()
+# API documentation if (BUILD_DOC) add_subdirectory(docs) endif()
 
 # NetCDF
 find_package(NetCDF 4.1.1 REQUIRED)
-if (NOT EXISTS ${NETCDF_INCLUDE_DIRS}/netcdf.h)
+if(NOT EXISTS ${NETCDF_INCLUDE_DIRS}/netcdf.h)
   message(FATAL_ERROR "Unable to find NetCDF C-Header files")
 endif()
 include_directories(${NETCDF_INCLUDE_DIRS})
@@ -163,21 +167,24 @@ add_subdirectory(src)
 add_subdirectory(test)
 add_subdirectory(examples)
 
-if (BUILD_PYTHON)
+if(BUILD_PYTHON)
   # Python
   find_package(PythonInterp REQUIRED)
   execute_process(
-      COMMAND
+    COMMAND
       ${PYTHON_EXECUTABLE} -c [=[import os
 import sysconfig
 import sys
 sys.stdout.write(os.path.dirname(sysconfig.get_config_h_filename()))
-]=] OUTPUT_VARIABLE PYTHON_INCLUDE_DIR)
-  execute_process (
-   COMMAND ${PYTHON_EXECUTABLE} -c [=[import site
+]=]
+    OUTPUT_VARIABLE PYTHON_INCLUDE_DIR)
+  execute_process(
+    COMMAND
+      ${PYTHON_EXECUTABLE} -c [=[import site
 import sys
 sys.stdout.write(site.getsitepackages()[-1])
-]=] OUTPUT_VARIABLE PYTHON_SITE_DIR)
+]=]
+    OUTPUT_VARIABLE PYTHON_SITE_DIR)
   find_package(PythonLibs REQUIRED)
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third_party/pybind11)
   add_subdirectory(python)
