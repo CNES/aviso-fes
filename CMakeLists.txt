@@ -14,6 +14,23 @@
 # with FES.  If not, see <http://www.gnu.org/licenses/>.
 cmake_minimum_required(VERSION 2.8.12)
 
+if(POLICY CMP0042)
+  cmake_policy(SET CMP0042 NEW)
+endif()
+
+cmake_policy(SET CMP0048 NEW)
+if(POLICY CMP0063)
+  cmake_policy(SET CMP0063 NEW)
+endif()
+
+if(POLICY CMP0074)
+  cmake_policy(SET CMP0074 NEW) # CMake 3.12
+endif()
+
+if(POLICY CMP0077)
+  cmake_policy(SET CMP0077 NEW)
+endif()
+
 project(fes)
 
 include(CheckFunctionExists)
@@ -29,7 +46,6 @@ option(BUILD_DOC "Build documentation" OFF)
 option(BUILD_PYTHON "Build python extension" OFF)
 
 # Version
-find_package(Python3 COMPONENTS Interpreter Development)
 file(STRINGS "${CMAKE_SOURCE_DIR}/include/fes.h" VERSION
      REGEX "define FES_VERSION")
 string(REGEX REPLACE ".*([0-9]\\.[0-9]\\.[0-9]).*" "\\1" VERSION ${VERSION})
@@ -42,27 +58,10 @@ set(LIB_VERSION
 
 message(STATUS "FES version: ${LIB_VERSION}")
 
-if(POLICY CMP0042)
-  cmake_policy(SET CMP0042 NEW)
-endif()
-
-cmake_policy(SET CMP0048 NEW)
 if(BUILD_PYTHON)
   project(fes LANGUAGES C CXX)
 else()
   project(fes LANGUAGES C)
-endif()
-
-if(POLICY CMP0063)
-  cmake_policy(SET CMP0063 NEW)
-endif()
-
-if(POLICY CMP0074)
-  cmake_policy(SET CMP0074 NEW) # CMake 3.12
-endif()
-
-if(POLICY CMP0077)
-  cmake_policy(SET CMP0077 NEW)
 endif()
 
 # CMake module search path
@@ -168,11 +167,10 @@ add_subdirectory(test)
 add_subdirectory(examples)
 
 if(BUILD_PYTHON)
-  # Python
-  find_package(PythonInterp REQUIRED)
+  find_package(Python3 COMPONENTS Interpreter Development)
   execute_process(
     COMMAND
-      ${PYTHON_EXECUTABLE} -c [=[import os
+      ${Python3_EXECUTABLE} -c [=[import os
 import sysconfig
 import sys
 sys.stdout.write(os.path.dirname(sysconfig.get_config_h_filename()))
@@ -180,7 +178,7 @@ sys.stdout.write(os.path.dirname(sysconfig.get_config_h_filename()))
     OUTPUT_VARIABLE PYTHON_INCLUDE_DIR)
   execute_process(
     COMMAND
-      ${PYTHON_EXECUTABLE} -c [=[import site
+      ${Python3_EXECUTABLE} -c [=[import site
 import sys
 sys.stdout.write(site.getsitepackages()[-1])
 ]=]
