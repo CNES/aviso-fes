@@ -18,6 +18,7 @@ Example of using the FES Python interface
 """
 import argparse
 import datetime
+
 import numpy as np
 import pyfes
 
@@ -51,8 +52,8 @@ def main():
     args = usage()
 
     # Create handler
-    short_tide = pyfes.Handler("ocean", "io", args.ocean.name)
-    radial_tide = pyfes.Handler("radial", "io", args.load.name)
+    short_tide = pyfes.Handler('ocean', 'io', args.ocean.name)
+    radial_tide = pyfes.Handler('radial', 'io', args.load.name)
 
     # Creating the time series
     dates = np.array([
@@ -68,7 +69,7 @@ def main():
     load, load_lp, _ = radial_tide.calculate(lons, lats, dates)
 
     for idx, date in enumerate(dates):
-        print("%s %9.3f %9.3f %9.3f %9.3f %9.3f %9.3f %9.3f" %
+        print('%s %9.3f %9.3f %9.3f %9.3f %9.3f %9.3f %9.3f' %
               (date, lats[idx], lons[idx], tide[idx], lp[idx], tide[idx] +
                lp[idx], tide[idx] + lp[idx] + load[idx], load[idx]))
 

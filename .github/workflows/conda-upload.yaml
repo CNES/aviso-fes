@@ -2,9 +2,8 @@ name: Anaconda Upload
 
 on:
   push:
-    branches: "*"
-  pull_request:
-    branches: master
+    tags:
+    - '*'
 
 jobs:
   boa:

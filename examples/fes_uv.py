@@ -18,8 +18,9 @@ Example of using the FES Python interface
 """
 import argparse
 import datetime
-import numpy as np
+
 import matplotlib.pyplot as plt
+import numpy as np
 import pyfes
 
 
@@ -29,23 +30,20 @@ def usage():
     """
     parser = argparse.ArgumentParser(
         description='Program example using the Python API for FES.')
-    parser.add_argument(
-        'northward_velocity',
-        help='Path to the configuration file that contains '
-        'the definition of grids to use to compute the '
-        'northward velocity (V-component)',
-        type=argparse.FileType('r'))
-    parser.add_argument(
-        'eastward_velocity',
-        help='Path to the configuration file that contains '
-        'the definition of grids to use to compute the '
-        'eastward velocity (U-component)',
-        type=argparse.FileType('r'))
-    parser.add_argument(
-        '--date',
-        help='Date of calculation of the velocities tide.',
-        default=datetime.datetime.now(),
-        type=argparse.FileType('r'))
+    parser.add_argument('northward_velocity',
+                        help='Path to the configuration file that contains '
+                        'the definition of grids to use to compute the '
+                        'northward velocity (V-component)',
+                        type=argparse.FileType('r'))
+    parser.add_argument('eastward_velocity',
+                        help='Path to the configuration file that contains '
+                        'the definition of grids to use to compute the '
+                        'eastward velocity (U-component)',
+                        type=argparse.FileType('r'))
+    parser.add_argument('--date',
+                        help='Date of calculation of the velocities tide.',
+                        default=datetime.datetime.now(),
+                        type=argparse.FileType('r'))
     return parser.parse_args()
 
 
@@ -56,9 +54,9 @@ def main():
     args = usage()
 
     # Create handler
-    eastward_velocity = pyfes.Handler("ocean", "memory",
+    eastward_velocity = pyfes.Handler('ocean', 'memory',
                                       args.eastward_velocity.name)
-    northward_velocity = pyfes.Handler("ocean", "memory",
+    northward_velocity = pyfes.Handler('ocean', 'memory',
                                        args.northward_velocity.name)
 
     # Creating a grid that will be used to interpolate the tide
@@ -83,13 +81,13 @@ def main():
     u_tide = u_tide.reshape((size, size))
     u_tide = np.ma.masked_where(np.isnan(u_tide), u_tide)
     plt.figure(1)
-    plt.title("eastward velocity")
+    plt.title('eastward velocity')
     plt.pcolormesh(u_tide)
 
     v_tide = v_tide.reshape((size, size))
     v_tide = np.ma.masked_where(np.isnan(v_tide), v_tide)
     plt.figure(2)
-    plt.title("northward velocity")
+    plt.title('northward velocity')
     plt.pcolormesh(v_tide)
 
     plt.show()

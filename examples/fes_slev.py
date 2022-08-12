@@ -18,8 +18,9 @@ Example of using the FES Python interface
 """
 import argparse
 import datetime
-import numpy as np
+
 import matplotlib.pyplot as plt
+import numpy as np
 import pyfes
 
 
@@ -53,9 +54,9 @@ def main():
     args = usage()
 
     # Create handler
-    short_tide = pyfes.Handler("ocean", "memory", args.ocean.name)
+    short_tide = pyfes.Handler('ocean', 'memory', args.ocean.name)
     if args.load is not None:
-        radial_tide = pyfes.Handler("radial", "memory", args.load.name)
+        radial_tide = pyfes.Handler('radial', 'memory', args.load.name)
     else:
         radial_tide = None
 

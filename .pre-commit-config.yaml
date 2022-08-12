@@ -1,20 +1,21 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.2.0
+    rev: v4.3.0
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: debug-statements
+      - id: double-quote-string-fixer
       - id: mixed-line-ending
         args: [--fix=lf]
         exclude: docs/make.bat
       - id: check-yaml
         exclude: conda/meta.yaml
   - repo: https://github.com/pre-commit/mirrors-clang-format
-    rev: v14.0.0
+    rev: v14.0.6
     hooks:
       - id: clang-format
-        args: ["--style", "Mozilla", "-i"]
+        args: ["--style", "Mozilla"]
   - repo: https://github.com/codespell-project/codespell
     rev: "v2.1.0"
     hooks:
@@ -27,3 +28,23 @@ repos:
       additional_dependencies: [pyyaml]
       types: [file]
       files: CMakeLists.txt
+  - repo: https://github.com/pre-commit/mirrors-yapf
+    rev: v0.32.0
+    hooks:
+      - id: yapf
+        files: \.py(?:i)?
+  - repo: https://github.com/pre-commit/mirrors-isort
+    rev: v5.10.1
+    hooks:
+      - id: isort
+        name: isort (python)
+  - repo: https://github.com/asottile/pyupgrade
+    rev: "v2.37.3"
+    hooks:
+    - id: pyupgrade
+      args: [--py36-plus]
+  - repo: https://gitlab.com/pycqa/flake8
+    rev: 5.0.4
+    hooks:
+      - id: flake8
+        exclude: tests
