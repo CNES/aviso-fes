@@ -28,11 +28,11 @@ jobs:
         mamba-version: "*"
         auto-update-conda: true
         auto-activate-base: false
-        activate-environment: test_env
+        activate-environment: FES
         environment-file: conda/environment.yml
 
     - name: Build
       shell: bash -l {0}
       run: |
         conda mambabuild --output-folder boa-bld conda/
-        anaconda-client upload --force --no-progress --label main --token ${{ secrets.ANACONDA_TOKEN }} --python ${{ matrix.python-version }} boa-bld/*/*.tar.bz2
+        anaconda upload --force --no-progress --label main --token ${{ secrets.ANACONDA_TOKEN }} --python ${{ matrix.python-version }} boa-bld/*/*.tar.bz2
