@@ -1,4 +1,4 @@
-name: CI
+name: Anaconda Upload
 
 on:
   push:
@@ -36,4 +36,4 @@ jobs:
       shell: bash -l {0}
       run: |
         conda mambabuild --output-folder boa-bld conda/
-        anaconda-client upload --force --no-progress --label main --token ${{ secrets.ANACONDA_TOKEN }} --python ${{{ matrix.python-version }}} boa-bld/*/*.tar.bz2
+        anaconda-client upload --force --no-progress --label main --token ${{ secrets.ANACONDA_TOKEN }} --python ${{ matrix.python-version }} boa-bld/*/*.tar.bz2
