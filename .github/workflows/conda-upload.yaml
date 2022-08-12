@@ -7,17 +7,16 @@ on:
     branches: master
 
 jobs:
-  linux:
-    name: ${{ matrix.python-version }}-posix
+  boa:
+    name: ${{ matrix.python-version }}-{{ matrix.os }}
     runs-on:
-      - ubuntu-latest
-      - windows-2019
-      - OSX-latest
+      - {{ matrix.os }}
 
     strategy:
       max-parallel: 5
       matrix:
         python-version: ['3.7', '3.8', '3.9', '3.10']
+        os: ['ubuntu-latest', 'macos-latest', 'win-latest']
     steps:
     - name: Checkout
       uses: actions/checkout@v2
