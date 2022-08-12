@@ -6,7 +6,7 @@ import re
 import subprocess
 import sys
 
-PATTERN = "#define FES_VERSION"
+PATTERN = '#define FES_VERSION'
 
 
 def execute(cmd):
@@ -25,7 +25,7 @@ def execute(cmd):
 
 def update_version(path, version, pattern, replaced_line):
     """Updating the version number description"""
-    with open(path, "r") as stream:
+    with open(path) as stream:
         lines = stream.readlines()
     pattern = re.compile(pattern)
 
@@ -34,8 +34,8 @@ def update_version(path, version, pattern, replaced_line):
         if match is not None:
             lines[idx] = replaced_line % version
 
-    with open(path, "w") as stream:
-        stream.write("".join(lines))
+    with open(path, 'w') as stream:
+        stream.write(''.join(lines))
 
 
 def update_meta(path, version):
@@ -56,21 +56,21 @@ def revision(path, update=False):
     """
     if not update:
         pattern = re.compile(PATTERN + r' "(.*)"').search
-        with open(path, "r") as stream:
+        with open(path) as stream:
             for line in stream:
                 match = pattern(line)
                 if match is not None:
                     return tuple(
-                        int(item) for item in match.group(1).split("."))
+                        int(item) for item in match.group(1).split('.'))
 
-    stdout = execute("git describe --tags --dirty --long --always").strip()
+    stdout = execute('git describe --tags --dirty --long --always').strip()
     pattern = re.compile(r'([\w\d\.]+)-(\d+)-g([\w\d]+)(?:-(dirty))?')
     match = pattern.search(stdout)
     assert match is not None
-    (major, minor, patch) = (int(item) for item in match.group(1).split("."))
+    (major, minor, patch) = (int(item) for item in match.group(1).split('.'))
 
     if update:
-        with open(path, "r") as stream:
+        with open(path) as stream:
             lines = stream.readlines()
 
         for idx, line in enumerate(lines):
@@ -78,28 +78,28 @@ def revision(path, update=False):
                 lines[idx] = PATTERN + " \"%d.%d.%d\"\n" % (major, minor,
                                                             patch)
 
-        with open(path, "w") as stream:
+        with open(path, 'w') as stream:
             stream.writelines(lines)
 
         update_meta(
             os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                         "conda/meta.yaml"),
-            "%d.%d.%d" % (major, minor, patch))
+                         'conda/meta.yaml'),
+            '%d.%d.%d' % (major, minor, patch))
         update_python_module(
             os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                         "python/main.cpp"),
-            "%d.%d.%d" % (major, minor, patch))
+                         'python/main.cpp'),
+            '%d.%d.%d' % (major, minor, patch))
     return (major, minor, patch)
 
 
 def usage():
     """Parse arguments"""
     parser = argparse.ArgumentParser(
-        description="Handle the version of the library")
+        description='Handle the version of the library')
     parser.add_argument(
-        "--update",
-        help="Update the version number inf the FES Header file",
-        action="store_true")
+        '--update',
+        help='Update the version number inf the FES Header file',
+        action='store_true')
     return parser.parse_args()
 
 
@@ -107,10 +107,10 @@ def main():
     """Main function"""
     args = usage()
     path = os.path.normpath(
-        os.path.join(os.path.dirname(os.path.abspath(__file__)), "include",
-                     "fes.h"))
-    sys.stdout.write("%d %d %d" % revision(path, args.update))
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), 'include',
+                     'fes.h'))
+    sys.stdout.write('%d %d %d' % revision(path, args.update))
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
