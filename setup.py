@@ -219,7 +219,7 @@ class BuildExt(setuptools.command.build_ext.build_ext):
         """
         cmake_args = [
             "-DBUILD_PYTHON=on",
-            "-DBUILD_SHARED_LIBS=on",
+            "-DBUILD_SHARED_LIBS=off",
             "-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=" + str(extdir),
             "-DCMAKE_PREFIX_PATH=" + sys.prefix,
             "-DPython3_EXECUTABLE=" + sys.executable,
