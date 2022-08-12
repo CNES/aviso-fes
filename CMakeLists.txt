@@ -82,7 +82,12 @@ if(BUILD_PYTHON)
   set(CMAKE_MACOSX_RPATH 1)
 
   include(CheckCXXCompilerFlag)
-  check_cxx_compiler_flag("-std=c++14" HAS_CPP14_FLAG)
+  if(NOT WIN32)
+    check_cxx_compiler_flag("-std=c++14" HAS_CPP14_FLAG)
+  else()
+    check_cxx_compiler_flag("/std:c++14" HAS_CPP14_FLAG)
+  endif()
+
   if(NOT HAS_CPP14_FLAG)
     message(FATAL_ERROR "Unsupported compiler -- requires C++14 support!")
   endif()
