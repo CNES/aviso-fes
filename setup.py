@@ -251,7 +251,7 @@ class BuildExt(setuptools.command.build_ext.build_ext):
         * `cfg`: config, one of {"debug", "release"}
         """
         build_args = ["--config", cfg]
-        is_windows = platform.system() == "windows"
+        is_windows = platform.system() == "Windows"
         if is_windows:
             build_args += ['--', '/m']
         else:
