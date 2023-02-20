@@ -317,8 +317,8 @@ _open_grid(const char* const path,
   int var_id[2];
   size_t start = 0;
   size_t count = 2;
-  float x[2];
-  float y[2];
+  double x[2];
+  double y[2];
   float undef1;
   float undef2;
 
@@ -374,14 +374,14 @@ _open_grid(const char* const path,
     return 1;
   }
 
-  rc = nc_get_vara_float(nc->id, x_id, &start, &count, &x[0]);
+  rc = nc_get_vara_double(nc->id, x_id, &start, &count, &x[0]);
   if (rc) {
     set_fes_extended_error(
       fes, FES_NETCDF_ERROR, "%s (%s): %s", nc_strerror(rc), nc->lon, path);
     return 1;
   }
 
-  rc = nc_get_vara_float(nc->id, y_id, &start, &count, &y[0]);
+  rc = nc_get_vara_double(nc->id, y_id, &start, &count, &y[0]);
   if (rc) {
     set_fes_extended_error(
       fes, FES_NETCDF_ERROR, "%s (%s): %s", nc_strerror(rc), nc->lat, path);
