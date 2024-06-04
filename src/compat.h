@@ -80,7 +80,7 @@ dirname(const char* path);
  */
 #define STRNCPY(dst, src, size)                                                \
   strncpy((dst), (src), (size));                                               \
-  (dst)[(size)-1] = '\0'
+  (dst)[(size) - 1] = '\0'
 
 /**
  * Duplicates string

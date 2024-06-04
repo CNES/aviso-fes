@@ -885,7 +885,7 @@ lpe_minus_n_waves(const float w2nd[][N_COEFS],
 
   tmp = sin(lat * RAD);
 
-  /* FES14C: mass conservation for LP equil */
+  /* FES14C: mass conservation for LP equilibrium */
   /* subtraction of the mean of c20 and c30 on ocean, for mass conservation */
   /* mean_c20 = -0.014432247 */
   /* mean_c30 = 0.012469818  */
@@ -1637,8 +1637,8 @@ set_waves(fes_wave* const w)
     "MSF", 0, 0, 2, -2, 0, 0, 0, 0, 2, -2, 0, 0, SP_TIDE, _f_m2, &w[MSF]);
 
   /* FES14C: add new LP waves hereafter */
-  /* these are LP equil waves, but an atlas (equilibrium or not) can be given as
-   * input */
+  /* these are LP equilibrium waves, but an atlas (equilibrium or not) can be
+   * given as input */
   /*
    * MSf_LP = 2nd order LP equi in atlas FES2014c
    * WARNING: Same frequency as MSf Non Linear wave : 2s -2h
