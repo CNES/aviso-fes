@@ -4,17 +4,12 @@
 
 This directory contains the different configuration files to compute:
 
-* FES2022 elevations (ocean or geocentric)
+* FES2022 elevations (ocean or geocentric) - version B
   * Use [ocean_tide.ini](ocean_tide.ini) to compute the ocean tide
     with the native grids.
   * Use [ocean_tide_extrapolated.ini](ocean_tide_extrapolated.ini)
     to compute the ocean tide with the extrapolated grids.
   * Use [load_tide.ini](load_tide.ini) to compute the load tide.
-* FES2022 currents
-    * Use [northward_velocity.ini](northward_velocity.ini) to use the
-      native grids.
-    * Use [eastward_velocity.ini](eastward_velocity.ini) to use the
-      native grids.
 
 > **_NOTE_**
 >
@@ -23,10 +18,8 @@ This directory contains the different configuration files to compute:
 >
 > ```
 > data/
-> └── fes2022
->     ├── eastward_velocity
+> └── fes2022B
 >     ├── load_tide
->     ├── northward_velocity
 >     ├── ocean_tide
 >     └── ocean_tide_extrapolated
 >```
@@ -39,9 +32,7 @@ calculate the different tides are not distributed here, but on the
 website. You will find on the AVISO FTP server authenticated the following
 archives for filling empty directories:
 
-- eastward_velocity.tar.xz
 - load_tide.tar.xz
-- northward_velocity.tar.xz
 - ocean_tide.tar.xz
 - ocean_tide_extrapolated.tar.xz
 
@@ -52,40 +43,34 @@ compression algorithms. To decompress the archive, you must use this command or
 
 > **_NOTE_**
 >
-> The decompression of these archives will need 193 MiB of memory.
+> The decompression of these archives will need 18 GB of memory.
 
 ## Database description
 
-The FES2022 tides database includes 3 components: Tide elevations, currents and
+The FES2022 tides database includes 3 components: Tide elevations, Extrapolated Tide elevations and Tide 
 loading. Each component contains 34 tidal components:
 
     2N₂, J₁, K₁, K₂, L₂, MKS₂, MN₄, MS₄, Mf, Mm, Msf, Msqm, Mtm, M₂, M₃, M₄, M₆, M₈, N₂, N₄, O₁, P₁, P₁, R₂, Sa, Ssa, S₁, S₂, S₄, T₂, µ₂, ε₂, λ₂, ν₂
 
 ### Tide Elevations
 
-FES2014b ocean tide model is distributed; this model has
+FES2022B ocean tide model is distributed; this model has
 been computed using the new FES2022 tidal loading grids. Two versions
 are available:
 
   * Non extrapolated version contained in the `ocean_tide.tar.xz` archive: the
-    model is defined on a 1/16° grid directly
+    model is defined on a 1/30° grid directly
     interpolated from the finite element native grid of the model.
 
   * Extrapolated version contained in the `ocean_tide_extrapolated.tar.xz`: the
     above version has been extrapolated on the coasts in order to cover nearly
     entirely the coastal regions. The procedure is a simple extrapolation
-    applied on 10 pixels and using mean values when necessary, it cannot be
+    applied on 20 pixels and using mean values when necessary, it can be not
     accurate enough in some regions.
-
-### Tide Currents
-
-Tidal currents derived from FES2014a models are delivered on
-the 1/16° grid, directly interpolated from the finite element native grid.
-No extrapolation is done on the coasts of the currents. This database is
-contained in two separate archives: `eastward_velocity.tar.xz` and
-`northward_velocity.tar.xz`.
+    A specific mask file is also provided to differentiate native data and extrapolated data
+    for FES2022B tide elevation grids: mask_fes2022.nc
 
 ### Tide Loading
 
-The new FES2014a tide loading is supplied on the same 1/16° grid. This
+The new FES2022 tide loading is supplied on the same 1/30° grid. This
 dataset is provided into the `load_tide.tar.xz` archive.
