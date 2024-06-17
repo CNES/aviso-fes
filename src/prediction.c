@@ -1634,7 +1634,7 @@ set_waves(fes_wave* const w)
    * f = f(M₂) * f(S2) = f(M₂)
    */
   _init_wave(
-    "MSF", 0, 0, 2, -2, 0, 0, 0, 0, 2, -2, 0, 0, SP_TIDE, _f_m2, &w[MSF]);
+    "MSF", 0, 0, 2, -2, 0, 0, 0, 0, 2, -2, 0, 0, LP_TIDE, _f_m2, &w[MSF]);
 
   /* FES14C: add new LP waves hereafter */
   /* these are LP equilibrium waves, but an atlas (equilibrium or not) can be
