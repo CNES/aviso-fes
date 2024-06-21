@@ -84,6 +84,23 @@ _get_key(const fes_enum_tide_type tide,
 }
 
 /*
+  _get_dynamic_key
+
+  Get the key name in the parameter file
+
+  name Wave name
+
+  Returns a pointer to a static string that contains the key name.
+  */
+static char*
+_get_dynamic_key(const char* const name)
+{
+  static char buffer[MAX_PATH];
+  snprintf(buffer, sizeof(buffer), "DYNAMIC_%s", name);
+  return buffer;
+}
+
+/*
  _get_env
 
  Read the environment variable defining the size of the buffer
@@ -129,6 +146,11 @@ _get_env(fes_handler* handle)
   if ((key) == NULL) {                                                         \
     goto error;                                                                \
   }
+#define DUPLICATE_DYNAMIC_KEY(key)                                             \
+  (key) = STRDUP(_get_dynamic_key(fes->waves[ix].name));                       \
+  if ((key) == NULL) {                                                         \
+    goto error;                                                                \
+  }
 
 /*
  _delete_string_list
@@ -158,7 +180,7 @@ _delete_string_list(char** list)
 static char**
 _known_keys(fes_handler* fes)
 {
-#define SIZE (N_WAVES * 10 + 1)
+#define SIZE (N_WAVES * 11 + 1)
   char** keys;
   size_t ix, jx;
 
@@ -166,7 +188,7 @@ _known_keys(fes_handler* fes)
     return NULL;
   }
 
-  for (ix = 0, jx = 0; ix < N_WAVES; ++ix, jx += 10) {
+  for (ix = 0, jx = 0; ix < N_WAVES; ++ix, jx += 11) {
     DUPLICATE_KEY(FES_TIDE, keys[jx], KW_FILE);
     DUPLICATE_KEY(FES_TIDE, keys[jx + 1], KW_LATITUDE);
     DUPLICATE_KEY(FES_TIDE, keys[jx + 2], KW_LONGITUDE);
@@ -177,12 +199,48 @@ _known_keys(fes_handler* fes)
     DUPLICATE_KEY(FES_RADIAL, keys[jx + 7], KW_LONGITUDE);
     DUPLICATE_KEY(FES_RADIAL, keys[jx + 8], KW_AMPLITUDE);
     DUPLICATE_KEY(FES_RADIAL, keys[jx + 9], KW_PHASE);
+    DUPLICATE_DYNAMIC_KEY(keys[jx + 10]);
   }
   return keys;
 
 error:
   _delete_string_list(keys);
   return NULL;
+}
+
+/*
+ _set_dynamic_wave
+
+ Set the dynamic wave property
+
+ fes FES handler
+ ini Configuration file
+*/
+static int
+_set_dynamic_wave(fes_handler* fes, void* ini)
+{
+  int ix;
+  int dynamic;
+  const char* keyword;
+
+  for (ix = 0; ix < N_WAVES; ++ix) {
+    /* Get the keyword DYNAMIC_{WAVE_NAME} */
+    keyword = _get_dynamic_key(fes->waves[ix].name);
+    dynamic = ini_get_integer(ini, keyword, -1);
+    /* Keyword value must -1, 0 or 1 */
+    if (dynamic != -1 && dynamic != 0 && dynamic != 1) {
+      set_fes_extended_error(fes,
+                             FES_INI_ERROR,
+                             "The value of the %s keyword must be 0 or 1",
+                             keyword);
+      return 1;
+    }
+    if (dynamic == 1) {
+      fes->waves[ix].dynamic = 1;
+      fes->waves[ix].admittance = 0;
+    }
+  }
+  return 0;
 }
 
 /*
@@ -422,6 +480,13 @@ fes_new(FES* handle,
     fes->grid.waveIndex[n] = ix;
 
     ++n;
+  }
+
+  /* Set dynamic wave property. This keyword is used to disable the computation
+    of the wave by admittance and in the lpe_minus_n_waves function even if the
+    wave is not computed dynamically. */
+  if (_set_dynamic_wave(fes, ini)) {
+    goto error;
   }
 
   /* Set wave order 2 to compute long-period equilibrium ocean tides */
