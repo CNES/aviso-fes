@@ -51,6 +51,7 @@
 #define KW_LATITUDE "LATITUDE"
 #define KW_LONGITUDE "LONGITUDE"
 #define KW_PHASE "PHASE"
+#define KW_DYNAMIC "DYNAMIC"
 
 /* Default size of the buffer */
 #define BUFFER_SIZE 64
@@ -80,23 +81,6 @@ _get_key(const fes_enum_tide_type tide,
            name,
            key);
 
-  return buffer;
-}
-
-/*
-  _get_dynamic_key
-
-  Get the key name in the parameter file
-
-  name Wave name
-
-  Returns a pointer to a static string that contains the key name.
-  */
-static char*
-_get_dynamic_key(const char* const name)
-{
-  static char buffer[MAX_PATH];
-  snprintf(buffer, sizeof(buffer), "DYNAMIC_%s", name);
   return buffer;
 }
 
@@ -146,11 +130,6 @@ _get_env(fes_handler* handle)
   if ((key) == NULL) {                                                         \
     goto error;                                                                \
   }
-#define DUPLICATE_DYNAMIC_KEY(key)                                             \
-  (key) = STRDUP(_get_dynamic_key(fes->waves[ix].name));                       \
-  if ((key) == NULL) {                                                         \
-    goto error;                                                                \
-  }
 
 /*
  _delete_string_list
@@ -180,7 +159,7 @@ _delete_string_list(char** list)
 static char**
 _known_keys(fes_handler* fes)
 {
-#define SIZE (N_WAVES * 11 + 1)
+#define SIZE (N_WAVES * 12 + 1)
   char** keys;
   size_t ix, jx;
 
@@ -188,18 +167,19 @@ _known_keys(fes_handler* fes)
     return NULL;
   }
 
-  for (ix = 0, jx = 0; ix < N_WAVES; ++ix, jx += 11) {
+  for (ix = 0, jx = 0; ix < N_WAVES; ++ix, jx += 12) {
     DUPLICATE_KEY(FES_TIDE, keys[jx], KW_FILE);
     DUPLICATE_KEY(FES_TIDE, keys[jx + 1], KW_LATITUDE);
     DUPLICATE_KEY(FES_TIDE, keys[jx + 2], KW_LONGITUDE);
     DUPLICATE_KEY(FES_TIDE, keys[jx + 3], KW_AMPLITUDE);
     DUPLICATE_KEY(FES_TIDE, keys[jx + 4], KW_PHASE);
-    DUPLICATE_KEY(FES_RADIAL, keys[jx + 5], KW_FILE);
-    DUPLICATE_KEY(FES_RADIAL, keys[jx + 6], KW_LATITUDE);
-    DUPLICATE_KEY(FES_RADIAL, keys[jx + 7], KW_LONGITUDE);
-    DUPLICATE_KEY(FES_RADIAL, keys[jx + 8], KW_AMPLITUDE);
-    DUPLICATE_KEY(FES_RADIAL, keys[jx + 9], KW_PHASE);
-    DUPLICATE_DYNAMIC_KEY(keys[jx + 10]);
+    DUPLICATE_KEY(FES_TIDE, keys[jx + 5], KW_DYNAMIC);
+    DUPLICATE_KEY(FES_RADIAL, keys[jx + 6], KW_FILE);
+    DUPLICATE_KEY(FES_RADIAL, keys[jx + 7], KW_LATITUDE);
+    DUPLICATE_KEY(FES_RADIAL, keys[jx + 8], KW_LONGITUDE);
+    DUPLICATE_KEY(FES_RADIAL, keys[jx + 9], KW_AMPLITUDE);
+    DUPLICATE_KEY(FES_RADIAL, keys[jx + 10], KW_PHASE);
+    DUPLICATE_KEY(FES_RADIAL, keys[jx + 11], KW_DYNAMIC);
   }
   return keys;
 
@@ -225,7 +205,7 @@ _set_dynamic_wave(fes_handler* fes, void* ini)
 
   for (ix = 0; ix < N_WAVES; ++ix) {
     /* Get the keyword DYNAMIC_{WAVE_NAME} */
-    keyword = _get_dynamic_key(fes->waves[ix].name);
+    keyword = _get_key(fes->type, fes->waves[ix].name, KW_DYNAMIC);
     dynamic = ini_get_integer(ini, keyword, -1);
     /* Keyword value must -1, 0 or 1 */
     if (dynamic != -1 && dynamic != 0 && dynamic != 1) {
