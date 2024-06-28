@@ -9,8 +9,6 @@ dependencies:
   - netcdf4
   - pytest
   - boost-cpp
-  - git
-  - git-lfs
   - cxx-compiler
   - make # [not win]
   - binutils # [not win]
