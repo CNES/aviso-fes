@@ -2,24 +2,46 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
     hooks:
-      - id: trailing-whitespace
-      - id: end-of-file-fixer
+      - id: check-case-conflict
+      - id: check-docstring-first
+      - id: check-yaml
+        exclude: "(conda/meta.yaml|.clang\\-format)$"
       - id: debug-statements
+      - id: end-of-file-fixer
       - id: double-quote-string-fixer
       - id: mixed-line-ending
         args: [--fix=lf]
         exclude: docs/make.bat
-      - id: check-yaml
-        exclude: conda/meta.yaml
-  - repo: https://github.com/pre-commit/mirrors-clang-format
-    rev: v18.1.6
+      - id: trailing-whitespace
+  - repo: https://github.com/asottile/pyupgrade
+    rev: "v3.15.2"
     hooks:
-      - id: clang-format
-        args: ["--style", "Mozilla"]
-  - repo: https://github.com/codespell-project/codespell
-    rev: "v2.3.0"
+    - id: pyupgrade
+      args: [--py37-plus]
+  - repo: https://github.com/PyCQA/flake8
+    rev: 7.0.0
     hooks:
-    - id: codespell
+      - id: flake8
+        exclude: tests
+  - repo: https://github.com/pre-commit/mirrors-isort
+    rev: v5.10.1
+    hooks:
+      - id: isort
+        name: isort (python)
+      - id: isort
+        name: isort (pyi)
+        types: [pyi]
+  - repo: https://github.com/pre-commit/mirrors-yapf
+    rev: v0.32.0
+    hooks:
+      - id: yapf
+        additional_dependencies:
+          - toml
+        files: \.py(?:i)?
+  - repo: https://github.com/myint/docformatter
+    rev: "v1.7.5"
+    hooks:
+    - id: docformatter
   - repo: https://github.com/cheshirekow/cmake-format-precommit
     rev: "v0.6.13"
     hooks:
@@ -28,23 +50,22 @@ repos:
       additional_dependencies: [pyyaml]
       types: [file]
       files: CMakeLists.txt
-  - repo: https://github.com/pre-commit/mirrors-yapf
-    rev: v0.32.0
+  - repo: https://github.com/codespell-project/codespell
+    rev: "v2.2.6"
     hooks:
-      - id: yapf
-        files: \.py(?:i)?
-  - repo: https://github.com/pre-commit/mirrors-isort
-    rev: v5.10.1
+    - id: codespell
+      exclude: "leap-seconds.txt"
+      args: [-L inout]
+  - repo: https://github.com/pre-commit/mirrors-clang-format
+    rev: v18.1.4
     hooks:
-      - id: isort
-        name: isort (python)
-  - repo: https://github.com/asottile/pyupgrade
-    rev: "v3.15.2"
+      - id: clang-format
+        exclude: "(dataset.*json)$"
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.10.0
     hooks:
-    - id: pyupgrade
-      args: [--py36-plus]
-  - repo: https://github.com/pycqa/flake8
-    rev: 7.0.0
-    hooks:
-      - id: flake8
-        exclude: tests
+      - id: mypy
+        exclude: docs
+        additional_dependencies:
+          # Type stubs
+          - types-PyYAML
