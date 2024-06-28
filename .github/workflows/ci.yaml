@@ -38,7 +38,7 @@ jobs:
       shell: bash -l {0}
       run: |
         python setup.py build
-        pytest -v -ra --processes
+        pytest -v -ra
 
     - name: Build C++ Library and Testing
       shell: bash -l {0}
@@ -75,4 +75,4 @@ jobs:
       shell: bash -l {0}
       run: |
         python setup.py build
-        pytest -v -ra --processes
+        pytest -v -ra
