@@ -11,7 +11,7 @@ dependencies:
   - boost-cpp
   - git
   - git-lfs
-  - gxx
+  - cxx-compiler
   - make # [not win]
   - binutils # [not win]
   - pyyaml
