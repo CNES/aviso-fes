@@ -11,6 +11,7 @@ import platform
 import re
 import sys
 import sysconfig
+import warnings
 
 import setuptools
 import setuptools.command.build_ext
@@ -49,7 +50,13 @@ def version() -> str:
         # otherwise setuptools_scm will not be able to find the version number.
         os.chdir(WORKING_DIRECTORY)
         import setuptools_scm
-        return setuptools_scm.get_version()
+        try:
+            return setuptools_scm.get_version()
+        except:  # noqa: E722
+            warnings.warn(
+                'Unable to find the version number with setuptools_scm.',
+                RuntimeWarning)
+            return '0.0.0'
     with path.open() as stream:
         for line in stream:
             if line.startswith('__version__'):

@@ -3,5 +3,16 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - boa
-  - anaconda-client
+  - cmake
+  - eigen
+  - setuptools_scm
+  - netcdf4
+  - pytest
+  - boost-cpp
+  - git
+  - git-lfs
+  - gxx
+  - make # [not win]
+  - binutils # [not win]
+  - pyyaml
+  - gtest
