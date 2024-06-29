@@ -101,14 +101,13 @@ fig = plt.figure(figsize=(10, 10))
 ax = fig.add_subplot(1, 1, 1, projection=ccrs.PlateCarree())
 ax.set_extent([-5.0, 10.0, 40.0, 55.0], crs=ccrs.PlateCarree())
 ax.coastlines()
-levels = np.arange(0, 400, 10)
-contour = ax.contourf(lon,
-                      lat,
-                      grid,
-                      100,
-                      transform=ccrs.PlateCarree(),
-                      levels=levels,
-                      cmap='terrain')
+contour = ax.pcolormesh(lon,
+                        lat,
+                        grid,
+                        transform=ccrs.PlateCarree(),
+                        cmap='terrain',
+                        vmin=0.0,
+                        vmax=400.0)
 cbar = plt.colorbar(contour, ax=ax, orientation='vertical')
 cbar.set_label('Amplitude (cm)')
 plt.show()
@@ -137,13 +136,13 @@ fig = plt.figure(figsize=(10, 10))
 ax = fig.add_subplot(1, 1, 1, projection=ccrs.PlateCarree())
 ax.set_extent([-5.0, 10.0, 40.0, 55.0], crs=ccrs.PlateCarree())
 ax.coastlines()
-contour = ax.contourf(lon,
-                      lat,
-                      grid,
-                      100,
-                      transform=ccrs.PlateCarree(),
-                      levels=levels,
-                      cmap='terrain')
+contour = ax.pcolormesh(lon,
+                        lat,
+                        grid,
+                        transform=ccrs.PlateCarree(),
+                        cmap='terrain',
+                        vmin=0.0,
+                        vmax=400.0)
 cbar = plt.colorbar(contour, ax=ax, orientation='vertical')
 cbar.set_label('Amplitude (cm)')
 plt.show()
