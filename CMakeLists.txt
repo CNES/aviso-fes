@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.8.2)
 
 # CMake module search path
 set(CMAKE_MODULE_PATH
