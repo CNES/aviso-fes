@@ -41,6 +41,17 @@ jobs:
         python setup.py build
         pytest -v -ra
 
+    - name: Generate Documentation
+      shell: bash -l {0}
+      run: |
+        sphinx-build -b html docs/source docs/build
+
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: docs/build/html
+
     - name: Build C++ Library and Testing
       shell: bash -l {0}
       run: |
