@@ -61,8 +61,12 @@ class Point : public point_t {
   /// @param[in] lat The latitude in degrees.
   inline auto lat(const double lat) { set<1>(lat); }
 
-  /// Return true if this instance is valid.
-  constexpr auto is_valid() const -> bool {
+/// Return true if this instance is valid.
+#ifndef _WINDOWS
+  constexpr
+#endif
+      auto
+      is_valid() const -> bool {
     return !std::isnan(lon()) && !std::isnan(lat());
   }
 
