@@ -70,7 +70,6 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
                                     "MinSizeRel" "Asan")
 endif()
 
-option(FES_BUILD_DOXYGEN "Build Doxygen documentation" OFF)
 option(FES_BUILD_PYTHON_BINDINGS "Build Python bindings" OFF)
 option(FES_ENABLE_CLANG_TIDY "Enable clang-tidy" OFF)
 option(FES_ENABLE_FPIC "Enable position independent code" ON)
@@ -243,10 +242,6 @@ endif()
 
 if(FES_ENABLE_TEST)
   add_subdirectory(tests/library)
-endif()
-
-if(FES_BUILD_DOXYGEN)
-  add_subdirectory(docs/cpp_api)
 endif()
 
 if(FES_BUILD_PYTHON_BINDINGS)
