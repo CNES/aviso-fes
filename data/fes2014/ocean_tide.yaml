@@ -1,0 +1,41 @@
+tide:
+  cartesian:
+    amplitude: amplitude
+    latitude: lat
+    longitude: lon
+    paths:
+      2N2: ./ocean_tide/2n2.nc
+      Eps2: ./ocean_tide/eps2.nc
+      J1: ./ocean_tide/j1.nc
+      K1: ./ocean_tide/k1.nc
+      K2: ./ocean_tide/k2.nc
+      L2: ./ocean_tide/l2.nc
+      Lambda2: ./ocean_tide/la2.nc
+      M2: ./ocean_tide/m2.nc
+      M3: ./ocean_tide/m3.nc
+      M4: ./ocean_tide/m4.nc
+      M6: ./ocean_tide/m6.nc
+      M8: ./ocean_tide/m8.nc
+      MKS2: ./ocean_tide/mks2.nc
+      MN4: ./ocean_tide/mn4.nc
+      MS4: ./ocean_tide/ms4.nc
+      MSf: ./ocean_tide/msf.nc
+      Mf: ./ocean_tide/mf.nc
+      Mm: ./ocean_tide/mm.nc
+      Msqm: ./ocean_tide/msqm.nc
+      Mtm: ./ocean_tide/mtm.nc
+      Mu2: ./ocean_tide/mu2.nc
+      N2: ./ocean_tide/n2.nc
+      N4: ./ocean_tide/n4.nc
+      Nu2: ./ocean_tide/nu2.nc
+      O1: ./ocean_tide/o1.nc
+      P1: ./ocean_tide/p1.nc
+      Q1: ./ocean_tide/q1.nc
+      R2: ./ocean_tide/r2.nc
+      S1: ./ocean_tide/s1.nc
+      S2: ./ocean_tide/s2.nc
+      S4: ./ocean_tide/s4.nc
+      Sa: ./ocean_tide/sa.nc
+      Ssa: ./ocean_tide/ssa.nc
+      T2: ./ocean_tide/t2.nc
+    phase: phase

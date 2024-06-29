@@ -5,15 +5,15 @@
 This directory contains the different configuration files to compute:
 
 * FES2014 elevations (ocean or geocentric)
-  * Use [ocean_tide.ini](ocean_tide.ini) to compute the ocean tide
+  * Use [ocean_tide.yaml](ocean_tide.yaml) to compute the ocean tide
     with the native grids.
-  * Use [ocean_tide_extrapolated.ini](ocean_tide_extrapolated.ini)
+  * Use [ocean_tide_extrapolated.yaml](ocean_tide_extrapolated.yaml)
     to compute the ocean tide with the extrapolated grids.
-  * Use [load_tide.ini](load_tide.ini) to compute the load tide.
+  * Use [load_tide.yaml](load_tide.yaml) to compute the load tide.
 * FES2014 currents
-    * Use [northward_velocity.ini](northward_velocity.ini) to use the
+    * Use [northward_velocity.yaml](northward_velocity.yaml) to use the
       native grids.
-    * Use [eastward_velocity.ini](eastward_velocity.ini) to use the
+    * Use [eastward_velocity.yaml](eastward_velocity.yaml) to use the
       native grids.
 
 > **_NOTE_**
