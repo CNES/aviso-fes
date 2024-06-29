@@ -5,8 +5,7 @@ build:
     python: mambaforge-4.10
   jobs:
     post_build:
-      commands:
-        - pip install .
+      - pip install .
 sphinx:
   builder: html
   configuration: docs/source/conf.py
