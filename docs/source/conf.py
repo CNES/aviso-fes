@@ -40,7 +40,11 @@ author = 'CNES'
 try:
     release = importlib.metadata.version(project)
 except importlib.metadata.PackageNotFoundError:
-    release = '0.0.0'
+    import setuptools_scm
+    try:
+        release = setuptools_scm.get_version()
+    except LookupError:
+        release = '0.0.0'
 version = '.'.join(release.split('.')[:2])
 
 # -- General configuration ---------------------------------------------------
