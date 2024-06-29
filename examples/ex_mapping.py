@@ -1,7 +1,7 @@
 """
-******************
+********************
 Tide mapping example
-******************
+********************
 
 In this example, we will use the model to predict the tidal elevation on a
 global grid. The model used is an old FES tidel-atlas model. Do not use it for
@@ -23,8 +23,8 @@ import pyfes
 
 # %%
 # First we create an environment variable to store the path to the model file.
-os.environ['DATASET_DIR'] = str(pathlib.Path().absolute() / 'src' / 'python' /
-                                'pyfes' / 'tests' / 'dataset')
+os.environ['DATASET_DIR'] = str(pathlib.Path().absolute().parent / 'src' /
+                                'python' / 'pyfes' / 'tests' / 'dataset')
 
 # %%
 # Now we need to create the instances of the model used to calculate the ocean
@@ -33,7 +33,7 @@ os.environ['DATASET_DIR'] = str(pathlib.Path().absolute() / 'src' / 'python' /
 # documented in the :ref:`documentation <confguration_file>`.
 handlers: dict[str, pyfes.core.AbstractTidalModelComplex128
                | pyfes.core.AbstractTidalModelComplex64]
-handlers = pyfes.load_config(pathlib.Path(__file__).parent / 'fes_slev.yml')
+handlers = pyfes.load_config(pathlib.Path().absolute() / 'fes_slev.yml')
 
 # %%
 # ``handlers`` is a dictionary that contains the handlers to the ocean and
@@ -73,7 +73,7 @@ geo_tide = np.ma.masked_where(np.isnan(geo_tide), geo_tide)
 
 # %%
 # We can now plot the result.
-fig = plt.figure(figsize=(22, 10))
+fig = plt.figure(figsize=(10, 5))
 ax = fig.add_subplot(1, 1, 1, projection=ccrs.PlateCarree())
 ax.coastlines()
 ax.set_global()
