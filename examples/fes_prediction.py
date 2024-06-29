@@ -30,8 +30,6 @@ os.environ['DATASET_DIR'] = str(pathlib.Path().absolute() / 'src' / 'python' /
 # tide and the radial tide. To do this, we need to create a YAML file that
 # describes the models and their parameters. The configuration file is fully
 # documented in the :ref:`documentation >confguration_file>`.
-handlers: dict[str, pyfes.core.AbstractTidalModelComplex118
-               | pyfes.core.AbstractTidalModelComplex64]
 handlers = pyfes.load_config(pathlib.Path(__file__).parent / 'fes_slev.yml')
 
 # %%
@@ -77,4 +75,4 @@ print(f"{'JulDay':>6s} {'Hour':>5s} {'Latitude':>11s} {'Longitude':>11s} "
 for ix, jd in enumerate(cnes_julian_days):
     print(f'{jd:>6.0f} {hours[ix]:>5.0f} {lats[ix]:>11.3f} {lons[ix]:>11.3f} '
           f'{tide[ix]:>11.3f} {lp[ix]:>11.3f} {tide[ix] + lp[ix]:>11.3f} '
-          f'{tide[ix] + lp[ix]+ load[ix]:>11.3f} {load[ix]:>11.3f}')
+          f'{tide[ix] + lp[ix] + load[ix]:>11.3f} {load[ix]:>11.3f}')
