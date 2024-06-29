@@ -17,3 +17,5 @@ dependencies:
   - sphinx
   - sphinx-book-theme
   - sphinx-gallery
+  - matplotlib
+  - cartopy
