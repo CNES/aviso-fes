@@ -16,7 +16,7 @@ with support from CNES (http://www.aviso.altimetry.fr/)*
 # DOCUMENTATION
 
 The documentation of the FES2022 software is available on the readthedocs
-platform: https://fes2022.readthedocs.io/en/latest/
+platform: https://cnes.github.io/aviso-fes/
 
 # LEGACY C VERSION
 
