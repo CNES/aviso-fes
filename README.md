@@ -1,17 +1,17 @@
 # DESCRIPTION
 
-This package is the fully revised version of the FES2022 distribution.
-This distribution includes the FES2022 tidal prediction software managed on this
-page and the [FES2022 tides databases](data/fes2022/README.md)
-A full description of the FES2022 tidal solution is given in the handbook
+This package is the fully revised version of the FES2022 distribution. This
+distribution includes the FES2022 tidal prediction software managed on this page
+and the [FES2022 tides databases](data/fes2022/README.md) A full description of
+the FES2022 tidal solution is given in the handbook
 (https://www.aviso.altimetry.fr/fileadmin/documents/data/tools/hdbk_FES2022.pdf)
 and in the paper (Lyard et al. 2024).
 
 # CREDITS
 
-When using FES2022, please mention: *FES2022 was produced by LEGOS, NOVELTIS and CLS
-Ocean and Climate Division; the project was funded by CNES. It is distributed by AVISO,
-with support from CNES (http://www.aviso.altimetry.fr/)*
+When using FES2022, please mention: *FES2022 was produced by LEGOS, NOVELTIS and
+CLS Ocean and Climate Division; the project was funded by CNES. It is
+distributed by AVISO, with support from CNES (http://www.aviso.altimetry.fr/)*
 
 # DOCUMENTATION
 
