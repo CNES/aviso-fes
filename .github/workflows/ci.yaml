@@ -73,7 +73,7 @@ jobs:
         mkdir build
         cd build
         cmake .. -DFES_ENABLE_TEST=ON
-        make
+        make -j 2
         ctest
 
   win:
