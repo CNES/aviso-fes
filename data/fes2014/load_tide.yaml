@@ -1,0 +1,41 @@
+radial:
+  cartesian:
+    amplitude: amplitude
+    latitude: lat
+    longitude: lon
+    paths:
+      2N2: ./load_tide/2n2.nc
+      Eps2: ./load_tide/eps2.nc
+      J1: ./load_tide/j1.nc
+      K1: ./load_tide/k1.nc
+      K2: ./load_tide/k2.nc
+      L2: ./load_tide/l2.nc
+      Lambda2: ./load_tide/la2.nc
+      M2: ./load_tide/m2.nc
+      M3: ./load_tide/m3.nc
+      M4: ./load_tide/m4.nc
+      M6: ./load_tide/m6.nc
+      M8: ./load_tide/m8.nc
+      MKS2: ./load_tide/mks2.nc
+      MN4: ./load_tide/mn4.nc
+      MS4: ./load_tide/ms4.nc
+      MSf: ./load_tide/msf.nc
+      Mf: ./load_tide/mf.nc
+      Mm: ./load_tide/mm.nc
+      Msqm: ./load_tide/msqm.nc
+      Mtm: ./load_tide/mtm.nc
+      Mu2: ./load_tide/mu2.nc
+      N2: ./load_tide/n2.nc
+      N4: ./load_tide/n4.nc
+      Nu2: ./load_tide/nu2.nc
+      O1: ./load_tide/o1.nc
+      P1: ./load_tide/p1.nc
+      Q1: ./load_tide/q1.nc
+      R2: ./load_tide/r2.nc
+      S1: ./load_tide/s1.nc
+      S2: ./load_tide/s2.nc
+      S4: ./load_tide/s4.nc
+      Sa: ./load_tide/sa.nc
+      Ssa: ./load_tide/ssa.nc
+      T2: ./load_tide/t2.nc
+    phase: phase
