@@ -3,11 +3,8 @@
 Introduction
 ============
 
-This module provides a Python interface to the tidal prediction software. It is
-based on the C library libfes, which is a part of the FES2014 software package.
-The FES2014 software package is available from the GitHub repository `aviso-fes
-<https://github.com/CNES/aviso-fes>`_. The FES2014 tides database is available
-from the `AVISO website
+This module provides a Python interface to the tidal prediction software.
+The FES tides database is available from the `AVISO website
 <http://www.aviso.altimetry.fr/en/data/products/auxiliary-products/global-tide-fes.html>`_.
 
 To predict tides, you need to instantiate a
@@ -77,16 +74,16 @@ The section ``lgp`` contains the following keys:
   points. Optional, default: ``lat``.
 * ``lon``: the name of the netCDF variable containing the longitude of the mesh
   points. Optional, default: ``lon``.
-* ``amplitude``: the pattern of the netCDF variable containing the amplitude of the
-  tidal constituents. The pattern must contain the string ``{constituent}``,
+* ``amplitude``: the pattern of the netCDF variable containing the amplitude of
+  the tidal constituents. The pattern must contain the string ``{constituent}``,
   which is replaced by the name of the tidal constituent. Example:
   ``amp_{constituent}``. Optional, default: ``{constituent}_amplitude``.
-* ``phase``: the pattern of the netCDF variable containing the phase of the tidal
-  constituents. The pattern must contain the string ``{constituent}``, which
-  is replaced by the name of the tidal constituent. Example:
+* ``phase``: the pattern of the netCDF variable containing the phase of the
+  tidal constituents. The pattern must contain the string ``{constituent}``,
+  which is replaced by the name of the tidal constituent. Example:
   ``pha_{constituent}``. Optional, default: ``{constituent}_phase``.
-* ``codes``: The name of the netCDF variable containing the LPG codes of the mesh
-  points.
+* ``codes``: The name of the netCDF variable containing the LPG codes of the
+  mesh points.
 * ``max_distance``: The maximum distance between a mesh point and a requested
   point outside the mesh. If the distance is greater than this value, the
   estimation is undefined, otherwise the estimation is extrapolated. Optional,
@@ -149,13 +146,15 @@ The Python code to instantiate the tidal model and evaluate the tide elevation:
 Harmonic analysis
 -----------------
 
-The static method :func:`pyfes.wave_table.WaveTable.harmonic_analysis` function can be used to perform a harmonic
-analysis of a time series.
+The static method :func:`pyfes.wave_table.WaveTable.harmonic_analysis` function
+can be used to perform a harmonic analysis of a time series.
 
-The source tree contains a time series ``fes_tide_time_series.nc`` containing the tide elevation for one year. This file
-is located in the ``tests/python/dataset`` directory.
+The source tree contains a time series ``fes_tide_time_series.nc`` containing
+the tide elevation for one year. This file is located in the
+``tests/python/dataset`` directory.
 
-The first step is to read this time series using the NetCDF4 library, for example:
+The first step is to read this time series using the NetCDF4 library, for
+example:
 
 .. code-block:: python
 
@@ -165,7 +164,8 @@ The first step is to read this time series using the NetCDF4 library, for exampl
         time = (ds.variables['time'][:]).astype("datetime64[us]")
         h = dataset['ocean'][:] * 1e-2      # cm to m
 
-Then, we will create an instance of a :class:`pyfes.wave_table.WaveTable` object:
+Then, we will create an instance of a :class:`pyfes.wave_table.WaveTable`
+object:
 
 .. code-block:: python
 
@@ -184,7 +184,8 @@ a list to the constructor in order to specify the waves to be analyzed.
 
     wave_table = pyfes.WaveTable(['M2', 'S2', 'K1', 'O1', 'P1', 'Q1'])
 
-The different nodal corrections are then calculated from the time series to be analyzed:
+The different nodal corrections are then calculated from the time series to be
+analyzed:
 
 .. code-block:: python
 
@@ -197,8 +198,8 @@ the different tidal waves defined during the construction of the instance.
 
     w = wt.harmonic_analysis(h, f, vu)
 
-This result can then be used to determine a tidal height for the analyzed time series:
-
+This result can then be used to determine a tidal height for the analyzed time
+series:
 
 .. code-block:: python
 

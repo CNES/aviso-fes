@@ -14,3 +14,5 @@ dependencies:
   - binutils # [not win]
   - pyyaml
   - gtest
+  - sphinx
+  - sphinx-book-theme

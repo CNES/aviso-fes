@@ -20,7 +20,13 @@ The compiling C++ requires the following development library:
 
     * `Boost <https://www.boost.org/>`_
     * `Eigen3 <http://eigen.tuxfamily.org/>`_
-    * `MKL <https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl.html>`_
+
+Eigen3 can utilize optimized libraries such as `Intel Math Kernel Library (MKL)
+<https://software.intel.com/en-us/mkl>`_, `OpenBlas
+<https://www.openblas.net/>`_, or `Accelerate
+<https://developer.apple.com/documentation/accelerate>`_ on MacOSX to enhance
+computation speed. These libraries replace the default BLAS implementation
+provided by Eigen3.
 
 You can install these packages on Ubuntu by typing the following command:
 
@@ -33,12 +39,13 @@ You need, also, to install Python libraries before configuring and installing
 this software:
 
     * `numpy <https://www.numpy.org/>`_
+    * `netCDF4 <https://unidata.github.io/netcdf4-python/>`_
 
 You can install these packages on Ubuntu by typing the following command:
 
 .. code-block:: bash
 
-    sudo apt-get install python3-numpy
+    sudo apt-get install python3-numpy python3-netcdf4
 
 Build
 #####
@@ -67,8 +74,7 @@ Requirements
 
 Running tests require the following Python libraries:
 
-    * `numpy <https://www.numpy.org/>`_
-    * `netCDF4 <https://unidata.github.io/netcdf4-python/>`_
+    * `pytest <https://docs.pytest.org/en/latest/>`_
 
 Running tests
 -------------
@@ -89,14 +95,9 @@ The source code of this documentation is managed by
 generate it in order to produce a local mini WEB site to read and navigate it.
 To do this, type the following command: ::
 
-    python setup.py build_sphinx
+    python3 setup.py build_sphinx
 
 Install
 #######
 
-To install just type the command ``python3 setup.py``. You can specify an
-alternate installation path, with:
-
-.. code-block:: bash
-
-    python setup.py install --prefix=/opt/local
+To install just type the command `pip install .` at the root of the project.

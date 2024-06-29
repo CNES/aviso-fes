@@ -35,11 +35,18 @@ jobs:
         environment-name: FES
         environment-file: conda/environment.yml
 
-    - name: Compile and Testing Python Package
+    - name: Compile, Testing Python Package And Generate Documentation
       shell: bash -l {0}
       run: |
         python setup.py build
         pytest -v -ra
+        sphinx-build -b html docs/source docs/build
+        git config --global user.email "fbriol@gmail.com"
+        git config --global user.name "fbriol"
+        git clone --branch gh-pages
+        git add docs/build
+        git commit -m "Update documentation"
+        git push
 
     - name: Build C++ Library and Testing
       shell: bash -l {0}
