@@ -15,18 +15,25 @@ build:
 
 requirements:
   build:
-    - {{ compiler('cxx') }}
-    - make                   # [linux or osx]
+    - python                              # [build_platform != target_platform]
+    - cross-python_{{ target_platform }}  # [build_platform != target_platform]
+    - setuptools                          # [build_platform != target_platform]
+    - {{ compiler('cxx') }}               # [linux or osx]
+    - vs2017_win-64                       # [win]
     - cmake
+    - make                                # [linux]
   host:
     - python {{ python }}
-    - libnetcdf
-    - setuptools
-    - packaging
+    - cmake
+    - eigen
+    - setuptools_scm
+    - boost-cpp >= 1.79
+    - cxx-compiler
   run:
     - {{ pin_compatible('numpy') }}
     - python
-    - libnetcdf
+    - netcdf4
+    - pyyaml
 
 test:
   imports:
