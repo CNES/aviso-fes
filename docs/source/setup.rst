@@ -95,7 +95,7 @@ The source code of this documentation is managed by
 generate it in order to produce a local mini WEB site to read and navigate it.
 To do this, type the following command: ::
 
-    python3 setup.py build_sphinx
+    sphinx-build -b html docs/source docs/build
 
 Install
 #######
