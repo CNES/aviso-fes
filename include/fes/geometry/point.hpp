@@ -33,7 +33,8 @@ class Point : public point_t {
   constexpr Point(double lon, double lat) : point_t(lon, lat) {}
 
   /// Convert the point to an ECEF point.
-  constexpr explicit operator geometry::EarthCenteredEarthFixed() const;
+  FES_MATH_CONSTEXPR explicit operator geometry::EarthCenteredEarthFixed()
+      const;
 
   /// Write the geographic point to a stream.
   friend auto operator<<(std::ostream& os, const Point& point) -> std::ostream&;
