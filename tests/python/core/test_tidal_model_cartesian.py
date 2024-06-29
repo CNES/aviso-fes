@@ -6,9 +6,8 @@ import pathlib
 
 import netCDF4
 import numpy
-import pytest
-
 from pyfes import core
+import pytest
 
 S2 = pathlib.Path(__file__).parent.parent / 'dataset' / 'S2_tide.nc'
 

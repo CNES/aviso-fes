@@ -4,9 +4,8 @@
 # BSD-style license that can be found in the LICENSE file.
 import datetime
 
-import pytest
-
 from pyfes import core
+import pytest
 
 
 def test_astronomic_angle():

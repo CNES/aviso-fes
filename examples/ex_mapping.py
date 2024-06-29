@@ -23,8 +23,8 @@ import pyfes
 
 # %%
 # First we create an environment variable to store the path to the model file.
-os.environ['DATASET_DIR'] = str(pathlib.Path().absolute().parent / 'src' /
-                                'python' / 'pyfes' / 'tests' / 'dataset')
+os.environ['DATASET_DIR'] = str(pathlib.Path().absolute().parent / 'tests' /
+                                'python' / 'dataset')
 
 # %%
 # Now we need to create the instances of the model used to calculate the ocean

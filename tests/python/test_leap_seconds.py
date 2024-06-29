@@ -4,7 +4,6 @@
 # BSD-style license that can be found in the LICENSE file.
 """Testing leap seconds."""
 import numpy
-
 from pyfes.leap_seconds import get_leap_seconds
 
 
