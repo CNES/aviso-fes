@@ -14,12 +14,12 @@ repos:
         exclude: docs/make.bat
       - id: trailing-whitespace
   - repo: https://github.com/asottile/pyupgrade
-    rev: "v3.15.2"
+    rev: "v3.16.0"
     hooks:
     - id: pyupgrade
       args: [--py37-plus]
   - repo: https://github.com/PyCQA/flake8
-    rev: 7.0.0
+    rev: 7.1.0
     hooks:
       - id: flake8
         exclude: tests
@@ -51,18 +51,18 @@ repos:
       types: [file]
       files: CMakeLists.txt
   - repo: https://github.com/codespell-project/codespell
-    rev: "v2.2.6"
+    rev: "v2.3.0"
     hooks:
     - id: codespell
       exclude: "leap-seconds.txt"
       args: [-L inout]
   - repo: https://github.com/pre-commit/mirrors-clang-format
-    rev: v18.1.4
+    rev: v18.1.8
     hooks:
       - id: clang-format
         exclude: "(dataset.*json)$"
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.10.0
+    rev: v1.10.1
     hooks:
       - id: mypy
         exclude: docs
