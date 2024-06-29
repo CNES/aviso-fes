@@ -5,12 +5,12 @@
 This directory contains the different configuration files to compute:
 
 * FES2022 elevations (ocean or geocentric) - version B
-  * Use [ocean_tide.ini](ocean_tide.ini) to compute the ocean tide
+  * Use [ocean_tide.yaml](ocean_tide.yaml) to compute the ocean tide
     with the native grids.
-  * Use [ocean_tide_extrapolated.ini](ocean_tide_extrapolated.ini)
+  * Use [ocean_tide_extrapolated.yaml](ocean_tide_extrapolated.yaml)
     to compute the ocean tide with the extrapolated grids.
-  * Use [load_tide.ini](load_tide.ini) to compute the load tide.
-  * Use [fes2022.ini](fes2022.ini)
+  * Use [load_tide.yaml](load_tide.yaml) to compute the load tide.
+  * Use [fes2022.yaml](fes2022.yaml)
     to compute the geocentric tide with the extrapolated grids
 
 > **_NOTE_**
