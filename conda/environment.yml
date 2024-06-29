@@ -16,3 +16,4 @@ dependencies:
   - gtest
   - sphinx
   - sphinx-book-theme
+  - sphinx-gallery

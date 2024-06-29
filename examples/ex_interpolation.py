@@ -23,8 +23,8 @@ import numpy as np
 import pyfes
 
 # %%
-MODEL = str(pathlib.Path().absolute().parent / 'tests' / 'python' / 'dataset' /
-            'fes_2014.nc')
+MODEL = str(pathlib.Path().absolute().parent / 'src' / 'python' / 'pyfes' /
+            'tests' / 'dataset' / 'fes_2014.nc')
 
 
 # %%
@@ -101,7 +101,16 @@ fig = plt.figure(figsize=(10, 10))
 ax = fig.add_subplot(1, 1, 1, projection=ccrs.PlateCarree())
 ax.set_extent([-5.0, 10.0, 40.0, 55.0], crs=ccrs.PlateCarree())
 ax.coastlines()
-ax.contourf(lon, lat, grid, 100, transform=ccrs.PlateCarree())
+levels = np.arange(0, 400, 10)
+contour = ax.contourf(lon,
+                      lat,
+                      grid,
+                      100,
+                      transform=ccrs.PlateCarree(),
+                      levels=levels,
+                      cmap='terrain')
+cbar = plt.colorbar(contour, ax=ax, orientation='vertical')
+cbar.set_label('Amplitude (cm)')
 plt.show()
 
 # %%
@@ -128,6 +137,14 @@ fig = plt.figure(figsize=(10, 10))
 ax = fig.add_subplot(1, 1, 1, projection=ccrs.PlateCarree())
 ax.set_extent([-5.0, 10.0, 40.0, 55.0], crs=ccrs.PlateCarree())
 ax.coastlines()
-ax.contourf(lon, lat, grid, 100, transform=ccrs.PlateCarree())
+contour = ax.contourf(lon,
+                      lat,
+                      grid,
+                      100,
+                      transform=ccrs.PlateCarree(),
+                      levels=levels,
+                      cmap='terrain')
+cbar = plt.colorbar(contour, ax=ax, orientation='vertical')
+cbar.set_label('Amplitude (cm)')
 plt.show()
 # %%

@@ -6,6 +6,7 @@ PyFES documentation
    :caption: Contents:
 
    setup
+   auto_examples/index.rst
    pyfes
    api
    core

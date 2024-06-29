@@ -40,10 +40,11 @@ author = 'CNES'
 try:
     release = importlib.metadata.version(project)
 except importlib.metadata.PackageNotFoundError:
-    import setuptools_scm
     try:
-        release = setuptools_scm.get_version()
-    except LookupError:
+        import pyfes
+        release = pyfes.__version__
+        release = '.'.join(release.split('.')[:3])
+    except ImportError:
         release = '0.0.0'
 version = '.'.join(release.split('.')[:2])
 
@@ -51,6 +52,7 @@ version = '.'.join(release.split('.')[:2])
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
+    'sphinx_gallery.gen_gallery',
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
     'sphinx.ext.mathjax',
@@ -73,6 +75,21 @@ autodoc_type_aliases = {
     'MatrixInt32': 'MatrixInt32',
     'MatrixFloat64': 'MatrixFloat64',
     'MatrixComplex128': 'MatrixComplex128',
+}
+
+sphinx_gallery_conf = {
+    'examples_dirs': [HERE.parent.parent.joinpath('examples')],
+    'filename_pattern': r'[\\\/]ex_',
+    'pypandoc': False,
+    # 'binder': {
+    #     'org': 'CNES',
+    #     'repo': 'aviso-fes',
+    #     'branch': 'main',
+    #     'binderhub_url': 'https://mybinder.org',
+    #     'dependencies':
+    #     [HERE.joinpath('..', '..', 'binder', 'environment.yml')],
+    #     'use_jupyter_lab': True,
+    # }
 }
 
 exclude_patterns = []
