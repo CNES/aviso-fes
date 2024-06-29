@@ -13,41 +13,18 @@ When using FES2022, please mention: *FES2022 was produced by LEGOS, NOVELTIS and
 Ocean and Climate Division; the project was funded by CNES. It is distributed by AVISO,
 with support from CNES (http://www.aviso.altimetry.fr/)*
 
-# HOW TO INSTALL THE SOFTWARE ?
+# DOCUMENTATION
 
-The complete description of the build method is described in the
-[INSTALL](INSTALL.md) file located in the root of this software.
+The documentation of the FES2022 software is available on the readthedocs
+platform: https://fes2022.readthedocs.io/en/latest/
 
-# HOW TO USE THE SOFTWARE ?
+# LEGACY C VERSION
 
-This distribution contains a C/Python API to be used to calculate the tide. The
-[C API](C_API.md) documentation describes the functions to be used to
-perform the calculation with C/C++. The directory [examples](examples) contains an
-example of using this API.
+The legacy C version of the FES2014 software is available on his own branch:
+https://github.com/CNES/aviso-fes/tree/legacy-c-version-archive
 
-This distribution contains a C/Python API to be used to calculate the tide.
-
-The [C API](C_API.md) documentation describes the functions to be used to
-perform the calculation with C/C++. The source code
-[fes_slev.c](examples/fes_slev.c) contains an example of how to use this
-API with the "C" language.
-
-The [Python API](PYTHON_API.md) documentation describes the functions to be
-used to perform the calculation with Python. The [examples](examples) directory
-contains several examples of using this API:
-[tide_gauge.py](examples/tide_gauge.py) illustrates the basic use of the API
-(the program performs the same calculation as the C program) and the programs
-[fes_slev.py](examples/fes_slev.py) and [fes_uv.py](examples/fes_uv.py)
-illustrates the calculation of the global tide map and tidal velocities.
-
-# Coming Library Update 
-
-This version of the library will no longer be updated. The new code under
-development is designed to handle the new finite element grids of FES2022. The
-new code can be accessed in the
-[develop](https://github.com/CNES/aviso-fes/tree/develop) branch. It will become
-official at the end of this year. For now, we do not provide support for this
-new version.
+> This version of the library will no longer be updated. The new code is
+> designed to handle the new finite element grids of FES2022.
 
 # BIBLIOGRAPHY
 
