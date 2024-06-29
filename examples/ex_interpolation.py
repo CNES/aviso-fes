@@ -80,7 +80,7 @@ lon, lat = np.meshgrid(
 
 # %%
 # Interpolate the waves loaded from the model.
-values, quality = model.interpolate(lon.ravel(), lat.ravel(), num_threads=0)
+values, quality = model.interpolate(lon.ravel(), lat.ravel(), num_threads=1)
 # %%
 # Values is dictionary of numpy arrays. Each key is the name of a wave and the
 # value is the interpolated values. Quality is a numpy array of integers. The
@@ -124,7 +124,7 @@ plt.show()
 #   inside the domain, the model is always interpolated. The distance is
 #   calculated on the sphere. The expected unit is meters.
 model = load_model(MODEL, 'M2', max_distance=20_000.0)
-values, quality = model.interpolate(lon.ravel(), lat.ravel(), num_threads=0)
+values, quality = model.interpolate(lon.ravel(), lat.ravel(), num_threads=1)
 grid = values[pyfes.core.kM2]
 grid = np.ma.masked_invalid(grid)
 grid = grid.reshape(lon.shape)
