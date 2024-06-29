@@ -8,8 +8,8 @@ import netCDF4
 import numpy
 import pytest
 
-from ... import core
-from ...leap_seconds import get_leap_seconds
+from pyfes import core
+from pyfes.leap_seconds import get_leap_seconds
 
 DATASET = pathlib.Path(__file__).parent.parent / 'dataset'
 

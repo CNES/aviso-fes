@@ -5,7 +5,7 @@
 import numpy
 import pytest
 
-from ... import core
+from  pyfes import core
 
 
 def test_axis():

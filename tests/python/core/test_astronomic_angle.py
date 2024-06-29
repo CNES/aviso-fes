@@ -6,7 +6,7 @@ import datetime
 
 import pytest
 
-from ... import core
+from pyfes import core
 
 
 def test_astronomic_angle():
