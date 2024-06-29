@@ -23,8 +23,8 @@ import numpy as np
 import pyfes
 
 # %%
-MODEL = str(pathlib.Path().absolute().parent / 'src' / 'python' / 'pyfes' /
-            'tests' / 'dataset' / 'fes_2014.nc')
+MODEL = str(pathlib.Path().absolute().parent / 'tests' / 'python' / 'dataset' /
+            'fes_2014.nc')
 
 
 # %%

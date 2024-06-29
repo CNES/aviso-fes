@@ -5,9 +5,8 @@
 import pathlib
 
 import numpy
-
-import pyfes.config as config_handler
 from pyfes import evaluate_tide
+import pyfes.config as config_handler
 
 DATASET = pathlib.Path(__file__).parent / 'dataset'
 
