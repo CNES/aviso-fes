@@ -6,6 +6,15 @@ on:
   pull_request:
     branches: main
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
 jobs:
   linux:
     name: ${{ matrix.python-version }}-posix
@@ -46,11 +55,17 @@ jobs:
       run: |
         sphinx-build -b html docs/source docs/build
 
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v4
+    - name: Setup Pages
+      uses: actions/configure-pages@v5
+
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: docs/build
+        path: docs/build
+
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
 
     - name: Build C++ Library and Testing
       shell: bash -l {0}
