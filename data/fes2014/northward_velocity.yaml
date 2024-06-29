@@ -1,0 +1,41 @@
+tide:
+  cartesian:
+    amplitude: Va
+    latitude: lat
+    longitude: lon
+    paths:
+      2N2: ./northward_velocity/2n2.nc
+      Eps2: ./northward_velocity/eps2.nc
+      J1: ./northward_velocity/j1.nc
+      K1: ./northward_velocity/k1.nc
+      K2: ./northward_velocity/k2.nc
+      L2: ./northward_velocity/l2.nc
+      Lambda2: ./northward_velocity/la2.nc
+      M2: ./northward_velocity/m2.nc
+      M3: ./northward_velocity/m3.nc
+      M4: ./northward_velocity/m4.nc
+      M6: ./northward_velocity/m6.nc
+      M8: ./northward_velocity/m8.nc
+      MKS2: ./northward_velocity/mks2.nc
+      MN4: ./northward_velocity/mn4.nc
+      MS4: ./northward_velocity/ms4.nc
+      MSf: ./northward_velocity/msf.nc
+      Mf: ./northward_velocity/mf.nc
+      Mm: ./northward_velocity/mm.nc
+      Msqm: ./northward_velocity/msqm.nc
+      Mtm: ./northward_velocity/mtm.nc
+      Mu2: ./northward_velocity/mu2.nc
+      N2: ./northward_velocity/n2.nc
+      N4: ./northward_velocity/n4.nc
+      Nu2: ./northward_velocity/nu2.nc
+      O1: ./northward_velocity/o1.nc
+      P1: ./northward_velocity/p1.nc
+      Q1: ./northward_velocity/q1.nc
+      R2: ./northward_velocity/r2.nc
+      S1: ./northward_velocity/s1.nc
+      S2: ./northward_velocity/s2.nc
+      S4: ./northward_velocity/s4.nc
+      Sa: ./northward_velocity/sa.nc
+      Ssa: ./northward_velocity/ssa.nc
+      T2: ./northward_velocity/t2.nc
+    phase: Vg
