@@ -5,7 +5,7 @@
 import pathlib
 import pickle
 
-from .. import config as config_handler
+import pyfes.config as config_handler
 
 DATASET = pathlib.Path(__file__).parent / 'dataset'
 

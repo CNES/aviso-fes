@@ -5,7 +5,7 @@
 """Testing leap seconds."""
 import numpy
 
-from ..leap_seconds import get_leap_seconds
+from pyfes.leap_seconds import get_leap_seconds
 
 
 def test_leap_seconds():
