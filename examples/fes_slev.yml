@@ -1,0 +1,30 @@
+radial:
+  cartesian:
+    paths:
+       2N2: ${DATASET_DIR}/2N2_radial.nc
+       K1: ${DATASET_DIR}/K1_radial.nc
+       K2: ${DATASET_DIR}/K2_radial.nc
+       M2: ${DATASET_DIR}/M2_radial.nc
+       N2: ${DATASET_DIR}/N2_radial.nc
+       O1: ${DATASET_DIR}/O1_radial.nc
+       P1: ${DATASET_DIR}/P1_radial.nc
+       Q1: ${DATASET_DIR}/Q1_radial.nc
+       S2: ${DATASET_DIR}/S2_radial.nc
+tide:
+  cartesian:
+    paths:
+      2N2: ${DATASET_DIR}/2N2_tide.nc
+      K1: ${DATASET_DIR}/K1_tide.nc
+      K2: ${DATASET_DIR}/K2_tide.nc
+      M2: ${DATASET_DIR}/M2_tide.nc
+      M4: ${DATASET_DIR}/M4_tide.nc
+      Mf: ${DATASET_DIR}/Mf_tide.nc
+      Mm: ${DATASET_DIR}/Mm_tide.nc
+      Msqm: ${DATASET_DIR}/Msqm_tide.nc
+      Mtm: ${DATASET_DIR}/Mtm_tide.nc
+      N2: ${DATASET_DIR}/N2_tide.nc
+      O1: ${DATASET_DIR}/O1_tide.nc
+      P1: ${DATASET_DIR}/P1_tide.nc
+      Q1: ${DATASET_DIR}/Q1_tide.nc
+      S1: ${DATASET_DIR}/S1_tide.nc
+      S2: ${DATASET_DIR}/S2_tide.nc

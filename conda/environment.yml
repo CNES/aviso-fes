@@ -3,5 +3,16 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - boa
-  - anaconda-client
+  - cmake
+  - eigen
+  - setuptools_scm
+  - netcdf4
+  - pytest
+  - boost-cpp
+  - cxx-compiler
+  - make # [not win]
+  - binutils # [not win]
+  - pyyaml
+  - gtest
+  - sphinx
+  - sphinx-book-theme

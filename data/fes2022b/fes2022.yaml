@@ -1,0 +1,84 @@
+radial:
+  cartesian:
+    amplitude: amplitude
+    latitude: lat
+    longitude: lon
+    paths:
+      2N2: ./load_tide/2n2_fes2022.nc
+      Eps2: ./load_tide/eps2_fes2022.nc
+      J1: ./load_tide/j1_fes2022.nc
+      K1: ./load_tide/k1_fes2022.nc
+      K2: ./load_tide/k2_fes2022.nc
+      L2: ./load_tide/l2_fes2022.nc
+      Lambda2: ./load_tide/lambda2_fes2022.nc
+      M2: ./load_tide/m2_fes2022.nc
+      M3: ./load_tide/m3_fes2022.nc
+      M4: ./load_tide/m4_fes2022.nc
+      M6: ./load_tide/m6_fes2022.nc
+      M8: ./load_tide/m8_fes2022.nc
+      MKS2: ./load_tide/mks2_fes2022.nc
+      MN4: ./load_tide/mn4_fes2022.nc
+      MS4: ./load_tide/ms4_fes2022.nc
+      MSf: ./load_tide/msf_fes2022.nc
+      Mf: ./load_tide/mf_fes2022.nc
+      Mm: ./load_tide/mm_fes2022.nc
+      Msqm: ./load_tide/msqm_fes2022.nc
+      Mtm: ./load_tide/mtm_fes2022.nc
+      Mu2: ./load_tide/mu2_fes2022.nc
+      N2: ./load_tide/n2_fes2022.nc
+      N4: ./load_tide/n4_fes2022.nc
+      Nu2: ./load_tide/nu2_fes2022.nc
+      O1: ./load_tide/o1_fes2022.nc
+      P1: ./load_tide/p1_fes2022.nc
+      Q1: ./load_tide/q1_fes2022.nc
+      R2: ./load_tide/r2_fes2022.nc
+      S1: ./load_tide/s1_fes2022.nc
+      S2: ./load_tide/s2_fes2022.nc
+      S4: ./load_tide/s4_fes2022.nc
+      Sa: ./load_tide/sa_fes2022.nc
+      Ssa: ./load_tide/ssa_fes2022.nc
+      T2: ./load_tide/t2_fes2022.nc
+    phase: phase
+tide:
+  cartesian:
+    amplitude: amplitude
+    dynamic:
+    - A5
+    latitude: lat
+    longitude: lon
+    paths:
+      2N2: ./ocean_tide_extrapolated/2n2_fes2022.nc
+      Eps2: ./ocean_tide_extrapolated/eps2_fes2022.nc
+      J1: ./ocean_tide_extrapolated/j1_fes2022.nc
+      K1: ./ocean_tide_extrapolated/k1_fes2022.nc
+      K2: ./ocean_tide_extrapolated/k2_fes2022.nc
+      L2: ./ocean_tide_extrapolated/l2_fes2022.nc
+      Lambda2: ./ocean_tide_extrapolated/lambda2_fes2022.nc
+      M2: ./ocean_tide_extrapolated/m2_fes2022.nc
+      M3: ./ocean_tide_extrapolated/m3_fes2022.nc
+      M4: ./ocean_tide_extrapolated/m4_fes2022.nc
+      M6: ./ocean_tide_extrapolated/m6_fes2022.nc
+      M8: ./ocean_tide_extrapolated/m8_fes2022.nc
+      MKS2: ./ocean_tide_extrapolated/mks2_fes2022.nc
+      MN4: ./ocean_tide_extrapolated/mn4_fes2022.nc
+      MS4: ./ocean_tide_extrapolated/ms4_fes2022.nc
+      MSf: ./ocean_tide_extrapolated/msf_fes2022.nc
+      Mf: ./ocean_tide_extrapolated/mf_fes2022.nc
+      Mm: ./ocean_tide_extrapolated/mm_fes2022.nc
+      Msqm: ./ocean_tide_extrapolated/msqm_fes2022.nc
+      Mtm: ./ocean_tide_extrapolated/mtm_fes2022.nc
+      Mu2: ./ocean_tide_extrapolated/mu2_fes2022.nc
+      N2: ./ocean_tide_extrapolated/n2_fes2022.nc
+      N4: ./ocean_tide_extrapolated/n4_fes2022.nc
+      Nu2: ./ocean_tide_extrapolated/nu2_fes2022.nc
+      O1: ./ocean_tide_extrapolated/o1_fes2022.nc
+      P1: ./ocean_tide_extrapolated/p1_fes2022.nc
+      Q1: ./ocean_tide_extrapolated/q1_fes2022.nc
+      R2: ./ocean_tide_extrapolated/r2_fes2022.nc
+      S1: ./ocean_tide_extrapolated/s1_fes2022.nc
+      S2: ./ocean_tide_extrapolated/s2_fes2022.nc
+      S4: ./ocean_tide_extrapolated/s4_fes2022.nc
+      Sa: ./ocean_tide_extrapolated/sa_fes2022.nc
+      Ssa: ./ocean_tide_extrapolated/ssa_fes2022.nc
+      T2: ./ocean_tide_extrapolated/t2_fes2022.nc
+    phase: phase

@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  push:
+    branches: "*"
+  pull_request:
+    branches: main
+
+jobs:
+  linux:
+    name: ${{ matrix.python-version }}-posix
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        python-version: ['3.11']
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+        lfs: true
+
+    - name: Setup Miniconda
+      uses: mamba-org/setup-micromamba@v1
+      with:
+        cache-downloads: true
+        condarc: |
+          channels:
+            - conda-forge
+        create-args: |
+          python=${{ matrix.python-version }}
+        environment-name: FES
+        environment-file: conda/environment.yml
+
+    - name: Compile and Testing Python Package
+      shell: bash -l {0}
+      run: |
+        python setup.py build
+        pytest -v -ra
+
+    - name: Build C++ Library and Testing
+      shell: bash -l {0}
+      run: |
+        mkdir build
+        cd build
+        cmake .. -DFES_ENABLE_TEST=ON
+        make
+        ctest
+
+  win:
+    name: win
+    runs-on: windows-2019
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+        lfs: true
+
+    - name: Setup Miniconda
+      uses: mamba-org/setup-micromamba@v1
+      with:
+        cache-downloads: true
+        condarc: |
+          channels:
+            - conda-forge
+        create-args: |
+          python=3.11
+        environment-name: FES
+        environment-file: conda/environment.yml
+
+    - name: Building Testing Python Package
+      shell: bash -l {0}
+      run: |
+        python setup.py build
+        pytest -v -ra
