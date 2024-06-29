@@ -61,12 +61,8 @@ class Point : public point_t {
   /// @param[in] lat The latitude in degrees.
   inline auto lat(const double lat) { set<1>(lat); }
 
-/// Return true if this instance is valid.
-#ifndef _WINDOWS
-  constexpr
-#endif
-      auto
-      is_valid() const -> bool {
+  /// Return true if this instance is valid.
+  FES_MATH_CONSTEXPR auto is_valid() const -> bool {
     return !std::isnan(lon()) && !std::isnan(lat());
   }
 
@@ -145,7 +141,7 @@ inline auto operator<<(std::ostream& os, const Point& point) -> std::ostream& {
   return os;
 }
 
-constexpr Point::operator geometry::EarthCenteredEarthFixed() const {
+FES_MATH_CONSTEXPR Point::operator geometry::EarthCenteredEarthFixed() const {
   // Global variables of Earth's geometric constants (WGS84)
   // Equatorial Radius [m]
   constexpr const double A = 6378137.0;
