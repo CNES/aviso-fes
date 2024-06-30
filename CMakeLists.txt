@@ -121,15 +121,13 @@ find_package(Boost 1.79 REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 
 # Blas
-if(DEFINED ENV{MKLROOT})
-  # First try to use MKL as a single dynamic library (conda-forge)
-  set(BLA_VENDOR Intel10_64_dyn)
+# First try to use MKL as a single dynamic library
+set(BLA_VENDOR Intel10_64_dyn)
+find_package(BLAS)
+if(NOT BLAS_FOUND)
+  # Otherwise try to use MKL lp64 model with sequential code
+  set(BLA_VENDOR Intel10_64lp_seq)
   find_package(BLAS)
-  if(NOT BLAS_FOUND)
-    # Otherwise try to use MKL lp64 model with sequential code
-    set(BLA_VENDOR Intel10_64lp_seq)
-    find_package(BLAS)
-  endif()
 endif()
 
 if(BLAS_FOUND)
