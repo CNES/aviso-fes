@@ -104,5 +104,6 @@ jobs:
     - name: Building Testing Python Package
       shell: bash -l {0}
       run: |
-        python setup.py build --global-option=build_ext --global-option="--generator=Visual Studio 16 2019"
+        python setup.py build_ext --generator="Visual Studio 16 2019"
+        pythno setup.py build
         pytest -v -ra
