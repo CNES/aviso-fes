@@ -274,12 +274,12 @@ class LGP2 : public LGP<T, 2> {
       -> Eigen::Matrix<double, 6, 1> override {
     return Eigen::Matrix<double, 6, 1>({
         //
-        2 * (x + y - 0.5) * (x + y - 1),  //  2x²+2y²+4xy-3x-3y+1
-        -4 * x * (x + y - 1),             // -4x²    -4xy+4x
-        2 * x * (x - 0.5),                //  2x²        - x
-        4 * x * y,                        //         +4xy
-        2 * y * (y - 0.5),                //     +2y²       - y
-        -4 * y * (x + y - 1)              //     -4y²-4xy   +4y
+        2 * (x + y - 0.5) * (x + y - 1),  //  2x² + 2y² + 4xy - 3x - 3y + 1
+        -4 * x * (x + y - 1),             // -4x² - 4xy + 4x
+        2 * x * (x - 0.5),                //  2x² - x
+        4 * x * y,                        //  4xy
+        2 * y * (y - 0.5),                //  2y² - y
+        -4 * y * (x + y - 1)              // -4y² - 4xy + 4y
     });
   }
 
