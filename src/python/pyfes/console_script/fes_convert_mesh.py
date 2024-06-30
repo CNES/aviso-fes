@@ -2,7 +2,6 @@
 #
 # All rights reserved. Use of this source code is governed by a
 # BSD-style license that can be found in the LICENSE file.
-from typing import Tuple
 import argparse
 import os
 
@@ -50,7 +49,7 @@ WAVE_MAP = {
 
 def load_mesh(
     filename: str
-) -> Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray, numpy.ndarray]:
+) -> tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray, numpy.ndarray]:
     """Load the mesh from a netCDF file."""
     with netCDF4.Dataset(filename) as ds:
         x = ds.variables['lon'][:]
@@ -60,7 +59,7 @@ def load_mesh(
     return x, y, triangles, lgp2
 
 
-def load_data(filename: str) -> Tuple[numpy.ndarray, numpy.ndarray]:
+def load_data(filename: str) -> tuple[numpy.ndarray, numpy.ndarray]:
     """Load data from a netCDF file."""
     with netCDF4.Dataset(filename) as ds:
         amp = ds.variables['a_eta_LGP2'][0, :]

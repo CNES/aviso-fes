@@ -8,11 +8,12 @@ Get the leap seconds from the IERS website.
 """
 from __future__ import annotations
 
-from typing import Callable, Match
+from collections.abc import Callable
 import datetime
 import functools
 import pathlib
 import re
+from re import Match
 import ssl
 import sys
 import urllib.request
