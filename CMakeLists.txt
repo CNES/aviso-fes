@@ -120,8 +120,7 @@ endif()
 find_package(Boost 1.79 REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 
-# Blas
-# First try to use MKL as a single dynamic library
+# BLAS: first try to use MKL as a single dynamic library
 set(BLA_VENDOR Intel10_64_dyn)
 find_package(BLAS)
 if(NOT BLAS_FOUND)
