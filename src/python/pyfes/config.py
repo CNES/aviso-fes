@@ -12,11 +12,13 @@ by the numerical model.
 """
 from __future__ import annotations
 
-from typing import Any, Callable, Match, NamedTuple, Union
+from typing import Any, NamedTuple, Union
+from collections.abc import Callable
 import dataclasses
 import enum
 import os
 import re
+from re import Match
 
 import netCDF4
 import numpy
