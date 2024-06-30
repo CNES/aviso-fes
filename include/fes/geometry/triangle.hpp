@@ -22,9 +22,6 @@ using triangle_t = boost::geometry::model::polygon<Point, false>;
 
 /// Geodetic triangle.
 class Triangle : public triangle_t {
- private:
-  Point* data_;
-
  public:
   using triangle_t::triangle_t;
 
@@ -33,44 +30,42 @@ class Triangle : public triangle_t {
   /// @param[in] v1 The first vertex.
   /// @param[in] v2 The second vertex.
   /// @param[in] v3 The third vertex.
-  inline Triangle(const Point& v1, const Point& v2, const Point& v3)
+  inline Triangle(const Point &v1, const Point &v2, const Point &v3)
       : triangle_t{{{v1.lon(), v1.lat()},
                     {v2.lon(), v2.lat()},
                     {v3.lon(), v3.lat()},
-                    {v1.lon(), v1.lat()}}} {
-    data_ = this->outer().data();
-  }
+                    {v1.lon(), v1.lat()}}} {}
 
   /// Get the first vertex.
-  constexpr auto v1() const -> const Point& { return *data_; }
+  inline auto v1() const -> const Point & { return this->outer()[0]; }
 
   /// Get the second vertex.
-  constexpr auto v2() const -> const Point& { return *(data_ + 1); }
+  inline auto v2() const -> const Point & { return this->outer()[1]; }
 
   /// Get the third vertex.
-  constexpr auto v3() const -> const Point& { return *(data_ + 2); }
+  inline auto v3() const -> const Point & { return this->outer()[2]; }
 
   /// Set the first vertex.
   ///
   /// @param[in] v1 The first vertex.
-  constexpr auto v1(const Point& v1) -> void { *data_ = v1; }
+  inline auto v1(const Point &v1) -> void { this->outer()[0] = v1; }
 
   /// Set the second vertex.
   ///
   /// @param[in] v2 The second vertex.
-  constexpr auto v2(const Point& v2) -> void { *(data_ + 1) = v2; }
+  inline auto v2(const Point &v2) -> void { this->outer()[1] = v2; }
 
   /// Set the third vertex.
   ///
   /// @param[in] v3 The third point.
-  constexpr auto v3(const Point& v3) -> void { *(data_ + 2) = v3; }
+  inline auto v3(const Point &v3) -> void { this->outer()[2] = v3; }
 
   /// Returns the vertex index of the triangle corresponding to the given point,
   /// or -1 if the point is not a vertex of the triangle.
   ///
   /// @param[in] point The point.
-  constexpr auto is_vertex(const Point& point) const -> int {
-    auto* outer = data_;
+  inline auto is_vertex(const Point &point) const -> int {
+    auto *outer = this->outer().data();
     for (int ix = 0; ix < 3; ++ix) {
       if (point == *(outer++)) {
         return ix;
@@ -88,7 +83,7 @@ class Triangle : public triangle_t {
   /// the calculation of the angles of the reference triangle is also carried
   /// out in this space. The search carried out in geodesic space can cause
   /// inconsistencies between these two spaces and generate erroneous values.
-  inline auto covered_by(const geometry::Point& point) const -> bool {
+  inline auto covered_by(const geometry::Point &point) const -> bool {
     return boost::geometry::covered_by(point, *this);
   }
 
@@ -106,7 +101,7 @@ class Triangle : public triangle_t {
   ///
   /// @param[in] point The point.
   /// @return The distance between the triangle and the point in meters.
-  inline auto distance(const Point& point) const -> double {
+  inline auto distance(const Point &point) const -> double {
     return detail::geometry::distance(point, *this);
   }
 
@@ -116,8 +111,8 @@ class Triangle : public triangle_t {
   inline auto area() const -> double { return detail::geometry::area(*this); }
 
   /// Write the triangle to a stream.
-  friend auto operator<<(std::ostream& os,
-                         const Triangle& triangle) -> std::ostream&;
+  friend auto operator<<(std::ostream &os,
+                         const Triangle &triangle) -> std::ostream &;
 
   /// Convert the triangle to a string representation.
   explicit operator std::string() const;
@@ -126,7 +121,7 @@ class Triangle : public triangle_t {
   ///
   /// @param[in] other The other triangle.
   /// @return True if the triangles are equal, else false.
-  inline auto operator==(const Triangle& other) const -> bool {
+  inline auto operator==(const Triangle &other) const -> bool {
     return boost::geometry::equals(*this, other);
   }
 
@@ -137,14 +132,14 @@ class Triangle : public triangle_t {
   /// @return A tuple containing the angles ξ and η.
   /// @warning The given point must be inside the triangle otherwise the result
   /// is undefined.
-  auto reference_right_angled(const Point& point) const
+  auto reference_right_angled(const Point &point) const
       -> std::tuple<double, double>;
 
   /// Calculate the projection of a point on the triangle.
   ///
   /// @param[in] point The point.
   /// @return The projection of the point on the triangle.
-  inline auto project(const Point& point) const -> Point {
+  inline auto project(const Point &point) const -> Point {
     boost::geometry::model::segment<Point> segment;
 
     detail::geometry::closest_points(point, *this, segment);
@@ -171,25 +166,25 @@ struct tag<fg::Triangle> {
 template <>
 struct ring_const_type<fg::Triangle> {
   /// @brief Type of a ring of the triangle geometry.
-  using type = const model::polygon<fg::Point, false>::ring_type&;
+  using type = const model::polygon<fg::Point, false>::ring_type &;
 };
 /// @brief Type of a mutable ring of the triangle geometry.
 template <>
 struct ring_mutable_type<fg::Triangle> {
   /// @brief Type of a mutable ring of the triangle geometry.
-  using type = model::polygon<fg::Point, false>::ring_type&;
+  using type = model::polygon<fg::Point, false>::ring_type &;
 };
 /// @brief Type of the interior of the triangle geometry.
 template <>
 struct interior_const_type<fg::Triangle> {
   /// @brief Type of the interior of the triangle geometry.
-  using type = const model::polygon<fg::Point, false>::inner_container_type&;
+  using type = const model::polygon<fg::Point, false>::inner_container_type &;
 };
 /// @brief Type of a mutable interior of the triangle geometry.
 template <>
 struct interior_mutable_type<fg::Triangle> {
   /// @brief Type of a mutable interior of the triangle geometry.
-  using type = model::polygon<fg::Point, false>::inner_container_type&;
+  using type = model::polygon<fg::Point, false>::inner_container_type &;
 };
 
 /// @brief Get the ring of the triangle geometry.
@@ -198,15 +193,15 @@ struct exterior_ring<fg::Triangle> {
   /// @brief Get the ring of the triangle geometry.
   /// @param[in] p The triangle geometry.
   /// @return The ring of the triangle geometry.
-  static auto get(model::polygon<fg::Point, false>& p)
-      -> model::polygon<fg::Point, false>::ring_type& {
+  static auto get(model::polygon<fg::Point, false> &p)
+      -> model::polygon<fg::Point, false>::ring_type & {
     return p.outer();
   }
   /// @brief Get the ring of the triangle geometry.
   /// @param[in] p The triangle geometry.
   /// @return The ring of the triangle geometry.
-  static auto get(model::polygon<fg::Point, false> const& p)
-      -> model::polygon<fg::Point, false>::ring_type const& {
+  static auto get(model::polygon<fg::Point, false> const &p)
+      -> model::polygon<fg::Point, false>::ring_type const & {
     return p.outer();
   }
 };
@@ -217,15 +212,15 @@ struct interior_rings<fg::Triangle> {
   /// @brief Get the interior of the triangle geometry.
   /// @param[in] p The triangle geometry.
   /// @return The interior of the triangle geometry.
-  static auto get(model::polygon<fg::Point, false>& p)
-      -> model::polygon<fg::Point, false>::inner_container_type& {
+  static auto get(model::polygon<fg::Point, false> &p)
+      -> model::polygon<fg::Point, false>::inner_container_type & {
     return p.inners();
   }
   /// @brief Get the interior of the triangle geometry.
   /// @param[in] p The triangle geometry.
   /// @return The interior of the triangle geometry.
-  static auto get(model::polygon<fg::Point, false> const& p)
-      -> model::polygon<fg::Point, false>::inner_container_type const& {
+  static auto get(model::polygon<fg::Point, false> const &p)
+      -> model::polygon<fg::Point, false>::inner_container_type const & {
     return p.inners();
   }
 };
@@ -241,8 +236,8 @@ namespace geometry {
 /// @param[in,out] os The stream.
 /// @param[in] triangle The triangle.
 /// @return The stream.
-inline auto operator<<(std::ostream& os,
-                       const Triangle& triangle) -> std::ostream& {
+inline auto operator<<(std::ostream &os,
+                       const Triangle &triangle) -> std::ostream & {
   os << boost::geometry::wkt(triangle);
   return os;
 }
