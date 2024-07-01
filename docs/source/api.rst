@@ -26,6 +26,18 @@ file. For more information on the configuration file format, see the
 .. autofunction:: pyfes.config.load
 
 
+Settings
+--------
+
+The settings are used to control the behavior of the tidal evaluation.
+
+.. currentmodule:: pyfes
+
+.. autoclass:: pyfes.Settings
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Astronomic angles
 -----------------
 
@@ -36,8 +48,19 @@ Astronomic angles
    :undoc-members:
    :show-inheritance:
 
-Known tidal constituents
--------------------------
+Tidal constituents
+------------------
+
+.. currentmodule:: pyfes.constituents
+
+.. autofunction:: pyfes.constituents.known
+
+.. autofunction:: pyfes.constituents.name
+
+.. autofunction:: pyfes.constituents.parse
+
+Constituents Analysis
+---------------------
 
 .. currentmodule:: pyfes.wave_table
 
@@ -50,6 +73,13 @@ Known tidal constituents
    :members:
    :undoc-members:
    :show-inheritance:
+
+Leap Seconds
+------------
+
+.. currentmodule:: pyfes
+
+.. autofunction:: pyfes.get_leap_seconds
 
 Type hints
 ----------

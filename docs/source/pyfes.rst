@@ -142,65 +142,7 @@ The Python code to instantiate the tidal model and evaluate the tide elevation:
     load = pyfes.evaluate_radial(cfg['radial'], dates, lons, lats, num_threads=1)[0]
     geocentric_tide = tide + load + lp
 
+.. note::
 
-Harmonic analysis
------------------
-
-The static method :func:`pyfes.wave_table.WaveTable.harmonic_analysis` function
-can be used to perform a harmonic analysis of a time series.
-
-The source tree contains a time series ``fes_tide_time_series.nc`` containing
-the tide elevation for one year. This file is located in the
-``tests/python/dataset`` directory.
-
-The first step is to read this time series using the NetCDF4 library, for
-example:
-
-.. code-block:: python
-
-    import netCDF4
-
-    with netCDF4.Dataset("tests/dataset/fes_tide_time_series.nc") as dataset:
-        time = (ds.variables['time'][:]).astype("datetime64[us]")
-        h = dataset['ocean'][:] * 1e-2      # cm to m
-
-Then, we will create an instance of a :class:`pyfes.wave_table.WaveTable`
-object:
-
-.. code-block:: python
-
-    import pyfes
-
-    wave_table = pyfes.WaveTable()
-
-By default, all components known by this object are loaded into memory. The list
-of components known by this object can be retrieved using the
-:func:`pyfes.wave_table.WaveTable.known_constituents` method.
-
-If you want to restrict the analysis to only a few components, you must provide
-a list to the constructor in order to specify the waves to be analyzed.
-
-.. code-block:: python
-
-    wave_table = pyfes.WaveTable(['M2', 'S2', 'K1', 'O1', 'P1', 'Q1'])
-
-The different nodal corrections are then calculated from the time series to be
-analyzed:
-
-.. code-block:: python
-
-    f, vu = wt.compute_nodal_modulations(time)
-
-These coefficients are used by harmonic analysis to determine the properties of
-the different tidal waves defined during the construction of the instance.
-
-.. code-block:: python
-
-    w = wt.harmonic_analysis(h, f, vu)
-
-This result can then be used to determine a tidal height for the analyzed time
-series:
-
-.. code-block:: python
-
-    tide = wt.tide_from_tide_series(time, w)
+  A full example of tide prediction is available in the `gallery
+  <auto_examples/ex_prediction.html>`_.

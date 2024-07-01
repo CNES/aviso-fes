@@ -15,6 +15,7 @@ These classes are used to map the C++ enumerators to Python.
    :maxdepth: 1
 
    core/constituent
+   core/formulae
    core/tide_type
    core/quality
 

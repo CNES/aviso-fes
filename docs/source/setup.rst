@@ -8,7 +8,7 @@ Requirements
 ############
 
 Because the programs are written in Python, and some parts of the library in
-C++, you must have Python 3, at least Python version 3.8, a C++ compiler and
+C++, you must have Python 3, at least Python version 3.10, a C++ compiler and
 `cmake <https://cmake.org/>`_ installed on your system to build the library.
 
 .. note::
