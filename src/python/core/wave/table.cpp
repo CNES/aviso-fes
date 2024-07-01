@@ -32,9 +32,10 @@ Returns:
            &fes::wave::Table::compute_nodal_corrections, py::arg("angles"),
            R"__doc__(
 Compute nodal corrections.
+
 Args:
-  angles: Astronomic angle, indicating the date on which the tide is to be
-    calculated.
+    angles: Astronomic angle, indicating the date on which the tide is to be
+        calculated.
 )__doc__")
       .def("admittance", &fes::wave::Table::admittance, R"__doc__(
 Compute waves by admittance from these 7 major ones : O1, Q1, K1, 2n2, N2, M2,
@@ -84,9 +85,11 @@ Args:
     :py:class:`numpy.datetime64`.
   leap_seconds: Leap seconds at the date of the tide calculation.
   wave: Tidal wave properties computed by
-    :py:meth:`fes.core.WaveTable.harmonic_analysis`.
+    :py:meth:`pyfes.WaveTable.harmonic_analysis
+    <pyfes.core.WaveTable.harmonic_analysis>`.
   formulae: Astronomic formulae used to calculate the astronomic angles.
-    Defaults to :py:attr:`fes.angle.Formulae.kSchuremanOrder3`.
+    Defaults to :py:attr:`pyfes.Formulae.kSchuremanOrder3
+    <pyfes.core.Formulae.kSchuremanOrder3>`.
 
 Return:
   The tide calculated for the time series provided.
@@ -117,7 +120,8 @@ Args:
   leap_seconds: Leap seconds at the date of the tide calculation.
   mapping: Mapping of the wave properties over an area of interest.
   formulae: Astronomic formulae used to calculate the astronomic angles.
-    Defaults to :py:attr:`fes.angle.Formulae.kSchuremanOrder3`.
+    Defaults to :py:attr:`pyfes.Formulae.kSchuremanOrder3
+    <pyfes.core.Formulae.kSchuremanOrder3>`.
   num_threads: Number of threads to use. If 0, the number of threads is
     automatically determined.
 Returns:
@@ -140,15 +144,18 @@ Returns:
           py::arg("formulae") = fes::angle::Formulae::kSchuremanOrder3,
           R"__doc__(
 Compute nodal modulations for amplitude and phase.
+
 Args:
-  dates: Desired UTC time. The array must be one-dimensional
-    and of type :py:class:`numpy.datetime64`.
-  leap_seconds: Leap seconds at the date of the tide calculation.
-  formulae: Astronomic formulae used to calculate the astronomic angles.
-    Defaults to :py:attr:`fes.angle.Formulae.kSchuremanOrder3`.
+    dates: Desired UTC time. The array must be one-dimensional
+        and of type :py:class:`numpy.datetime64`.
+    leap_seconds: Leap seconds at the date of the tide calculation.
+    formulae: Astronomic formulae used to calculate the astronomic angles.
+        Defaults to :py:attr:`pyfes.Formulae.kSchuremanOrder3
+        <pyfes.core.Formulae.kSchuremanOrder3>`.
+
 Returns:
-  tuple: the nodal correction for amplitude, v (greenwich argument) + u
-  (nodal correction for phase)
+    tuple: the nodal correction for amplitude, v (greenwich argument) + u
+    (nodal correction for phase)
 )__doc__")
       .def_static("select_waves_for_analysis",
                   &fes::wave::Table::select_waves_for_analysis,
