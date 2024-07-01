@@ -1,0 +1,10 @@
+name: pyfes
+channels:
+  - conda-forge
+dependencies:
+  - cartopy
+  - matplotlib
+  - jupyter
+  - pyfes
+  - sphinx-gallery
+  - sphinx-inline-tabs
