@@ -6,6 +6,7 @@ PyFES documentation
    :caption: Contents:
 
    setup
+   conda
    auto_examples/index.rst
    pyfes
    api
