@@ -8,7 +8,7 @@ from __future__ import annotations
 from . import core
 from .astronomic_angle import AstronomicAngle
 from .config import load as load_config
-from .core import Constituent, Formulae
+from .core import Constituent, Formulae, constituents
 from .leap_seconds import get_leap_seconds
 from .typing import VectorDateTime64, VectorFloat64, VectorInt8
 from .version import __version__
@@ -16,6 +16,7 @@ from .wave_table import WaveDict, WaveTable
 
 __all__ = [
     '__version__',
+    'constituents',
     'AstronomicAngle',
     'Constituent',
     'Formulae',
@@ -31,7 +32,8 @@ class Settings(core.Settings):
     Args:
         astronomic_formulae: Astronomic formulae used to evaluate the astronomic
             arguments for a given date. Default is
-            :py:attr:`Formulae.kSchuremanOrder1`.
+            :py:attr:`pyfes.Formulae.kSchuremanOrder1
+            <pyfes.core.Formulae.kSchuremanOrder1>`.
         time_tolerance: time_tolerance The time in seconds during which
             astronomical angles are considered constant. The default value is
             0 seconds, indicating that astronomical angles do not remain
@@ -39,7 +41,7 @@ class Settings(core.Settings):
         excluded: The list of tidal constituents to be excluded from the model.
             Constituents included in this list will be processed through
             admittance calculations and in the long-period equilibrium wave
-            calculation routine (`lpe_minus_n_waves`).
+            calculation routine (``lpe_minus_n_waves``).
 
     .. note::
 
