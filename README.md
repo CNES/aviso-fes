@@ -40,15 +40,6 @@ contains several examples of using this API:
 [fes_slev.py](examples/fes_slev.py) and [fes_uv.py](examples/fes_uv.py)
 illustrates the calculation of the global tide map and tidal velocities.
 
-# Coming Library Update 
-
-This version of the library will no longer be updated. The new code under
-development is designed to handle the new finite element grids of FES2022. The
-new code can be accessed in the
-[develop](https://github.com/CNES/aviso-fes/tree/develop) branch. It will become
-official at the end of this year. For now, we do not provide support for this
-new version.
-
 # BIBLIOGRAPHY
 
 * Lyard, F. H., Carrere, L., Fouchet, E., Cancet, M., Greenberg, D.,
