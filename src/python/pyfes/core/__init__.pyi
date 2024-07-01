@@ -1,13 +1,4 @@
-from typing import (
-    Any,
-    ClassVar,
-    Dict,
-    Iterator,
-    List,
-    Optional,
-    Tuple,
-    overload,
-)
+from typing import ClassVar, Dict, Iterator, List, Optional, Tuple, overload
 import datetime
 
 from . import constituents, datemanip, mesh, tidal_model
