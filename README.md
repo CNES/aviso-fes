@@ -7,6 +7,10 @@ the FES2022 tidal solution is given in the handbook
 (https://www.aviso.altimetry.fr/fileadmin/documents/data/tools/hdbk_FES2022.pdf)
 and in the paper (Lyard et al. 2024).
 
+> This new code is under development and it is designed to handle the new finite
+> element grids of FES2022. It will become official at the end of this year. For
+> now, we do not provide support for this new version.
+
 # CREDITS
 
 When using FES2022, please mention: *FES2022 was produced by LEGOS, NOVELTIS and
@@ -20,8 +24,11 @@ platform: https://cnes.github.io/aviso-fes/
 
 # LEGACY C VERSION
 
-The legacy C version of the FES2014 software is available on his own branch:
+The legacy C version of the FES software is available on his own branch:
 https://github.com/CNES/aviso-fes/tree/legacy-c-version-archive
+
+The reference version to compute the FES2022b tidal solution is
+[2.9.7](https://github.com/CNES/aviso-fes/releases/tag/2.9.7).
 
 > This version of the library will no longer be updated. The new code is
 > designed to handle the new finite element grids of FES2022.
