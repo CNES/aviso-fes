@@ -30,8 +30,7 @@ https://github.com/CNES/aviso-fes/tree/legacy-c-version-archive
 The reference version to compute the FES2022b tidal solution is
 [2.9.7](https://github.com/CNES/aviso-fes/releases/tag/2.9.7).
 
-> This version of the library will no longer be updated. The new code is
-> designed to handle the new finite element grids of FES2022.
+> This version of the library will no longer be updated.
 
 # BIBLIOGRAPHY
 
