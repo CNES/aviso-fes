@@ -16,10 +16,10 @@ from __future__ import annotations
 
 import pathlib
 
-import cartopy.crs as ccrs
-import matplotlib.pyplot as plt
+import cartopy.crs
+import matplotlib.pyplot
 import netCDF4
-import numpy as np
+import numpy
 import pyfes
 
 # %%
@@ -51,10 +51,10 @@ def load_model(
         triangle = ds.variables['triangle'][:]
         code = ds.variables['lgp2'][:]
 
-        amp = np.ma.filled(ds.variables[f'{wave}_amp'][:], np.nan)
-        pha = np.ma.filled(ds.variables[f'{wave}_phase'][:], np.nan)
-        pha = np.radians(pha)
-        values = amp * np.cos(pha) + 1j * amp * np.sin(pha)
+        amp = numpy.ma.filled(ds.variables[f'{wave}_amp'][:], numpy.nan)
+        pha = numpy.ma.filled(ds.variables[f'{wave}_phase'][:], numpy.nan)
+        pha = numpy.radians(pha)
+        values = amp * numpy.cos(pha) + 1j * amp * numpy.sin(pha)
 
         result = pyfes.core.tidal_model.LGP2Complex64(
             pyfes.core.mesh.Index(lon, lat, triangle),
@@ -73,9 +73,9 @@ model = load_model(MODEL, 'M2')
 # %%
 # Create a grid to interpolate the model. For this example, we use a regular
 # grid over the French coast.
-lon, lat = np.meshgrid(
-    np.linspace(-5.0, 10.0, 100),
-    np.linspace(40.0, 55.0, 100),
+lon, lat = numpy.meshgrid(
+    numpy.linspace(-5.0, 10.0, 100),
+    numpy.linspace(40.0, 55.0, 100),
 )
 
 # %%
@@ -91,26 +91,26 @@ print(values)
 # %%
 # Calculate the amplitude of the M2 wave interpolated on the grid.
 grid = values[pyfes.core.kM2]
-grid = np.ma.masked_invalid(grid)
+grid = numpy.ma.masked_invalid(grid)
 grid = grid.reshape(lon.shape)
-grid = np.absolute(grid)
+grid = numpy.absolute(grid)
 
 # %%
 # Plot the result.
-fig = plt.figure(figsize=(10, 10))
-ax = fig.add_subplot(1, 1, 1, projection=ccrs.PlateCarree())
-ax.set_extent([-5.0, 10.0, 40.0, 55.0], crs=ccrs.PlateCarree())
+fig = matplotlib.pyplot.figure(figsize=(10, 10))
+ax = fig.add_subplot(1, 1, 1, projection=cartopy.crs.PlateCarree())
+ax.set_extent([-5.0, 10.0, 40.0, 55.0], crs=cartopy.crs.PlateCarree())
 ax.coastlines()
 contour = ax.pcolormesh(lon,
                         lat,
                         grid,
-                        transform=ccrs.PlateCarree(),
+                        transform=cartopy.crs.PlateCarree(),
                         cmap='terrain',
                         vmin=0.0,
                         vmax=400.0)
-cbar = plt.colorbar(contour, ax=ax, orientation='vertical')
+cbar = matplotlib.pyplot.colorbar(contour, ax=ax, orientation='vertical')
 cbar.set_label('Amplitude (cm)')
-plt.show()
+matplotlib.pyplot.show()
 
 # %%
 # You can observe that the values near the coast are not interpolated. This is
@@ -126,24 +126,24 @@ plt.show()
 model = load_model(MODEL, 'M2', max_distance=20_000.0)
 values, quality = model.interpolate(lon.ravel(), lat.ravel(), num_threads=1)
 grid = values[pyfes.core.kM2]
-grid = np.ma.masked_invalid(grid)
+grid = numpy.ma.masked_invalid(grid)
 grid = grid.reshape(lon.shape)
-grid = np.absolute(grid)
+grid = numpy.absolute(grid)
 
 # %%
 # Plot the result.
-fig = plt.figure(figsize=(10, 10))
-ax = fig.add_subplot(1, 1, 1, projection=ccrs.PlateCarree())
-ax.set_extent([-5.0, 10.0, 40.0, 55.0], crs=ccrs.PlateCarree())
+fig = matplotlib.pyplot.figure(figsize=(10, 10))
+ax = fig.add_subplot(1, 1, 1, projection=cartopy.crs.PlateCarree())
+ax.set_extent([-5.0, 10.0, 40.0, 55.0], crs=cartopy.crs.PlateCarree())
 ax.coastlines()
 contour = ax.pcolormesh(lon,
                         lat,
                         grid,
-                        transform=ccrs.PlateCarree(),
+                        transform=cartopy.crs.PlateCarree(),
                         cmap='terrain',
                         vmin=0.0,
                         vmax=400.0)
-cbar = plt.colorbar(contour, ax=ax, orientation='vertical')
+cbar = matplotlib.pyplot.colorbar(contour, ax=ax, orientation='vertical')
 cbar.set_label('Amplitude (cm)')
-plt.show()
+matplotlib.pyplot.show()
 # %%
