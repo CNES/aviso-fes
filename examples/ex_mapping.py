@@ -16,9 +16,9 @@ from __future__ import annotations
 import os
 import pathlib
 
-import cartopy.crs as ccrs
-import matplotlib.pyplot as plt
-import numpy as np
+import cartopy.crs
+import matplotlib.pyplot
+import numpy
 import pyfes
 
 # %%
@@ -43,11 +43,11 @@ print(handlers)
 # %%
 # We can now create a global grid to calculate the geocentric ocean tide.
 # The grid is defined by its extent and its resolution.
-lons = np.arange(-180, 180, 1)
-lats = np.arange(-90, 90, 1)
-lons, lats = np.meshgrid(lons, lats)
+lons = numpy.arange(-180, 180, 1)
+lats = numpy.arange(-90, 90, 1)
+lons, lats = numpy.meshgrid(lons, lats)
 shape = lons.shape
-dates = np.full(shape, 'now', dtype='datetime64[us]')
+dates = numpy.full(shape, 'now', dtype='datetime64[us]')
 
 # %%
 # We can now calculate the ocean tide and the radial tide.
@@ -69,12 +69,12 @@ geo_tide = geo_tide.reshape(lons.shape)
 
 # %%
 # Mask the land values.
-geo_tide = np.ma.masked_where(np.isnan(geo_tide), geo_tide)
+geo_tide = numpy.ma.masked_where(numpy.isnan(geo_tide), geo_tide)
 
 # %%
 # We can now plot the result.
-fig = plt.figure(figsize=(10, 5))
-ax = fig.add_subplot(1, 1, 1, projection=ccrs.PlateCarree())
+fig = matplotlib.pyplot.figure(figsize=(10, 5))
+ax = fig.add_subplot(1, 1, 1, projection=cartopy.crs.PlateCarree())
 ax.coastlines()
 ax.set_global()
 ax.set_title(f'Tide on {dates[0, 0]}')
@@ -84,6 +84,6 @@ mesh = ax.pcolormesh(lons,
                      lats,
                      geo_tide,
                      cmap='jet',
-                     transform=ccrs.PlateCarree())
+                     transform=cartopy.crs.PlateCarree())
 colorbar = fig.colorbar(mesh, ax=ax)
 colorbar.set_label('Geocentric ocean tide (cm)', rotation=270, labelpad=20)
