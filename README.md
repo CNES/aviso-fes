@@ -1,3 +1,10 @@
+![build](https://github.com/CNES/aviso-fes/actions/workflows/ci.yaml/badge.svg)
+[![platforms](https://anaconda.org/conda-forge/pyfes/badges/platforms.svg?service=github)](https://anaconda.org/conda-forge/pyfes)
+[![latest-release-date](https://anaconda.org/conda-forge/pyfes/badges/latest_release_date.svg?service=github)](https://github.com/CNES/pangeo-pyfes/commits/master)
+[![license](https://anaconda.org/conda-forge/pyfes/badges/license.svg?service=github)](https://opensource.org/licenses/BSD-3-Clause)
+[![download](https://anaconda.org/conda-forge/pyfes/badges/downloads.svg?service=github)](https://anaconda.org/conda-forge/pyfes)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/CNES/aviso-fes/main?urlpath=lab/tree/notebooks/)
+
 # DESCRIPTION
 
 This package is the fully revised version of the FES2022 distribution. This
