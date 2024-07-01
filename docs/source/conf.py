@@ -76,27 +76,20 @@ autodoc_type_aliases = {
     'MatrixFloat64': 'MatrixFloat64',
     'MatrixComplex128': 'MatrixComplex128',
 }
-
+dependencies = HERE.joinpath('..', '..', 'binder', 'environment.yml').resolve()
 sphinx_gallery_conf = {
     'examples_dirs': [HERE.parent.parent.joinpath('examples')],
     'filename_pattern': r'[\\\/]ex_',
     'pypandoc': False,
     'binder': {
-        'org':
-        'CNES',
-        'repo':
-        'aviso-fes',
-        'branch':
-        'main',
-        'binderhub_url':
-        'https://mybinder.org',
-        'dependencies':
-        [HERE.joinpath('..', '..', 'binder', 'environment.yml').resolve()],
-        'use_jupyter_lab':
-        True,
+        'org': 'CNES',
+        'repo': 'aviso-fes',
+        'branch': 'main',
+        'binderhub_url': 'https://mybinder.org',
+        'dependencies': [dependencies],
+        'use_jupyter_lab': True,
     }
 }
-print([HERE.joinpath('..', '..', 'binder', 'environment.yml').resolve()])
 exclude_patterns = []
 
 # -- Options for HTML output -------------------------------------------------
