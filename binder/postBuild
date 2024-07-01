@@ -1,0 +1,29 @@
+set -e
+
+TMP_CONTENT_DIR=/tmp/pyfes
+mkdir -p $TMP_CONTENT_DIR
+cp -r examples binder $TMP_CONTENT_DIR
+for item in $(find . -name "*.nc")
+do
+    dirname=$(dirname $item)
+    mkdir -p $TMP_CONTENT_DIR/$dirname
+    cp $item $TMP_CONTENT_DIR/$item
+done
+
+find . -delete
+
+GENERATED_NOTEBOOKS_DIR=.generated-notebooks
+cp -r $TMP_CONTENT_DIR/examples $GENERATED_NOTEBOOKS_DIR
+
+find $GENERATED_NOTEBOOKS_DIR -name '*.py' -exec sphinx_gallery_py2jupyter '{}' +
+NON_NOTEBOOKS=$(find $GENERATED_NOTEBOOKS_DIR -type f | grep -v -E '\.(ipynb|yml)')
+rm -f $NON_NOTEBOOKS
+
+mv $TMP_CONTENT_DIR/binder .
+mv $TMP_CONTENT_DIR/tests .
+rm -rf $TMP_CONTENT_DIR
+
+mkdir -p notebooks
+cp -v $GENERATED_NOTEBOOKS_DIR/*.ipynb notebooks/
+cp -v $GENERATED_NOTEBOOKS_DIR/*.yml notebooks/
+rm -rf $GENERATED_NOTEBOOKS_DIR
