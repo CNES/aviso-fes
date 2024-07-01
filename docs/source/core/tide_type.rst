@@ -3,4 +3,8 @@ pyfes.core.TideType
 
 .. automodule:: pyfes.core
 
-    .. autodata:: TideType
+.. class:: TideType
+
+    .. autoattribute:: kTide
+
+    .. autoattribute:: kRadial
