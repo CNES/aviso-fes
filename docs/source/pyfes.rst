@@ -3,17 +3,29 @@
 Introduction
 ============
 
-This module provides a Python interface to the tidal prediction software.
-The FES tides database is available from the `AVISO website
-<http://www.aviso.altimetry.fr/en/data/products/auxiliary-products/global-tide-fes.html>`_.
+To forecast tides, instantiate either a
+:class:`pyfes.core.AbstractTidalModelComplex128` for double precision floating
+point calculations, or a :class:`pyfes.core.AbstractTidalModelComplex64` for
+single precision. While the latter is quicker and more memory-efficient, it
+sacrifices some accuracy. Regardless of the chosen precision, all internal
+computations are performed using double precision.
 
-To predict tides, you need to instantiate a
-:class:`pyfes.core.AbstractTidalModelComplex128` or
-:class:`pyfes.core.AbstractTidalModelComplex64` object. The former uses double
-precision floating point numbers, while the latter uses single precision
-floating point numbers. The single precision version is faster and uses less
-memory, but is less accurate. Whatever the precision, the internal computations
-are done using double precision floating point numbers.
+Tidal models are configured via a YAML file detailing the configurations for
+tide elevation calculations and the radial model for tide loading effects. These
+models can be set up to utilize either a Cartesian grid or LGP discretization.
+Additionally, the library's API allows for further configuration. For more
+details, refer to the classes :class:`pyfes.config.Common`,
+:class:`pyfes.config.Cartesian`, and :class:`pyfes.config.LGP`.
+
+Data
+----
+
+The source distribution features a ``data`` directory, which is located
+alongside this project and exclusively contains configuration files. It's
+important to note that the tide atlas files are not part of the source
+distribution. To obtain the tide atlas files, they must be downloaded from the
+`AVISO website
+<http://www.aviso.altimetry.fr/en/data/products/auxiliary-products/global-tide-fes.html>`_.
 
 .. _confguration_file:
 
@@ -53,6 +65,11 @@ The section ``cartesian`` contains the following keys:
   points. Optional, default: ``lon``.
 * ``amplitude``: the name of the netCDF variable containing the amplitude of the
   tidal constituents. Optional, default: ``amplitude``.
+* ``dynamic``: The list of the waves to be considered as part of the given
+  altlas (evaluated dynamically from the model). The wave declared in this list
+  will be considered as part of the model components and will be disabled from
+  the admittance calculation and and in the long-period equilibrium wave
+  calculation routine (``lpe_minus_n_waves``). Optional, default: ``[]``.
 * ``phase``: the name of the netCDF variable containing the phase of the tidal
   constituents. Optional, default: ``phase``.
 * ``epsilon``: the tolerance used to determine if the longitude axis is periodic
@@ -122,6 +139,7 @@ The configuration file ``fes2014b.yaml``:
         lgp:
             lat: lat
             lon: lon
+            dynamic: ['A5']
             amplitude: amp_{constituent}
             phase: pha_{constituent}
             codes: codes
