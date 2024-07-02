@@ -190,7 +190,7 @@ class Common:
     #: (evaluated dynamically from the model). The wave declared in this list
     #: will be considered as part of the model components and will be disabled
     #: from the admittance calculation and and in the long-period equilibrium
-    #: wave calculation routine (`lpe_minus_n_waves`).
+    #: wave calculation routine (``lpe_minus_n_waves``).
     dynamic: list[str] = dataclasses.field(default_factory=list)
 
     def __post_init__(self) -> None:
@@ -239,7 +239,7 @@ class Cartesian(Common):
             raise ValueError('phase cannot be empty.')
 
     def load(self) -> TidalModel:
-        """Load the tidal model."""
+        """Load the tidal model defined by the configuration."""
 
         # Define a named tuple to hold the properties of the cartesian grid.
         class GridProperties(NamedTuple):
@@ -357,7 +357,8 @@ class LGP(Common):
     phase: str = '{constituent}_phase'
     #: The name of the variable containing the vertices of the triangles.
     triangle: str = 'triangle'
-    #: Type of LGP discretization to use.
+    #: Type of LGP discretization to use. Allowed values are ``lgp1`` and
+    #: ``lgp2``.
     type: str = 'lgp1'
 
     def __post_init__(self) -> None:
@@ -404,7 +405,7 @@ class LGP(Common):
         raise ValueError(f'Unknown wave type: {dtype!r}.')
 
     def load(self) -> TidalModel:
-        """Load the tidal model."""
+        """Load the tidal model defined by the configuration."""
         with netCDF4.Dataset(self.path, 'r') as ds:  # type: ignore
             lon: Vector = ds.variables[self.longitude][:]
             lat: Vector = ds.variables[self.latitude][:]
@@ -502,7 +503,9 @@ def load(path: str | os.PathLike) -> dict[str, TidalModel]:
 
     Returns:
         A dictionary defining the configuration of the processing to be
-        performed.
+        performed. The dictionary contains the tidal models to be used.
+        The key is the type of the tidal model (e.g. ``tide``, ``radial``) and
+        the value is the tidal model.
     """
     models: dict[str, TidalModel] = {}
     user_settings: dict[str, Any] = parse(path)
