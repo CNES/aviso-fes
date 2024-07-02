@@ -11,7 +11,7 @@
 
 namespace fes {
 
-/// Todal constituents known by the library.
+/// Tidal constituents known by the library.
 enum Constituent : uint8_t {
   kMm = 0,        //!< @f$Mm@f$
   kMf = 1,        //!< @f$Mf@f$
