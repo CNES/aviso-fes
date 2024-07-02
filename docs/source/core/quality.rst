@@ -1,6 +1,3 @@
-pyfes.core.Quality
-==================
-
 .. currentmodule:: pyfes.core
 
 .. class:: Quality

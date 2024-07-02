@@ -1,5 +1,5 @@
-pyfes.core.AbstractTidalModelComplex64
-======================================
+Abstract classes
+================
 
 .. currentmodule:: pyfes.core
 
@@ -10,12 +10,14 @@ pyfes.core.AbstractTidalModelComplex64
 
     .. automethod:: __init__
 
-pyfes.core.AbstractTidalModelComplex128
-=======================================
-
 .. autoclass:: AbstractTidalModelComplex128
     :show-inheritance:
     :members:
     :inherited-members:
 
     .. automethod:: __init__
+
+.. autoclass:: Accelerator
+    :show-inheritance:
+    :members:
+    :inherited-members:

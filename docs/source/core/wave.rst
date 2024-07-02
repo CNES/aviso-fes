@@ -1,6 +1,3 @@
-pyfes.core.Wave
-===============
-
 .. currentmodule:: pyfes.core
 
 .. autoclass:: Wave

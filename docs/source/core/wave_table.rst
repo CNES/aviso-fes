@@ -1,6 +1,3 @@
-pyfes.core.WaveTable
-====================
-
 .. currentmodule:: pyfes.core
 
 .. autoclass:: WaveTable
