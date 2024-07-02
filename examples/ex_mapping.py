@@ -4,9 +4,14 @@ Tide mapping example
 ********************
 
 In this example, we will use the model to predict the tidal elevation on a
-global grid. The model used is an old FES tidel-atlas model. Do not use it for
-real applications. You can download the model from the AVISO `website
-<https://www.aviso.altimetry.fr/en/data/products/auxiliary-products/global-tide-fes.html>`_.
+global grid.
+
+.. warning::
+
+      The model employed is an older FES tidal-atlas model due to its
+      significantly smaller size compared to newer models. **Do not use it for
+      real applications**. You can download the model from the `AVISO website
+      <https://www.aviso.altimetry.fr/en/data/products/auxiliary-products/global-tide-fes.html>`_.
 
 First, we import the required modules.
 """
