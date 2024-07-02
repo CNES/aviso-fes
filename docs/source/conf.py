@@ -67,14 +67,15 @@ numpydoc_show_class_members = False
 templates_path = ['_templates']
 
 autodoc_type_aliases = {
-    'VectorInt8': 'VectorInt8',
-    'VectorFloat64': 'VectorFloat64',
-    'VectorComplex64': 'VectorComplex64',
-    'VectorComplex128': 'VectorComplex128',
-    'VectorDateTime64': 'VectorDateTime64',
-    'MatrixInt32': 'MatrixInt32',
-    'MatrixFloat64': 'MatrixFloat64',
     'MatrixComplex128': 'MatrixComplex128',
+    'MatrixFloat64': 'MatrixFloat64',
+    'MatrixInt32': 'MatrixInt32',
+    'VectorComplex128': 'VectorComplex128',
+    'VectorComplex64': 'VectorComplex64',
+    'VectorDateTime64': 'VectorDateTime64',
+    'VectorFloat64': 'VectorFloat64',
+    'VectorInt8': 'VectorInt8',
+    'VectorUInt16': 'VectorUInt16',
 }
 dependencies = HERE.joinpath('..', '..', 'binder', 'environment.yml').resolve()
 sphinx_gallery_conf = {
