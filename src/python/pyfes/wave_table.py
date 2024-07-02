@@ -35,7 +35,7 @@ class WaveTable(core.WaveTable):
         self,
         dates: list[datetime.datetime] | VectorDateTime64,
         leap_seconds: VectorUInt16,
-        formulae: Formulae = Formulae.kSchuremanOrder3,
+        formulae: Formulae = Formulae.kSchuremanOrder1,
     ) -> tuple[VectorFloat64, VectorFloat64]:
         """Compute nodal modulations for amplitude and phase.
 
@@ -44,7 +44,8 @@ class WaveTable(core.WaveTable):
             leap_seconds: Leap seconds for the dates provided.
             formulae: Astronomic formulae used to evaluate the astronomic
                 arguments for a given date. Default is
-                :py:attr:`Formulae.kSchuremanOrder3`.
+                :py:attr:`pyfes.Formulae.kSchuremanOrder1
+                <pyfes.core.Formulae.kSchuremanOrder1>`.
         Returns:
             The nodal modulations for amplitude and phase.
         """
@@ -99,16 +100,15 @@ class WaveTable(core.WaveTable):
 
         The a priori analysis spectrum includes the most important astronomical
         constituents in the Darwin development, completed by Shureman in 1958,
-        and many non-linear waves. The definition of tidal constants and
-        astronomical arguments is taken from FES2014 tidal prediction software
-        and a complete definition of waves is also available in Shureman (1958).
-        This spectrum is the most commonly used for harmonic analysis due to the
-        simplification given by the nodal correction concept (:math:`f` and
-        :math:`u` coefficients above) which allows dealing with slow motions of
-        the lunar ascending node and reducing the number of constituents in the
-        tidal spectrum.
-        More details about this harmonic analysis method can be found in
-        Ponchaut et al. 1999.
+        and many non-linear waves. Tidal constants and astronomical arguments
+        are now derived from this software, incorporating legacy data from
+        FES2014. A comprehensive definition of waves can also be found in
+        Shureman (1958). This spectrum is the most commonly used for harmonic
+        analysis due to the simplification given by the nodal correction concept
+        (:math:`f` and :math:`u` coefficients above) which allows dealing with
+        slow motions of the lunar ascending node and reducing the number of
+        constituents in the tidal spectrum. More details about this harmonic
+        analysis method can be found in Ponchaut et al. 1999.
 
         Args:
             h: Sea level.
@@ -147,7 +147,7 @@ class WaveDict(WaveTable):
 
         Returns:
             A mapping between the wave name and its complex number representing
-                it.
+            it.
         .. seealso::
             :py:meth:`WaveTable.harmonic_analysis`
         """
