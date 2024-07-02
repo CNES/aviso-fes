@@ -44,8 +44,9 @@ K2.
       .def_static(
           "harmonic_analysis",
           [](const Eigen::Ref<const Eigen::VectorXd>& h,
-             const Eigen::Ref<const Eigen::MatrixXd>& f,
-             const Eigen::Ref<const Eigen::MatrixXd>& vu) -> Eigen::VectorXcd {
+             const fes::DynamicRef<const Eigen::MatrixXd>& f,
+             const fes::DynamicRef<const Eigen::MatrixXd>& vu)
+              -> Eigen::VectorXcd {
             py::gil_scoped_release release;
             return fes::wave::Table::harmonic_analysis(h, f, vu);
           },
@@ -98,7 +99,7 @@ Return:
           "tide_from_mapping",
           [](const fes::wave::Table& self, const py::handle& date,
              const uint16_t leap_seconds,
-             const Eigen::Ref<const Eigen::MatrixXcd>& wave,
+             const fes::DynamicRef<const Eigen::MatrixXcd>& wave,
              const fes::angle::Formulae& formulae,
              const size_t num_threads) -> Eigen::MatrixXd {
             auto epoch = fes::python::datemanip::as_float64(date);

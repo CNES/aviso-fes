@@ -254,8 +254,8 @@ class Table {
   /// nodal correction coefficient applied to the phase of the
   /// constituents analyzed.
   static auto harmonic_analysis(const Eigen::Ref<const Eigen::VectorXd>& h,
-                                const Eigen::Ref<const Eigen::MatrixXd>& f,
-                                const Eigen::Ref<const Eigen::MatrixXd>& vu)
+                                const DynamicRef<const Eigen::MatrixXd>& f,
+                                const DynamicRef<const Eigen::MatrixXd>& vu)
       -> Eigen::VectorXcd;
 
   /// Calculate the tide of a given time series.
@@ -270,7 +270,7 @@ class Table {
   /// @return the tide at the given time.
   auto tide_from_tide_series(
       const Eigen::Ref<const Eigen::VectorXd>& epoch,
-      const Eigen::Ref<const fes::Vector<uint16_t>>& leap_seconds,
+      const Eigen::Ref<const Vector<uint16_t>>& leap_seconds,
       const Eigen::Ref<const Eigen::VectorXcd>& wave,
       const angle::Formulae& formulae = angle::Formulae::kSchuremanOrder3) const
       -> Eigen::VectorXd;
@@ -288,7 +288,7 @@ class Table {
   /// set to 0, the number of threads is automatically determined.
   auto tide_from_mapping(
       double epoch, uint16_t leap_seconds,
-      const Eigen::Ref<const Eigen::MatrixXcd>& wave,
+      const DynamicRef<const Eigen::MatrixXcd>& wave,
       const angle::Formulae& formulae = angle::Formulae::kSchuremanOrder3,
       size_t num_threads = 0) const -> Eigen::MatrixXd;
 
@@ -305,7 +305,7 @@ class Table {
   /// equal to the size of the leap seconds vector.
   auto compute_nodal_modulations(
       const Eigen::Ref<const Eigen::VectorXd>& epoch,
-      const Eigen::Ref<const fes::Vector<uint16_t>>& leap_seconds,
+      const Eigen::Ref<const Vector<uint16_t>>& leap_seconds,
       const angle::Formulae& formulae) const
       -> std::tuple<Eigen::MatrixXd, Eigen::MatrixXd>;
 

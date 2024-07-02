@@ -329,8 +329,8 @@ void Table::admittance() {
 }
 
 auto Table::harmonic_analysis(const Eigen::Ref<const Eigen::VectorXd>& h,
-                              const Eigen::Ref<const Eigen::MatrixXd>& f,
-                              const Eigen::Ref<const Eigen::MatrixXd>& vu)
+                              const DynamicRef<const Eigen::MatrixXd>& f,
+                              const DynamicRef<const Eigen::MatrixXd>& vu)
     -> Eigen::VectorXcd {
   if (f.rows() != vu.rows() || f.cols() != vu.cols()) {
     throw std::invalid_argument(
@@ -368,7 +368,7 @@ auto Table::harmonic_analysis(const Eigen::Ref<const Eigen::VectorXd>& h,
 
 auto Table::tide_from_tide_series(
     const Eigen::Ref<const Eigen::VectorXd>& epoch,
-    const Eigen::Ref<const fes::Vector<uint16_t>>& leap_seconds,
+    const Eigen::Ref<const Vector<uint16_t>>& leap_seconds,
     const Eigen::Ref<const Eigen::VectorXcd>& wave,
     const angle::Formulae& formulae) const -> Eigen::VectorXd {
   detail::check_eigen_shape("epoch", epoch, "leap_seconds", leap_seconds);
@@ -404,7 +404,7 @@ auto Table::tide_from_tide_series(
 }
 
 auto Table::tide_from_mapping(const double epoch, const uint16_t leap_seconds,
-                              const Eigen::Ref<const Eigen::MatrixXcd>& wave,
+                              const DynamicRef<const Eigen::MatrixXcd>& wave,
                               const angle::Formulae& formulae,
                               const size_t num_threads) const
     -> Eigen::MatrixXd {
@@ -413,8 +413,7 @@ auto Table::tide_from_mapping(const double epoch, const uint16_t leap_seconds,
         "wave must contain as many elements as the number of waves in the "
         "table");
   }
-  auto result =
-      Eigen::MatrixXd(Eigen::MatrixXd::Zero(wave.cols(), wave.rows()));
+  auto result = Eigen::MatrixXd(wave.cols(), wave.rows());
   auto worker = [&](const int64_t start, const int64_t end) {
     // The wave properties of the object must be immutable for the provided
     // instance.
