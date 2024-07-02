@@ -3,8 +3,9 @@
 Harmonic Analysis
 *****************
 
-This example demonstrates how to perform harmonic analysis on a signal using
-the :func:`pyfes.harmonic_analysis` function.
+This example demonstrates how to perform harmonic analysis on a signal using the
+:func:`harmonic_analysis <pyfes.wave_table.WaveTable.harmonic_analysis>`
+function.
 
 First, we import the required modules.
 """
@@ -84,7 +85,10 @@ w = wt.harmonic_analysis(h, f, vu)
 h_tide = wt.tide_from_tide_series(time, leap_seconds, w)
 
 # %%
-# Finally, the result can be compared with the original time series:
+# Finally, we can visualize the original signal's height adjusted by the tidal
+# height derived from harmonic analysis. The outcome is zero because the
+# analyzed signal originates from the tidal model using identical
+# waves as those in the harmonic analysis.
 matplotlib.pyplot.plot(time, h, label='Original')
-matplotlib.pyplot.plot(time, h_tide, label='Tide')
+matplotlib.pyplot.plot(time, h - h_tide, label='Corrected height')
 matplotlib.pyplot.legend()

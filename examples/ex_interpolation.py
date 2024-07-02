@@ -4,10 +4,7 @@ Mesh Interpolation
 ******************
 
 This example demonstrates how to interpolate a tidal model stored in a mesh
-using LGP2 discretization. The model used is an old FES tidel-atlas model. Do
-not use it for real applications. You can download the model from the AVISO
-`website
-<https://www.aviso.altimetry.fr/en/data/products/auxiliary-products/global-tide-fes.html>`_.
+using LGP2 discretization.
 
 First, we import the required modules.
 """
