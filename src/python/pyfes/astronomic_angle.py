@@ -28,7 +28,9 @@ class AstronomicAngle(core.AstronomicAngle):
 
     Args:
         formulae: Astronomic formulae used to evaluate the astronomic arguments
-            for a given date. Default is :py:attr:`Formulae.kSchuremanOrder1`.
+            for a given date. Default is
+            :py:attr:`pyfes.Formulae.kSchuremanOrder1
+            <pyfes.core.Formulae.kSchuremanOrder1>`.
     """
 
     def __init__(self, formulae: Formulae = Formulae.kSchuremanOrder1) -> None:
