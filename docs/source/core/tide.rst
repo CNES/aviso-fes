@@ -1,6 +1,3 @@
-pyfes.core.evaluate_tide
-========================
-
 .. py:function:: pyfes.core.evaluate_tide(\
         tidal_model: Union[pyfes.core.AbstractTidalModelComplex64, \
                             pyfes.core.AbstractTidalModelComplex128], \

@@ -40,12 +40,12 @@ These objects provides a Python interface to interpolate the tidal models
 at the requested spatio-temporal coordinates.
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    core/abstract
-   core/cartesian
-   core/lgp1
-   core/lgp2
+   core/tidal_model/cartesian
+   core/tidal_model/lgp1
+   core/tidal_model/lgp2
 
 Tidal Prediction
 ----------------

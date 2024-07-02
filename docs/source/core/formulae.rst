@@ -1,6 +1,3 @@
-pyfes.core.Formulae
-===================
-
 .. currentmodule:: pyfes.core
 
 .. class:: Formulae

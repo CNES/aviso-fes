@@ -1,6 +1,3 @@
-pyfes.core.AstronomicAngle
-==========================
-
 .. currentmodule:: pyfes.core
 
 .. autoclass:: AstronomicAngle

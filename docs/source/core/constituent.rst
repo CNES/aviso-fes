@@ -1,6 +1,3 @@
-pyfes.core.Constituent
-======================
-
 .. currentmodule:: pyfes.core
 
 .. class:: Constituent
