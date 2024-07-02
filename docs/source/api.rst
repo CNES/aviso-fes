@@ -25,6 +25,24 @@ file. For more information on the configuration file format, see the
 
 .. autofunction:: pyfes.config.load
 
+Configuration classes
+---------------------
+
+The configuration classes are used to store the configuration of the tidal
+model.
+
+.. autoclass:: pyfes.config.Common
+   :members:
+   :show-inheritance:
+
+.. autoclass:: pyfes.config.Cartesian
+   :members:
+   :show-inheritance:
+
+.. autoclass:: pyfes.config.LGP
+   :members:
+   :show-inheritance:
+
 
 Settings
 --------
