@@ -109,20 +109,27 @@ def astronomic_constants() -> AstronomicConstants:
     """Astronomic constants."""
     # Mass (of sun/mass) of earthy (S/E)
     SE = 332946.0487
+
     # Mass of moon/mass of earth (M/E)
     ME = 0.0123000371
+
     # Solar parallex
     c1 = dms_to_deg(0, 0, 8.794_143)
+
     # Lunar equatorial parallex
     c = dms_to_deg(0, 57, 2.70)
     mean_earth_radius = 6_371_008.771415059
     earth_equatorial_radius = 6_378_137.0
+
     # Mean solar parallax in respect to mean radius
     ac1 = (mean_earth_radius / earth_equatorial_radius) * c1
+
     # Mean lunar parallax in respect to mean radius
     ac = (mean_earth_radius / earth_equatorial_radius) * c
+
     # Solar coefficient U1 (SE) * ac1^3
     u1: float = SE * ac1**3
+
     # Basic factor U (ME) * ac^3
     u: float = ME * ac**3
 
@@ -136,113 +143,167 @@ def astronomic_constants() -> AstronomicConstants:
 
 
 # %%
+# Schureman's values
+# ------------------
 const = schureman_values()
-const
+print(const)
 
 # %%
-# Page 25, formulae #73, Page 24, formulae #65
+# Formulae 73, 65
+# ---------------
+# `Page 24, 25`
 #
-# * :math:`\{2/3 - sin^2(\omega)\}\{1 - 3/2 \times sin(i)\} = 0.5021`
-# * :math:`f(Mm) = \{2/3 - sin^2(I)\} / 0.5021`
-
-# %%
+# .. math::
+#
+#       \{2/3 - sin^2(\omega)\}\{1 - 3/2 \times sin(i)\} = 0.5021
+#
+# .. math::
+#
+#       f(Mm) = \{2/3 - sin^2(I)\} / 0.5021
 a65 = (2 / 3 - math.sin(const.w)**2) * (1 - 3 / 2 * math.sin(const.i)**2)
 print(f'{a65:.4f}')
 
 # %%
-# Page 25, formulae #74, Page 24, formulae #66
+# Formulae 74, 66
+# ---------------
+# `Page 24, 25`
 #
-# * :math:`sin^2(\omega) \times \cos^4(\frac{1}{2}i) = 0.1528`
-# * :math:`f(Mf) = sin^2(I) / 0.1528`
-
-# %%
+# .. math::
+#
+#       sin^2(\omega) \times \cos^4(\frac{1}{2}i) = 0.1528
+#
+# .. math::
+#
+#       f(Mf) = sin^2(I) / 0.1528
 a66 = math.sin(const.w)**2 * math.cos(0.5 * const.i)**4
 print(f'a66 = {a66:.4f}')
 
 # %%
-# Page 25, formulae #75, Page 25, formulae #67
+# Formulae 75, 67
+# ---------------
+# `Page 25`
 #
-# * :math:`sin(\omega)cos^2(\frac{1}{2}\omega)cos^4(\frac{1}{2}i) = 0.3800`
-# * :math:`f(O_1) = sin(I) \times cos^2(\frac{1}{2}I) / 0.3800`
-
-# %%
+# .. math::
+#
+#   sin(\omega)cos^2(\frac{1}{2}\omega)cos^4(\frac{1}{2}i) = 0.3800
+#
+# .. math::
+#
+#   f(O_1) = sin(I) \times cos^2(\frac{1}{2}I) / 0.3800
 a67 = math.sin(const.w) * math.cos(0.5 * const.w)**2 * math.cos(
     0.5 * const.i)**4
 print(f'a67 = {a67:.4f}')
 
 # %%
-# Page 25, formulae #76, Page 25, formulae #68
+# Formulae 76, 68
+# ---------------
+# `Page 25`
 #
-# * :math:`sin(2\omega) \times \{1 - 3/2 \times sin^2(i)\} = 0.7214``
-# * :math:`f(J_1) = sin(2I) / 0.7214``
-
-# %%
+# .. math::
+#
+#   sin(2\omega) \times \{1 - 3/2 \times sin^2(i)\} = 0.7214
+#
+# .. math::
+#
+#   f(J_1) = sin(2I) / 0.7214
 a68 = math.sin(2 * const.w) * (1 - 3 / 2 * math.sin(const.i)**2)
 print(f'a68 = {a68:.4f}')
 
 # %%
-# Page 25, formulae #77, Page 25, formulae #69
+# Formulae 77, 69
+# ---------------
+# `Page 25`
 #
-# * .. math::
+# .. math::
 #
 #       sin(\omega) \times sin^2(\frac{1}{2}\omega)
 #       \times cos^4(\frac{1}{2}i) = 0.0164``
 #
-# * :math:`f(OO_1) = sin(I) \times sin^2(\frac{1}{2}I) / 0.0164``
-
-# %%
+# .. math::
+#
+#   f(OO_1) = sin(I) \times sin^2(\frac{1}{2}I) / 0.0164
 a69 = math.sin(const.w) * math.sin(0.5 * const.w)**2 * math.cos(
     0.5 * const.i)**4
 print(f'a69 = {a69:.4f}')
 
 # %%
-# Page 25, formulae #78, Page 25, formulae #70
+# Formulae 78, 70
+# ---------------
+# `Page 25`
 #
-# * :math:`cos^4(\frac{1}{2}\omega) \times cos^4(\frac{1}{2}i) = 0.9154`
-# * :math:`f(M_2) = sin^4(\frac{1}{2}I) / 0.9154`
-
-# %%
+# .. math::
+#
+#       cos^4(\frac{1}{2}\omega) \times cos^4(\frac{1}{2}i) = 0.9154
+#
+# .. math::
+#
+#       f(M_2) = sin^4(\frac{1}{2}I) / 0.9154
 a70 = math.cos(0.5 * const.w)**4 * math.cos(0.5 * const.i)**4
 print(f'a70 = {a70:.4f}')
 
 # %%
-# Page 25, formulae #79, Page 25, formulae #71
+# Formulae 79, 71
+# ---------------
+# `Page 25`
 #
-# * :math:`sin^2(\omega) \times (1 -3/2 \times sin^2(i))`
-# * :math:`f(79) = sin^2I / 0.1565`
-
-# %%
+# .. math::
+#
+#       sin^2(\omega) \times (1 -3/2 \times sin^2(i))
+#
+# .. math::
+#
+#       f(79) = sin^2I / 0.1565
 a71 = math.sin(const.w)**2 * (1 - 3 / 2 * math.sin(const.i)**2)
 print(f'a71 = {a71:.4f}')
 
 # %%
-# Page 36, formulae #141, Page 35, formulae #137
+# Formulae 141, 137
+# -----------------
+# `Page 35, 36`
 #
-# * :math:`sin(I) -5/4 \times sin^3(I) = 0.3192`
-# * :math:`f(141) = sin(I) - 5/4 \times sin^3(i) / 0.3192`
-
-# %%
+# .. math::
+#
+#       sin(I) -5/4 \times sin^3(I) = 0.3192
+#
+# .. math::
+#
+#       f(141) = sin(I) - 5/4 \times sin^3(i) / 0.3192
 a141 = math.sin(const.w) - 5 / 4 * math.sin(const.w)**3
 print(f'a141 = {a141:.4f}')
 
 # %%
-# Page 36, formulae #149, Page 35, formulae #140
-# * :math:`cos^6(\frac{1}{2}I) + cos^4(\frac{1}{2}I) \times sin^2(\frac{1}{2}I)`
-# * :math:`f(M_3) = cos^6(\frac{1}{2}I) / 0.8758`
-
-# %%
-# Page 41, formulae #207, Page 41, formulae #195
+# Formulae 149, 140
+# -----------------
+# `Page 35, 36`
 #
-# * .. math::
+# .. math::
+#
+#       cos^6(\frac{1}{2}I) + cos^4(\frac{1}{2}I) \times sin^2(\frac{1}{2}I)
+#
+# .. math::
+#
+#       f(M_3) = cos^6(\frac{1}{2}I) / 0.8758
+#
+# Formulae 207, 195
+# -----------------
+# `Page 41`
+#
+# .. math::
 #
 #       1/Q_a = \left[1/4 + 3/2\frac{cos I}{cos^2 \frac{1}{2}I}\times cos 2P +
 #       9/4\frac{cos^2 I}{cos^4 \frac{1}{2} I}\right]^\frac{1}{2}
 #
-# * :math:`1/Q_a = \left(2.310 + 1.435 \times cos(2P)\right)^\frac{1}{2}`
-# * :math:`cos(2P) = cos(2 \times (p - \xi))`
-# * :math:`f(M_ 1) = f(O_ 1) \times 1 / Q_a`
-
-# %%
+# .. math::
+#
+#   1/Q_a = \left(2.310 + 1.435 \times cos(2P)\right)^\frac{1}{2}
+#
+# .. math::
+#
+#   cos(2P) = cos(2 \times (p - \xi))
+#
+# .. math::
+#
+#   f(M_ 1) = f(O_ 1) \times 1 / Q_a
 a195_1 = (1 /
           4) + (9 / 4) * (math.cos(const.w)**2 / math.cos(0.5 * const.w)**4)
 a195_2 = (3 / 2) * (math.cos(const.w) / math.cos(0.5 * const.w)**2)
@@ -250,13 +311,21 @@ print(f'a195_1 = {a195_1:.3f}')
 print(f'a195_2 = {a195_2:.3f}')
 
 # %%
-# Page 45, formulae 216 & 218, 217, 219
+# Formulae 216, 218, 217, 219
+# ---------------------------
+# `Page 45`
 #
-# * :math:`1/2 + 3/4 \times e^2 = 0.5023`
-# * :math:`(1/2 + 3/4 \times e_1^2) \times S' \times sin(2\omega) = 0.1681`
-# * :math:`(1/2 + 3/4 \times e_1^2) \times S'  \times sin^2(\omega) = 0.0365`
-
-# %%
+# .. math::
+#
+#       1/2 + 3/4 \times e^2 = 0.5023
+#
+# .. math::
+#
+#       (1/2 + 3/4 \times e_1^2) \times S' \times sin(2\omega) = 0.1681
+#
+# .. math::
+#
+#       (1/2 + 3/4 \times e_1^2) \times S'  \times sin^2(\omega) = 0.0365
 term_a22 = 1 / 2 + 3 / 4 * const.e**2
 term_b22 = (1 / 2 + 3 / 4 * const.e1**2) * const.s * math.sin(2 * const.w)
 term_a47 = 1 / 2 + 3 / 4 * const.e**2
@@ -268,70 +337,69 @@ print(f'term A47 = {term_a47:.4f}')
 print(f'term B47 = {term_b47:.4f}')
 
 # %%
-# Page #45, formulae #226
+# Formulae 226
+# ------------
+# `Page 45`
 #
-# * .. math::
+# .. math::
 #
-#       \left[(A^2 + 2AB \times cos(\upsilon) + B^2)^\frac{1}{2} \times
-#       cos(\upsilon')\right]_0
+#       [(A^2 + 2AB \times cos(\upsilon) + B^2)^\frac{1}{2} \times
+#       cos(\upsilon')]_0
 #
-# * :math:`\left[0.5023 \times sin(2I) cos(\upsilon) + 0.1681\right]_0 = 0.5305`
-
-# %%
+# .. math::
+#
+#   \left[0.5023 \times sin(2I) cos(\upsilon) + 0.1681\right]_0 = 0.5305
 a226 = (term_a22 * a68 + term_b22)
 print(f'a226 = {a226:.4f}')
 
 # %%
-# Page #45, formulae #227
+# Formulae 227
+# ------------
+# `Page 45`
 #
-# * .. math::
+# .. math::
 #
 #       f(K_1) = (0.2523 \times sin^2(2I) + 0.1689 \times sin(2I) \times
 #       cos(\upsilon) + 0.0283)^\frac{1}{2}/0.5305
 #
-# * .. math::
+# .. math::
 #
 #       f(K_1) = (0.8965 \times sin^2(2I) + 0.6001 \times sin(2I) \times
 #       cos(\upsilon) + 0.1006)^\frac{1}{2}
-#
+print(f'{(term_a22 ** 2) / a226 ** 2:.4f}')
+print(f'{(term_a22 * term_b22 * 2) / a226 ** 2:.4f}')
+print(f'{term_b22 ** 2 / a226 ** 2:.4f}')
 
 # %%
-print(f'{(term_a22** 2) / a226**2:.4f}')
-print(f'{(term_a22 * term_b22 * 2) / a226**2:.4f}')
-print(f'{term_b22**2 / a226**2:.4f}')
-
-# %%
-# Page #46, formulae #234
+# Formulae 234
+# ------------
+# `Page 46`
 #
-# * .. math::
+# .. math::
 #
-#       \left[(A^2 + 2AB \times cos(2\upsilon) + B^2)^\frac{1}{2} \times
-#       cos(\upsilon')\right]_0
+#       [(A^2 + 2AB \times cos(2\upsilon) + B^2)^\frac{1}{2} \times
+#       cos(\upsilon')]_0
 #
-# * .. math::
+# .. math::
 #
 #       \left[0.5023 \times sin^2(2I) cos(\upsilon) + 0.0365\right]_0 = 0.1151
-#
-
-# %%
 a234: float = (term_a47 * a71 + term_b47)
 print(f'a226 = {a234:.4f}')
 
 # %%
-# Page #46, formulae #235
+# Formulae 235
+# ------------
+# `Page 46`
 #
-# * .. math::
+# .. math::
 #
 #       f(K_2) = (0.2523 \times sin^4(I) + 0.0367 \times sin^2(I) \times
 #       cos(2\upsilon) + 0.0013)^\frac{1}{2}/0.1151
 #
-# * .. math::
+# .. math::
 #
 #       f(K_2) = (19.0444 \times sin^4(I) + 2.7702 \times sin^2(I) \times
 #       cos(2\upsilon) + 0.0981)^\frac{1}{2}
-#
-
-# %%
-print(f'{(term_a47** 2) / a234**2:.4f}')
+print(f'{term_a47**2 / a234**2:.4f}')
 print(f'{(term_a47 * term_b47 * 2) / a234**2:.4f}')
 print(f'{term_b47**2 / a234**2:.4f}')
