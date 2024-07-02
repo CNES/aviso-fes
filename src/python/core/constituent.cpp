@@ -111,7 +111,7 @@ Returns:
   Constituent name.
 )__doc__")
       .def("known", &fes::constituents::known,
-           R"__doc__("
+           R"__doc__(
 Return the list of known constituents by this library.
 
 Returns:
