@@ -9,6 +9,8 @@
 #include <stdexcept>
 #include <string>
 
+#include "fes/eigen.hpp"
+
 namespace fes {
 namespace detail {
 
@@ -18,7 +20,11 @@ namespace detail {
 template <typename Array>
 auto eigen_shape(const Array& array) -> std::string {
   std::stringstream ss;
-  ss << "(" << array.rows() << ", " << array.cols() << ")";
+  if (is_vector<Array>()) {
+    ss << "(" << array.size() << ")";
+  } else {
+    ss << "(" << array.rows() << ", " << array.cols() << ")";
+  }
   return ss.str();
 }
 
