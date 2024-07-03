@@ -31,7 +31,7 @@ enum class Formulae {
 /// influence reaches the Earth create a theoretical tide producing force, the
 /// greater distance or smaller size of such body renders negligible any effect
 /// of this force upon the tides of the Earth. In deriving mathematical
-/// expressions for the tide-producing forces of the moon and sun,  the
+/// expressions for the tide-producing forces of the moon and sun, the
 /// principal factors to be taken into consideration are the rotation of the
 /// earth, the volution of the moon around the earth, the revolution of the
 /// earth around the sun, the inclination of the moon's orbit to the earth's
@@ -151,7 +151,8 @@ class Astronomic {
   /// @return @f$sin(I) \times cos^{2}(\frac{I}{2})/0.3800@f$
   FES_MATH_CONSTEXPR auto f_o1() const noexcept -> double {
     // SCHUREMAN P.25 (75)
-    return std::sin(i_) * detail::math::sqr(std::cos(i_ * 0.5)) / 0.3800;
+    constexpr auto factor = 1 / 0.3800;
+    return std::sin(i_) * detail::math::sqr(std::cos(i_ * 0.5)) * factor;
   }
 
   /// @brief Gets the node factor of @f$OO_1@f$.
@@ -159,7 +160,8 @@ class Astronomic {
   /// @return @f$sin(I) \times sin^2(\frac{I}{2})/0.0164@f$
   FES_MATH_CONSTEXPR auto f_oo1() const noexcept -> double {
     // SCHUREMAN P.25 (77)
-    return std::sin(i_) * detail::math::sqr(std::sin(i_ * 0.5)) / 0.0164;
+    constexpr auto factor = 1 / 0.0164;
+    return std::sin(i_) * detail::math::sqr(std::sin(i_ * 0.5)) * factor;
   }
 
   /// @brief Gets the unity node factor.
@@ -172,7 +174,8 @@ class Astronomic {
   /// @return @f$sin(2I)/0.7214@f$
   FES_MATH_CONSTEXPR auto f_j1() const noexcept -> double {
     // SCHUREMAN P.25 (76)
-    return std::sin(2.0 * i_) / 0.7214;
+    constexpr auto factor = 1 / 0.7214;
+    return std::sin(2.0 * i_) * factor;
   }
 
   /// @brief Gets the node factor of @f$M_{1}@f$.
@@ -191,7 +194,8 @@ class Astronomic {
   /// @return @f$cos^4(\frac{I}{2})/0.9154@f$
   constexpr auto f_m2() const noexcept -> double {
     // SCHUREMAN P.25 (78)
-    return detail::math::pow4(std::cos(i_ * 0.5)) / 0.9154;
+    constexpr auto factor = 1 / 0.9154;
+    return detail::math::pow4(std::cos(i_ * 0.5)) * factor;
   }
 
   /// @brief Gets the node factor of @f$M_{3}@f$.
@@ -199,7 +203,8 @@ class Astronomic {
   /// @return @f$cos^6(\frac{I}{2})/0.8758@f$
   FES_MATH_CONSTEXPR auto f_m3() const noexcept -> double {
     // SCHUREMAN P.36 (149)
-    return std::pow(std::cos(i_ * 0.5), 6.0) / 0.8758;
+    constexpr auto factor = 1 / 0.8758;
+    return std::pow(std::cos(i_ * 0.5), 6.0) * factor;
   }
 
   /// @brief Gets the node factor of @f$Mf@f$.
@@ -207,7 +212,8 @@ class Astronomic {
   /// @return @f$sin^2(I)/0.1578@f$
   constexpr auto f_mf() const noexcept -> double {
     // SCHUREMAN P.25 (74)
-    return detail::math::sqr(std::sin(i_)) / 0.1578;
+    constexpr auto factor = 1 / 0.1578;
+    return detail::math::sqr(std::sin(i_)) * factor;
   }
 
   /// @brief Gets the node factor of @f$Mm@f$.
@@ -215,7 +221,8 @@ class Astronomic {
   /// @return @f$(\frac{2}{3} - sin^2(I))/0.5021@f$
   constexpr auto f_mm() const noexcept -> double {
     // SCHUREMAN P.25 (73)
-    return (2.0 / 3.0 - detail::math::sqr(std::sin(i_))) / 0.5021;
+    constexpr auto factor = 1 / 0.5021;
+    return (2.0 / 3.0 - detail::math::sqr(std::sin(i_))) * factor;
   }
 
   /// @brief Gets the node factor of @f$M_2^2@f$.
@@ -266,7 +273,8 @@ class Astronomic {
   /// @return @f$sin^2(I)/0.1565@f$
   constexpr auto f_79() const noexcept -> double {
     // SCHUREMAN P.25 (79)
-    return detail::math::sqr(std::sin(i_)) / 0.1565;
+    constexpr auto factor = 1 / 0.1565;
+    return detail::math::sqr(std::sin(i_)) * factor;
   }
 
   /// @brief Gets the node factor of @f$L_2@f$.
@@ -318,7 +326,8 @@ class Astronomic {
   FES_MATH_CONSTEXPR auto f_141() const noexcept -> double {
     // SCHUREMAN P.36 (141)
     auto sin_i = std::sin(i_);
-    return (sin_i - (5.0 / 4.0) * detail::math::pow3(sin_i)) / 0.3192;
+    constexpr auto factor = 1 / 0.3192;
+    return (sin_i - (5.0 / 4.0) * detail::math::pow3(sin_i)) * factor;
   }
 
  protected:
