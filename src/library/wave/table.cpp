@@ -332,18 +332,11 @@ auto Table::harmonic_analysis(const Eigen::Ref<const Eigen::VectorXd>& h,
                               const DynamicRef<const Eigen::MatrixXd>& f,
                               const DynamicRef<const Eigen::MatrixXd>& vu)
     -> Eigen::VectorXcd {
-  if (f.rows() != vu.rows() || f.cols() != vu.cols()) {
-    throw std::invalid_argument(
-        "f and vu could not be broadcast together with shape (" +
-        std::to_string(f.rows()) + ", " + std::to_string(f.cols()) + ") (" +
-        std::to_string(vu.rows()) + ", " + std::to_string(vu.cols()) + ")");
-  }
-
+  detail::check_eigen_shape("f", f, "vu", vu);
   if (h.rows() != f.cols() || h.rows() != vu.cols()) {
     throw std::invalid_argument(
-        "f, vu could not be broadcast with h with shape (" +
-        std::to_string(f.rows()) + ", " + std::to_string(f.cols()) + ") (" +
-        std::to_string(h.cols()) + ")");
+        "f, vu could not be broadcast with h with shape " +
+        detail::eigen_shape(f) + ", " + detail::eigen_shape(h));
   }
   auto w_size = f.rows();
   auto result = Eigen::VectorXcd(w_size);
@@ -442,6 +435,7 @@ auto Table::compute_nodal_modulations(
     const angle::Formulae& formulae) const
     -> std::tuple<Eigen::MatrixXd, Eigen::MatrixXd> {
   detail::check_eigen_shape("epoch", epoch, "leap_seconds", leap_seconds);
+
   auto f = Eigen::MatrixXd(size(), epoch.size());
   auto vu = Eigen::MatrixXd(size(), epoch.size());
 
