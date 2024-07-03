@@ -359,7 +359,8 @@ auto Table::harmonic_analysis(const Eigen::Ref<const Eigen::VectorXd>& h,
   H.topRows(w_size) = f.array() * vu.array().cos();
   H.bottomRows(w_size) = f.array() * vu.array().sin();
 
-  auto solution = ((H * H.transpose()).inverse() * H) * h;
+  Eigen::LDLT<Eigen::MatrixXd> ldlt(H * H.transpose());
+  Eigen::VectorXd solution = ldlt.solve(H * h);
   result.real() = solution.topRows(w_size);
   result.imag() = solution.bottomRows(w_size);
 
