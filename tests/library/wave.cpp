@@ -406,7 +406,7 @@ inline auto check_nodal_a(const fes::wave::Table& table,
         EXPECT_NEAR(item->f(), 0.64794930999090794 * 1.0661482919660317, 1e-8);
         break;
       case fes::kM8:
-        EXPECT_NEAR(item->f(), detail::math::pow4(0.64794930999090794), 1e-8);
+        EXPECT_NEAR(item->f(), detail::math::pow<4>(0.64794930999090794), 1e-8);
         break;
       case fes::kMm2:
       case fes::kMf2:

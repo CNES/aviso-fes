@@ -155,13 +155,14 @@ FES_MATH_CONSTEXPR Point::operator geometry::EarthCenteredEarthFixed() const {
 
   auto sincos_x = detail::math::sincosd(lon());
   auto sincos_y = detail::math::sincosd(lat());
-  const auto chi = std::sqrt(
-      1.0 - detail::math::sqr(E) * detail::math::sqr(std::get<0>(sincos_y)));
+  const auto chi =
+      std::sqrt(1.0 - detail::math::pow<2>(E) *
+                          detail::math::pow<2>(std::get<0>(sincos_y)));
   const auto a_chi = A / chi;
 
   return {a_chi * std::get<1>(sincos_y) * std::get<1>(sincos_x),
           a_chi * std::get<1>(sincos_y) * std::get<0>(sincos_x),
-          (a_chi * (1.0 - detail::math::sqr(E))) * std::get<0>(sincos_y)};
+          (a_chi * (1.0 - detail::math::pow<2>(E))) * std::get<0>(sincos_y)};
 }
 
 }  // namespace geometry

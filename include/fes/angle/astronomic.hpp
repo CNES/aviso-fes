@@ -152,7 +152,7 @@ class Astronomic {
   FES_MATH_CONSTEXPR auto f_o1() const noexcept -> double {
     // SCHUREMAN P.25 (75)
     constexpr auto factor = 1 / 0.3800;
-    return std::sin(i_) * detail::math::sqr(std::cos(i_ * 0.5)) * factor;
+    return std::sin(i_) * detail::math::pow<2>(std::cos(i_ * 0.5)) * factor;
   }
 
   /// @brief Gets the node factor of @f$OO_1@f$.
@@ -161,7 +161,7 @@ class Astronomic {
   FES_MATH_CONSTEXPR auto f_oo1() const noexcept -> double {
     // SCHUREMAN P.25 (77)
     constexpr auto factor = 1 / 0.0164;
-    return std::sin(i_) * detail::math::sqr(std::sin(i_ * 0.5)) * factor;
+    return std::sin(i_) * detail::math::pow<2>(std::sin(i_ * 0.5)) * factor;
   }
 
   /// @brief Gets the unity node factor.
@@ -195,7 +195,7 @@ class Astronomic {
   constexpr auto f_m2() const noexcept -> double {
     // SCHUREMAN P.25 (78)
     constexpr auto factor = 1 / 0.9154;
-    return detail::math::pow4(std::cos(i_ * 0.5)) * factor;
+    return detail::math::pow<4>(std::cos(i_ * 0.5)) * factor;
   }
 
   /// @brief Gets the node factor of @f$M_{3}@f$.
@@ -213,7 +213,7 @@ class Astronomic {
   constexpr auto f_mf() const noexcept -> double {
     // SCHUREMAN P.25 (74)
     constexpr auto factor = 1 / 0.1578;
-    return detail::math::sqr(std::sin(i_)) * factor;
+    return detail::math::pow<2>(std::sin(i_)) * factor;
   }
 
   /// @brief Gets the node factor of @f$Mm@f$.
@@ -222,28 +222,28 @@ class Astronomic {
   constexpr auto f_mm() const noexcept -> double {
     // SCHUREMAN P.25 (73)
     constexpr auto factor = 1 / 0.5021;
-    return (2.0 / 3.0 - detail::math::sqr(std::sin(i_))) * factor;
+    return (2.0 / 3.0 - detail::math::pow<2>(std::sin(i_))) * factor;
   }
 
   /// @brief Gets the node factor of @f$M_2^2@f$.
   ///
   /// @return @f$f(M_2)^2@f$
   constexpr auto f_m22() const noexcept -> double {
-    return detail::math::sqr(f_m2());
+    return detail::math::pow<2>(f_m2());
   }
 
   /// @brief Gets the node factor of @f$M_2^3@f$.
   ///
   /// @return @f$f(M_2)^3@f$
   constexpr auto f_m23() const noexcept -> double {
-    return detail::math::pow3(f_m2());
+    return detail::math::pow<3>(f_m2());
   }
 
   /// @brief Gets the node factor of @f$f(M_2)^4@f$.
   ///
   /// @return @f$f(M_2)^4@f$
   constexpr auto f_m24() const noexcept -> double {
-    return detail::math::pow4(f_m2());
+    return detail::math::pow<4>(f_m2());
   }
 
   /// @brief Gets the node factor of @f$K_1@f$.
@@ -253,7 +253,7 @@ class Astronomic {
   FES_MATH_CONSTEXPR auto f_k1() const noexcept -> double {
     // SCHUREMAN P.45 (227)
     auto sin_2i = std::sin(2.0 * i_);
-    return std::sqrt(0.8965 * detail::math::sqr(sin_2i) +
+    return std::sqrt(0.8965 * detail::math::pow<2>(sin_2i) +
                      0.6001 * sin_2i * std::cos(nu_) + 0.1006);
   }
 
@@ -263,8 +263,8 @@ class Astronomic {
   /// cos(2\nu) + 0.0981)^\frac{1}{2}@f$
   FES_MATH_CONSTEXPR auto f_k2() const noexcept -> double {
     // SCHUREMAN P.46 (234)
-    auto sin_i2 = detail::math::sqr(std::sin(i_));
-    return sqrt(19.0444 * detail::math::sqr(sin_i2) +
+    auto sin_i2 = detail::math::pow<2>(std::sin(i_));
+    return sqrt(19.0444 * detail::math::pow<2>(sin_i2) +
                 2.7702 * sin_i2 * std::cos(2.0 * nu_) + 0.0981);
   }
 
@@ -274,7 +274,7 @@ class Astronomic {
   constexpr auto f_79() const noexcept -> double {
     // SCHUREMAN P.25 (79)
     constexpr auto factor = 1 / 0.1565;
-    return detail::math::sqr(std::sin(i_)) * factor;
+    return detail::math::pow<2>(std::sin(i_)) * factor;
   }
 
   /// @brief Gets the node factor of @f$L_2@f$.
@@ -327,7 +327,7 @@ class Astronomic {
     // SCHUREMAN P.36 (141)
     auto sin_i = std::sin(i_);
     constexpr auto factor = 1 / 0.3192;
-    return (sin_i - (5.0 / 4.0) * detail::math::pow3(sin_i)) * factor;
+    return (sin_i - (5.0 / 4.0) * detail::math::pow<3>(sin_i)) * factor;
   }
 
  protected:
@@ -555,7 +555,7 @@ auto FES_MATH_CONSTEXPR Astronomic::update(
   nu_ = at1 - at2;
 
   // for constituents l2, k1, k2
-  auto tgi2 = detail::math::sqr(std::tan(i_ * 0.5));
+  auto tgi2 = detail::math::pow<2>(std::tan(i_ * 0.5));
 
   // SCHUREMAN P. 41 (191)
   // Mean longitude  of the lunar perigee reckoned from the lunar intersection
@@ -573,9 +573,10 @@ auto FES_MATH_CONSTEXPR Astronomic::update(
 
   // SCHUREMAN P. 46 (232)
   nusec_ =
-      0.5 * std::atan((detail::math::sqr(std::sin(i_)) * std::sin(2.0 * nu_)) /
-                      (detail::math::sqr(std::sin(i_)) * std::cos(2.0 * nu_) +
-                       0.0727));
+      0.5 *
+      std::atan(
+          (detail::math::pow<2>(std::sin(i_)) * std::sin(2.0 * nu_)) /
+          (detail::math::pow<2>(std::sin(i_)) * std::cos(2.0 * nu_) + 0.0727));
 }
 
 }  // namespace angle
