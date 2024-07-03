@@ -9,6 +9,17 @@
 
 namespace fes {
 
+/// @brief Check if a matrix is a vector.
+///
+/// @tparam MatrixType The type of the matrix.
+/// @return true if the matrix is a vector, false otherwise.
+template <typename MatrixType>
+constexpr auto is_vector() noexcept -> bool {
+  return MatrixType::ColsAtCompileTime == 1 &&
+         (MatrixType::RowsAtCompileTime == Eigen::Dynamic ||
+          MatrixType::RowsAtCompileTime > 1);
+}
+
 /// @brief Alias for an Eigen vector.
 /// @tparam T The type of the vector elements.
 template <typename T>
