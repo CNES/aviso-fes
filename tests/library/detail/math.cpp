@@ -29,19 +29,13 @@ TEST(Math, TwoPi) {
   EXPECT_DOUBLE_EQ(math::two_pi<double>(), 2 * M_PI);
 }
 
-TEST(Math, Square) {
-  // sqr(2) == 4
-  EXPECT_DOUBLE_EQ(math::sqr(2), 4);
-}
-
-TEST(Math, Pow3) {
-  // pow3(2) == 8
-  EXPECT_DOUBLE_EQ(math::pow3(2), 8);
-}
-
-TEST(Math, Pow4) {
-  // pow4(2) == 16
-  EXPECT_DOUBLE_EQ(math::pow4(2), 16);
+TEST(Math, Pow) {
+  // pow<n>(x) == x^n
+  EXPECT_DOUBLE_EQ(math::pow<0>(2), 1);
+  EXPECT_DOUBLE_EQ(math::pow<1>(2), 2);
+  EXPECT_DOUBLE_EQ(math::pow<2>(2), 4);
+  EXPECT_DOUBLE_EQ(math::pow<3>(2), 8);
+  EXPECT_DOUBLE_EQ(math::pow<4>(2), 16);
 }
 
 TEST(Math, Radians) {

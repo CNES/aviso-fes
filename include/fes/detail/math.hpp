@@ -51,31 +51,40 @@ constexpr auto two_pi() noexcept -> T {
   return T(2) * pi<T>();
 }
 
-/// Power of 2.
-///
-/// @tparam T The type of the result.
-/// @return \f$x^2\f$
-template <typename T>
-constexpr auto sqr(const T& x) -> T {
-  return x * x;
-}
+/// @brief Evaluate x^n
+/// @tparam T The type of the number.
+/// @tparam N The power to raise the number to.
+template <typename T, unsigned N>
+struct Power {
+  ///  @brief Evaluate x^n
+  ///
+  /// @param[in] x The number to raise to the power.
+  /// @return The result of raising the number to the power.
+  static constexpr auto eval(const T& x) noexcept -> T {
+    return x * Power<T, N - 1>().eval(x);
+  }
+};
 
-/// Power of 3.
-///
-/// @tparam T The type of the result.
-/// @return \f$x^3\f$
+/// @brief Specialization of Power struct for N = 0.
 template <typename T>
-constexpr auto pow3(const T& x) -> T {
-  return sqr(x) * x;
-}
+struct Power<T, 0> {
+  /// @brief Evaluate x^0
+  ///
+  /// @return The result of raising the number to the power (always 1).
+  static constexpr auto eval(const T& /*x*/) noexcept -> T { return 1; }
+};
 
-/// Power of 4.
+/// @brief Calculate the power of a number.
 ///
-/// @tparam T The type of the result.
-/// @return \f$x^4\f$
-template <typename T>
-constexpr auto pow4(const T& x) -> T {
-  return sqr(x) * sqr(x);
+/// This function calculates the power of a number by using the Power struct.
+///
+/// @tparam N The power to raise the number to.
+/// @tparam T The type of the number.
+/// @param[in] x The number to raise to the power.
+/// @return The result of raising the number to the power.
+template <unsigned N, typename T>
+constexpr auto pow(const T& x) noexcept -> T {
+  return Power<T, N>::eval(x);
 }
 
 /// Convert angle x from radians to degrees.

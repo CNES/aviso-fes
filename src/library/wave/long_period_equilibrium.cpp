@@ -231,7 +231,7 @@ auto LongPeriodEquilibrium::lpe_minus_n_waves(const angle::Astronomic& angles,
   // mean_c20 = -0.014432247
   // mean_c30 = 0.012469818
   auto sy = detail::math::sind(lat);
-  auto sy2 = detail::math::sqr(sy);
+  auto sy2 = detail::math::pow<2>(sy);
   auto c20 =
       std::sqrt(5.0 / (4.0 * detail::math::pi<double>())) * (1.5 * sy2 - 0.5) +
       0.014432247;
