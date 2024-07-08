@@ -69,8 +69,13 @@ static auto build_wave_table(const AbstractTidalModel<T>* const tidal_model,
   // Add the constituents provided by the model.
   for (const auto& item : tidal_model->data()) {
     auto& wave = result[item.first];
-    wave->dynamic(true);
-    wave->admittance(false);
+    auto it = std::find(disable.begin(), disable.end(), item.first);
+    // Set the wave as dynamic and not provided by the model only if it is not
+    // in the list of disabled constituents.
+    if (it == disable.end()) {
+      wave->dynamic(true);
+      wave->admittance(false);
+    }
   }
 
   // Add the constituents to be be considered as dynamic but not provided by
@@ -79,13 +84,6 @@ static auto build_wave_table(const AbstractTidalModel<T>* const tidal_model,
     auto& wave = result[item];
     wave->dynamic(true);
     wave->admittance(false);
-  }
-
-  // Finally, exclude the constituents from the model requested by the user.
-  for (const auto& item : disable) {
-    auto& wave = result[item];
-    wave->dynamic(false);
-    wave->admittance(true);
   }
 
   return result;
