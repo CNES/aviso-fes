@@ -46,7 +46,7 @@ option(BUILD_DOC "Build documentation" OFF)
 option(BUILD_PYTHON "Build python extension" OFF)
 
 # Version
-file(STRINGS "${CMAKE_SOURCE_DIR}/include/fes.h" VERSION
+file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/include/fes.h" VERSION
      REGEX "define FES_VERSION")
 string(REGEX REPLACE ".*([0-9]\\.[0-9]\\.[0-9]).*" "\\1" VERSION ${VERSION})
 string(REPLACE "." ";" VERSION_LIST ${VERSION})
