@@ -15,6 +15,10 @@ if(POLICY CMP0077)
   cmake_policy(SET CMP0077 NEW)
 endif()
 
+if(POLICY CMP0167)
+  cmake_policy(SET CMP0167 NEW)
+endif()
+
 # On development machines, generate the version file. On other machines, ignore
 # errors.
 execute_process(COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/setup.py ERROR_QUIET)
