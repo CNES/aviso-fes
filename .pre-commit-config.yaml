@@ -18,6 +18,7 @@ repos:
     hooks:
     - id: pyupgrade
       args: [--py310-plus]
+      exclude: setup.py
   - repo: https://github.com/PyCQA/flake8
     rev: 7.1.0
     hooks:

@@ -4,7 +4,7 @@
 # All rights reserved. Use of this source code is governed by a
 # BSD-style license that can be found in the LICENSE file.
 # Working directory
-from typing import Any
+from typing import Any, List, Optional, Tuple
 import os
 import pathlib
 import platform
@@ -23,7 +23,7 @@ WORKING_DIRECTORY = pathlib.Path(__file__).parent.absolute()
 OSX_DEPLOYMENT_TARGET = '10.14'
 
 
-def compare_setuptools_version(required: tuple[int, ...]) -> bool:
+def compare_setuptools_version(required: Tuple[int, ...]) -> bool:
     """Compare the version of setuptools with the required version."""
     current = tuple(map(int, setuptools.__version__.split('.')[:2]))
     return current >= required
@@ -159,7 +159,7 @@ class BuildExt(setuptools.command.build_ext.build_ext):
             self.build_cmake(ext)
         super().run()
 
-    def boost(self) -> list[str] | None:
+    def boost(self) -> Optional[List[str]]:
         """Return the Boost installation prefix."""
         # Do not search system for Boost & disable the search for boost-cmake
         boost_option = '-DBoost_NO_SYSTEM_PATHS=TRUE ' \
@@ -176,7 +176,7 @@ class BuildExt(setuptools.command.build_ext.build_ext):
             return None
         return f'{boost_option} -DBoost_INCLUDE_DIR={boost_root}'.split()
 
-    def eigen(self) -> str | None:
+    def eigen(self) -> Optional[str]:
         """Return the Eigen3 installation prefix."""
         eigen_include_dir = pathlib.Path(sys.prefix, 'include', 'eigen3')
         if eigen_include_dir.exists():
@@ -217,7 +217,7 @@ class BuildExt(setuptools.command.build_ext.build_ext):
                 result = True
         return result
 
-    def set_cmake_user_options(self) -> list[str]:
+    def set_cmake_user_options(self) -> List[str]:
         """Set the CMake user options."""
         cmake_variable: Any
 
@@ -316,7 +316,7 @@ class BuildExt(setuptools.command.build_ext.build_ext):
     # pylint: enable=too-many-instance-attributes
 
 
-def typehints() -> list[tuple[str, list[str]]]:
+def typehints() -> List[Tuple[str, List[str]]]:
     """Get the list of type information files."""
     pyi = []
     for root, _, files in os.walk(WORKING_DIRECTORY):
