@@ -111,8 +111,8 @@ class Triangle : public triangle_t {
   inline auto area() const -> double { return detail::geometry::area(*this); }
 
   /// Write the triangle to a stream.
-  friend auto operator<<(std::ostream &os,
-                         const Triangle &triangle) -> std::ostream &;
+  friend auto operator<<(std::ostream &os, const Triangle &triangle)
+      -> std::ostream &;
 
   /// Convert the triangle to a string representation.
   explicit operator std::string() const;
@@ -236,8 +236,8 @@ namespace geometry {
 /// @param[in,out] os The stream.
 /// @param[in] triangle The triangle.
 /// @return The stream.
-inline auto operator<<(std::ostream &os,
-                       const Triangle &triangle) -> std::ostream & {
+inline auto operator<<(std::ostream &os, const Triangle &triangle)
+    -> std::ostream & {
   os << boost::geometry::wkt(triangle);
   return os;
 }

@@ -60,8 +60,8 @@ class sviewbuf : public std::streambuf {
   /// @param[in] sp The position to seek to.
   /// @param[in] which The open mode.
   /// @return The position in the buffer.
-  auto seekpos(pos_type sp,
-               std::ios_base::openmode which) -> pos_type override {
+  auto seekpos(pos_type sp, std::ios_base::openmode which)
+      -> pos_type override {
     return seekoff(sp - pos_type(static_cast<off_type>(0)), std::ios_base::beg,
                    which);
   }

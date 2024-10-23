@@ -74,15 +74,15 @@ class Grid {
 
   /// The index of the element at the given row and column if the grid is
   /// stored in row-major order.
-  constexpr auto index_xy(const Eigen::Index x,
-                          const Eigen::Index y) const -> Eigen::Index {
+  constexpr auto index_xy(const Eigen::Index x, const Eigen::Index y) const
+      -> Eigen::Index {
     return x * ny_ + y;
   }
 
   /// The index of the element at the given row and column if the grid is
   /// stored in column-major order.
-  constexpr auto index_yx(const Eigen::Index x,
-                          const Eigen::Index y) const -> Eigen::Index {
+  constexpr auto index_yx(const Eigen::Index x, const Eigen::Index y) const
+      -> Eigen::Index {
     return y * nx_ + x;
   }
 };

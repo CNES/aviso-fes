@@ -180,8 +180,8 @@ constexpr auto sincosd(const T& x) noexcept -> std::tuple<T, T> {
 template <typename T, typename std::enable_if<std::is_floating_point<T>::value,
                                               T>::type* = nullptr>
 constexpr auto is_almost_zero(
-    const T& a,
-    const T& epsilon = std::numeric_limits<T>::epsilon()) noexcept -> bool {
+    const T& a, const T& epsilon = std::numeric_limits<T>::epsilon()) noexcept
+    -> bool {
   return std::fabs(a) < epsilon;
 }
 
