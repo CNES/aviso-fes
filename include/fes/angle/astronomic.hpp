@@ -365,16 +365,18 @@ class Astronomic {
   /// @param[in] epoch Desired UTC time in seconds since 1970-01-01T00:00:00Z.
   /// @param[in] leap_seconds The number of leap seconds since
   /// 1970-01-01T00:00:00Z.
-  FES_MATH_CONSTEXPR auto schureman_order1(
-      const double epoch, const uint16_t leap_seconds) noexcept -> void;
+  FES_MATH_CONSTEXPR auto schureman_order1(const double epoch,
+                                           const uint16_t leap_seconds) noexcept
+      -> void;
 
   /// Calculates the astronomic angles using the Schureman formulae.
   ///
   /// @param[in] epoch Desired UTC time in seconds since 1970-01-01T00:00:00Z.
   /// @param[in] leap_seconds The number of leap seconds since
   /// 1970-01-01T00:00:00Z.
-  FES_MATH_CONSTEXPR auto schureman_order3(
-      const double epoch, const uint16_t leap_seconds) noexcept -> void;
+  FES_MATH_CONSTEXPR auto schureman_order3(const double epoch,
+                                           const uint16_t leap_seconds) noexcept
+      -> void;
 
   /// Calculates the astronomic angles using the Meeus formulae.
   ///
@@ -396,8 +398,8 @@ class Astronomic {
 /// @param[in] epoch UTC epoch
 /// @param[in] leap_seconds The number of leap seconds since
 /// 1970-01-01T00:00:00Z.
-constexpr auto utc_2_tdt(const double epoch,
-                         const uint16_t leap_seconds) -> double {
+constexpr auto utc_2_tdt(const double epoch, const uint16_t leap_seconds)
+    -> double {
   // Number of seconds to add to TAI to get Terrestrial Dynamical Time (TDT)
   constexpr auto dynamic_time = 32.184;
   return epoch + static_cast<double>(leap_seconds) + dynamic_time;
@@ -474,8 +476,9 @@ auto FES_MATH_CONSTEXPR Astronomic::schureman_order3(
 }
 
 // /////////////////////////////////////////////////////////////////////////////
-FES_MATH_CONSTEXPR auto Astronomic::meeus(
-    const double epoch, const uint16_t leap_seconds) noexcept -> void {
+FES_MATH_CONSTEXPR auto Astronomic::meeus(const double epoch,
+                                          const uint16_t leap_seconds) noexcept
+    -> void {
   // Number of seconds elapsed since 2000-01-01T12:00:00Z (J2000) to epoch
   constexpr auto j2000 = 946728000.0;
   // Julian Ephemeris Millennium
@@ -518,8 +521,9 @@ FES_MATH_CONSTEXPR auto Astronomic::meeus(
                             -1.0 / 80053.0, 1.0 / 18999000.0);
 }
 
-auto FES_MATH_CONSTEXPR Astronomic::update(
-    const double epoch, const uint16_t leap_seconds) noexcept -> void {
+auto FES_MATH_CONSTEXPR Astronomic::update(const double epoch,
+                                           const uint16_t leap_seconds) noexcept
+    -> void {
   ((*this).*update_)(epoch, leap_seconds);
 
   // T mean solar angle relative to Greenwich

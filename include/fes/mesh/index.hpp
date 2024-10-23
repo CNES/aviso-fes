@@ -73,8 +73,8 @@ class Index : public std::enable_shared_from_this<Index> {
   /// @param[in] point The point.
   /// @param[in] max_distance The maximum distance to the nearest triangle.
   /// @return The selected triangle.
-  auto search(const geometry::Point& point,
-              const double max_distance) const -> SelectedTriangle;
+  auto search(const geometry::Point& point, const double max_distance) const
+      -> SelectedTriangle;
 
   /// Get the number of positions in the index
   inline auto n_positions() const noexcept -> size_t { return lon_.size(); }

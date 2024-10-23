@@ -64,8 +64,9 @@ class TableIterator : public std::iterator_traits<RangeType> {
   /// @param[in] rhs iterator to compare
   /// @returns true if the two iterators are equal
   template <typename OtherRange, typename OtherRangeType>
-  constexpr auto operator==(const TableIterator<OtherRange, OtherRangeType>&
-                                rhs) const noexcept -> bool {
+  constexpr auto operator==(
+      const TableIterator<OtherRange, OtherRangeType>& rhs) const noexcept
+      -> bool {
     return it_ == rhs.base();
   }
 
@@ -73,8 +74,9 @@ class TableIterator : public std::iterator_traits<RangeType> {
   /// @param[in] rhs iterator to compare
   /// @returns true if the two iterators are different
   template <typename OtherRange, typename OtherRangeType>
-  constexpr auto operator!=(const TableIterator<OtherRange, OtherRangeType>&
-                                rhs) const noexcept -> bool {
+  constexpr auto operator!=(
+      const TableIterator<OtherRange, OtherRangeType>& rhs) const noexcept
+      -> bool {
     return !(*this == rhs);
   }
 

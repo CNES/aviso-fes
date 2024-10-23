@@ -58,8 +58,8 @@ class EarthCenteredEarthFixed : public ecef_t {
   inline auto z(const double z) { set<2>(z); }
 
   /// Write the ECEF point to a stream.
-  friend auto operator<<(std::ostream& os,
-                         const EarthCenteredEarthFixed& ecef) -> std::ostream&;
+  friend auto operator<<(std::ostream& os, const EarthCenteredEarthFixed& ecef)
+      -> std::ostream&;
 
   /// Convert the point to a string representation.
   explicit inline operator std::string() const {
@@ -143,8 +143,8 @@ namespace geometry {
 /// @param[in,out] os The stream.
 /// @param[in] ecef The ECEF point.
 /// @return The stream.
-inline auto operator<<(std::ostream& os,
-                       const EarthCenteredEarthFixed& ecef) -> std::ostream& {
+inline auto operator<<(std::ostream& os, const EarthCenteredEarthFixed& ecef)
+    -> std::ostream& {
   os << "ECEF(" << ecef.x() << " " << ecef.y() << " " << ecef.z() << ")";
   return os;
 }

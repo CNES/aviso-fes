@@ -19,8 +19,8 @@ namespace geometry {
 /// @param[in] geometry2 The second geometry.
 /// @return The distance between the two geometries.
 template <typename Geometry1, typename Geometry2>
-inline auto distance(const Geometry1& geometry1,
-                     const Geometry2& geometry2) -> double {
+inline auto distance(const Geometry1& geometry1, const Geometry2& geometry2)
+    -> double {
   return boost::geometry::distance(geometry1, geometry2);
 }
 

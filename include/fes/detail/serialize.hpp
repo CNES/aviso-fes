@@ -38,8 +38,8 @@ auto read_data(detail::isviewstream& ss) -> T {
 /// @brief Write a string to a stringstream
 /// @param[in] ss The stringstream to write to
 /// @param[in] data The string to write
-inline auto write_string(std::stringstream& ss,
-                         const std::string& data) -> void {
+inline auto write_string(std::stringstream& ss, const std::string& data)
+    -> void {
   auto size = data.size();
   write_data(ss, size);
   ss.write(data.data(), data.size());

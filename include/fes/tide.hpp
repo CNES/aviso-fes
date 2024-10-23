@@ -110,11 +110,13 @@ static auto build_wave_table(const AbstractTidalModel<T>* const tidal_model,
 ///   spectrum (same units as the constituents).
 /// - The quality of the interpolation (see Quality)
 template <typename T>
-inline auto evaluate_tide(
-    const AbstractTidalModel<T>* const tidal_model, const double epoch,
-    const uint16_t leap_seconds, const double longitude, const double latitude,
-    wave::Table& wave_table, wave::LongPeriodEquilibrium& long_period,
-    Accelerator* acc) -> std::tuple<double, double, Quality> {
+inline auto evaluate_tide(const AbstractTidalModel<T>* const tidal_model,
+                          const double epoch, const uint16_t leap_seconds,
+                          const double longitude, const double latitude,
+                          wave::Table& wave_table,
+                          wave::LongPeriodEquilibrium& long_period,
+                          Accelerator* acc)
+    -> std::tuple<double, double, Quality> {
   // Update the astronomic angle used to evaluate the tidal constituents.
   const auto& angles = acc->calculate_angle(epoch, leap_seconds);
   // Adjusts nodal corrections to the tidal estimate date.
