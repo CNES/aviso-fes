@@ -15,8 +15,10 @@
 
 #if defined(__GNUC__) && (__GNUC__ >= 11) || \
     defined(__clang__) && (__cplusplus >= 202303L)
+/// @brief Define the constexpr keyword for newer compilers
 #define FES_MATH_CONSTEXPR constexpr
 #else
+/// @brief Define the constexpr keyword for older compilers
 #define FES_MATH_CONSTEXPR inline
 #endif
 
