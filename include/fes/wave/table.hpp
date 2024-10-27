@@ -216,7 +216,7 @@ class Table {
   /// The harmonic analysis method consists in expressing the ocean tidal
   /// variations as a sum of independent constituents accordingly to the tidal
   /// potential spectrum. Then the sea surface elevation at a point
-  /// \f$(x, y)\f$ and time \fs(t\fs) can be expressed as a linear sum as
+  /// \f$(x, y)\f$ and time \f$(t\f$) can be expressed as a linear sum as
   /// follow:
   ///
   /// \f[
