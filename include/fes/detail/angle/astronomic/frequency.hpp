@@ -36,7 +36,7 @@ constexpr auto p() noexcept -> double {
   return 1.0 / ((15.0 / speed::p()) * 24.0);
 }
 
-/// @brief N′
+/// @brief \f$N'\f$
 ///
 /// Compute the frequency in degree by hour for the longitude of the moon's
 /// ascending node.
@@ -44,7 +44,7 @@ constexpr auto n() noexcept -> double {
   return 1.0 / ((15.0 / speed::n()) * 24.0);
 }
 
-/// @brief p₁
+/// @brief \f$p_1\f$
 ///
 /// Compute the frequency in degree by hour for the longitude of sun's
 /// perigee.
@@ -52,7 +52,7 @@ constexpr auto p1() noexcept -> double {
   return 1.0 / ((15.0 / speed::p1()) * 24.0);
 }
 
-/// @brief τ
+/// @brief \f$\tau\f$
 ///
 /// Compute the frequency in degree by hour for the local mean lunar time.
 constexpr auto tau() noexcept -> double {

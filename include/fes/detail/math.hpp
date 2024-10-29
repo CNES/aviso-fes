@@ -26,39 +26,39 @@ namespace fes {
 namespace detail {
 namespace math {
 
-/// π
+/// \f$\pi\f$
 ///
 /// @tparam T The type of the result.
-/// @return π
+/// @return \f$\pi\f$
 template <typename T>
 constexpr auto pi() noexcept -> T {
   return std::atan2(T(0), T(-1));
 }
 
-/// π/2
+/// \f$\pi/2\f$
 ///
 /// @tparam T The type of the result.
-/// @return π/2
+/// @return \f$\pi/2\f$
 template <typename T>
 constexpr auto pi_2() noexcept -> T {
   return 0.5 * pi<T>();
 }
 
-/// 2π
+/// \f$2\pi\f$
 ///
 /// @tparam T The type of the result.
-/// @return 2π
+/// @return \f$2\pi\f$
 template <typename T>
 constexpr auto two_pi() noexcept -> T {
   return T(2) * pi<T>();
 }
 
-/// @brief Evaluate x^n
+/// @brief Evaluate \f$x^n\f$
 /// @tparam T The type of the number.
 /// @tparam N The power to raise the number to.
 template <typename T, unsigned N>
 struct Power {
-  ///  @brief Evaluate x^n
+  ///  @brief Evaluate \f$x^n\f$
   ///
   /// @param[in] x The number to raise to the power.
   /// @return The result of raising the number to the power.

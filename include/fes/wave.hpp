@@ -183,7 +183,8 @@ class Wave : public std::enable_shared_from_this<Wave> {
   /// Tide value.
   std::complex<double> c_;
 
-  /// Harmonic constituents (T, s, h, p, N′, p_1, shift, \xi, \nu, \nu′, \nu″)
+  /// Harmonic constituents
+  /// \f$(T, s, h, p, N', p_1, shift, \xi, \nu, \nu', \nu'')\f$
   std::array<int8_t, 11> argument_;
 
   /// Computes the wave frequency from the doodson arguments
@@ -307,7 +308,7 @@ class Sa : public Wave {
 ///
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
-/// <tr><td>@f$T - 4s + h + 2p + 90°@f$</td>
+/// <tr><td>@f$T - 4s + h + 2p + 90^{\circ}@f$</td>
 /// <td>@f$+2\xi - \nu@f$</td>
 /// <td>@f$f(O_1)@f$</td></tr>
 /// </table>
@@ -323,7 +324,7 @@ class _2Q1 : public Wave {
 ///
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
-/// <tr><td>@f$T - 4s + 3h + 90°@f$</td>
+/// <tr><td>@f$T - 4s + 3h + 90^{\circ}@f$</td>
 /// <td>@f$+2\xi - \nu@f$</td>
 /// <td>@f$f(O_1)@f$</td></tr>
 /// </table>
@@ -339,7 +340,7 @@ class Sigma1 : public Wave {
 ///
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
-/// <tr><td>@f$T - 3s + h + p + 90°@f$</td>
+/// <tr><td>@f$T - 3s + h + p + 90^{\circ}@f$</td>
 /// <td>@f$+2\xi - \nu@f$</td>
 /// <td>@f$f(O_1)@f$</td></tr>
 /// </table>
@@ -355,7 +356,7 @@ class Q1 : public Wave {
 ///
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
-/// <tr><td>@f$T - 3s + 3h - p + 90°@f$</td>
+/// <tr><td>@f$T - 3s + 3h - p + 90^{\circ}@f$</td>
 /// <td>@f$+2\xi - \nu@f$</td>
 /// <td>@f$f(O_1)@f$</td></tr>
 /// </table>
@@ -371,7 +372,7 @@ class Rho1 : public Wave {
 ///
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
-/// <tr><td>@f$T - 2s + h + 90°@f$</td>
+/// <tr><td>@f$T - 2s + h + 90^{\circ}@f$</td>
 /// <td>@f$+2\xi - \nu@f$</td>
 /// <td>@f$f(O_1)@f$</td></tr>
 /// </table>
@@ -387,7 +388,7 @@ class O1 : public Wave {
 ///
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
-/// <tr><td>@f$T - 2s + 3h - 90°@f$</td>
+/// <tr><td>@f$T - 2s + 3h - 90^{\circ}@f$</td>
 /// <td>@f$-\nu@f$</td>
 /// <td>@f$f(J_1)@f$</td></tr>
 /// </table>
@@ -403,7 +404,7 @@ class MP1 : public Wave {
 ///
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
-/// <tr><td>@f$T - s + h - p - 90°@f$</td>
+/// <tr><td>@f$T - s + h - p - 90^{\circ}@f$</td>
 /// <td>@f$+2\xi - \nu@f$</td>
 /// <td>@f$f(O_1)@f$</td></tr>
 /// </table>
@@ -443,7 +444,7 @@ class M13 : public Wave {
 ///
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
-/// <tr><td>@f$T - s + h + p - 90°@f$</td>
+/// <tr><td>@f$T - s + h + p - 90^{\circ}@f$</td>
 /// <td>@f$-\nu@f$</td>
 /// <td>@f$f(J_1)@f$</td></tr>
 /// </table>
@@ -459,7 +460,7 @@ class M11 : public Wave {
 ///
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
-/// <tr><td>@f$T - s + 3h - p - 90°@f$</td>
+/// <tr><td>@f$T - s + 3h - p - 90^{\circ}@f$</td>
 /// <td>@f$-\nu@f$</td>
 /// <td>@f$f(J_1)@f$</td></tr>
 /// </table>
@@ -475,7 +476,7 @@ class Chi1 : public Wave {
 ///
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
-/// <tr><td>@f$T - 2h + p1 + 90°@f$</td>
+/// <tr><td>@f$T - 2h + p1 + 90^{\circ}@f$</td>
 /// <td>@f$0@f$</td>
 /// <td>@f$1@f$</td></tr>
 /// </table>
@@ -491,7 +492,7 @@ class Pi1 : public Wave {
 ///
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
-/// <tr><td>@f$T - h + 90°@f$</td>
+/// <tr><td>@f$T - h + 90^{\circ}@f$</td>
 /// <td>@f$0@f$</td>
 /// <td>@f$1@f$</td></tr>
 /// </table>
@@ -523,7 +524,7 @@ class S1 : public Wave {
 ///
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
-/// <tr><td>@f$T + h - 90°@f$</td>
+/// <tr><td>@f$T + h - 90^{\circ}@f$</td>
 /// <td>@f$- \nu@f$</td>
 /// <td>@f$f(K_1)@f$</td></tr>
 /// </table>
@@ -539,7 +540,7 @@ class K1 : public Wave {
 ///
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
-/// <tr><td>@f$T + 2h - p1 - 90°@f$</td>
+/// <tr><td>@f$T + 2h - p1 - 90^{\circ}@f$</td>
 /// <td>@f$0@f$</td>
 /// <td>@f$1@f$</td></tr>
 /// </table>
@@ -555,7 +556,7 @@ class Psi1 : public Wave {
 ///
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
-/// <tr><td>@f$T + 3h - 90°@f$</td>
+/// <tr><td>@f$T + 3h - 90^{\circ}@f$</td>
 /// <td>@f$0@f$</td>
 /// <td>@f$1@f$</td></tr>
 /// </table>
@@ -571,7 +572,7 @@ class Phi1 : public Wave {
 ///
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
-/// <tr><td>@f$T + s - h + p - 90°@f$</td>
+/// <tr><td>@f$T + s - h + p - 90^{\circ}@f$</td>
 /// <td>@f$-\nu@f$</td>
 /// <td>@f$f(J_1)@f$</td></tr>
 /// </table>
@@ -587,7 +588,7 @@ class Theta1 : public Wave {
 ///
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
-/// <tr><td>@f$T + s + h - p - 90°@f$</td>
+/// <tr><td>@f$T + s + h - p - 90^{\circ}@f$</td>
 /// <td>@f$-\nu@f$</td>
 /// <td>@f$f(J_1)@f$</td></tr>
 /// </table>
@@ -603,7 +604,7 @@ class J1 : public Wave {
 ///
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
-/// <tr><td>@f$T + 2s + h - 90°@f$</td>
+/// <tr><td>@f$T + 2s + h - 90^{\circ}@f$</td>
 /// <td>@f$-2\xi - \nu@f$</td>
 /// <td>@f$f(OO_1)@f$</td></tr>
 /// </table>
@@ -747,7 +748,7 @@ class M2 : public Wave {
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
 /// <tr><td>@f$2T - 2s + 4h@f$</td>
 /// <td>@f$+2\xi - 2\nu -2\nu^{\prime \prime}@f$</td>
-/// <td>@f$f(M_2) × f(K_2)@f$</td></tr>
+/// <td>@f$f(M_2) ^times f(K_2)@f$</td></tr>
 /// </table>
 class MKS2 : public Wave {
  public:
@@ -760,7 +761,7 @@ class MKS2 : public Wave {
 ///
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
-/// <tr><td>@f$2T - s + p + 180°@f$</td>
+/// <tr><td>@f$2T - s + p + 180^{\circ}@f$</td>
 /// <td>@f$+2\xi - 2\nu@f$</td>
 /// <td>@f$f(M_2)@f$</td></tr>
 /// </table>
@@ -776,7 +777,7 @@ class Lambda2 : public Wave {
 ///
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
-/// <tr><td>@f$2T - s + 2h - p + 180°@f$</td>
+/// <tr><td>@f$2T - s + 2h - p + 180^{\circ}@f$</td>
 /// <td>@f$+2\xi - 2\nu - R@f$</td>
 /// <td>@f$f(L_2)@f$</td></tr>
 /// </table>
@@ -800,7 +801,7 @@ class L2 : public Wave {
 ///
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
-/// <tr><td>@f$2T - s + 2h - p + 180°@f$</td>
+/// <tr><td>@f$2T - s + 2h - p + 180^{\circ}@f$</td>
 /// <td>@f$+2\xi - 2\nu@f$</td>
 /// <td>@f$f(M_2)^3@f$</td></tr>
 /// </table>
@@ -847,7 +848,7 @@ class S2 : public Wave {
 ///
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
-/// <tr><td>@f$2T + h - p1 + 180°@f$</td>
+/// <tr><td>@f$2T + h - p1 + 180^{\circ}@f$</td>
 /// <td>@f$0@f$</td>
 /// <td>@f$1@f$</td></tr>
 /// </table>
@@ -925,9 +926,9 @@ class _2SM2 : public Wave {
 ///
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
-/// <tr><td>@f$3T - 4s + 3h + 90°@f$</td>
+/// <tr><td>@f$3T - 4s + 3h + 90^{\circ}@f$</td>
 /// <td>@f$4\xi - 3\nu@f$</td>
-/// <td>@f$f(M_2) × f(O_1)@f$</td></tr>
+/// <td>@f$f(M_2) ^times f(O_1)@f$</td></tr>
 /// </table>
 class MO3 : public Wave {
  public:
@@ -940,9 +941,9 @@ class MO3 : public Wave {
 ///
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
-/// <tr><td>@f$3T - 4s + 3h + 90°@f$</td>
+/// <tr><td>@f$3T - 4s + 3h + 90^{\circ}@f$</td>
 /// <td>@f$4\xi - 4\nu + \nu^{\prime}@f$</td>
-/// <td>@f$f(M_2)² × f(K_1)@f$</td></tr>
+/// <td>@f$f(M_2)^2 ^times f(K_1)@f$</td></tr>
 /// </table>
 class _2MK3 : public Wave {
  public:
@@ -971,9 +972,9 @@ class M3 : public Wave {
 ///
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
-/// <tr><td>@f$3T - 2s + 3h - 90°@f$</td>
+/// <tr><td>@f$3T - 2s + 3h - 90^{\circ}@f$</td>
 /// <td>@f$2\xi - 2\nu - \nu^{\prime}@f$</td>
-/// <td>@f$f(M_2) × f(K_1)@f$</td></tr>
+/// <td>@f$f(M_2) ^times f(K_1)@f$</td></tr>
 /// </table>
 class MK3 : public Wave {
  public:
@@ -1183,7 +1184,7 @@ class _2MS6 : public Wave {
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
 /// <tr><td>@f$6T - 4s + 6h@f$</td>
 /// <td>@f$4\xi - 4\nu - 2\nu^{\prime \prime}@f$</td>
-/// <td>@f$f(M_2)² × f(K_2)@f$</td></tr>
+/// <td>@f$f(M_2)^2 ^times f(K_2)@f$</td></tr>
 /// </table>
 class _2MK6 : public Wave {
  public:
@@ -1213,7 +1214,7 @@ class _2SM6 : public Wave {
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
 /// <tr><td>@f$6T - 2s + 4h@f$</td>
 /// <td>@f$2\xi - 2\nu - 2\nu^{\prime}@f$</td>
-/// <td>@f$f(M_2) × f(K_2)@f$</td></tr>
+/// <td>@f$f(M_2) ^times f(K_2)@f$</td></tr>
 /// </table>
 class MSK6 : public Wave {
  public:
