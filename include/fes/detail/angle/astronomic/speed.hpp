@@ -36,7 +36,7 @@ constexpr auto p() noexcept -> double {
   return (((11.0 * 360.0 + 109.032) / kJulianCentury)) * 3600.0;
 }
 
-/// @brief N′
+/// @brief \f$N'\f$
 ///
 /// Compute the speed in degree by hour for the longitude of moon's ascending
 /// node.
@@ -44,7 +44,7 @@ constexpr auto n() noexcept -> double {
   return (((-5.0 * 360.0 - 134.142) / kJulianCentury)) * 3600.0;
 }
 
-/// @brief p₁
+/// @brief \f$p_1\f$
 ///
 /// Compute the speed in degree by hour for the longitude of sun's
 /// perigee.
@@ -52,7 +52,7 @@ constexpr auto p1() noexcept -> double {
   return ((1.719 / kJulianCentury)) * 3600;
 }
 
-/// @brief τ
+/// @brief \f$\tau\f$
 ///
 /// Compute the speed in degree by hour for the local mean lunar time.
 constexpr auto tau() noexcept -> double { return 15.0 - s() + h(); }
