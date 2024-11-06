@@ -27,7 +27,7 @@ Bibliography
   correction, in preparation, to be submitted to Ocean Sciences in 2024.
 
 * Lyard, F. H., Allain, D. J., Cancet, M., Carrère, L., and Picot, N.: FES2014
-  global ocean tide atlas: design and performance, Ocean Sci., 17, 615–649,
+  global ocean tide atlas: design and performance, Ocean Sci., 17, 615-649,
   https://doi.org/10.5194/os-17-615-2021, 2021.
 
 * Carrere L., F. Lyard, M. Cancet, A. Guillot, N. Picot: FES 2014, a new tidal
@@ -36,8 +36,8 @@ Bibliography
 
 Credits
 -------
-When using FES2022, please mention: ``FES2022 was produced by LEGOS, NOVELTIS and
-CLS Ocean and Climate Division; the project was funded by CNES. It is
+When using FES2022, please mention: ``FES2022 was produced by LEGOS, NOVELTIS
+and CLS Ocean and Climate Division; the project was funded by CNES. It is
 distributed by AVISO, with support from CNES (http://www.aviso.altimetry.fr/)``
 
 Contact
@@ -50,6 +50,7 @@ Contact
    :maxdepth: 1
    :caption: Contents:
 
+   changelog
    setup
    conda
    auto_examples/index.rst
