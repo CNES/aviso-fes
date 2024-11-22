@@ -184,6 +184,7 @@ class BuildExt(setuptools.command.build_ext.build_ext):
             '-DCMAKE_BUILD_TYPE=' + cfg,
             '-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + extdir,
             '-DPython3_EXECUTABLE=' + sys.executable,
+            '-DFES_BUILD_PYTHON_BINDINGS=ON',
             *self.set_cmake_user_options()
         ]
         return cmake_args
