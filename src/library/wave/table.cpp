@@ -205,6 +205,14 @@ Table::Table(const std::vector<std::string>& waves) {
                 : create_sparse_table(known_constituents, waves, waves_);
   getter_ =
       size() == waves_.size() ? &Table::direct_access : &Table::sparse_access;
+
+  // Fill the index between to have a direct access to the wave
+  wave_identifiers_.reserve(waves_.size());
+  for (const auto& item : waves_) {
+    if (item) {
+      wave_identifiers_.emplace_back(static_cast<size_t>(item->ident()));
+    }
+  }
 }
 
 Table::Table(const std::vector<Constituent>& waves) {
@@ -386,7 +394,7 @@ auto Table::tide_from_tide_series(
     wt.compute_nodal_corrections(angles);
 
     for (size_t jx = 0; jx < wt.size(); ++jx) {
-      const auto& item = wt[static_cast<Constituent>(jx)];
+      const auto& item = wt[jx];
       double phi = item->vu();
 
       tide += item->f() * (wave(jx).real() * std::cos(phi) +
@@ -417,7 +425,7 @@ auto Table::tide_from_mapping(const double epoch, const uint16_t leap_seconds,
 
     for (auto ix = start; ix < end; ++ix) {
       for (size_t jx = 0; jx < wt.size(); ++jx) {
-        const auto& item = wt[static_cast<Constituent>(jx)];
+        const auto& item = wt[jx];
         double phi = item->vu();
 
         result(ix, jx) += item->f() * (wave(jx, ix).real() * std::cos(phi) +
@@ -450,8 +458,8 @@ auto Table::compute_nodal_modulations(
     angles.update(epoch(ix), leap_seconds(ix));
     wt.compute_nodal_corrections(angles);
 
-    for (std::size_t jx = 0; jx < wt.size(); ++jx) {
-      const auto& wave = wt[static_cast<Constituent>(jx)];
+    for (size_t jx = 0; jx < wt.size(); ++jx) {
+      const auto& wave = wt[jx];
       f(jx, ix) = wave->f();
       vu(jx, ix) = wave->vu();
     }

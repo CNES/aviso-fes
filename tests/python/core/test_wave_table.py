@@ -6,6 +6,7 @@ import datetime
 import pathlib
 
 import netCDF4
+import numpy
 from pyfes import core
 from pyfes.leap_seconds import get_leap_seconds
 import pytest
@@ -73,3 +74,24 @@ def test_harmonic_analysis():
 
     assert delta.mean(), pytest.approx(0, rel=1e-16)
     assert delta.std(), pytest.approx(0, rel=1e-12)
+
+
+def test_harmonic_analysis_with_empty_table():
+    time = numpy.arange(numpy.datetime64('2018-01-01'),
+                        numpy.datetime64('2018-03-01'),
+                        3600,
+                        dtype='datetime64[s]')
+    h = numpy.random.rand(time.shape[0])
+    leap_seconds = get_leap_seconds(time)
+
+    wt = core.WaveTable(['M2', 'S2', 'N2', 'K1', 'O1', 'Q1'])
+    w = wt.harmonic_analysis(h,
+                             *wt.compute_nodal_modulations(time, leap_seconds))
+    assert numpy.all(
+        ~numpy.isnan(wt.tide_from_tide_series(time, leap_seconds, w)))
+
+    wt = core.WaveTable()
+    w = wt.harmonic_analysis(h,
+                             *wt.compute_nodal_modulations(time, leap_seconds))
+    assert numpy.all(
+        ~numpy.isnan(wt.tide_from_tide_series(time, leap_seconds, w)))
