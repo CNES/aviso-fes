@@ -15,7 +15,7 @@ def usage(args: dict[str, str | list[str] | None]) -> argparse.Namespace:
     parser.add_argument('--generator', help='Selected CMake generator')
     parser.add_argument('--cmake-args', help='Additional arguments for CMake')
     parser.add_argument('--mkl', help='Using MKL as BLAS library')
-    return parser.parse_args(args=[f"--{k}={v}" for k, v in args.items()])
+    return parser.parse_args(args=[f'--{k}={v}' for k, v in args.items()])
 
 
 def decode_bool(value: str | None) -> bool:
@@ -39,11 +39,11 @@ class _CustomBuildMetaBackend(setuptools.build_meta._BuildMetaBackend):
         args = usage(self.config_settings or {})  # type: ignore[arg-type]
         setuptools_args = []
         if args.cxx_compiler:
-            setuptools_args.append(f"--cxx-compiler={args.cxx_compiler}")
+            setuptools_args.append(f'--cxx-compiler={args.cxx_compiler}')
         if args.generator:
-            setuptools_args.append(f"--generator={args.generator}")
+            setuptools_args.append(f'--generator={args.generator}')
         if args.cmake_args:
-            setuptools_args.append(f"--cmake-args={args.cmake_args}")
+            setuptools_args.append(f'--cmake-args={args.cmake_args}')
         if decode_bool(args.mkl):
             setuptools_args.append('--mkl=yes')
 
