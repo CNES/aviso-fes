@@ -143,13 +143,22 @@ class Table {
   /// 2N2, N2, M2, K2.
   auto admittance() -> void;
 
-  /// Get the wave properties
+  /// Get the wave properties from its index
+  inline auto operator[](const size_t index) const
+      -> const std::shared_ptr<Wave>& {
+    if (index >= wave_identifiers_.size()) {
+      throw std::out_of_range("index out of range");
+    }
+    return waves_[wave_identifiers_[index]];
+  }
+
+  /// Get the wave properties from its identifier
   constexpr auto operator[](const Constituent ident) const
       -> const std::shared_ptr<Wave>& {
     return ((*this).*getter_)(ident);
   }
 
-  /// Get the wave properties
+  /// Get the wave properties from its identifier
   constexpr auto operator[](const Constituent ident) -> std::shared_ptr<Wave>& {
     return std::remove_const_t<std::shared_ptr<Wave>&>(
         ((*this).*getter_)(ident));
@@ -322,6 +331,11 @@ class Table {
 
   /// Wave table
   std::vector<std::shared_ptr<Wave>> waves_{};
+
+  /// An array that maps linear indices (0, 1, 2, 3, ...) to the wave
+  /// identifiers defined in the table. If the table is complete, this mapping
+  /// is an identity mapping {0:0, 1:1, 2:2, ...}.
+  std::vector<size_t> wave_identifiers_{};
 
   /// Get a wave from the table
   ///
