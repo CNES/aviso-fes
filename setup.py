@@ -4,7 +4,7 @@
 # All rights reserved. Use of this source code is governed by a
 # BSD-style license that can be found in the LICENSE file.
 # Working directory
-from typing import Any, List, Optional, Tuple
+from typing import List, Tuple
 import os
 import pathlib
 import platform
@@ -117,41 +117,25 @@ class CMakeExtension(setuptools.Extension):
 class BuildExt(setuptools.command.build_ext.build_ext):
     """Build everything needed to install."""
     user_options = setuptools.command.build_ext.build_ext.user_options
-    user_options += [
-        ('boost-root=', None, 'Preferred Boost installation prefix'),
-        ('conda-forge', None, 'Generation of the conda-forge package'),
-        ('cxx-compiler=', None, 'Preferred C++ compiler'),
-        ('eigen-root=', None, 'Preferred Eigen3 include directory'),
-        ('generator=', None, 'Selected CMake generator'),
-        ('mkl-root=', None, 'Preferred MKL installation prefix'),
-        ('mkl=', None, 'Using MKL as BLAS library'),
-        ('reconfigure', None, 'Forces CMake to reconfigure this project')
-    ]
+    user_options += [('cmake-args=', None, 'Additional arguments for CMake'),
+                     ('cxx-compiler=', None, 'Preferred C++ compiler'),
+                     ('generator=', None, 'Selected CMake generator'),
+                     ('mkl=', None, 'Using MKL as BLAS library'),
+                     ('reconfigure', None,
+                      'Forces CMake to reconfigure this project')]
 
     boolean_options = setuptools.command.build_ext.build_ext.boolean_options
-    boolean_options += ['mkl', 'conda-forge']
+    boolean_options += ['mkl']
 
     def initialize_options(self) -> None:
         """Set default values for all the options that this command
         supports."""
         super().initialize_options()
-        self.boost_root = None
-        self.conda_forge = None
+        self.cmake_args = None
         self.cxx_compiler = None
-        self.eigen_root = None
         self.generator = None
         self.mkl = None
-        self.mkl_root = None
         self.reconfigure = None
-
-    def finalize_options(self) -> None:
-        """Set final values for all the options that this command supports."""
-        super().finalize_options()
-        if self.mkl_root is not None:
-            self.mkl = True
-        if not self.mkl and self.mkl_root:
-            raise RuntimeError(
-                'argument --mkl_root not allowed with argument --mkl=no')
 
     def run(self) -> None:
         """Carry out the action."""
@@ -159,97 +143,50 @@ class BuildExt(setuptools.command.build_ext.build_ext):
             self.build_cmake(ext)
         super().run()
 
-    def boost(self) -> Optional[List[str]]:
-        """Return the Boost installation prefix."""
-        # Do not search system for Boost & disable the search for boost-cmake
-        boost_option = '-DBoost_NO_SYSTEM_PATHS=TRUE ' \
-            '-DBoost_NO_BOOST_CMAKE=TRUE'
-        boost_root = pathlib.Path(sys.prefix)
-        if (boost_root / 'include' / 'boost').exists():
-            return f'{boost_option} -DBOOSTROOT={boost_root}'.split()
-        boost_root = pathlib.Path(sys.prefix, 'Library', 'include')
-        if not boost_root.exists():
-            if self.conda_forge:
-                raise RuntimeError(
-                    'Unable to find the Boost library in the conda '
-                    'distribution used.')
-            return None
-        return f'{boost_option} -DBoost_INCLUDE_DIR={boost_root}'.split()
-
-    def eigen(self) -> Optional[str]:
-        """Return the Eigen3 installation prefix."""
-        eigen_include_dir = pathlib.Path(sys.prefix, 'include', 'eigen3')
-        if eigen_include_dir.exists():
-            return f'-DEIGEN3_INCLUDE_DIR={eigen_include_dir}'
-        eigen_include_dir = pathlib.Path(sys.prefix, 'Library', 'include',
-                                         'eigen3')
-        if not eigen_include_dir.exists():
-            eigen_include_dir = eigen_include_dir.parent
-        if not eigen_include_dir.exists():
-            if self.conda_forge:
-                raise RuntimeError(
-                    'Unable to find the Eigen3 library in the conda '
-                    'distribution used.')
-            return None
-        return f'-DEIGEN3_INCLUDE_DIR={eigen_include_dir}'
-
     @staticmethod
-    def set_conda_mklroot() -> None:
-        """Set the MKLROOT environment variable."""
+    def set_mklroot() -> None:
+        """Set the MKLROOT environment variable if the MKL header is found."""
         mkl_header = pathlib.Path(sys.prefix, 'include', 'mkl.h')
+        if not mkl_header.exists():
+            mkl_header = pathlib.Path(sys.prefix, 'Library', 'include',
+                                      'mkl.h')
+
         if mkl_header.exists():
             os.environ['MKLROOT'] = sys.prefix
-            return
 
     @staticmethod
-    def is_conda() -> bool:
-        """Return True if the current Python distribution is conda."""
-        result = pathlib.Path(sys.prefix, 'conda-meta').exists()
-        if not result:
-            try:
-                # pylint: disable=unused-import,import-outside-toplevel
-                import conda  # noqa: F401
+    def conda_prefix() -> str | None:
+        """Returns the conda prefix."""
+        if 'CONDA_PREFIX' in os.environ:
+            return os.environ['CONDA_PREFIX']
+        return None
 
-                # pylint: enable=unused-import,import-outside-toplevel
-            except ImportError:
-                result = False
-            else:
-                result = True
-        return result
-
-    def set_cmake_user_options(self) -> List[str]:
-        """Set the CMake user options."""
-        cmake_variable: Any
-
-        is_conda = self.is_conda()
+    def set_cmake_user_options(self) -> list[str]:
+        """Sets the options defined by the user."""
         result = []
+
+        conda_prefix = self.conda_prefix()
 
         if self.cxx_compiler is not None:
             result.append('-DCMAKE_CXX_COMPILER=' + self.cxx_compiler)
 
-        if self.conda_forge:
-            result.append('-DCONDA_FORGE=ON')
+        if conda_prefix is not None:
+            result.append('-DCMAKE_PREFIX_PATH=' + conda_prefix)
 
-        if self.boost_root is not None:
-            result.append('-DBOOSTROOT=' + self.boost_root)
-        elif is_conda:
-            cmake_variable = self.boost()
-            if cmake_variable:
-                result += cmake_variable
-
-        if self.eigen_root is not None:
-            result.append('-DEIGEN3_INCLUDE_DIR=' + self.eigen_root)
-        elif is_conda:
-            cmake_variable = self.eigen()
-            if cmake_variable:
-                result.append(cmake_variable)
-
-        if self.mkl_root is not None:
-            os.environ['MKLROOT'] = self.mkl_root
-        elif is_conda and self.mkl:
-            self.set_conda_mklroot()
+        if self.mkl:
+            self.set_mklroot()
 
         return result
+
+    def cmake_arguments(self, cfg: str, extdir: str) -> list[str]:
+        """Returns the cmake arguments."""
+        cmake_args: list[str] = [
+            '-DCMAKE_BUILD_TYPE=' + cfg,
+            '-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + extdir,
+            '-DPython3_EXECUTABLE=' + sys.executable,
+            *self.set_cmake_user_options()
+        ]
+        return cmake_args
 
     def build_cmake(self, ext) -> None:
         """Execute cmake to build the Python extension."""
@@ -262,12 +199,7 @@ class BuildExt(setuptools.command.build_ext.build_ext):
 
         cfg = 'Debug' if self.debug else 'Release'
 
-        cmake_args = [
-            '-DCMAKE_BUILD_TYPE=' + cfg, '-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' +
-            str(extdir), '-DPython3_EXECUTABLE=' + sys.executable,
-            '-DFES_BUILD_PYTHON_BINDINGS=ON'
-        ] + self.set_cmake_user_options()
-
+        cmake_args = self.cmake_arguments(cfg, extdir)
         build_args = ['--config', cfg]
 
         is_windows = platform.system() == 'Windows'
@@ -275,10 +207,8 @@ class BuildExt(setuptools.command.build_ext.build_ext):
         if self.generator is not None:
             cmake_args.append('-G' + self.generator)
         elif is_windows:
-            cmake_args.append('-G' + 'Visual Studio 17 2022')
-
-        if self.verbose:  # type: ignore
-            build_args += ['--verbose']
+            cmake_args.append(
+                '-G' + os.environ.get('CMAKE_GEN', 'Visual Studio 17 2022'))
 
         if not is_windows:
             build_args += ['--', f'-j{os.cpu_count()}']
@@ -293,15 +223,15 @@ class BuildExt(setuptools.command.build_ext.build_ext):
             ]
             build_args += ['--', '/m']
 
+        if self.cmake_args:
+            cmake_args.extend(self.cmake_args.split())
+
         os.chdir(str(build_temp))
 
         # Has CMake ever been executed?
-        if pathlib.Path(build_temp, 'CMakeFiles',
-                        'TargetDirectories.txt').exists():
-            # The user must force the reconfiguration
-            configure = self.reconfigure is not None
-        else:
-            configure = True
+        configure = (self.reconfigure is not None) if pathlib.Path(
+            build_temp, 'CMakeFiles',
+            'TargetDirectories.txt').exists() else True
 
         if configure:
             self.spawn(['cmake', str(WORKING_DIRECTORY)] + cmake_args)

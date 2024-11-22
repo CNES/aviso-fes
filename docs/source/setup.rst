@@ -56,12 +56,23 @@ type the command ``python3 setup.py build`` at the root of the project.
 You can specify, among other things, the following options to `build-ext`
 command to customize the build:
 
-    * ``--boost-root`` to specify the Boost include directory,
-    * ``--cxx-compiler`` to select the C++ compiler to use,
-    * ``--debug`` to compile the C++ library in Debug mode,
-    * ``--eigen-root`` to specify the Eigen3 include directory,
-    * ``--generator`` to specify the generator used by CMake,
-    * ``--mkl-root`` to specify the MKL root.
+.. list-table:: Build options
+    :header-rows: 1
+
+    * - Option
+      - Description
+    * - ``--cmake-args``
+      - Additional arguments for CMake
+    * - ``--cxx-compiler``
+      - Preferred C++ compiler
+    * - ``--generator``
+      - Selected CMake generator
+    * - ``--mkl``
+      - Use MKL as the BLAS library. The MKL library is searched in the
+        Python prefix path. Alternatively, you can set the environment variable
+        ``MKLROOT`` to the MKL library path to help the build system locate it.
+    * - ``--reconfigure``
+      - Forces CMake to reconfigure this project
 
 Run the ``python setup.py build-ext --help`` command to view all the options
 available for building the library.
