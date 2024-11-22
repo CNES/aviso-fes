@@ -3,6 +3,19 @@
 Changelog
 #########
 
+2024.11.1
+=========
+
+Build System
+------------
+* Add custom build backend and update documentation to use build option with
+  pip.
+
+Bug Fixes
+---------
+* Fix incorrect wave identifier mapping in harmonic analysis for sparse tables
+  of constituents (`#36 <https://github.com/CNES/aviso-fes/issues/36>`_).
+
 2024.11.0
 =========
 
