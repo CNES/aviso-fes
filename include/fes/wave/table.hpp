@@ -149,7 +149,7 @@ class Table {
     if (index >= wave_identifiers_.size()) {
       throw std::out_of_range("index out of range");
     }
-    return waves_[wave_identifiers_[index]];
+    return waves_[static_cast<size_t>(wave_identifiers_[index])];
   }
 
   /// Get the wave properties from its identifier
@@ -335,7 +335,7 @@ class Table {
   /// An array that maps linear indices (0, 1, 2, 3, ...) to the wave
   /// identifiers defined in the table. If the table is complete, this mapping
   /// is an identity mapping {0:0, 1:1, 2:2, ...}.
-  std::vector<size_t> wave_identifiers_{};
+  std::vector<Constituent> wave_identifiers_{};
 
   /// Get a wave from the table
   ///

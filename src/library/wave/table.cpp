@@ -210,7 +210,7 @@ Table::Table(const std::vector<std::string>& waves) {
   wave_identifiers_.reserve(waves_.size());
   for (const auto& item : waves_) {
     if (item) {
-      wave_identifiers_.emplace_back(static_cast<size_t>(item->ident()));
+      wave_identifiers_.emplace_back(item->ident());
     }
   }
 }
