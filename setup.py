@@ -187,6 +187,8 @@ class BuildExt(setuptools.command.build_ext.build_ext):
             '-DFES_BUILD_PYTHON_BINDINGS=ON',
             *self.set_cmake_user_options(),
         ]
+        if self.cmake_args:
+            cmake_args.extend(self.cmake_args.split())
         return cmake_args
 
     def build_cmake(self, ext) -> None:
