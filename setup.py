@@ -4,7 +4,7 @@
 # All rights reserved. Use of this source code is governed by a
 # BSD-style license that can be found in the LICENSE file.
 # Working directory
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 import os
 import pathlib
 import platform
@@ -155,13 +155,13 @@ class BuildExt(setuptools.command.build_ext.build_ext):
             os.environ['MKLROOT'] = sys.prefix
 
     @staticmethod
-    def conda_prefix() -> str | None:
+    def conda_prefix() -> Optional[str]:
         """Returns the conda prefix."""
         if 'CONDA_PREFIX' in os.environ:
             return os.environ['CONDA_PREFIX']
         return None
 
-    def set_cmake_user_options(self) -> list[str]:
+    def set_cmake_user_options(self) -> List[str]:
         """Sets the options defined by the user."""
         result = []
 
@@ -178,7 +178,7 @@ class BuildExt(setuptools.command.build_ext.build_ext):
 
         return result
 
-    def cmake_arguments(self, cfg: str, extdir: str) -> list[str]:
+    def cmake_arguments(self, cfg: str, extdir: str) -> List[str]:
         """Returns the cmake arguments."""
         cmake_args: list[str] = [
             '-DCMAKE_BUILD_TYPE=' + cfg,
