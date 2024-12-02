@@ -3,6 +3,13 @@
 Changelog
 #########
 
+2024.12.0
+=========
+
+Bug Fixes
+---------
+* Fixed incorrect mapping between waves and their indices in sparse wave tables.
+
 2024.11.1
 =========
 
