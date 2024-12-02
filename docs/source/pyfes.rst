@@ -68,7 +68,7 @@ The section ``cartesian`` contains the following keys:
 * ``dynamic``: The list of the waves to be considered as part of the given
   altlas (evaluated dynamically from the model). The wave declared in this list
   will be considered as part of the model components and will be disabled from
-  the admittance calculation and and in the long-period equilibrium wave
+  the admittance calculation and/or in the long-period equilibrium wave
   calculation routine (``lpe_minus_n_waves``). Optional, default: ``[]``.
 * ``phase``: the name of the netCDF variable containing the phase of the tidal
   constituents. Optional, default: ``phase``.
@@ -99,6 +99,11 @@ The section ``lgp`` contains the following keys:
   tidal constituents. The pattern must contain the string ``{constituent}``,
   which is replaced by the name of the tidal constituent. Example:
   ``pha_{constituent}``. Optional, default: ``{constituent}_phase``.
+* ``dynamic``: The list of the waves to be considered as part of the given
+  altlas (evaluated dynamically from the model). The wave declared in this list
+  will be considered as part of the model components and will be disabled from
+  the admittance calculation and/or in the long-period equilibrium wave
+  calculation routine (``lpe_minus_n_waves``). Optional, default: ``[]``.
 * ``codes``: The name of the netCDF variable containing the LPG codes of the
   mesh points.
 * ``max_distance``: The maximum distance between a mesh point and a requested
