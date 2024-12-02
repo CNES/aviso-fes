@@ -146,10 +146,10 @@ class Table {
   /// Get the wave properties from its index
   inline auto operator[](const size_t index) const
       -> const std::shared_ptr<Wave>& {
-    if (index >= wave_identifiers_.size()) {
+    if (index >= wave_index_.size()) {
       throw std::out_of_range("index out of range");
     }
-    return waves_[static_cast<size_t>(wave_identifiers_[index])];
+    return waves_[static_cast<size_t>(wave_index_[index])];
   }
 
   /// Get the wave properties from its identifier
@@ -197,10 +197,7 @@ class Table {
   }
 
   /// Returns the size of the table
-  inline auto size() const -> size_t {
-    return std::count_if(waves_.begin(), waves_.end(),
-                         [](auto& item) { return item != nullptr; });
-  }
+  inline auto size() const -> size_t { return wave_index_.size(); }
 
   /// Searches the properties of a wave from its name.
   /// @param[in] name Name of the wave
@@ -335,7 +332,7 @@ class Table {
   /// An array that maps linear indices (0, 1, 2, 3, ...) to the wave
   /// identifiers defined in the table. If the table is complete, this mapping
   /// is an identity mapping {0:0, 1:1, 2:2, ...}.
-  std::vector<Constituent> wave_identifiers_{};
+  std::vector<uint8_t> wave_index_{};
 
   /// Get a wave from the table
   ///
