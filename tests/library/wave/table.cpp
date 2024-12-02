@@ -457,9 +457,18 @@ TEST(WaveTable, IdentName) {
 
 TEST(WaveTable, Sparse) {
   auto table =
-      fes::wave::Table({"O1", "K1", "M2", "S2", "N2", "K2", "M4", "M6"});
-  EXPECT_EQ(table.size(), 8);
+      fes::wave::Table({"O1", "K1", "M2", "S2", "N2", "K2", "M4", "M6", "Mf2"});
+  EXPECT_EQ(table.size(), 9);
   EXPECT_EQ(table[fes::kO1]->ident(), fes::kO1);
+  EXPECT_EQ(table[0]->ident(), fes::kO1);
+  EXPECT_EQ(table[1]->ident(), fes::kK1);
+  EXPECT_EQ(table[2]->ident(), fes::kN2);
+  EXPECT_EQ(table[3]->ident(), fes::kM2);
+  EXPECT_EQ(table[4]->ident(), fes::kS2);
+  EXPECT_EQ(table[5]->ident(), fes::kK2);
+  EXPECT_EQ(table[6]->ident(), fes::kM4);
+  EXPECT_EQ(table[7]->ident(), fes::kM6);
+  EXPECT_EQ(table[8]->ident(), fes::kMf2);
   EXPECT_THROW(table[fes::kP1], std::out_of_range);
   EXPECT_THROW(table.admittance(), std::out_of_range);
   EXPECT_THROW(

@@ -207,11 +207,13 @@ Table::Table(const std::vector<std::string>& waves) {
       size() == waves_.size() ? &Table::direct_access : &Table::sparse_access;
 
   // Fill the index between to have a direct access to the wave
-  wave_identifiers_.reserve(waves_.size());
+  wave_index_.reserve(waves_.size());
+  uint8_t index = 0;
   for (const auto& item : waves_) {
     if (item) {
-      wave_identifiers_.emplace_back(item->ident());
+      wave_index_.emplace_back(index);
     }
+    ++index;
   }
 }
 
