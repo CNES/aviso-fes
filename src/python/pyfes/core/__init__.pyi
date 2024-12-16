@@ -2,6 +2,28 @@ from typing import ClassVar, Dict, Iterator, List, Optional, Tuple, overload
 import datetime
 
 from . import constituents, datemanip, mesh, tidal_model
+
+__all__ = [
+    "AbstractTidalModelComplex128",
+    "AbstractTidalModelComplex64",
+    "Accelerator",
+    "AstronomicAngle",
+    "Axis",
+    "Constituent",
+    "Formulae",
+    "LongPeriodEquilibrium",
+    "Quality",
+    "Settings",
+    "TideType",
+    "Wave",
+    "WaveTable",
+    "evaluate_tide",
+    "constituents",
+    "datemanip",
+    "mesh",
+    "tidal_model",
+]
+
 from ..typing import (
     MatrixComplex128,
     MatrixFloat64,
