@@ -8,7 +8,7 @@ from __future__ import annotations
 from . import core
 from .astronomic_angle import AstronomicAngle
 from .config import load as load_config
-from .core import Constituent, Formulae, constituents
+from .core import Constituent, Formulae, Quality, constituents
 from .leap_seconds import get_leap_seconds
 from .typing import VectorDateTime64, VectorFloat64, VectorInt8
 from .version import __version__
@@ -20,6 +20,7 @@ __all__ = [
     'AstronomicAngle',
     'Constituent',
     'Formulae',
+    'Quality',
     'load_config',
     'WaveDict',
     'WaveTable',
@@ -104,21 +105,36 @@ def evaluate_tide(
         * A flag indicating if the tide is correctly estimated or not. Possible
           values are
 
-            ======  ==========================================================
-            1       The tide is correctly estimated.
-            2       The tide is extrapolated with the nearest mesh point.
-            4       The tide is extrapolated using a linear interpolation
-                    with two surrounding grid points.
-            8       The tide is extrapolated using a linear interpolation
-                    with three surrounding grid points.
-            16      The tide is undefined because the position is outside the
-                    domain of the tidal model or the numerical model is
-                    undefined for the requested spatial position.
-            ======  ==========================================================
+          .. list-table:: Flag values
+              :header-rows: 1
+
+              * - Flag
+                - Description
+              * - ``0``
+                - The tide is undefined because the position is outside the
+                  domain of the tidal model or the numerical model is
+                  undefined for the requested spatial position. This value
+                  corresponds to the :py:attr:`pyfes.Quality.kUndefined`
+                  quality flag.
+              * - ``1``
+                - The tide is extrapolated with the nearest mesh point. This
+                  value corresponds to the
+                  :py:attr:`pyfes.Quality.kExtrapolated1` quality flag.
+              * - ``2``
+                - The tide is extrapolated using a linear interpolation with
+                  two surrounding grid points. This value corresponds to the
+                  :py:attr:`pyfes.Quality.kExtrapolated2` quality flag.
+              * - ``3``
+                - The tide is extrapolated using a linear interpolation with
+                  three surrounding grid points. This value corresponds to the
+                  :py:attr:`pyfes.Quality.kExtrapolated3` quality flag.
+              * - ``4``
+                - The tide is correctly estimated. This value corresponds to
+                  the :py:attr:`pyfes.Quality.kInterpolated` quality flag.
 
         .. note::
 
-            The flag value ``2``, ``4`` or ``8`` are only possible if the
+            The flag value ``2`` or ``3`` are only possible if the
             tidal model used is a Cartesian grid.
     """
     return core.evaluate_tide(

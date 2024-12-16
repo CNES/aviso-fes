@@ -14,6 +14,46 @@ units as the tidal model.
 
 .. autofunction:: pyfes.evaluate_tide
 
+Quality
+-------
+
+The quality flag is used to indicate the quality of the interpolated value from
+the tidal model.
+
+.. class:: pyfes.Quality
+
+   .. py:attribute:: kUndefined
+
+      The tidal model is undefined at the given location. The corresponding
+      value is ``0``.
+
+   .. py:attribute:: kExtrapolated1
+
+      The tidal model is extrapolated with one data point. The corresponding
+      value is ``1``.
+
+   .. py:attribute:: kExtrapolated2
+
+      The tidal model is extrapolated with two data points. The corresponding
+      value is ``2``.
+
+   .. py:attribute:: kExtrapolated3
+
+      The tidal model is extrapolated with three data points. The corresponding
+      value is ``3``.
+
+   .. py:attribute:: kInterpolated
+
+      The tidal model is interpolated. The corresponding value is ``4``.
+
+   .. py:method:: value() -> int
+
+      Returns the integer value of the quality flag.
+
+   .. py:method:: name() -> str
+
+      Returns the name of the quality flag.
+
 Configuration file
 ------------------
 
