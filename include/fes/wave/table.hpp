@@ -245,10 +245,10 @@ class Table {
   ///     the phase of the constituent of index \f$(k\f$).
   ///
   ///   The a priori analysis spectrum includes the most important astronomical
-  ///   constituents in the Darwin development, completed by Shureman in 1958,
+  ///   constituents in the Darwin development, completed by Schureman in 1958,
   ///   and many non-linear waves. The definition of tidal constants and
   ///   astronomical arguments is taken from FES2014 tidal prediction software
-  ///   and a complete definition of waves is also available in Shureman (1958).
+  ///   and a complete definition of waves is also available in Schureman (1958).
   ///   This spectrum is the most commonly used for harmonic analysis due the
   ///   simplification given by the nodal correction concept (\f$(f\f$) and
   ///   \f$(u\f$) coefficients above) which allows dealing with slow motions of
