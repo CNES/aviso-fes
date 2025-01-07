@@ -99,11 +99,11 @@ class WaveTable(core.WaveTable):
               the phase of the constituent of index :math:`k`.
 
         The a priori analysis spectrum includes the most important astronomical
-        constituents in the Darwin development, completed by Shureman in 1958,
+        constituents in the Darwin development, completed by Schureman in 1958,
         and many non-linear waves. Tidal constants and astronomical arguments
         are now derived from this software, incorporating legacy data from
         FES2014. A comprehensive definition of waves can also be found in
-        Shureman (1958). This spectrum is the most commonly used for harmonic
+        Schureman (1958). This spectrum is the most commonly used for harmonic
         analysis due to the simplification given by the nodal correction concept
         (:math:`f` and :math:`u` coefficients above) which allows dealing with
         slow motions of the lunar ascending node and reducing the number of

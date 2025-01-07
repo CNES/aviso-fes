@@ -22,7 +22,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 164, Ref. A2
+            Schureman: Table 2, Page 164, Ref. A2
 
 
     .. autoattribute:: kMf
@@ -37,7 +37,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 164, Ref. A6
+            Schureman: Table 2, Page 164, Ref. A6
 
     .. autoattribute:: kMtm
 
@@ -51,7 +51,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 164, Ref. A7
+            Schureman: Table 2, Page 164, Ref. A7
 
     .. autoattribute:: kMsqm
 
@@ -65,7 +65,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 164, Ref. A12
+            Schureman: Table 2, Page 164, Ref. A12
 
     .. autoattribute:: k2Q1
 
@@ -79,7 +79,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 164, Ref. A17
+            Schureman: Table 2, Page 164, Ref. A17
 
     .. autoattribute:: kSigma1
 
@@ -93,7 +93,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 164, Ref. A20
+            Schureman: Table 2, Page 164, Ref. A20
 
     .. autoattribute:: kQ1
 
@@ -107,7 +107,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 164, Ref. A15
+            Schureman: Table 2, Page 164, Ref. A15
 
     .. autoattribute:: kRho1
 
@@ -121,7 +121,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 164, Ref. A18
+            Schureman: Table 2, Page 164, Ref. A18
 
     .. autoattribute:: kO1
 
@@ -135,7 +135,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 164, Ref. A14
+            Schureman: Table 2, Page 164, Ref. A14
 
     .. autoattribute:: kMP1
 
@@ -149,7 +149,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 164, Ref. A29
+            Schureman: Table 2, Page 164, Ref. A29
 
 
     .. autoattribute:: kM11
@@ -164,7 +164,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 164, Ref. A23
+            Schureman: Table 2, Page 164, Ref. A23
 
     .. autoattribute:: kM12
 
@@ -178,7 +178,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 164, Ref. A16
+            Schureman: Table 2, Page 164, Ref. A16
 
     .. autoattribute:: kM13
 
@@ -202,7 +202,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 164, Ref. A27
+            Schureman: Table 2, Page 164, Ref. A27
 
     .. autoattribute:: kPi1
 
@@ -216,7 +216,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 164, Ref. B15
+            Schureman: Table 2, Page 164, Ref. B15
 
     .. autoattribute:: kP1
 
@@ -230,7 +230,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 164, Ref. B14
+            Schureman: Table 2, Page 164, Ref. B14
 
 
     .. autoattribute:: kS1
@@ -245,7 +245,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 164, Ref. B71
+            Schureman: Table 2, Page 164, Ref. B71
 
     .. autoattribute:: kK1
 
@@ -259,7 +259,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 165, Ref. Note 2
+            Schureman: Table 2, Page 165, Ref. Note 2
 
     .. autoattribute:: kPsi1
 
@@ -273,7 +273,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 165, Ref. B24
+            Schureman: Table 2, Page 165, Ref. B24
 
     .. autoattribute:: kPhi1
 
@@ -287,7 +287,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 165, Ref. B31
+            Schureman: Table 2, Page 165, Ref. B31
 
 
     .. autoattribute:: kTheta1
@@ -302,7 +302,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 164, Ref. A28
+            Schureman: Table 2, Page 164, Ref. A28
 
     .. autoattribute:: kJ1
 
@@ -316,7 +316,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 164, Ref. A24
+            Schureman: Table 2, Page 164, Ref. A24
 
     .. autoattribute:: kOO1
 
@@ -330,7 +330,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 164, Ref. A31
+            Schureman: Table 2, Page 164, Ref. A31
 
     .. autoattribute:: kMNS2
 
@@ -344,7 +344,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 167, Ref. MNS2
+            Schureman: Table 2, Page 167, Ref. MNS2
 
     .. autoattribute:: kEps2
 
@@ -368,7 +368,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 165, Ref. A42
+            Schureman: Table 2, Page 165, Ref. A42
 
     .. autoattribute:: kMu2
 
@@ -382,7 +382,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 165, Ref. A45
+            Schureman: Table 2, Page 165, Ref. A45
 
     .. autoattribute:: k2MS2
 
@@ -406,7 +406,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 165, Ref. A40
+            Schureman: Table 2, Page 165, Ref. A40
 
     .. autoattribute:: kNu2
 
@@ -420,7 +420,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 165, Ref. A43
+            Schureman: Table 2, Page 165, Ref. A43
 
     .. autoattribute:: kM2
 
@@ -434,7 +434,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 165, Ref. A39
+            Schureman: Table 2, Page 165, Ref. A39
 
 
     .. autoattribute:: kMKS2
@@ -459,7 +459,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 165, Ref. A44
+            Schureman: Table 2, Page 165, Ref. A44
 
     .. autoattribute:: kL2
 
@@ -473,7 +473,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 166, Ref. Note 3
+            Schureman: Table 2, Page 166, Ref. Note 3
 
     .. autoattribute:: k2MN2
 
@@ -497,7 +497,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 166, Ref. B40
+            Schureman: Table 2, Page 166, Ref. B40
 
     .. autoattribute:: kS2
 
@@ -511,7 +511,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 166, Ref. B39
+            Schureman: Table 2, Page 166, Ref. B39
 
     .. autoattribute:: kR2
 
@@ -525,7 +525,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 166, Ref. B41
+            Schureman: Table 2, Page 166, Ref. B41
 
     .. autoattribute:: kK2
 
@@ -539,7 +539,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 166, Ref. Note 4
+            Schureman: Table 2, Page 166, Ref. Note 4
 
     .. autoattribute:: kMSN2
 
@@ -563,7 +563,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 166, Ref. A48
+            Schureman: Table 2, Page 166, Ref. A49
 
     .. autoattribute:: k2SM2
 
@@ -607,7 +607,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 166, Ref. A82
+            Schureman: Table 2, Page 166, Ref. A82
 
     .. autoattribute:: kMK3
 
@@ -825,7 +825,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 164, Ref. B6
+            Schureman: Table 2, Page 164, Ref. B6
 
     .. autoattribute:: kSa
 
@@ -839,7 +839,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 164, Ref. B64
+            Schureman: Table 2, Page 164, Ref. B64
 
     .. autoattribute:: kSa1
 
@@ -853,7 +853,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 164, Ref. B2
+            Schureman: Table 2, Page 164, Ref. B2
 
     .. autoattribute:: kSta
 
@@ -867,7 +867,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 164, Ref. B7
+            Schureman: Table 2, Page 164, Ref. B7
 
     .. autoattribute:: kMm1
 
@@ -881,7 +881,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 164, Table 2
+            Schureman: Table 2, Page 164, Table 2
 
     .. autoattribute:: kMf1
 
@@ -905,7 +905,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 164, Ref. A5
+            Schureman: Table 2, Page 164, Ref. A5
 
         .. warning::
 
@@ -923,7 +923,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 164, Ref. A1
+            Schureman: Table 2, Page 164, Ref. A1
 
     .. autoattribute:: kMm2
 
@@ -937,7 +937,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 164, Ref. A64
+            Schureman: Table 2, Page 164, Ref. A64
 
     .. autoattribute:: kMf2
 
@@ -951,7 +951,7 @@
 
         .. note::
 
-            Shureman: Table 2, Page 164, Ref. A65
+            Schureman: Table 2, Page 164, Ref. A65
 
     .. property:: name
 
