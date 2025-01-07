@@ -1063,13 +1063,14 @@ class MS4 : public Wave {
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
 /// <tr><td>@f$4T - 2s + 4h@f$</td>
-/// <td>@f$2\xi - 2\nu - 2\nu^{\prime}@f$</td>
+/// <td>@f$2\xi - 2\nu - 2\nu^{\prime\prime}@f$</td>
 /// <td>@f$f(MK_4)@f$</td></tr>
 /// </table>
+/// @note Shureman: %Table 2a, Page 167
 class MK4 : public Wave {
  public:
   constexpr MK4()
-      : Wave(kMK4, kShortPeriod, false, 4, -2, 4, 0, 0, 0, 0, 2, -2, -2, 0,
+      : Wave(kMK4, kShortPeriod, false, 4, -2, 4, 0, 0, 0, 0, 2, -2, 0, -2,
              &angle::Astronomic::f_m2_k2) {}
 };
 
