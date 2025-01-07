@@ -899,7 +899,7 @@ class MSN2 : public Wave {
 /// <td>@f$-2\nu@f$</td>
 /// <td>@f$f(KJ_2)@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 165, Ref. A48
+/// @note Shureman: %Table 2, Page 165, Ref. A49
 class Eta2 : public Wave {
  public:
   constexpr Eta2()
