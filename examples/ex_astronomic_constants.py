@@ -155,7 +155,7 @@ print(const)
 #
 # .. math::
 #
-#       \{2/3 - sin^2(\omega)\}\{1 - 3/2 \times sin(i)\} = 0.5021
+#       \{2/3 - sin^2(\omega)\}\{1 - 3/2 \times sin^2(i)\} = 0.5021
 #
 # .. math::
 #
@@ -170,11 +170,11 @@ print(f'{a65:.4f}')
 #
 # .. math::
 #
-#       sin^2(\omega) \times \cos^4(\frac{1}{2}i) = 0.1528
+#       sin^2(\omega) \times \cos^4(\frac{1}{2}i) = 0.1578
 #
 # .. math::
 #
-#       f(Mf) = sin^2(I) / 0.1528
+#       f(Mf) = sin^2(I) / 0.1578
 a66 = math.sin(const.w)**2 * math.cos(0.5 * const.i)**4
 print(f'a66 = {a66:.4f}')
 
@@ -217,7 +217,7 @@ print(f'a68 = {a68:.4f}')
 # .. math::
 #
 #       sin(\omega) \times sin^2(\frac{1}{2}\omega)
-#       \times cos^4(\frac{1}{2}i) = 0.0164``
+#       \times cos^4(\frac{1}{2}i) = 0.0164
 #
 # .. math::
 #
@@ -237,7 +237,7 @@ print(f'a69 = {a69:.4f}')
 #
 # .. math::
 #
-#       f(M_2) = sin^4(\frac{1}{2}I) / 0.9154
+#       f(M_2) = cos^4(\frac{1}{2}I) / 0.9154
 a70 = math.cos(0.5 * const.w)**4 * math.cos(0.5 * const.i)**4
 print(f'a70 = {a70:.4f}')
 

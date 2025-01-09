@@ -262,7 +262,7 @@ class Astronomic {
   /// @return @f$(19.0444 \times sin^4(I) + 2.7702 \times sin^2(I) \times
   /// cos(2\nu) + 0.0981)^\frac{1}{2}@f$
   FES_MATH_CONSTEXPR auto f_k2() const noexcept -> double {
-    // SCHUREMAN P.46 (234)
+    // SCHUREMAN P.46 (235)
     auto sin_i2 = detail::math::pow<2>(std::sin(i_));
     return sqrt(19.0444 * detail::math::pow<2>(sin_i2) +
                 2.7702 * sin_i2 * std::cos(2.0 * nu_) + 0.0981);
@@ -320,7 +320,7 @@ class Astronomic {
     return f_m23() * f_k2();
   }
 
-  /// @brief Gets the node factor for the githu
+  /// @brief Gets the node factor for formula 141.
   ///
   /// @return @f$(\sin(I) - 5/4 sin^3(I)) / 0.3192@f$
   FES_MATH_CONSTEXPR auto f_141() const noexcept -> double {

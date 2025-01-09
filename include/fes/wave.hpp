@@ -216,7 +216,7 @@ namespace wave {
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
 /// <tr><td>@f$s - p@f$</td><td>@f$0@f$</td><td>@f$f(Mm)@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 164, Ref. A2
+/// @note Schureman: %Table 2, Page 164, Ref. A2
 class Mm : public Wave {
  public:
   constexpr Mm()
@@ -232,7 +232,7 @@ class Mm : public Wave {
 /// <td>@f$-2\xi@f$</td>
 /// <td>@f$f(Mf)@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 164, Ref. A6
+/// @note Schureman: %Table 2, Page 164, Ref. A6
 class Mf : public Wave {
  public:
   constexpr Mf()
@@ -248,7 +248,7 @@ class Mf : public Wave {
 /// <td>@f$-2\xi@f$</td>
 /// <td>@f$f(Mf)@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 164, Ref. A7
+/// @note Schureman: %Table 2, Page 164, Ref. A7
 class Mtm : public Wave {
  public:
   constexpr Mtm()
@@ -264,7 +264,7 @@ class Mtm : public Wave {
 /// <td>@f$-2\xi@f$</td>
 /// <td>@f$f(Mf)@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 164, Ref. A12
+/// @note Schureman: %Table 2, Page 164, Ref. A12
 class Msqm : public Wave {
  public:
   constexpr Msqm()
@@ -280,7 +280,7 @@ class Msqm : public Wave {
 /// <td>@f$0@f$</td>
 /// <td>@f$1@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 164, Ref. B6
+/// @note Schureman: %Table 2, Page 164, Ref. B6
 class Ssa : public Wave {
  public:
   constexpr Ssa()
@@ -296,7 +296,7 @@ class Ssa : public Wave {
 /// <td>@f$0@f$</td>
 /// <td>@f$1@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 164, Ref. B64
+/// @note Schureman: %Table 2, Page 164, Ref. B64
 class Sa : public Wave {
  public:
   constexpr Sa()
@@ -312,7 +312,7 @@ class Sa : public Wave {
 /// <td>@f$+2\xi - \nu@f$</td>
 /// <td>@f$f(O_1)@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 164, Ref. A17
+/// @note Schureman: %Table 2, Page 164, Ref. A17
 class _2Q1 : public Wave {
  public:
   constexpr _2Q1()
@@ -328,7 +328,7 @@ class _2Q1 : public Wave {
 /// <td>@f$+2\xi - \nu@f$</td>
 /// <td>@f$f(O_1)@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 164, Ref. A20
+/// @note Schureman: %Table 2, Page 164, Ref. A20
 class Sigma1 : public Wave {
  public:
   constexpr Sigma1()
@@ -344,7 +344,7 @@ class Sigma1 : public Wave {
 /// <td>@f$+2\xi - \nu@f$</td>
 /// <td>@f$f(O_1)@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 164, Ref. A15
+/// @note Schureman: %Table 2, Page 164, Ref. A15
 class Q1 : public Wave {
  public:
   constexpr Q1()
@@ -360,7 +360,7 @@ class Q1 : public Wave {
 /// <td>@f$+2\xi - \nu@f$</td>
 /// <td>@f$f(O_1)@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 164, Ref. A18
+/// @note Schureman: %Table 2, Page 164, Ref. A18
 class Rho1 : public Wave {
  public:
   constexpr Rho1()
@@ -376,7 +376,7 @@ class Rho1 : public Wave {
 /// <td>@f$+2\xi - \nu@f$</td>
 /// <td>@f$f(O_1)@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 164, Ref. A14
+/// @note Schureman: %Table 2, Page 164, Ref. A14
 class O1 : public Wave {
  public:
   constexpr O1()
@@ -392,7 +392,7 @@ class O1 : public Wave {
 /// <td>@f$-\nu@f$</td>
 /// <td>@f$f(J_1)@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 164, Ref. A29
+/// @note Schureman: %Table 2, Page 164, Ref. A29
 class MP1 : public Wave {
  public:
   constexpr MP1()
@@ -408,7 +408,7 @@ class MP1 : public Wave {
 /// <td>@f$+2\xi - \nu@f$</td>
 /// <td>@f$f(O_1)@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 164, Ref. A16
+/// @note Schureman: %Table 2, Page 164, Ref. A16
 class M12 : public Wave {
  public:
   constexpr M12()
@@ -448,7 +448,7 @@ class M13 : public Wave {
 /// <td>@f$-\nu@f$</td>
 /// <td>@f$f(J_1)@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 164, Ref. A23
+/// @note Schureman: %Table 2, Page 164, Ref. A23
 class M11 : public Wave {
  public:
   constexpr M11()
@@ -464,7 +464,7 @@ class M11 : public Wave {
 /// <td>@f$-\nu@f$</td>
 /// <td>@f$f(J_1)@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 164, Ref. A27
+/// @note Schureman: %Table 2, Page 164, Ref. A27
 class Chi1 : public Wave {
  public:
   constexpr Chi1()
@@ -480,7 +480,7 @@ class Chi1 : public Wave {
 /// <td>@f$0@f$</td>
 /// <td>@f$1@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 165, Ref. B15
+/// @note Schureman: %Table 2, Page 165, Ref. B15
 class Pi1 : public Wave {
  public:
   constexpr Pi1()
@@ -496,7 +496,7 @@ class Pi1 : public Wave {
 /// <td>@f$0@f$</td>
 /// <td>@f$1@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 165, Ref. B14
+/// @note Schureman: %Table 2, Page 165, Ref. B14
 class P1 : public Wave {
  public:
   constexpr P1()
@@ -512,7 +512,7 @@ class P1 : public Wave {
 /// <td>@f$0@f$</td>
 /// <td>@f$1@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 165, Ref. B71
+/// @note Schureman: %Table 2, Page 165, Ref. B71
 class S1 : public Wave {
  public:
   constexpr S1()
@@ -528,7 +528,7 @@ class S1 : public Wave {
 /// <td>@f$- \nu@f$</td>
 /// <td>@f$f(K_1)@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 165, Ref. Note 2
+/// @note Schureman: %Table 2, Page 165, Ref. Note 2
 class K1 : public Wave {
  public:
   constexpr K1()
@@ -544,7 +544,7 @@ class K1 : public Wave {
 /// <td>@f$0@f$</td>
 /// <td>@f$1@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 165, Ref. B24
+/// @note Schureman: %Table 2, Page 165, Ref. B24
 class Psi1 : public Wave {
  public:
   constexpr Psi1()
@@ -560,7 +560,7 @@ class Psi1 : public Wave {
 /// <td>@f$0@f$</td>
 /// <td>@f$1@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 165, Ref. B31
+/// @note Schureman: %Table 2, Page 165, Ref. B31
 class Phi1 : public Wave {
  public:
   constexpr Phi1()
@@ -576,7 +576,7 @@ class Phi1 : public Wave {
 /// <td>@f$-\nu@f$</td>
 /// <td>@f$f(J_1)@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 164, Ref. A28
+/// @note Schureman: %Table 2, Page 164, Ref. A28
 class Theta1 : public Wave {
  public:
   constexpr Theta1()
@@ -592,7 +592,7 @@ class Theta1 : public Wave {
 /// <td>@f$-\nu@f$</td>
 /// <td>@f$f(J_1)@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 164, Ref. A24
+/// @note Schureman: %Table 2, Page 164, Ref. A24
 class J1 : public Wave {
  public:
   constexpr J1()
@@ -608,7 +608,7 @@ class J1 : public Wave {
 /// <td>@f$-2\xi - \nu@f$</td>
 /// <td>@f$f(OO_1)@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 164, Ref. A31
+/// @note Schureman: %Table 2, Page 164, Ref. A31
 class OO1 : public Wave {
  public:
   constexpr OO1()
@@ -624,7 +624,7 @@ class OO1 : public Wave {
 /// <td>@f$+4\xi - 4\nu@f$</td>
 /// <td>@f$f(M_2)^2@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 167, Ref. MNS2
+/// @note Schureman: %Table 2, Page 167, Ref. MNS2
 class MNS2 : public Wave {
  public:
   constexpr MNS2()
@@ -655,7 +655,7 @@ class Eps2 : public Wave {
 /// <td>@f$+2\xi - 2\nu@f$</td>
 /// <td>@f$f(M_2)@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 165, Ref. A42
+/// @note Schureman: %Table 2, Page 165, Ref. A42
 class _2N2 : public Wave {
  public:
   constexpr _2N2()
@@ -671,7 +671,7 @@ class _2N2 : public Wave {
 /// <td>@f$+2\xi - 2\nu@f$</td>
 /// <td>@f$f(M_2)@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 165, Ref. A45
+/// @note Schureman: %Table 2, Page 165, Ref. A45
 class Mu2 : public Wave {
  public:
   constexpr Mu2()
@@ -702,7 +702,7 @@ class _2MS2 : public Wave {
 /// <td>@f$+2\xi - 2\nu@f$</td>
 /// <td>@f$f(M_2)@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 165, Ref. A40
+/// @note Schureman: %Table 2, Page 165, Ref. A40
 class N2 : public Wave {
  public:
   constexpr N2()
@@ -718,7 +718,7 @@ class N2 : public Wave {
 /// <td>@f$+2\xi - 2\nu@f$</td>
 /// <td>@f$f(M_2)@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 165, Ref. A43
+/// @note Schureman: %Table 2, Page 165, Ref. A43
 class Nu2 : public Wave {
  public:
   constexpr Nu2()
@@ -734,7 +734,7 @@ class Nu2 : public Wave {
 /// <td>@f$+2\xi - 2\nu@f$</td>
 /// <td>@f$f(M_2)@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 165, Ref. A39
+/// @note Schureman: %Table 2, Page 165, Ref. A39
 class M2 : public Wave {
  public:
   constexpr M2()
@@ -765,7 +765,7 @@ class MKS2 : public Wave {
 /// <td>@f$+2\xi - 2\nu@f$</td>
 /// <td>@f$f(M_2)@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 165, Ref. A44
+/// @note Schureman: %Table 2, Page 165, Ref. A44
 class Lambda2 : public Wave {
  public:
   constexpr Lambda2()
@@ -781,7 +781,7 @@ class Lambda2 : public Wave {
 /// <td>@f$+2\xi - 2\nu - R@f$</td>
 /// <td>@f$f(L_2)@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 166, Ref. Note 3
+/// @note Schureman: %Table 2, Page 166, Ref. Note 3
 class L2 : public Wave {
  public:
   constexpr L2()
@@ -820,7 +820,7 @@ class _2MN2 : public Wave {
 /// <td>@f$0@f$</td>
 /// <td>@f$1@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 166, Ref. B40
+/// @note Schureman: %Table 2, Page 166, Ref. B40
 class T2 : public Wave {
  public:
   constexpr T2()
@@ -836,7 +836,7 @@ class T2 : public Wave {
 /// <td>@f$0@f$</td>
 /// <td>@f$1@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 166, Ref. B39
+/// @note Schureman: %Table 2, Page 166, Ref. B39
 class S2 : public Wave {
  public:
   constexpr S2()
@@ -852,7 +852,7 @@ class S2 : public Wave {
 /// <td>@f$0@f$</td>
 /// <td>@f$1@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 166, Ref. B41
+/// @note Schureman: %Table 2, Page 166, Ref. B41
 class R2 : public Wave {
  public:
   constexpr R2()
@@ -868,7 +868,7 @@ class R2 : public Wave {
 /// <td>@f$-2\nu^{\prime \prime}@f$</td>
 /// <td>@f$f(K_2)@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 166, Ref. Note 4
+/// @note Schureman: %Table 2, Page 166, Ref. Note 4
 class K2 : public Wave {
  public:
   constexpr K2()
@@ -899,7 +899,7 @@ class MSN2 : public Wave {
 /// <td>@f$-2\nu@f$</td>
 /// <td>@f$f(KJ_2)@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 165, Ref. A48
+/// @note Schureman: %Table 2, Page 165, Ref. A49
 class Eta2 : public Wave {
  public:
   constexpr Eta2()
@@ -960,7 +960,7 @@ class _2MK3 : public Wave {
 /// <td>@f$+3\xi - 3\nu@f$</td>
 /// <td>@f$f(M_3)@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 166, Ref. A82
+/// @note Schureman: %Table 2, Page 166, Ref. A82
 class M3 : public Wave {
  public:
   constexpr M3()
@@ -1021,6 +1021,7 @@ class MN4 : public Wave {
 /// <td>@f$+4\xi - 4\nu@f$</td>
 /// <td>@f$f(M_2)^2@f$</td></tr>
 /// </table>
+/// @note Schureman: %Table 2a, Page 167
 class M4 : public Wave {
  public:
   constexpr M4()
@@ -1051,6 +1052,8 @@ class SN4 : public Wave {
 /// <td>@f$+2\xi - 2\nu@f$</td>
 /// <td>@f$f(M_2)@f$</td></tr>
 /// </table>
+/// @note Schureman: %Table 2a, Page 167.
+/// @note correct nodal factor: Pugh (1987). Tides, surges and mean sea-level (Page 111, Table 4.4)
 class MS4 : public Wave {
  public:
   constexpr MS4()
@@ -1063,13 +1066,14 @@ class MS4 : public Wave {
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
 /// <tr><td>@f$4T - 2s + 4h@f$</td>
-/// <td>@f$2\xi - 2\nu - 2\nu^{\prime}@f$</td>
+/// <td>@f$2\xi - 2\nu - 2\nu^{\prime\prime}@f$</td>
 /// <td>@f$f(MK_4)@f$</td></tr>
 /// </table>
+/// @note Schureman: %Table 2a, Page 167
 class MK4 : public Wave {
  public:
   constexpr MK4()
-      : Wave(kMK4, kShortPeriod, false, 4, -2, 4, 0, 0, 0, 0, 2, -2, -2, 0,
+      : Wave(kMK4, kShortPeriod, false, 4, -2, 4, 0, 0, 0, 0, 2, -2, 0, -2,
              &angle::Astronomic::f_m2_k2) {}
 };
 
@@ -1278,7 +1282,7 @@ class MSf : public Wave {
 /// <td>@f$f(Mm)@f$</td></tr>
 /// </table>
 /// @warning Same frequency as MSf Non Linear wave : 2s -2h
-/// @note Shureman: %Table 2, Page 164, Ref. %A5
+/// @note Schureman: %Table 2, Page 164, Ref. %A5
 /// @note Second order long period equilibrium in atlas of FES2014c as MSf_LP
 class A5 : public Wave {
  public:
@@ -1295,7 +1299,7 @@ class A5 : public Wave {
 /// <td>@f$0@f$</td>
 /// <td>@f$1@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 164, Ref. B2
+/// @note Schureman: %Table 2, Page 164, Ref. B2
 class Sa1 : public Wave {
  public:
   constexpr Sa1()
@@ -1311,7 +1315,7 @@ class Sa1 : public Wave {
 /// <td>@f$0@f$</td>
 /// <td>@f$1@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 164, Ref. B7
+/// @note Schureman: %Table 2, Page 164, Ref. B7
 class Sta : public Wave {
  public:
   constexpr Sta()
@@ -1327,7 +1331,7 @@ class Sta : public Wave {
 /// <td>@f$-\xi@f$</td>
 /// <td>@f$f(141)@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 164, Ref. A64
+/// @note Schureman: %Table 2, Page 164, Ref. A64
 class Mm2 : public Wave {
  public:
   constexpr Mm2()
@@ -1343,10 +1347,10 @@ class Mm2 : public Wave {
 /// <td>@f$-2\xi@f$</td>
 /// <td>@f$f(Mf)@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 164, Ref. A8
+/// @note Schureman: %Table 2, Page 164, Ref. A8
 class Mm1 : public Wave {
  public:
-  // Shureman: Ref. A8, Page 164, Table 2.
+  // Schureman: Ref. A8, Page 164, Table 2.
   constexpr Mm1()
       : Wave(kMm1, kLongPeriod, false, 0, 1, 0, 1, 0, 0, 2, -2, 0, 0, 0,
              &angle::Astronomic::f_mf) {}
@@ -1360,10 +1364,9 @@ class Mm1 : public Wave {
 /// <td>@f$0@f$</td>
 /// <td>@f$f(Mm)@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 164, Ref. A3
+/// @note Schureman: %Table 2, Page 164, Ref. A3
 class Mf1 : public Wave {
  public:
-  // Shureman: Ref. A8, Page 164, Table 2.
   constexpr Mf1()
       : Wave(kMf1, kLongPeriod, false, 0, 2, 0, -2, 0, 0, 0, 0, 0, 0, 0,
              &angle::Astronomic::f_mm) {}
@@ -1377,7 +1380,7 @@ class Mf1 : public Wave {
 /// <td>@f$-\xi@f$</td>
 /// <td>@f$f(141)@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 164, Ref. A65
+/// @note Schureman: %Table 2, Page 164, Ref. A65
 class Mf2 : public Wave {
  public:
   constexpr Mf2()
@@ -1393,7 +1396,7 @@ class Mf2 : public Wave {
 /// <td>@f$0@f$</td>
 /// <td>@f$f(Mm)@f$</td></tr>
 /// </table>
-/// @note Shureman: %Table 2, Page 164, Ref. A1
+/// @note Schureman: %Table 2, Page 164, Ref. A1
 class M0 : public Wave {
  public:
   constexpr M0()
