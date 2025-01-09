@@ -1050,14 +1050,15 @@ class SN4 : public Wave {
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
 /// <tr><td>@f$4T - 2s + 2h@f$</td>
 /// <td>@f$+2\xi - 2\nu@f$</td>
-/// <td>@f$f(M_2)^2@f$</td></tr>
+/// <td>@f$f(M_2)@f$</td></tr>
 /// </table>
-/// @note Schureman: %Table 2a, Page 167
+/// @note Schureman: %Table 2a, Page 167.
+/// @note correct nodal factor: Pugh (1987). Tides, surges and mean sea-level (Page 111, Table 4.4)
 class MS4 : public Wave {
  public:
   constexpr MS4()
       : Wave(kMS4, kShortPeriod, false, 4, -2, 2, 0, 0, 0, 0, 2, -2, 0, 0,
-             &angle::Astronomic::f_m22) {}
+             &angle::Astronomic::f_m2) {}
 };
 
 /// @brief @f$MK_4 = M_2 + K_2@f$
