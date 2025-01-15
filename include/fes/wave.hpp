@@ -1053,7 +1053,8 @@ class SN4 : public Wave {
 /// <td>@f$f(M_2)@f$</td></tr>
 /// </table>
 /// @note Schureman: %Table 2a, Page 167.
-/// @note correct nodal factor: Pugh (1987). Tides, surges and mean sea-level (Page 111, Table 4.4)
+/// @note correct nodal factor: Pugh (1987).
+/// @note Tides, surges and mean sea-level (Page 111, Table 4.4)
 class MS4 : public Wave {
  public:
   constexpr MS4()
