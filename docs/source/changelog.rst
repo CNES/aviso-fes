@@ -3,6 +3,14 @@
 Changelog
 #########
 
+2025.1.0
+========
+* enhance Axis class to support circular properties and add circle degrees constant
+* fix formatting and update mathematical notation in constituent.rst
+* update leap-seconds.txt from https://hpiers.obspm.fr/iers/bul/bulc/ntp/leap-seconds.list
+* Fix typo in the docstrings
+* bug fix in the definition of the MK4 coefficients: nu' assigned instead of nu''
+
 2024.12.0
 =========
 
