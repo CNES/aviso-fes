@@ -53,6 +53,24 @@ constexpr auto two_pi() noexcept -> T {
   return T(2) * pi<T>();
 }
 
+/// \f$360\f$
+///
+/// @tparam T The type of the result.
+/// @return \f$360\f$
+template <typename T>
+constexpr auto circle_degrees() noexcept -> T {
+  return T(360);
+}
+
+/// \f$2\pi\f$
+///
+/// @tparam T The type of the result.
+/// @return \f$2\pi\f$
+template <typename T>
+constexpr auto circle_radians() noexcept -> T {
+  return two_pi<T>();
+}
+
 /// @brief Evaluate \f$x^n\f$
 /// @tparam T The type of the number.
 /// @tparam N The power to raise the number to.

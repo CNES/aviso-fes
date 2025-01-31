@@ -86,8 +86,9 @@ auto Axis::initialize(const Eigen::Ref<const Eigen::VectorXd>& values,
   is_ascending_ = size_ < 2 ? true : (*this)(0) < (*this)(1);
 
   if (is_circular_) {
-    is_circular_ = detail::math::is_same(
-        static_cast<double>(std::fabs(step_ * size_)), 360.0, epsilon);
+    is_circular_ =
+        detail::math::is_same(static_cast<double>(std::fabs(step_ * size_)),
+                              detail::math::circle_degrees<double>(), epsilon);
   }
 }
 
@@ -141,6 +142,7 @@ auto Axis::getstate() const -> std::string {
   auto ss = std::stringstream();
   ss.exceptions(std::stringstream::failbit);
   detail::serialize::write_data(ss, is_circular_);
+  detail::serialize::write_data(ss, circle_);
   detail::serialize::write_data(ss, is_ascending_);
   detail::serialize::write_data(ss, start_);
   detail::serialize::write_data(ss, size_);
@@ -152,12 +154,14 @@ auto Axis::setstate(const string_view& data) -> Axis {
   detail::isviewstream ss(data);
   ss.exceptions(std::stringstream::failbit);
   try {
-    auto is_circular = detail::serialize::read_data<bool>(ss);
-    auto is_ascending = detail::serialize::read_data<bool>(ss);
-    auto start = detail::serialize::read_data<double>(ss);
-    auto size = detail::serialize::read_data<int64_t>(ss);
-    auto step = detail::serialize::read_data<double>(ss);
-    return Axis(is_circular, is_ascending, start, size, step);
+    auto result = Axis();
+    result.is_circular_ = detail::serialize::read_data<bool>(ss);
+    result.circle_ = detail::serialize::read_data<double>(ss);
+    result.is_ascending_ = detail::serialize::read_data<bool>(ss);
+    result.start_ = detail::serialize::read_data<double>(ss);
+    result.size_ = detail::serialize::read_data<int64_t>(ss);
+    result.step_ = detail::serialize::read_data<double>(ss);
+    return result;
   } catch (const std::ios_base::failure&) {
     throw std::invalid_argument("invalid axis state");
   }

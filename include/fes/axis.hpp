@@ -32,7 +32,8 @@ class Axis : public std::enable_shared_from_this<Axis> {
   /// longitude is circular.
   explicit Axis(const Eigen::Ref<const Eigen::VectorXd>& points,
                 const double epsilon = 1e-6, const bool is_circular = false)
-      : is_circular_(is_circular) {
+      : is_circular_(is_circular),
+        circle_(is_circular ? detail::math::circle_degrees<double>() : 0.0) {
     if (points.size() > std::numeric_limits<int64_t>::max()) {
       throw std::invalid_argument(
           "the size of the axis must not contain more than " +
@@ -58,7 +59,7 @@ class Axis : public std::enable_shared_from_this<Axis> {
   /// @param[in] other The other axis.
   /// @return True if the axes are equal.
   constexpr auto operator==(const Axis& other) const -> bool {
-    return is_circular_ == other.is_circular_ &&
+    return is_circular_ == other.is_circular_ && circle_ == other.circle_ &&
            is_ascending_ == other.is_ascending_ && size_ == other.size_ &&
            start_ == other.start_ && step_ == other.step_;
   }
@@ -90,6 +91,11 @@ class Axis : public std::enable_shared_from_this<Axis> {
 
   /// True if the axis is circular.
   constexpr auto is_circular() const -> bool { return is_circular_; }
+
+  /// Return true if the axis is a longitude axis.
+  constexpr auto is_angle() const -> double {
+    return circle_ == detail::math::circle_degrees<double>();
+  }
 
   /// Return the value at the given index.
   ///
@@ -148,6 +154,8 @@ class Axis : public std::enable_shared_from_this<Axis> {
  private:
   /// True if the axis is circular.
   bool is_circular_{};
+  /// The value of the circle (360)
+  double circle_{};
   /// True if the axis is ascending.
   bool is_ascending_{};
   /// The size of the axis.
@@ -156,21 +164,6 @@ class Axis : public std::enable_shared_from_this<Axis> {
   double start_{};
   /// The step between two values of the axis.
   double step_{};
-
-  /// @brief Construct an axis from its properties.
-  ///
-  /// @param[in] is_circular True if the axis is circular.
-  /// @param[in] is_ascending True if the axis is ascending.
-  /// @param[in] start The first value of the axis.
-  /// @param[in] size The size of the axis.
-  /// @param[in] step The step between two values of the axis.
-  Axis(const bool is_circular, const bool is_ascending, const double start,
-       const int64_t size, const double step)
-      : is_circular_(is_circular),
-        is_ascending_(is_ascending),
-        size_(size),
-        start_(start),
-        step_(step) {}
 
   /// Determines whether the values contained in the vector are evenly spaced
   /// from each other.
@@ -195,9 +188,11 @@ class Axis : public std::enable_shared_from_this<Axis> {
   /// @return The normalized value of the coordinate.
   constexpr auto normalize_coordinate(const double coordinate) const noexcept
       -> double {
-    if (is_circular_ &&
-        (coordinate >= min_value() + 360.0 || coordinate < min_value())) {
-      return detail::math::normalize_angle(coordinate, min_value(), 360.0);
+    if (is_angle() &&
+        (coordinate >= min_value() + detail::math::circle_degrees<double>() ||
+         coordinate < min_value())) {
+      return detail::math::normalize_angle(
+          coordinate, min_value(), detail::math::circle_degrees<double>());
     }
     return coordinate;
   }
