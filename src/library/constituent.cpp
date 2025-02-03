@@ -15,31 +15,12 @@ namespace constituents {
 namespace wave = fes::detail::wave;
 
 auto known() -> std::vector<std::string> {
-  return {wave::name::kMm,   wave::name::kMf,   wave::name::kMtm,
-          wave::name::kMsqm, wave::name::k2Q1,  wave::name::kSigma1,
-          wave::name::kQ1,   wave::name::kRho1, wave::name::kO1,
-          wave::name::kMP1,  wave::name::kM11,  wave::name::kM12,
-          wave::name::kM13,  wave::name::kChi1, wave::name::kPi1,
-          wave::name::kP1,   wave::name::kS1,   wave::name::kK1,
-          wave::name::kPsi1, wave::name::kPhi1, wave::name::kTheta1,
-          wave::name::kJ1,   wave::name::kOO1,  wave::name::kMNS2,
-          wave::name::kEps2, wave::name::k2N2,  wave::name::kMu2,
-          wave::name::k2MS2, wave::name::kN2,   wave::name::kNu2,
-          wave::name::kM2,   wave::name::kMKS2, wave::name::kLambda2,
-          wave::name::kL2,   wave::name::k2MN2, wave::name::kT2,
-          wave::name::kS2,   wave::name::kR2,   wave::name::kK2,
-          wave::name::kMSN2, wave::name::kEta2, wave::name::k2SM2,
-          wave::name::kMO3,  wave::name::k2MK3, wave::name::kM3,
-          wave::name::kMK3,  wave::name::kN4,   wave::name::kMN4,
-          wave::name::kM4,   wave::name::kSN4,  wave::name::kMS4,
-          wave::name::kMK4,  wave::name::kS4,   wave::name::kSK4,
-          wave::name::kR4,   wave::name::k2MN6, wave::name::kM6,
-          wave::name::kMSN6, wave::name::k2MS6, wave::name::k2MK6,
-          wave::name::k2SM6, wave::name::kMSK6, wave::name::kS6,
-          wave::name::kM8,   wave::name::kMSf,  wave::name::kSsa,
-          wave::name::kSa,   wave::name::kA5,   wave::name::kSa1,
-          wave::name::kSta,  wave::name::kMm2,  wave::name::kMm1,
-          wave::name::kMf1,  wave::name::kMf2,  wave::name::kM0};
+  auto result = std::vector<std::string>();
+  result.reserve(all.size());
+  for (size_t ix = 0; ix < all.size(); ++ix) {
+    result.emplace_back(name(static_cast<Constituent>(ix)));
+  }
+  return result;
 }
 
 inline auto iequals(const std::string& a, const std::string& b) -> bool {

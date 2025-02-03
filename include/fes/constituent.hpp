@@ -3,6 +3,7 @@
 // All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 #pragma once
+#include <array>
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -91,6 +92,18 @@ enum Constituent : uint8_t {
 };
 
 namespace constituents {
+
+/// @brief Returns all the tidal constituents handled by the library.
+/// @return Tidal constituents.
+constexpr auto all = std::array<Constituent, 75>{
+    kMm,     kMf,   kMtm,     kMsqm, k2Q1,  kSigma1, kQ1,  kRho1, kO1,   kMP1,
+    kM11,    kM12,  kM13,     kChi1, kPi1,  kP1,     kS1,  kK1,   kPsi1, kPhi1,
+    kTheta1, kJ1,   kOO1,     kMNS2, kEps2, k2N2,    kMu2, k2MS2, kN2,   kNu2,
+    kM2,     kMKS2, kLambda2, kL2,   k2MN2, kT2,     kS2,  kR2,   kK2,   kMSN2,
+    kEta2,   k2SM2, kMO3,     k2MK3, kM3,   kMK3,    kN4,  kMN4,  kM4,   kSN4,
+    kMS4,    kMK4,  kS4,      kSK4,  kR4,   k2MN6,   kM6,  kMSN6, k2MS6, k2MK6,
+    k2SM6,   kMSK6, kS6,      kM8,   kMSf,  kSsa,    kSa,  kSa1,  kSta,  kMm1,
+    kMf1,    kA5,   kM0,      kMm2,  kMf2};
 
 /// Parses the tidal constituent from a string. Parsing is case not sensitive.
 /// So "Mm" and "mm" are equivalent.
