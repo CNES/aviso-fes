@@ -761,6 +761,14 @@ class WaveTable:
         ...
 
 
+def evaluate_long_period(dates: VectorDateTime64,
+                         latitudes: VectorFloat64,
+                         leap_seconds: VectorUInt16,
+                         settings: Settings | None = ...,
+                         num_threads: int = ...) -> VectorFloat64:
+    ...
+
+
 @overload
 def evaluate_tide(
     tidal_model: AbstractTidalModelComplex128,

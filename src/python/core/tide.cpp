@@ -16,6 +16,24 @@
 
 namespace py = pybind11;
 
+auto evaluate_long_period(
+    py::array& dates, const Eigen::Ref<const fes::Vector<double>>& latitudes,
+    const Eigen::Ref<const fes::Vector<uint16_t>>& leap_seconds,
+    const boost::optional<fes::Settings>& settings, const size_t num_threads)
+    -> Eigen::VectorXd {
+  if (dates.size() != latitudes.size() || dates.size() != leap_seconds.size()) {
+    throw std::invalid_argument(
+        "dates, latitudes and leap_seconds must have the same size");
+  }
+  auto epoch = fes::python::npdatetime64_to_epoch(dates);
+  {
+    py::gil_scoped_release gil;
+    return fes::evaluate_long_period(epoch, leap_seconds, latitudes,
+                                     settings.value_or(fes::Settings()),
+                                     num_threads);
+  }
+}
+
 template <typename T>
 auto evaluate_tide(const fes::AbstractTidalModel<T>* const tidal_model,
                    py::array& dates,
@@ -83,4 +101,22 @@ Returns:
 void init_tide(py::module& m) {
   init_tide<double>(m);
   init_tide<float>(m);
+
+  m.def("evaluate_long_period", &evaluate_long_period, py::arg("dates"),
+        py::arg("latitudes"), py::arg("leap_seconds"),
+        py::arg("settings") = boost::none, py::arg("num_threads") = 0,
+        R"__doc(Compute the long-period equilibrium ocean tides.
+
+Args:
+  dates: Dates of the tide calculation
+  latitudes: Latitude in degrees for the position at which the long-period
+    tide is calculated
+  leap_seconds: Leap seconds at the date of the tide calculation
+  settings: Settings for the tide computation.
+  num_threads: Number of threads to use for the computation. If 0, the
+    number of threads is automatically determined.
+
+Returns:
+  The computed long-period tide, in centimeters.
+)__doc");
 }
