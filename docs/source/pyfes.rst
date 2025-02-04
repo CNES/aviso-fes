@@ -59,9 +59,9 @@ Cartesian grid
 
 The section ``cartesian`` contains the following keys:
 
-* ``lat``: the name of the netCDF variable containing the latitude of the grid
+* ``latitude``: the name of the netCDF variable containing the latitude of the grid
   points. Optional, default: ``lat``.
-* ``lon``: the name of the netCDF variable containing the longitude of the grid
+* ``longitude``: the name of the netCDF variable containing the longitude of the grid
   points. Optional, default: ``lon``.
 * ``amplitude``: the name of the netCDF variable containing the amplitude of the
   tidal constituents. Optional, default: ``amplitude``.
@@ -87,9 +87,9 @@ LGP discretization
 
 The section ``lgp`` contains the following keys:
 
-* ``lat``: the name of the netCDF variable containing the latitude of the mesh
+* ``latitude``: the name of the netCDF variable containing the latitude of the mesh
   points. Optional, default: ``lat``.
-* ``lon``: the name of the netCDF variable containing the longitude of the mesh
+* ``longitude``: the name of the netCDF variable containing the longitude of the mesh
   points. Optional, default: ``lon``.
 * ``amplitude``: the pattern of the netCDF variable containing the amplitude of
   the tidal constituents. The pattern must contain the string ``{constituent}``,
@@ -111,7 +111,7 @@ The section ``lgp`` contains the following keys:
   estimation is undefined, otherwise the estimation is extrapolated. Optional,
   default: ``0.0`` (extrapolation is not allowed).
 * ``path``: the path to the netCDF file containing the tidal constituents.
-* ``triangles``: the name of the netCDF variable containing the vertices of the
+* ``triangle``: the name of the netCDF variable containing the vertices of the
   triangles of the mesh. Optional, default: ``triangle``
 * ``type``: the type of LPG discretization. The possible values are ``lgp1`` and
   ``lpg2``. Optional, default: ``lgp1``.
@@ -126,32 +126,44 @@ The configuration file ``fes2014b.yaml``:
 
 .. code-block:: yaml
 
-    radial:
-        cartesian:
-            lat: lat
-            lon: lon
-            amplitude: amp
-            phase: pha
-            epsilon: 1e-6
-            paths:
-                M2: ${PATH}/M2.nc
-                S2: ${PATH}/S2.nc
-                K1: ${PATH}/K1.nc
-                O1: ${PATH}/O1.nc
-                P1: ${PATH}/P1.nc
-                Q1: ${PATH}/Q1.nc
-    tide:
-        lgp:
-            lat: lat
-            lon: lon
-            dynamic: ['A5']
-            amplitude: amp_{constituent}
-            phase: pha_{constituent}
-            codes: codes
-            max_distance: 0.0
-            path: ${PATH}/fes2014b_elevations.nc
-            triangles: triangle
-            type: lgp1
+  radial:
+      cartesian:
+          latitude: lat
+          longitude: lon
+          amplitude: amp
+          phase: pha
+          epsilon: 1e-6
+          paths:
+              M2: ${PATH}/M2.nc
+              S2: ${PATH}/S2.nc
+              K1: ${PATH}/K1.nc
+              O1: ${PATH}/O1.nc
+              P1: ${PATH}/P1.nc
+              Q1: ${PATH}/Q1.nc
+  tide:
+      lgp:
+          latitude: lat
+          longitude: lon
+          dynamic:
+            - A5
+          amplitude: amp_{constituent}
+          phase: pha_{constituent}
+          codes: codes
+          max_distance: 0.0
+          path: ${PATH}/fes2014b_elevations.nc
+          triangle: triangle
+          type: lgp1
+          constituents:
+            - M2
+            - S2
+            - N2
+            - K2
+            - K1
+            - O1
+            - P1
+            - Q1
+            - 2N2
+            - S1
 
 The Python code to instantiate the tidal model and evaluate the tide elevation:
 
