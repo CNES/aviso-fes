@@ -84,7 +84,7 @@ def parse_args():
 def main():
     """Main function."""
     args = parse_args()
-    waves = dict()
+    waves = {}
 
     properties = None
     for path in args.mesh:

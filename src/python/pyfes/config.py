@@ -12,8 +12,7 @@ by the numerical model.
 """
 from __future__ import annotations
 
-from typing import Any, NamedTuple, Union
-from collections.abc import Callable
+from typing import TYPE_CHECKING, Any, NamedTuple, Union
 import dataclasses
 import enum
 import os
@@ -30,7 +29,11 @@ from .core import (
     AbstractTidalModelComplex128,
     Constituent,
 )
-from .typing import Matrix, Vector
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from .typing import Matrix, Vector
 
 #: Alias for a tidal type.
 TidalModel = Union[AbstractTidalModelComplex64, AbstractTidalModelComplex128]
@@ -40,6 +43,9 @@ PATTERN: Callable[[str], Match | None] = re.compile(r'\${(\w+)}').search
 
 #: Maximum number of nested environment variables.
 MAX_INTERPOLATION_DEPTH = 10
+
+#: Number of dimensions expected in the wave data.
+WAVE_DIMENSIONS = 2
 
 #: Alias to LPG classes known to this software.
 LGPModel = type[core.tidal_model.LGP1Complex64
@@ -150,7 +156,7 @@ def load_cartesian_model(
     Returns:
         A tuple containing the longitude, latitude and tidal model.
     """
-    with netCDF4.Dataset(path) as ds:  # type: ignore
+    with netCDF4.Dataset(path) as ds:
         lon: Vector = ds.variables[lon_name][:]
         lat: Vector = ds.variables[lat_name][:]
         amp: Matrix = numpy.ma.filled(ds.variables[amp_name][:], numpy.nan)
@@ -251,9 +257,9 @@ class Cartesian(Common):
             #: Longitude axis.
             lon: Vector
             #: Shape of the tidal model.
-            shape: tuple[int, int]
+            shape: tuple[int, ...]
 
-            def __ne__(self, other: Any) -> bool:
+            def __ne__(self, other: object) -> bool:
                 if not isinstance(other, GridProperties):
                     return NotImplemented
                 return (self.dtype != other.dtype and self.shape != other.shape
@@ -287,7 +293,7 @@ class Cartesian(Common):
                 self.phase,
             )
 
-            if len(wave.shape) != 2:
+            if wave.ndim != WAVE_DIMENSIONS:
                 raise ValueError(f'defined constituent {constituent!r} has '
                                  f'invalid shape: {wave.shape!r}.')
 
@@ -406,7 +412,7 @@ class LGP(Common):
 
     def load(self) -> TidalModel:
         """Load the tidal model defined by the configuration."""
-        with netCDF4.Dataset(self.path, 'r') as ds:  # type: ignore
+        with netCDF4.Dataset(self.path, 'r') as ds:
             lon: Vector = ds.variables[self.longitude][:]
             lat: Vector = ds.variables[self.latitude][:]
             triangles: Matrix = ds.variables[self.triangle][:]
@@ -514,20 +520,21 @@ def load(path: str | os.PathLike) -> dict[str, TidalModel]:
         raise ValueError(f'Configuration file {path!r} is empty.')
 
     key: str
-    for key in user_settings:
+    for key, settings in user_settings.items():
         if key not in ['tide', 'radial']:
             raise ValueError(f'Configuration file {path!r} is invalid. '
                              f'Expected "tide" or "radial" section.')
         try:
-            models[key] = _load_model(user_settings[key], tidal_type=key)
+            models[key] = _load_model(settings, tidal_type=key)
         except TypeError as err:
             if 'unexpected keyword argument' in str(err):
                 msg = str(err)
-                key = msg.split('unexpected keyword argument ')[1]
-                key = key.replace("'", '')
+                unknown_key = msg.split('unexpected keyword argument ')[1]
+                unknown_key = unknown_key.replace("'", '')
                 section: str = msg.split('.__init__', maxsplit=1)[0].lower()
-                raise ValueError(f'Configuration file {path!r} is invalid. '
-                                 f'Unknown keyword: {key!r} in section '
-                                 f'{section!r}.') from err
+                raise ValueError(
+                    f'Configuration file {path!r} is invalid. '
+                    f'Unknown keyword: {unknown_key!r} in section '
+                    f'{section!r}.') from err
             raise err from None
     return models

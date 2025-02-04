@@ -4,8 +4,8 @@ import datetime
 from . import constituents, datemanip, mesh, tidal_model
 
 __all__ = [
-    "AbstractTidalModelComplex128",
     "AbstractTidalModelComplex64",
+    "AbstractTidalModelComplex128",
     "Accelerator",
     "AstronomicAngle",
     "Axis",
@@ -17,9 +17,9 @@ __all__ = [
     "TideType",
     "Wave",
     "WaveTable",
-    "evaluate_tide",
     "constituents",
     "datemanip",
+    "evaluate_tide",
     "mesh",
     "tidal_model",
 ]
