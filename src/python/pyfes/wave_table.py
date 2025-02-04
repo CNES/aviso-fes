@@ -91,18 +91,18 @@ class WaveTable(core.WaveTable):
 
         where:
 
-            * :math:`n` is the number of constituents,
-            * :math:`S_{0}(x, y)` is the mean sea level,
-            * :math:`S_{k}(x, y)` is the amplitude of the constituent of index
-              :math:`k`,
-            * :math:`G_{k}(x, y)` is the phase lag relative to Greenwich time,
-            * :math:`w_{k}` is the angular frequency of the constituent of
-              index :math:`k`,
-            * :math:`v_{k}` is the astronomical argument at time :math:`t`,
-            * :math:`f_{k}(t)` is the nodal correction coefficient applied to
-              the amplitude of the constituent of index :math:`k`,
-            * :math:`u_{k}(t)` is the nodal correction coefficient applied to
-              the phase of the constituent of index :math:`k`.
+        * :math:`n` is the number of constituents,
+        * :math:`S_{0}(x, y)` is the mean sea level,
+        * :math:`S_{k}(x, y)` is the amplitude of the constituent of index
+          :math:`k`,
+        * :math:`G_{k}(x, y)` is the phase lag relative to Greenwich time,
+        * :math:`w_{k}` is the angular frequency of the constituent of
+          index :math:`k`,
+        * :math:`v_{k}` is the astronomical argument at time :math:`t`,
+        * :math:`f_{k}(t)` is the nodal correction coefficient applied to
+          the amplitude of the constituent of index :math:`k`,
+        * :math:`u_{k}(t)` is the nodal correction coefficient applied to
+          the phase of the constituent of index :math:`k`.
 
         The a priori analysis spectrum includes the most important astronomical
         constituents in the Darwin development, completed by Schureman in 1958,
