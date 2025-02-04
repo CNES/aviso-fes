@@ -9,7 +9,7 @@
 
 namespace fes {
 
-auto evaluate_long_period(
+auto evaluate_equilibrium_long_period(
     const Eigen::Ref<const Eigen::VectorXd>& epoch,
     const Eigen::Ref<const fes::Vector<uint16_t>>& leap_seconds,
     const Eigen::Ref<const Eigen::VectorXd>& latitude, const Settings& settings,

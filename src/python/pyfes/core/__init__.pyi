@@ -761,11 +761,11 @@ class WaveTable:
         ...
 
 
-def evaluate_long_period(dates: VectorDateTime64,
-                         latitudes: VectorFloat64,
-                         leap_seconds: VectorUInt16,
-                         settings: Settings | None = ...,
-                         num_threads: int = ...) -> VectorFloat64:
+def evaluate_equilibrium_long_period(dates: VectorDateTime64,
+                                     leap_seconds: VectorUInt16,
+                                     latitudes: VectorFloat64,
+                                     settings: Settings | None = ...,
+                                     num_threads: int = ...) -> VectorFloat64:
     ...
 
 

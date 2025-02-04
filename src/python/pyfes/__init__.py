@@ -146,3 +146,48 @@ def evaluate_tide(
         settings,
         num_threads,
     )
+
+
+def evaluate_equilibrium_long_period(
+    date: VectorDateTime64,
+    latitude: VectorFloat64,
+    *,
+    settings: Settings | None = None,
+    num_threads: int = 0,
+) -> VectorFloat64:
+    """Compute the long period ocean tides.
+
+    The complete tidal spectral lines from the Cartwright-Tayler-Edden
+    tables are summed over to compute the long-period tide.
+
+    Order 2 and order 3 of the tidal potential for the long period waves is
+    now taken into account.
+
+    The decomposition was validated compared to the potential proposed by
+    Tamura.
+
+    Technical references:
+    - Cartwright & Tayler, Geophys. J. R.A.S., 23, 45, 1971.
+    - Cartwright & Edden, Geophys. J. R.A.S., 33, 253, 1973.
+    - Tamura Y., Bull. d'information des marees terrestres, Vol. 99, 1987.
+
+    Args:
+        date: Date of the tide calculation.
+        latitude: Latitude in degrees for the position at which the tide is
+            calculated.
+        settings: Settings used for the tide calculation. See
+            :py:class:`Settings` for more details.
+        num_threads: Number of threads to use for the calculation. If 0, all
+            available threads are used.
+
+    Returns:
+        The height of the long period wave constituents of the tidal spectrum
+        (cm).
+    """
+    return core.evaluate_equilibrium_long_period(
+        date,
+        get_leap_seconds(date),
+        latitude,
+        settings,
+        num_threads,
+    )
