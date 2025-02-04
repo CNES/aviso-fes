@@ -25,10 +25,6 @@ class Settings {
   /// @param[in] time_tolerance The time in seconds during which astronomical
   /// angles are considered constant. The default value is 0 seconds, indicating
   /// that astronomical angles do not remain constant with time.
-  /// @param[in] excluded The list of tidal constituents to be excluded
-  /// from the model. Constituents included in this list will be processed
-  /// through admittance calculations and in the long-period equilibrium wave
-  /// calculation routine (`lpe_minus_n_waves`).
   /// @warning
   /// The parameter <tt>time_tolerance</tt> allows for the adjustment of
   /// astronomical angle calculations. When its value is set to zero, the angles
@@ -43,11 +39,9 @@ class Settings {
   /// threads used.
   Settings(const angle::Formulae& astronomic_formulae =
                angle::Formulae::kSchuremanOrder1,
-           const double time_tolerance = 0.0,
-           std::vector<fes::Constituent> excluded = {})
+           const double time_tolerance = 0.0)
       : astronomic_formulae_(astronomic_formulae),
-        time_tolerance_(time_tolerance),
-        excluded_(std::move(excluded)) {}
+        time_tolerance_(time_tolerance) {}
 
   /// @brief Returns the astronomic formulae used to calculate the astronomic
   /// angles.
@@ -67,21 +61,12 @@ class Settings {
     return time_tolerance_;
   }
 
-  /// @brief Returns the list of excluded waves from the model.
-  ///
-  /// @return The list of excluded waves.
-  constexpr auto excluded() const noexcept -> const std::vector<Constituent>& {
-    return excluded_;
-  }
-
  private:
   /// @brief Astronomic formulae used to calculate the astronomic angles.
   angle::Formulae astronomic_formulae_;
   /// @brief Time in seconds for which astronomical angles are considered
   /// constant.
   double time_tolerance_;
-  /// @brief List of equilibrium long period tidal constituents.
-  std::vector<Constituent> excluded_;
 };
 
 }  // namespace fes

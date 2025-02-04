@@ -18,16 +18,12 @@ namespace py = pybind11;
 void init_settings(py::module& m) {
   py::class_<fes::Settings>(m, "Settings", "Settings for the FES computation.")
       .def(py::init([](const fes::angle::Formulae astronomic_formulae,
-                       const double time_tolerance,
-                       const boost::optional<std::vector<fes::Constituent>>&
-                           excluded) {
-             return fes::Settings(
-                 astronomic_formulae, time_tolerance,
-                 excluded.value_or(std::vector<fes::Constituent>()));
+                       const double time_tolerance) {
+             return fes::Settings(astronomic_formulae, time_tolerance);
            }),
            py::arg("astronomic_formulae") =
                fes::angle::Formulae::kSchuremanOrder1,
-           py::arg("time_tolerance") = 0.0, py::arg("excluded") = boost::none,
+           py::arg("time_tolerance") = 0.0,
            R"__doc__(
 Constructor.
 
@@ -49,8 +45,5 @@ Args:
       .def_property_readonly(
           "time_tolerance", &fes::Settings::time_tolerance,
           "Return the time in seconds for which astronomical angles are "
-          "considered constant.")
-      .def_property_readonly("excluded", &fes::Settings::excluded,
-                             "Return the list of tidal constituents to be "
-                             "excluded from the model.");
+          "considered constant.");
 }

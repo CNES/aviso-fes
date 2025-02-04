@@ -55,27 +55,17 @@ namespace detail {
 ///
 /// @tparam T The type of tidal constituents modelled.
 /// @param[in] tidal_model The tidal model.
-/// @param[in] disable This list specifies tidal constituents to be excluded
-/// from the model. Constituents included in this list will be processed through
-/// admittance calculations and in the long-period equilibrium wave
-/// calculation routine (`lpe_minus_n_waves`).
 /// @return The wave table.
 template <typename T>
-static auto build_wave_table(const AbstractTidalModel<T>* const tidal_model,
-                             const std::vector<Constituent>& disable)
+static auto build_wave_table(const AbstractTidalModel<T>* const tidal_model)
     -> wave::Table {
   auto result = wave::Table();
 
   // Add the constituents provided by the model.
   for (const auto& item : tidal_model->data()) {
     auto& wave = result[item.first];
-    auto it = std::find(disable.begin(), disable.end(), item.first);
-    // Set the wave as dynamic and not provided by the model only if it is not
-    // in the list of disabled constituents.
-    if (it == disable.end()) {
-      wave->dynamic(true);
-      wave->admittance(false);
-    }
+    wave->dynamic(true);
+    wave->admittance(false);
   }
 
   // Add the constituents to be be considered as dynamic but not provided by
@@ -202,8 +192,7 @@ auto evaluate_tide(const AbstractTidalModel<T>* const tidal_model,
     auto acc = std::unique_ptr<Accelerator>(tidal_model->accelerator(
         settings.astronomic_formulae(), settings.time_tolerance()));
     auto* acc_ptr = acc.get();
-    auto wave_table =
-        detail::build_wave_table(tidal_model, settings.excluded());
+    auto wave_table = detail::build_wave_table(tidal_model);
     auto lpe = wave::LongPeriodEquilibrium(wave_table);
 
     for (auto ix = start; ix < end; ++ix) {
