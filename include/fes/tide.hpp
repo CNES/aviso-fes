@@ -240,7 +240,7 @@ auto evaluate_tide(const AbstractTidalModel<T>* const tidal_model,
 /// @param[in] settings Settings for the tide computation.
 /// @param[in] num_threads Number of threads to use for the computation. If 0,
 /// the number of threads is automatically determined.
-auto evaluate_long_period(
+auto evaluate_equilibrium_long_period(
     const Eigen::Ref<const Eigen::VectorXd>& epoch,
     const Eigen::Ref<const fes::Vector<uint16_t>>& leap_seconds,
     const Eigen::Ref<const Eigen::VectorXd>& latitude,
