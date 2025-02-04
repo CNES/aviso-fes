@@ -28,6 +28,14 @@ import pyfes
 
 # %%
 # First we create an environment variable to store the path to the model file.
+# The configuration file is fully documented in the
+# :ref:`documentation <confguration_file>`.
+#
+# .. note::
+#
+#     The content of the configuration file is viewable in the
+#     `GitHub repository <https://github.com/CNES/aviso-fes/blob/main/examples/fes_lpg.yml>`_.
+#
 os.environ['DATASET_DIR'] = str(pathlib.Path().absolute().parent / 'tests' /
                                 'python' / 'dataset')
 
