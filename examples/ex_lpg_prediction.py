@@ -34,7 +34,8 @@ import pyfes
 # .. note::
 #
 #     The content of the configuration file is viewable in the
-#     `GitHub repository <https://github.com/CNES/aviso-fes/blob/main/examples/fes_lpg.yml>`_.
+#     `GitHub repository
+#     <https://github.com/CNES/aviso-fes/blob/main/examples/fes_lpg.yml>`_.
 #
 os.environ['DATASET_DIR'] = str(pathlib.Path().absolute().parent / 'tests' /
                                 'python' / 'dataset')
