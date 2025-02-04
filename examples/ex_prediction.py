@@ -34,6 +34,12 @@ os.environ['DATASET_DIR'] = str(pathlib.Path().absolute().parent / 'tests' /
 # tide and the radial tide. To do this, we need to create a YAML file that
 # describes the models and their parameters. The configuration file is fully
 # documented in the :ref:`documentation <confguration_file>`.
+#
+# .. note::
+#
+#     The content of the configuration file is viewable in the
+#     `GitHub repository <https://github.com/CNES/aviso-fes/blob/main/examples/fes_slev.yml>`_.
+#
 handlers = pyfes.load_config(pathlib.Path().absolute() / 'fes_slev.yml')
 
 # %%
