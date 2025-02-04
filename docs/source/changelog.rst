@@ -3,6 +3,31 @@
 Changelog
 #########
 
+2025.2.0
+========
+
+Bug Fixes
+---------
+
+* Fix the calculation of the quality flag from LGP models
+
+New Features
+------------
+
+* Add evaluate_equilibrium_long_period function to the API
+* Remove excluded constituents parameter from Settings class and related
+  functions
+
+Documentation
+-------------
+
+* enhance documentation and add examples for the LGP discretization
+
+Miscellaneous
+-------------
+
+* Refactor type hinting and improve code clarity with TYPE_CHECKING imports
+
 2025.1.0
 ========
 * enhance Axis class to support circular properties and add circle degrees constant
