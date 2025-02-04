@@ -8,7 +8,7 @@ Get the leap seconds from the IERS website.
 """
 from __future__ import annotations
 
-from collections.abc import Callable
+from typing import TYPE_CHECKING
 import datetime
 import functools
 import pathlib
@@ -21,12 +21,15 @@ import warnings
 
 import numpy
 
-from .typing import (
-    NDArrayStructured,
-    VectorDateTime64,
-    VectorInt64,
-    VectorUInt16,
-)
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from .typing import (
+        NDArrayStructured,
+        VectorDateTime64,
+        VectorInt64,
+        VectorUInt16,
+    )
 
 #: URL of the IERS leap second file.
 LEAP_SECOND_URL = 'https://data.iana.org/time-zones/data/leap-seconds.list'
@@ -42,6 +45,9 @@ MONTH_ABBREVIATIONS = [
     'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct',
     'Nov', 'Dec'
 ]
+
+#: Standard response for successful HTTP requests.
+HTTP_OK = 200
 
 
 def _build_urlopener() -> urllib.request.OpenerDirector:
@@ -64,7 +70,7 @@ def _download_leap_second_file() -> None:
                                  })
 
     response = urlopener.open(req, timeout=None)
-    if response.status != 200:
+    if response.status != HTTP_OK:
         raise RuntimeError(
             f'Failed to download leap second file: {response.status} '
             f'{response.reason}')
@@ -118,13 +124,17 @@ def _load_leap_second_file() -> NDArrayStructured:
         # If the leap second file has expired, try to download a new one.
         warnings.warn(
             f'Leap second file {LEAP_SECOND_FILE.name} has expired. '
-            'Downloading a new version.', UserWarning)
+            'Downloading a new version.',
+            UserWarning,
+            stacklevel=2)
         try:
             expires, lines = _read_leap_second_file(download=True)
         except RuntimeError:
             warnings.warn(
                 'Failed to download new leap second file. '
-                'Using expired file.', UserWarning)
+                'Using expired file.',
+                UserWarning,
+                stacklevel=2)
 
     # Number of seconds elapsed between 1900-01-01T00:00:00:00+0000 and
     # 1970-01-01T00:00:00:00+0000

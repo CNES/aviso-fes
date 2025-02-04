@@ -96,8 +96,10 @@ if TYPE_CHECKING:
     MatrixComplex128 = Matrix[numpy.complex128]
     NDArrayStructured = numpy.ndarray[Any, numpy.dtype[numpy.void]]
 else:
-    ScalarType = TypeVar('ScalarType', bound=numpy.generic, covariant=True)
-    DType = GenericAlias(numpy.dtype, (ScalarType, ))
+    ScalarType_co = TypeVar('ScalarType_co',
+                            bound=numpy.generic,
+                            covariant=True)
+    DType = GenericAlias(numpy.dtype, (ScalarType_co, ))
 
     Vector = GenericAlias(numpy.ndarray, (Any, DType))
     Matrix = GenericAlias(numpy.ndarray, (Any, DType))

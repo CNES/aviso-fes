@@ -5,18 +5,24 @@
 """Properties of tidal constituents."""
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
 import datetime
 
 import numpy
 
 from . import core
 from .core import Formulae
-from .typing import (
-    VectorComplex128,
-    VectorDateTime64,
-    VectorFloat64,
-    VectorUInt16,
-)
+
+if TYPE_CHECKING:
+    from .typing import (
+        VectorComplex128,
+        VectorDateTime64,
+        VectorFloat64,
+        VectorUInt16,
+    )
+
+#: Maximum number of tidal constituents to display in the representation
+MAX_CONSTITUENTS = 9
 
 
 class WaveTable(core.WaveTable):
@@ -24,7 +30,7 @@ class WaveTable(core.WaveTable):
 
     def __repr__(self) -> str:
         constituents: list[str] = self.keys()
-        if len(constituents) > 9:
+        if len(constituents) > MAX_CONSTITUENTS:
             constituents = constituents[:4] + ['...'] + constituents[-4:]
 
         return '{}.{}({})'.format(self.__class__.__module__,
@@ -57,7 +63,7 @@ class WaveTable(core.WaveTable):
             return super().compute_nodal_modulations(datetime64, leap_seconds)
         # The method throws an error if the dates are not datetime64
         return super().compute_nodal_modulations(
-            dates,  # type: ignore
+            dates,  # type: ignore[arg-type]
             leap_seconds,
             formulae)
 
@@ -152,10 +158,7 @@ class WaveDict(WaveTable):
             :py:meth:`WaveTable.harmonic_analysis`
         """
         analysis: VectorComplex128 = super().harmonic_analysis(h, f, vu)
-        return {
-            constituent: coefficient
-            for constituent, coefficient in zip(self.keys(), analysis)
-        }
+        return dict(zip(self.keys(), analysis))
 
     def tide_from_tide_series(
             self,

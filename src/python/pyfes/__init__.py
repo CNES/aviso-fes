@@ -5,25 +5,29 @@
 """Tidal model prediction library."""
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from . import core
 from .astronomic_angle import AstronomicAngle
 from .config import load as load_config
 from .core import Constituent, Formulae, Quality, constituents
 from .leap_seconds import get_leap_seconds
-from .typing import VectorDateTime64, VectorFloat64, VectorInt8
 from .version import __version__
 from .wave_table import WaveDict, WaveTable
 
+if TYPE_CHECKING:
+    from .typing import VectorDateTime64, VectorFloat64, VectorInt8
+
 __all__ = [
-    '__version__',
-    'constituents',
     'AstronomicAngle',
     'Constituent',
     'Formulae',
     'Quality',
-    'load_config',
     'WaveDict',
     'WaveTable',
+    '__version__',
+    'constituents',
+    'load_config',
 ]
 
 
@@ -138,7 +142,7 @@ def evaluate_tide(
             tidal model used is a Cartesian grid.
     """
     return core.evaluate_tide(
-        tidal_model,  # type: ignore
+        tidal_model,  # type: ignore[arg-type]
         date,
         get_leap_seconds(date),
         longitude,
