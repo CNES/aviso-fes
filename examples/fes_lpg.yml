@@ -1,0 +1,25 @@
+radial:
+  cartesian:
+    paths:
+       2N2: ${DATASET_DIR}/2N2_radial.nc
+       K1: ${DATASET_DIR}/K1_radial.nc
+       K2: ${DATASET_DIR}/K2_radial.nc
+       M2: ${DATASET_DIR}/M2_radial.nc
+       N2: ${DATASET_DIR}/N2_radial.nc
+       O1: ${DATASET_DIR}/O1_radial.nc
+       P1: ${DATASET_DIR}/P1_radial.nc
+       Q1: ${DATASET_DIR}/Q1_radial.nc
+       S2: ${DATASET_DIR}/S2_radial.nc
+tide:
+  lgp:
+    latitude: lat
+    longitude: lon
+    dynamic: ['A5']
+    amplitude: "{constituent}_amp"
+    phase: "{constituent}_phase"
+    codes: lgp2
+    max_distance: 50000.0
+    path: ${DATASET_DIR}/fes_2014.nc
+    triangle: triangle
+    type: lgp1
+    constituents: ['M2', 'S2', 'N2', 'K2', 'K1', 'O1', 'P1', 'Q1', '2N2', 'S1']
