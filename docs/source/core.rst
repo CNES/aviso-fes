@@ -47,6 +47,17 @@ at the requested spatio-temporal coordinates.
    core/tidal_model/lgp1
    core/tidal_model/lgp2
 
+Settings
+--------
+
+This class provides a Python interface to the settings used for the tidal
+computation.
+
+.. toctree::
+   :maxdepth: 1
+
+   core/settings
+
 Tidal Prediction
 ----------------
 

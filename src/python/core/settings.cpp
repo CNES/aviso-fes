@@ -33,10 +33,6 @@ Args:
     time_tolerance: The time in seconds during which astronomical
         angles are considered constant. The default value is 0 seconds,
         indicating that astronomical angles do not remain constant with time.
-    excluded: The list of tidal constituents to be excluded from the model.
-        Constituents included in this list will be processed through admittance
-        calculations and in the long-period equilibrium wave calculation
-        routine (`lpe_minus_n_waves`). The default value is an empty list.
 )__doc__")
       .def_property_readonly("astronomic_formulae",
                              &fes::Settings::astronomic_formulae,
