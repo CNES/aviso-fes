@@ -40,7 +40,8 @@ os.environ['DATASET_DIR'] = str(pathlib.Path().absolute().parent / 'tests' /
 # .. note::
 #
 #     The content of the configuration file is viewable in the
-#     `GitHub repository <https://github.com/CNES/aviso-fes/blob/main/examples/fes_slev.yml>`_.
+#     `GitHub repository
+#     <https://github.com/CNES/aviso-fes/blob/main/examples/fes_slev.yml>`_.
 #
 handlers: dict[str, pyfes.core.AbstractTidalModelComplex128
                | pyfes.core.AbstractTidalModelComplex64]
