@@ -554,16 +554,11 @@ class Settings:
 
     def __init__(self,
                  astronomic_formulae: Formulae = ...,
-                 time_tolerance: float = ...,
-                 excluded: Optional[List[Constituent]] = ...) -> None:
+                 time_tolerance: float = ...) -> None:
         ...
 
     @property
     def astronomic_formulae(self) -> Formulae:
-        ...
-
-    @property
-    def excluded(self) -> List[Constituent]:
         ...
 
     @property

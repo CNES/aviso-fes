@@ -43,10 +43,6 @@ class Settings(core.Settings):
             astronomical angles are considered constant. The default value is
             0 seconds, indicating that astronomical angles do not remain
             constant with time.
-        excluded: The list of tidal constituents to be excluded from the model.
-            Constituents included in this list will be processed through
-            admittance calculations and in the long-period equilibrium wave
-            calculation routine (``lpe_minus_n_waves``).
 
     .. note::
 
@@ -67,13 +63,10 @@ class Settings(core.Settings):
     def __init__(self,
                  *,
                  astronomic_formulae: Formulae = Formulae.kSchuremanOrder1,
-                 time_tolerance: float = 0.0,
-                 excluded: list[str] | None = None) -> None:
-        excluded = excluded or []
+                 time_tolerance: float = 0.0) -> None:
         super().__init__(
             astronomic_formulae,
             time_tolerance,
-            [core.constituents.parse(constituent) for constituent in excluded],
         )
 
 
