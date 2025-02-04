@@ -217,4 +217,34 @@ auto evaluate_tide(const AbstractTidalModel<T>* const tidal_model,
   return {tide, long_period, quality};
 }
 
+/// @brief Compute the long period equilibrium ocean tides.
+///
+/// The complete tidal spectral lines from the Cartwright-Tayler-Edden tables
+/// are summed over to compute the long-period tide.
+/// @n
+/// Order 2 and order 3 of the tidal potential for the long period waves is
+/// now taken into account.
+/// @n
+/// The decomposition was validated compared to the potential proposed by
+/// Tamura.
+/// @n
+/// Technical references:
+///   - Cartwright & Tayler, Geophys. J. R.A.S., 23, 45, 1971.
+///   - Cartwright & Edden, Geophys. J. R.A.S., 33, 253, 1973.
+///   - Tamura Y., Bull. d'information des marees terrestres, Vol. 99, 1987.
+/// @param[in] epoch The number of seconds since 1970-01-01T00:00:00Z.
+/// @param[in] leap_seconds The number of leap seconds since
+/// 1970-01-01T00:00:00Z.
+/// @param[in] latitude Latitude in degrees (positive north) for the position at
+/// which tide is computed.
+/// @param[in] settings Settings for the tide computation.
+/// @param[in] num_threads Number of threads to use for the computation. If 0,
+/// the number of threads is automatically determined.
+auto evaluate_long_period(
+    const Eigen::Ref<const Eigen::VectorXd>& epoch,
+    const Eigen::Ref<const fes::Vector<uint16_t>>& leap_seconds,
+    const Eigen::Ref<const Eigen::VectorXd>& latitude,
+    const Settings& settings = Settings(), const size_t num_threads = 0)
+    -> Eigen::VectorXd;
+
 }  // namespace fes
