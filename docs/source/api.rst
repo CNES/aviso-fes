@@ -14,6 +14,22 @@ units as the tidal model.
 
 .. autofunction:: pyfes.evaluate_tide
 
+Equilibrium long period tide evaluation
+---------------------------------------
+
+This function calculates equilibrium ocean tides over long periods using the
+Cartwright-Tayler-Edden spectral line summation method. It incorporates both 2nd
+and 3rd order tidal potential components, with validation against Tamura's
+potential model. The function accepts multiple key inputs: time as numpy
+datetime64 array, latitude in degrees (positive northward), optional computation
+settings, and a thread count for parallel processing. When num_threads is set
+to 0, the function automatically determines optimal thread count. Returns a
+vector of computed tide heights. This implementation is based on established
+research by Cartwright & Tayler (1971), Cartwright & Edden (1973),
+and Tamura (1987).
+
+.. autofunction:: pyfes.evaluate_equilibrium_long_period
+
 Quality
 -------
 
