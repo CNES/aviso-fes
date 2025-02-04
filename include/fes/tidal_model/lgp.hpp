@@ -367,10 +367,10 @@ auto LGP<T, N>::interpolate(const geometry::Point& point, Quality& quality,
   // Get the LGP codes for the triangle
   const auto& codes = codes_.row(selected_triangle.index);
 
-  // In the case of extrapolation, if the projected point is one of the vertices
-  // of the triangle, then we return values associated with this vertex. The
-  // LGP code of vertex 0 is at index 0, the code of vertex 1 is at index 2 and
-  // the code of vertex 3 is at index 4.
+  // If the selected point is one of the vertices of the triangle, then we
+  // return values associated with this vertex. The LGP code of vertex 0 is at
+  // index 0, the code of vertex 1 is at index 2 and the code of vertex 3 is at
+  // index 4.
   auto vertex_id =
       selected_triangle.triangle.is_vertex(selected_triangle.point);
   if (vertex_id != -1) {
@@ -378,7 +378,8 @@ auto LGP<T, N>::interpolate(const geometry::Point& point, Quality& quality,
       const auto value = item.second(codes(vertex_id << 1));
       lgp_acc->emplace_back(item.first, static_cast<std::complex<T>>(value));
     }
-    quality = Quality::kExtrapolated1;
+    quality = selected_triangle.inside ? Quality::kInterpolated
+                                       : Quality::kExtrapolated1;
     return lgp_acc->values();
   }
 
@@ -400,7 +401,8 @@ auto LGP<T, N>::interpolate(const geometry::Point& point, Quality& quality,
     }
     lgp_acc->emplace_back(item.first, dot);
   }
-  quality = Quality::kInterpolated;
+  quality = selected_triangle.inside ? Quality::kInterpolated
+                                     : Quality::kExtrapolated1;
   return lgp_acc->values();
 }
 
