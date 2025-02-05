@@ -17,6 +17,9 @@ New Features
 * Add evaluate_equilibrium_long_period function to the API
 * Remove excluded constituents parameter from Settings class and related
   functions
+* Allow dates before January 1st, 1972 to determine the leap seconds between
+  TAI/UTC. In this case, a user warning is thrown and the leap seconds are set
+  to 0.
 
 Documentation
 -------------
