@@ -179,12 +179,14 @@ def get_leap_seconds(
         utc = numpy.datetime64(utc)
     if isinstance(utc, numpy.datetime64):
         utc = numpy.array([utc], dtype='datetime64[ns]')
-    if numpy.any(utc < numpy.datetime64('1972-01-01')):
-        raise ValueError('Cannot compute leap seconds before 1972.')
+    date_before_1972 = utc < numpy.datetime64('1972-01-01')
+    if numpy.any(date_before_1972):
+        warnings.warn(
+            'Leap seconds are not defined before January 1, 1972. '
+            'Setting them to zero.', UserWarning)
 
     table = _load_leap_second_file()
-    index: numpy.ndarray = numpy.searchsorted(table['utc'],
-                                              utc,
-                                              side='right',
-                                              sorter=sorter)
-    return table['seconds'][index - 1]
+    index = numpy.searchsorted(table['utc'], utc, side='right', sorter=sorter)
+    result = table['seconds'][index - 1]
+    result[date_before_1972] = 0
+    return result
