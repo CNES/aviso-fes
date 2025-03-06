@@ -177,6 +177,18 @@ The Python code to instantiate the tidal model and evaluate the tide elevation:
     load = pyfes.evaluate_radial(cfg['radial'], dates, lons, lats, num_threads=1)[0]
     geocentric_tide = tide + load + lp
 
+.. hint::
+
+    By default, the function :func:`pyfes.load_config` loads the entire numeric
+    grid into memory. To predict the tide for a specific region, you can use the
+    bbox keyword argument to specify the region's bounding box. This bounding
+    box is a tuple of four elements: minimum longitude, minimum latitude,
+    maximum longitude, and maximum latitude. Example:
+
+    .. code-block:: python
+
+        cfg = pyfes.load_config('fes2014b.yaml', bbox=(-10, 40, 10, 60))
+
 .. note::
 
   A full example of tide prediction is available in the `gallery
