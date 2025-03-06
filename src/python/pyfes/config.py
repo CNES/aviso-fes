@@ -118,7 +118,7 @@ def _expand(rawval: str) -> str:
                 f"The shell variable {name!r} doesn't exist.")
     if '$' in result and interpolation:
         raise InterpolationDepthError(
-            f"Value interpolation too deeply recursive: {rawval!r}.")
+            f'Value interpolation too deeply recursive: {rawval!r}.')
     return result
 
 
@@ -288,7 +288,7 @@ class Common:
     def __post_init__(self) -> None:
         if self.tidal_type not in tuple(item.name.lower()
                                         for item in TideType):
-            raise ValueError(f"Unknown tidal type: {self.tidal_type!r}.")
+            raise ValueError(f'Unknown tidal type: {self.tidal_type!r}.')
         if not self.longitude:
             raise ValueError('longitude cannot be empty.')
         if not self.latitude:
@@ -296,7 +296,7 @@ class Common:
         known_constituents = constituents.known()
         for item in self.dynamic:
             if item not in known_constituents:
-                raise ValueError(f"Unknown wave: {item!r}.")
+                raise ValueError(f'Unknown wave: {item!r}.')
 
     @property
     def dynamic_constituents(self) -> list[Constituent]:
@@ -369,7 +369,7 @@ class Cartesian(Common):
         for constituent, path in self.paths.items():
             # Check that the NetCDF file exists.
             if not os.path.exists(path):
-                raise FileNotFoundError(f"File not found: {path!r}.")
+                raise FileNotFoundError(f'File not found: {path!r}.')
 
             lon: Vector
             lat: Vector
@@ -387,8 +387,8 @@ class Cartesian(Common):
             )
 
             if wave.ndim != WAVE_DIMENSIONS:
-                raise ValueError(f"defined constituent {constituent!r} has "
-                                 f"invalid shape: {wave.shape!r}.")
+                raise ValueError(f'defined constituent {constituent!r} has '
+                                 f'invalid shape: {wave.shape!r}.')
 
             # Create the tidal model if it doesn't exist yet.
             if model is None:
@@ -401,7 +401,7 @@ class Cartesian(Common):
                     type_name = tidal_model.CartesianComplex128
 
                 if type_name is None:
-                    raise ValueError(f"Unknown wave type: {wave.dtype!r}.")
+                    raise ValueError(f'Unknown wave type: {wave.dtype!r}.')
 
                 # Create the tidal model instance.
                 instance: TidalModel = type_name(
@@ -429,7 +429,7 @@ class Cartesian(Common):
                     wave.shape,
                     longitude_major,
             ):
-                raise ValueError(f"Inconsistent tidal model: {path!r}.")
+                raise ValueError(f'Inconsistent tidal model: {path!r}.')
 
             # Add the constituent to the tidal model.
             model.instance.add_constituent(constituent, wave.ravel())
@@ -486,17 +486,17 @@ class LGP(Common):
         if not self.phase:
             raise ValueError('phase cannot be empty.')
         if self.type not in tuple(item.name.lower() for item in LGPType):
-            raise ValueError(f"Unknown LGP type: {self.type!r}.")
+            raise ValueError(f'Unknown LGP type: {self.type!r}.')
         try:
             self.amplitude.format(constituent='M2')
         except KeyError as err:
             raise ValueError(
-                f"Invalid amplitude pattern: {self.amplitude!r}.") from err
+                f'Invalid amplitude pattern: {self.amplitude!r}.') from err
         try:
             self.phase.format(constituent='M2')
         except KeyError as err:
             raise ValueError(
-                f"Invalid phase pattern: {self.phase!r}.") from err
+                f'Invalid phase pattern: {self.phase!r}.') from err
 
     def _lgp_class(self, dtype: numpy.dtype) -> LGPModel:
         """Return the class of the LGP tidal model."""
@@ -509,7 +509,7 @@ class LGP(Common):
             return tidal_model.LGP2Complex64
         if dtype == numpy.complex128:
             return tidal_model.LGP2Complex128
-        raise ValueError(f"Unknown wave type: {dtype!r}.")
+        raise ValueError(f'Unknown wave type: {dtype!r}.')
 
     def load(self) -> TidalModel:
         """Load the tidal model defined by the configuration."""
@@ -525,10 +525,10 @@ class LGP(Common):
             for item in self.constituents or constituents.known():
                 amp_name: str = self.amplitude.format(constituent=item)
                 if amp_name not in ds.variables:
-                    raise ValueError(f"Variable not found: {amp_name!r}.")
+                    raise ValueError(f'Variable not found: {amp_name!r}.')
                 pha_name: str = self.phase.format(constituent=item)
                 if pha_name not in ds.variables:
-                    raise ValueError(f"Variable not found: {pha_name!r}.")
+                    raise ValueError(f'Variable not found: {pha_name!r}.')
 
                 if instance is None:
                     type_name: LGPModel = self._lgp_class(
@@ -605,8 +605,8 @@ def _load_model(
 
     def tidal_type_exists(config: dict[str, Any], section: str) -> None:
         if 'tidal_type' in config[section]:
-            raise TypeError(f"{section}.__init__() got an "
-                            "unexpected keyword argument 'tidal_type'")
+            raise TypeError(f'{section}.__init__() got an '
+                            'unexpected keyword argument "tidal_type"')
 
     if 'cartesian' in settings:
         tidal_type_exists(settings, 'cartesian')
@@ -643,12 +643,12 @@ def load(
     user_settings: dict[str, Any] = parse(path)
 
     if user_settings is None or len(user_settings) == 0:
-        raise ValueError(f"Configuration file {path!r} is empty.")
+        raise ValueError(f'Configuration file {path!r} is empty.')
 
     key: str
     for key, settings in user_settings.items():
         if key not in ['tide', 'radial']:
-            raise ValueError(f"Configuration file {path!r} is invalid. "
+            raise ValueError(f'Configuration file {path!r} is invalid. '
                              f'Expected "tide" or "radial" section.')
         try:
             models[key] = _load_model(settings, tidal_type=key, bbox=bbox)
@@ -659,8 +659,8 @@ def load(
                 unknown_key = unknown_key.replace("'", '')
                 section: str = msg.split('.__init__', maxsplit=1)[0].lower()
                 raise ValueError(
-                    f"Configuration file {path!r} is invalid. "
-                    f"Unknown keyword: {unknown_key!r} in section "
-                    f"{section!r}.") from err
+                    f'Configuration file {path!r} is invalid. '
+                    f'Unknown keyword: {unknown_key!r} in section '
+                    f'{section!r}.') from err
             raise err from None
     return models
