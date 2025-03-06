@@ -183,7 +183,10 @@ def get_leap_seconds(
     if numpy.any(date_before_1972):
         warnings.warn(
             'Leap seconds are not defined before January 1, 1972. '
-            'Setting them to zero.', UserWarning)
+            'Setting them to zero.',
+            category=UserWarning,
+            stacklevel=2,
+        )
 
     table = _load_leap_second_file()
     index = numpy.searchsorted(table['utc'], utc, side='right', sorter=sorter)
