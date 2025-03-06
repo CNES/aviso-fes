@@ -6,7 +6,7 @@ backend-path = ["_custom_build"]
 [tool.setuptools_scm]
 write_to = "src/python/pyfes/version.py"
 write_to_template = '''
-# Copyright (c) 2024 CNES
+# Copyright (c) 2025 CNES
 #
 # All rights reserved. Use of this source code is governed by a
 # BSD-style license that can be found in the LICENSE file.
