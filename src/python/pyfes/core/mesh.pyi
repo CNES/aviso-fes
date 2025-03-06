@@ -1,4 +1,4 @@
-from ..typing import MatrixInt32, VectorFloat64
+from ..type_hints import MatrixInt32, VectorFloat64
 
 class Index:
 

@@ -14,7 +14,7 @@ from . import core
 from .core import Formulae
 
 if TYPE_CHECKING:
-    from .typing import (
+    from .type_hints import (
         VectorComplex128,
         VectorDateTime64,
         VectorFloat64,

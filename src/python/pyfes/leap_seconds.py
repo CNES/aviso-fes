@@ -24,7 +24,7 @@ import numpy
 if TYPE_CHECKING:
     from collections.abc import Callable
 
-    from .typing import (
+    from .type_hints import (
         NDArrayStructured,
         VectorDateTime64,
         VectorInt64,
