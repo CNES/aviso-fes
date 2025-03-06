@@ -3,6 +3,18 @@
 Changelog
 #########
 
+2025.3.0
+========
+
+New Features
+------------
+* Add the keyword argument ``bbox`` to the function ``load_config`` to specify
+  the bounding box of the region to load from the tidal model files.
+
+Documentation
+-------------
+* Add examples for the new ``bbox`` keyword argument in the documentation.
+
 2025.2.0
 ========
 
