@@ -257,7 +257,8 @@ if(FES_BUILD_PYTHON_BINDINGS)
   endif()
 
   target_link_libraries(core PRIVATE fes)
-  if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+  message(STATUS ${CMAKE_CXX_COMPILER_ID})
+  if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     set_property(
       TARGET core
       APPEND
