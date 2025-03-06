@@ -11,7 +11,7 @@ import pyfes.config as config_handler
 DATASET = pathlib.Path(__file__).parent / 'dataset'
 
 
-def test_evalute_tide_lgp2(tmpdir) -> None:
+def test_evalute_tide_lgp2(tmp_path) -> None:
     """Test the evaluation of the tide using LPG2 mesh."""
     config = f"""
 tide:
@@ -33,7 +33,7 @@ tide:
             - S1
             - S2
 """
-    config_path = str(tmpdir / 'config.yaml')
+    config_path = str(tmp_path / 'config.yaml')
     with open(config_path, 'w', encoding='utf-8') as stream:
         stream.write(config)
     handler = config_handler.load(config_path)

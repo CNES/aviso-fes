@@ -10,7 +10,7 @@ import pyfes.config as config_handler
 DATASET = pathlib.Path(__file__).parent / 'dataset'
 
 
-def test_config_cartesian(tmpdir):
+def test_config_cartesian(tmp_path):
     """Test the configuration of the cartesian tide."""
     config = f"""
 radial:
@@ -25,7 +25,7 @@ radial:
         dynamic:
             - A5
 """
-    config_path = str(tmpdir / 'config.yaml')
+    config_path = str(tmp_path / 'config.yaml')
     with open(config_path, 'w', encoding='utf-8') as stream:
         stream.write(config)
     config = config_handler.load(config_path)
@@ -35,7 +35,7 @@ radial:
     assert config != other
 
 
-def test_config_lgp2(tmpdir):
+def test_config_lgp2(tmp_path):
     """Test the configuration of the lgp2 tide."""
     config = f"""
 tide:
@@ -55,7 +55,7 @@ tide:
         dynamic:
             - A5
 """
-    config_path = str(tmpdir / 'config.yaml')
+    config_path = str(tmp_path / 'config.yaml')
     with open(config_path, 'w', encoding='utf-8') as stream:
         stream.write(config)
     config = config_handler.load(config_path)
