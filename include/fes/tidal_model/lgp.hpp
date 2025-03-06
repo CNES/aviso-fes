@@ -385,7 +385,8 @@ LGP<T, N>::LGP(
   }
 
   // Store the expected data size to interpolate
-  expected_data_size_ = bbox ? selected_indices_.size() : max_index + 1;
+  expected_data_size_ =
+      bbox ? static_cast<int>(selected_indices_.size()) : max_index + 1;
 }
 
 // /////////////////////////////////////////////////////////////////////////////
