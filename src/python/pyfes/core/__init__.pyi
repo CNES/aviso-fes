@@ -24,7 +24,7 @@ __all__ = [
     "tidal_model",
 ]
 
-from ..typing import (
+from ..type_hints import (
     MatrixComplex128,
     MatrixFloat64,
     VectorComplex64,
