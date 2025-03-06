@@ -49,6 +49,18 @@ handlers = pyfes.load_config(pathlib.Path().absolute() / 'fes_slev.yml')
 print(handlers)
 
 # %%
+# .. hint::
+#
+#     By default, the function :func:`pyfes.load_config` loads the entire
+#     numeric grid into memory. To predict the tide for a specific region, you
+#     can use the ``bbox`` keyword argument to specify the region's bounding
+#     box. This bounding box is a tuple of four elements: minimum longitude,
+#     minimum latitude, maximum longitude, and maximum latitude. Example:
+#
+#     .. code-block:: python
+#
+#         handlers = pyfes.load_config('fes_slev.yaml', bbox=(-10, 40, 10, 60))
+#
 # Setup the longitude and latitude of the location where we want to calculate
 # the tide.
 lon = -7.688
