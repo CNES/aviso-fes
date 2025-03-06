@@ -8,6 +8,8 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
+#include "fes/python/optional.hpp"
+
 namespace py = pybind11;
 
 template <typename T>
@@ -19,12 +21,14 @@ void init_lgp1_model(py::module& m, const std::string& suffix) {
 Handle the wave models loaded from finite elements using LGP1
 discretization.
 )__doc__")
-      .def(py::init<std::shared_ptr<fes::mesh::Index>,
-                    typename fes::tidal_model::LGP1<T>::codes_t, fes::TideType,
-                    double>(),
+      .def(py::init<
+               std::shared_ptr<fes::mesh::Index>,
+               typename fes::tidal_model::LGP1<T>::codes_t, fes::TideType,
+               double,
+               boost::optional<std::tuple<double, double, double, double>>>(),
            py::arg("index"), py::arg("codes"),
            py::arg("tide_type") = fes::TideType::kTide,
-           py::arg("max_distance") = 0,
+           py::arg("max_distance") = 0, py::arg("bbox") = boost::none,
            R"__doc__(
 Construct a LGP1 tidal model.
 
@@ -35,12 +39,24 @@ Args:
     max_distance: The maximum distance allowed to extrapolate the wave
         models. By default, extrapolation is disabled, all points outside
         the finite elements will be considered undefined.
+    bbox: The bounding box to consider when selecting the LGP codes. It is
+        represented by a tuple of four values: the minimum longitude, the
+        minimum latitude, the maximum longitude, and the maximum latitude. If
+        the bounding box is not provided, all LGP codes will be considered.
 )__doc__")
       .def("index", &fes::tidal_model::LGP1<T>::index, R"__doc__(
 Get the index of the finite elements.
 
 Returns:
     The index of the finite elements.
+)__doc__")
+      .def("selected_indices", &fes::tidal_model::LGP1<T>::selected_indices,
+           R"__doc__(Retrieve the indices for wave model values that intersect
+the specified bounding box.
+
+Returns:
+  A vector containing the selected indices. If no bounding box is set, an empty
+  vector is returned.
 )__doc__")
       .def(py::pickle(
           [](const fes::tidal_model::LGP1<T>& self) {
@@ -66,12 +82,14 @@ void init_lgp2_model(py::module& m, const std::string& suffix) {
 Handle the wave models loaded from finite elements using LGP2
 discretization.
 )__doc__")
-      .def(py::init<std::shared_ptr<fes::mesh::Index>,
-                    typename fes::tidal_model::LGP2<T>::codes_t, fes::TideType,
-                    double>(),
+      .def(py::init<
+               std::shared_ptr<fes::mesh::Index>,
+               typename fes::tidal_model::LGP2<T>::codes_t, fes::TideType,
+               double,
+               boost::optional<std::tuple<double, double, double, double>>>(),
            py::arg("index"), py::arg("codes"),
            py::arg("tide_type") = fes::TideType::kTide,
-           py::arg("max_distance") = 0,
+           py::arg("max_distance") = 0, py::arg("bbox") = boost::none,
            R"__doc__(
 Construct a LGP2 tidal model.
 
@@ -82,12 +100,24 @@ Args:
     max_distance: The maximum distance allowed to extrapolate the wave
         models. By default, extrapolation is disabled, all points outside
         the finite elements will be considered undefined.
+    bbox: The bounding box to consider when selecting the LGP codes. It is
+        represented by a tuple of four values: the minimum longitude, the
+        minimum latitude, the maximum longitude, and the maximum latitude. If
+        the bounding box is not provided, all LGP codes will be considered.
 )__doc__")
       .def("index", &fes::tidal_model::LGP2<T>::index, R"__doc__(
 Get the index of the finite elements.
 
 Returns:
     The index of the finite elements.
+)__doc__")
+      .def("selected_indices", &fes::tidal_model::LGP2<T>::selected_indices,
+           R"__doc__(Retrieve the indices for wave model values that intersect
+the specified bounding box.
+
+Returns:
+  A vector containing the selected indices. If no bounding box is set, an empty
+  vector is returned.
 )__doc__")
       .def(py::pickle(
           [](const fes::tidal_model::LGP2<T>& self) {
