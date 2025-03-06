@@ -246,6 +246,9 @@ if(FES_ENABLE_TEST)
 endif()
 
 if(FES_BUILD_PYTHON_BINDINGS)
+  include(ProcessorCount)
+  ProcessorCount(NUM_CORES)
+
   file(GLOB_RECURSE PYTHON_SOURCES "src/python/core/*.cpp")
   pybind11_add_module(core ${PYTHON_SOURCES})
 
@@ -254,6 +257,25 @@ if(FES_BUILD_PYTHON_BINDINGS)
   endif()
 
   target_link_libraries(core PRIVATE fes)
+  if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    set_property(
+      TARGET core
+      APPEND
+      PROPERTY COMPILE_OPTIONS -flto=${NUM_CORES})
+    set_property(
+      TARGET core
+      APPEND
+      PROPERTY LINK_OPTIONS -flto=${NUM_CORES})
+  elseif(MSVC)
+    set_property(
+      TARGET core
+      APPEND
+      PROPERTY COMPILE_OPTIONS /GL)
+    set_property(
+      TARGET core
+      APPEND
+      PROPERTY LINK_OPTIONS /LTCG)
+  endif()
 endif()
 
 if(FES_ENABLE_COVERAGE)
