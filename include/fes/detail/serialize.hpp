@@ -8,6 +8,7 @@
 #include <Eigen/Core>
 #include <map>
 #include <sstream>
+#include <unordered_map>
 
 #include "fes/detail/isviewstream.hpp"
 
@@ -111,6 +112,38 @@ auto read_constituent_map(detail::isviewstream& ss)
     auto constituent = read_data<T>(ss);
     auto map = read_matrix<U, Eigen::Dynamic, 1>(ss);
     data.emplace(constituent, map);
+  }
+  return data;
+}
+
+/// @brief Write an unordered map to a stringstream
+/// @tparam T The type of the key
+/// @tparam U The type of the value
+/// @param[in] ss The stringstream to write to
+/// @param[in] data The unordered map to write
+template <typename T, typename U>
+auto write_unordered_map(std::stringstream& ss,
+                         const std::unordered_map<T, U>& data) -> void {
+  write_data(ss, data.size());
+  for (const auto& item : data) {
+    write_data(ss, item.first);
+    write_data(ss, item.second);
+  }
+}
+
+/// @brief Read an unordered map from a stringstream
+/// @tparam T The type of the key
+/// @tparam U The type of the value
+/// @param[in] ss The stringstream to read from
+/// @return The unordered map read
+template <typename T, typename U>
+auto read_unordered_map(detail::isviewstream& ss) -> std::unordered_map<T, U> {
+  auto size = read_data<size_t>(ss);
+  auto data = std::unordered_map<T, U>{};
+  for (size_t ix = 0; ix < size; ++ix) {
+    auto key = read_data<T>(ss);
+    auto value = read_data<U>(ss);
+    data.emplace(key, value);
   }
   return data;
 }

@@ -7,11 +7,13 @@
 #pragma once
 #include <Eigen/Core>
 #include <algorithm>
+#include <boost/optional.hpp>
 #include <cstdint>
 #include <limits>
 #include <map>
 #include <memory>
 #include <sstream>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -19,6 +21,7 @@
 #include "fes/detail/isviewstream.hpp"
 #include "fes/detail/serialize.hpp"
 #include "fes/eigen.hpp"
+#include "fes/geometry/box.hpp"
 #include "fes/mesh/index.hpp"
 #include "fes/string_view.hpp"
 #include "fes/wave.hpp"
@@ -102,8 +105,14 @@ class LGP : public fes::AbstractTidalModel<T> {
   /// @param[in] max_distance The maximum distance allowed to extrapolate the
   /// wave model. By default, extrapolation is disabled, all points outside the
   /// mesh will be considered undefined.
+  /// @param[in] bbox The bounding box to consider when selecting the LGP codes.
+  /// It is represented by a tuple of four values: the minimum longitude, the
+  /// minimum latitude, the maximum longitude, and the maximum latitude. If the
+  /// bounding box is not provided, all LGP codes will be considered.
   LGP(std::shared_ptr<mesh::Index> index, codes_t codes, TideType tide_type,
-      double max_distance = 0);
+      double max_distance = 0,
+      const boost::optional<std::tuple<double, double, double, double>>& bbox =
+          {});
 
   /// Default destructor
   virtual ~LGP() override = default;
@@ -163,6 +172,20 @@ class LGP : public fes::AbstractTidalModel<T> {
   /// @return A string representation of the state of the tidal model.
   auto getstate() const -> std::string;
 
+  /// Retrieve the indices for wave model values that intersect the specified
+  /// bounding box.
+  ///
+  /// @return A vector containing the selected indices. If no bounding box is
+  /// set, an empty vector is returned.
+  inline auto selected_indices() const -> Vector<int64_t> {
+    Vector<int64_t> result(selected_indices_.size());
+    auto* ptr = result.data();
+    std::for_each(selected_indices_.begin(), selected_indices_.end(),
+                  [&ptr](const auto& item) { *ptr++ = item.first; });
+    std::sort(result.begin(), result.end());
+    return result;
+  }
+
  protected:
   /// @brief Default constructor
   LGP() = default;
@@ -187,6 +210,10 @@ class LGP : public fes::AbstractTidalModel<T> {
 
   /// Index used to find the nearest triangle
   std::shared_ptr<mesh::Index> index_{};
+
+  /// Indices that intersect the bounding box. If no bounding box is provided,
+  /// this map will be empty.
+  std::unordered_map<int64_t, int64_t> selected_indices_{};
 
   /// The maximum distance allowed to extrapolate the wave model.
   double max_distance_{};
@@ -304,8 +331,10 @@ class LGP2 : public LGP<T, 2> {
 
 // /////////////////////////////////////////////////////////////////////////////
 template <typename T, int N>
-LGP<T, N>::LGP(std::shared_ptr<mesh::Index> index, LGP::codes_t codes,
-               TideType tide_type, const double max_distance)
+LGP<T, N>::LGP(
+    std::shared_ptr<mesh::Index> index, LGP::codes_t codes, TideType tide_type,
+    const double max_distance,
+    const boost::optional<std::tuple<double, double, double, double>>& bbox)
     : AbstractTidalModel<T>(tide_type),
       index_(std::move(index)),
       max_distance_(max_distance),
@@ -317,6 +346,30 @@ LGP<T, N>::LGP(std::shared_ptr<mesh::Index> index, LGP::codes_t codes,
         "index and codes must have the same number of triangles: " +
         std::to_string(index_->n_triangles()) +
         " != " + std::to_string(codes_.rows()));
+  }
+
+  // A bounding box is provided, we need to select the LGP codes that intersect
+  // the bounding box.
+  if (bbox) {
+    // Get the selected triangles that intersect the bounding box
+    const auto selected_triangles = index_->selected_triangles(
+        geometry::Box{geometry::Point{std::get<0>(*bbox), std::get<1>(*bbox)},
+                      geometry::Point{std::get<2>(*bbox), std::get<3>(*bbox)}});
+    // A LPG code could be used by multiple triangles, we need to store the
+    // selected indices to avoid duplicates.
+    std::set<int64_t> selected_indices;
+    for (const auto& ix : selected_triangles) {
+      const auto& codes = codes_.row(ix);
+      for (auto iy = 0; iy < N * 3; ++iy) {
+        selected_indices.insert(codes(iy));
+      }
+    }
+    // Finally, we store the selected indices in a map to get the index of each
+    // LGP code.
+    int64_t index = 0;
+    for (const auto& ix : selected_indices) {
+      selected_indices_[ix] = index++;
+    }
   }
 
   // Determine the first and last LGP codes for each triangle
@@ -332,7 +385,7 @@ LGP<T, N>::LGP(std::shared_ptr<mesh::Index> index, LGP::codes_t codes,
   }
 
   // Store the expected data size to interpolate
-  expected_data_size_ = max_index + 1;
+  expected_data_size_ = bbox ? selected_indices_.size() : max_index + 1;
 }
 
 // /////////////////////////////////////////////////////////////////////////////
@@ -341,6 +394,21 @@ auto LGP<T, N>::interpolate(const geometry::Point& point, Quality& quality,
                             Accelerator* acc) const
     -> const ConstituentValues& {
   auto* lgp_acc = reinterpret_cast<LGPAccelerator*>(acc);
+
+  /// Lambda that sets the interpolation result to NaN if the point:
+  /// - Is not located within or near the mesh, or
+  /// - Lies outside the designated geographical area.
+  auto reset_values_to_undefined = [&]() -> const ConstituentValues& {
+    constexpr auto undefined_value =
+        std::complex<double>(std::numeric_limits<double>::quiet_NaN(),
+                             std::numeric_limits<double>::quiet_NaN());
+
+    for (const auto& item : this->data_) {
+      lgp_acc->emplace_back(item.first, undefined_value);
+    }
+    quality = Quality::kUndefined;
+    return lgp_acc->values();
+  };
 
   // Reset the accelerator if the point is not in the cache, otherwise update
   // the point in use.
@@ -354,14 +422,7 @@ auto LGP<T, N>::interpolate(const geometry::Point& point, Quality& quality,
   const auto& selected_triangle = lgp_acc->get();
   if (selected_triangle.index == -1) {
     // No triangle found, return NaN
-    for (const auto& item : this->data_) {
-      lgp_acc->emplace_back(
-          item.first,
-          std::complex<double>(std::numeric_limits<double>::quiet_NaN(),
-                               std::numeric_limits<double>::quiet_NaN()));
-    }
-    quality = Quality::kUndefined;
-    return lgp_acc->values();
+    return reset_values_to_undefined();
   }
 
   // Get the LGP codes for the triangle
@@ -391,15 +452,37 @@ auto LGP<T, N>::interpolate(const geometry::Point& point, Quality& quality,
   const auto beta = calculate_beta(std::get<0>(xy), std::get<1>(xy));
 
   // Interpolate the wave model for each data set
-  for (const auto& item : this->data_) {
-    const auto& wave = item.second;
-    auto dot = std::complex<double>(0, 0);
+  if (selected_indices_.empty()) {
+    // First case: no bounding box is provided, we interpolate all the LGP codes
+    for (const auto& item : this->data_) {
+      const auto& wave = item.second;
+      auto dot = std::complex<double>(0, 0);
 
-    // Read the values for each LGP code
-    for (auto ix = 0; ix < N * 3; ++ix) {
-      dot += beta(ix) * static_cast<std::complex<double>>(wave(codes(ix)));
+      // Read the values for each LGP code
+      for (auto ix = 0; ix < N * 3; ++ix) {
+        dot += beta(ix) * static_cast<std::complex<double>>(wave(codes(ix)));
+      }
+      lgp_acc->emplace_back(item.first, dot);
     }
-    lgp_acc->emplace_back(item.first, dot);
+  } else {
+    // Second case: a bounding box is provided, we interpolate the selected LGP
+    // codes
+    for (const auto& item : this->data_) {
+      const auto& wave = item.second;
+      auto dot = std::complex<double>(0, 0);
+
+      for (auto ix = 0; ix < N * 3; ++ix) {
+        const auto it = selected_indices_.find(codes(ix));
+        if (it == selected_indices_.end()) {
+          // If the input coordinates are outside the bounding box, the
+          // LPG codes will not be found in the selected indices. In this case,
+          // we return NaN.
+          return reset_values_to_undefined();
+        }
+        dot += beta(ix) * static_cast<std::complex<double>>(wave(it->second));
+      }
+      lgp_acc->emplace_back(item.first, dot);
+    }
   }
   quality = selected_triangle.inside ? Quality::kInterpolated
                                      : Quality::kExtrapolated1;
@@ -415,6 +498,7 @@ auto LGP<T, N>::getstate() const -> std::string {
   detail::serialize::write_data(ss, max_distance_);
   detail::serialize::write_matrix<int, Eigen::Dynamic, N * 3>(ss, codes_);
   detail::serialize::write_constituent_map(ss, this->data_);
+  detail::serialize::write_unordered_map(ss, this->selected_indices_);
   return ss.str();
 }
 
@@ -429,6 +513,8 @@ auto LGP<T, N>::setstate_instance(const string_view& data) {
   this->codes_ = detail::serialize::read_matrix<int, Eigen::Dynamic, N * 3>(ss);
   this->data_ =
       detail::serialize::read_constituent_map<Constituent, std::complex<T>>(ss);
+  this->selected_indices_ =
+      detail::serialize::read_unordered_map<int64_t, int64_t>(ss);
 }
 
 }  // namespace tidal_model

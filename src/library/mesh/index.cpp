@@ -136,6 +136,24 @@ auto Index::search(const geometry::Point& point,
   return result;
 }
 
+auto Index::selected_triangles(const geometry::Box& bbox) const
+    -> std::vector<int64_t> {
+  auto result = std::vector<int64_t>{};
+  result.reserve(triangles_.rows());
+
+  for (int64_t ix = 0; ix < triangles_.rows(); ++ix) {
+    if (bbox.intersects(build_triangle(ix))) {
+      result.push_back(ix);
+    }
+  }
+
+  if (result.empty()) {
+    throw std::invalid_argument("no triangle intersects the bounding box");
+  }
+
+  return result;
+}
+
 auto Index::getstate() const -> std::string {
   auto ss = std::stringstream();
   ss.exceptions(std::stringstream::failbit);
