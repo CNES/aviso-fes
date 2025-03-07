@@ -8,7 +8,7 @@ FROM ubuntu:24.04
 ARG MINIFORGE_NAME=Miniforge3
 ARG MINIFORGE_VERSION=25.1.1-0
 ARG TMP=/tmp
-ARG PYFES_VERSION=2025.2.0
+ARG PYFES_VERSION=2025.3.0
 
 # ============================
 # Set Home Directory
