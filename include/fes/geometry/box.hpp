@@ -92,6 +92,7 @@ struct point_type<fg::Box> {
   using type = fg::Point;
 };
 
+/// @brief Get the minimum corner of the Box box.
 template <std::size_t Dimension>
 struct indexed_access<fg::Box, min_corner, Dimension> {
   /// @brief Get the coordinate at the specified index.
@@ -111,6 +112,7 @@ struct indexed_access<fg::Box, min_corner, Dimension> {
   }
 };
 
+/// @brief Index access for the Box box.
 template <std::size_t Dimension>
 struct indexed_access<fg::Box, max_corner, Dimension> {
   /// @brief Get the coordinate at the specified index.
@@ -137,6 +139,11 @@ struct indexed_access<fg::Box, max_corner, Dimension> {
 namespace fes {
 namespace geometry {
 
+/// @brief Write the geographic box to a stream.
+///
+/// @param[in,out] os The output stream.
+/// @param[in] box The box.
+/// @return The output stream.
 inline auto operator<<(std::ostream& os, const Box& box) -> std::ostream& {
   os << boost::geometry::wkt(box);
   return os;
