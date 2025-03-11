@@ -20,7 +20,7 @@ namespace geometry {
 /// Base class of the geodetic triangle.
 using triangle_t = boost::geometry::model::polygon<Point, false>;
 
-/// Geodetic triangle.
+/// @brief Geodetic triangle.
 class Triangle : public triangle_t {
  public:
   using triangle_t::triangle_t;
@@ -125,11 +125,11 @@ class Triangle : public triangle_t {
     return boost::geometry::equals(*this, other);
   }
 
-  /// Compute the angles \f$\xi\$f and \f$\eta\$f of the reference right-angled
+  /// Compute the angles \f$\xi\f$ and \f$\eta\f$ of the reference right-angled
   /// triangle in the Cartesian space.
   ///
   /// @param[in] point The point.
-  /// @return A tuple containing the angles \f$\xi\$f and \f$\eta\$f.
+  /// @return A tuple containing the angles  \f$\xi\f$ and \f$\eta\f$.
   /// @warning The given point must be inside the triangle otherwise the result
   /// is undefined.
   auto reference_right_angled(const Point &point) const
