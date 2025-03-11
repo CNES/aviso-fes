@@ -178,11 +178,12 @@ class LGP : public fes::AbstractTidalModel<T> {
   /// @return A vector containing the selected indices. If no bounding box is
   /// set, an empty vector is returned.
   inline auto selected_indices() const -> Vector<int64_t> {
-    Vector<int64_t> result(selected_indices_.size());
+    const auto size = selected_indices_.size();
+    Vector<int64_t> result(size);
     auto* ptr = result.data();
     std::for_each(selected_indices_.begin(), selected_indices_.end(),
                   [&ptr](const auto& item) { *ptr++ = item.first; });
-    std::sort(result.begin(), result.end());
+    std::sort(result.data(), result.data() + size);
     return result;
   }
 
