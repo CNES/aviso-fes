@@ -142,7 +142,7 @@ auto Index::selected_triangles(const geometry::Box& bbox) const
   result.reserve(triangles_.rows());
 
   for (int64_t ix = 0; ix < triangles_.rows(); ++ix) {
-    if (bbox.intersects(build_triangle(ix))) {
+    if (bbox.intersects(build_triangle(static_cast<int>(ix)))) {
       result.push_back(ix);
     }
   }
