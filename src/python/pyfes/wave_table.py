@@ -26,7 +26,29 @@ MAX_CONSTITUENTS = 9
 
 
 class WaveTable(core.WaveTable):
-    """Properties of tidal constituents."""
+    """Properties of tidal constituents.
+    
+    The WaveTable manages tidal wave constituents, allows computation of nodal
+    corrections, performs tidal predictions, and supports harmonic analysis.
+
+    .. warning::
+
+        The order of wave constituents in the resulting WaveTable does **NOT**
+        match the order specified in the constructor's ``waves`` argument.
+        Constituents are internally ordered according to the declaration order
+        of the enumerated `Constituent
+        <https://github.com/CNES/aviso-fes/blob/main/include/fes/constituent.hpp>`_
+        fields.
+
+        Example:
+            >>> from pyfes import WaveTable, Constituent
+            >>> wt = WaveTable (["M2", "S2", "N2", "K1"])
+            >>> wt.keys()
+            ['K1', 'N2', 'M2', 'S2']
+
+        To determine the actual ordering of constituents, use the 
+        :py:func:`~pyfes.constituents.known()` function.
+    """
 
     def __repr__(self) -> str:
         constituents: list[str] = self.keys()
