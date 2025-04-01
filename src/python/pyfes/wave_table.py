@@ -27,7 +27,7 @@ MAX_CONSTITUENTS = 9
 
 class WaveTable(core.WaveTable):
     """Properties of tidal constituents.
-    
+
     The WaveTable manages tidal wave constituents, allows computation of nodal
     corrections, performs tidal predictions, and supports harmonic analysis.
 
@@ -46,7 +46,7 @@ class WaveTable(core.WaveTable):
             >>> wt.keys()
             ['K1', 'N2', 'M2', 'S2']
 
-        To determine the actual ordering of constituents, use the 
+        To determine the actual ordering of constituents, use the
         :py:func:`~pyfes.constituents.known()` function.
     """
 
