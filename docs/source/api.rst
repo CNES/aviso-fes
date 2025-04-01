@@ -158,6 +158,6 @@ Leap Seconds
 Type hints
 ----------
 
-.. currentmodule:: pyfes.typing
+.. currentmodule:: pyfes.type_hints
 
-.. automodule:: pyfes.typing
+.. automodule:: pyfes.type_hints
