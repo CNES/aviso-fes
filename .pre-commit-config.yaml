@@ -20,7 +20,7 @@ repos:
       args: [--py310-plus]
       exclude: setup.py
   - repo: https://github.com/PyCQA/flake8
-    rev: 7.1.2
+    rev: 7.2.0
     hooks:
       - id: flake8
         exclude: tests
@@ -58,7 +58,7 @@ repos:
       exclude: "leap-seconds.txt"
       args: [-L inout]
   - repo: https://github.com/pre-commit/mirrors-clang-format
-    rev: v19.1.7
+    rev: v20.1.0
     hooks:
       - id: clang-format
         exclude: "(dataset.*json)$"
