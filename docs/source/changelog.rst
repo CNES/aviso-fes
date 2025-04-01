@@ -3,6 +3,25 @@
 Changelog
 #########
 
+2025.4.0
+========
+
+Documentation
+-------------
+* Enhanced documentation for WaveTable class in wave_table.py to clarify usage
+  and constituent ordering (#45).
+* Updated module references in api.rst for type hints.
+* Improved documentation comments in box.hpp and triangle.hpp for clarity.
+* Updated latest release date link in README to point to the correct repository.
+
+Compatibility
+------------
+* Corrected compatibility with older versions of Eigen.
+
+Build System
+------------
+* Updated flake8 and clang-format versions in pre-commit configuration.
+
 2025.3.0
 ========
 
