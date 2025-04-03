@@ -8,6 +8,8 @@ enable_testing()
 macro(ADD_TESTCASE testname)
   set(FILES "${CMAKE_CURRENT_SOURCE_DIR}/${testname}.cpp")
   add_executable(fes_${testname} ${FILES})
+  target_include_directories(fes_${testname}
+                             PRIVATE ${CMAKE_BINARY_DIR}/include)
   target_link_libraries(fes_${testname} GTest::gtest_main ${ARGN})
   add_test(NAME fes_${testname}
            COMMAND ${EXECUTABLE_OUTPUT_PATH}/fes_${testname})

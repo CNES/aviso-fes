@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10.0)
 # CMake module search path
 set(CMAKE_MODULE_PATH
     "${CMAKE_CURRENT_SOURCE_DIR}/cmake"
-    "${CMAKE_SOURCE_DIR}/third_party//CMake-codecov/cmake"
+    "${CMAKE_SOURCE_DIR}/third_party/CMake-codecov/cmake"
     "${CMAKE_MODULE_PATH}")
 
 if("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_BINARY_DIR}")
@@ -90,6 +90,11 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+if(NOT BUILD_SHARED_LIBS)
+  message(STATUS "Static library build")
+else()
+  message(STATUS "Shared library build")
+endif()
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -164,6 +169,12 @@ else()
   endif()
 endif()
 
+if(APPLE)
+  list(APPEND CMAKE_INSTALL_RPATH "@loader_path")
+elseif(UNIX)
+  list(APPEND CMAKE_INSTALL_RPATH "$ORIGIN")
+endif()
+
 # CMake-codecov
 if(FES_ENABLE_COVERAGE)
   set(ENABLE_COVERAGE ON)
@@ -179,7 +190,7 @@ if(FES_ENABLE_TEST)
   find_package(GTest REQUIRED)
 endif()
 
-if(FES_ENABLE_FPIC)
+if((FES_ENABLE_FPIC OR FES_BUILD_PYTHON_BINDINGS) AND NOT BUILD_SHARED_LIBS)
   set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
   set(CMAKE_CXX_VISIBILITY_PRESET hidden)
   set(CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -189,27 +200,38 @@ endif()
 if(FES_BUILD_PYTHON_BINDINGS)
   find_package(Python3 COMPONENTS Interpreter Development)
   add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/third_party/pybind11")
-
-  set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
-  set(CMAKE_CXX_VISIBILITY_PRESET hidden)
-  set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 endif()
 
 file(GLOB_RECURSE LIBRARY_SOURCES "src/library/*.cpp")
-add_library(fes STATIC ${LIBRARY_SOURCES})
-target_include_directories(fes PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
-                                      ${CMAKE_CURRENT_BINARY_DIR}/include)
+if(BUILD_SHARED_LIBS)
+  add_library(fes SHARED ${LIBRARY_SOURCES})
+else()
+  add_library(fes STATIC ${LIBRARY_SOURCES})
+endif()
+
+target_include_directories(
+  fes PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+             $<INSTALL_INTERFACE:include>)
+
 if(FES_ENABLE_COVERAGE)
   add_coverage(fes)
 endif()
 if(BLAS_FOUND)
   target_link_libraries(fes ${BLAS_LIBRARIES})
 endif()
+
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/fes DESTINATION include)
 install(
   TARGETS fes
+  LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib COMPONENT library)
+  RUNTIME DESTINATION bin
+  INCLUDES
+  DESTINATION include)
+set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
+set(CMAKE_BUILD_RPATH_USE_ORIGIN ON)
 
 if(GTest_FOUND OR FES_ENABLE_CLANG_TIDY)
   include(CTest)
