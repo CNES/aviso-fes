@@ -26,6 +26,56 @@ namespace fes {
 namespace detail {
 namespace math {
 
+/// @brief Construct a NaN value
+///
+/// @tparam T The type of the result.
+/// @return A NaN value of type T
+template <typename T>
+constexpr auto construct_nan() noexcept -> typename std::enable_if<
+    !std::is_same<T, std::complex<float>>::value &&
+        !std::is_same<T, std::complex<double>>::value &&
+        !std::is_same<T, std::complex<long double>>::value,
+    T>::type {
+  return std::numeric_limits<T>::quiet_NaN();
+}
+
+/// @brief Construct a NaN value for complex types
+///
+/// @tparam T The type of the result.
+/// @return A NaN value of type T
+template <typename T>
+constexpr auto construct_nan() noexcept ->
+    typename std::enable_if<std::is_same<T, std::complex<float>>::value,
+                            T>::type {
+  return std::complex<float>(std::numeric_limits<float>::quiet_NaN(),
+                             std::numeric_limits<float>::quiet_NaN());
+}
+
+/// @brief Construct a NaN value for complex types
+///
+/// @tparam T The type of the result.
+/// @return A NaN value of type T
+template <typename T>
+constexpr auto construct_nan() noexcept ->
+    typename std::enable_if<std::is_same<T, std::complex<double>>::value,
+                            T>::type {
+  return std::complex<double>(std::numeric_limits<double>::quiet_NaN(),
+                              std::numeric_limits<double>::quiet_NaN());
+}
+
+/// @brief Construct a NaN value for complex types
+///
+/// @tparam T The type of the result.
+/// @return A NaN value of type T
+template <typename T>
+constexpr auto construct_nan() noexcept ->
+    typename std::enable_if<std::is_same<T, std::complex<long double>>::value,
+                            T>::type {
+  return std::complex<long double>(
+      std::numeric_limits<long double>::quiet_NaN(),
+      std::numeric_limits<long double>::quiet_NaN());
+}
+
 /// \f$\pi\f$
 ///
 /// @tparam T The type of the result.
@@ -313,8 +363,7 @@ constexpr auto bilinear_interpolation(const T& wx1, const T& wx2, const T& wy1,
   add_sample(z12, wx1 * wy2);
   add_sample(z21, wx2 * wy1);
   add_sample(z22, wx2 * wy2);
-  return std::abs(sum_w) > 0 ? result / sum_w
-                             : std::numeric_limits<T>::quiet_NaN();
+  return std::abs(sum_w) > 0 ? result / sum_w : construct_nan<T>();
 }
 
 /// @brief Evaluates a polynomial using Horner's method.
