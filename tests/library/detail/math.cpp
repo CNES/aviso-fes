@@ -150,6 +150,16 @@ TEST(Math, BilinearInterpolationComplex) {
   EXPECT_DOUBLE_EQ(z.real(), 1.5);
   EXPECT_DOUBLE_EQ(z.imag(), 1.5);
   EXPECT_EQ(n, 4);
+
+  std::tie(w0, w1, w2, w3) =
+      math::bilinear_weights(0.0, 1.0, 0.0, 0.0, 1.0, 1.0);
+  n = static_cast<int64_t>(0);
+  z = math::bilinear_interpolation<std::complex<double>>(
+      w0, w1, w2, w3, std::complex<double>(0.0, 0.0),
+      std::complex<double>(NAN, NAN), std::complex<double>(2.0, 2.0),
+      std::complex<double>(3.0, 3.0), n);
+  EXPECT_TRUE(std::isnan(z.real()));
+  EXPECT_TRUE(std::isnan(z.imag()));
 }
 
 TEST(Math, Horner) {
