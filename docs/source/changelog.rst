@@ -3,6 +3,16 @@
 Changelog
 #########
 
+2025.4.1
+========
+
+Bug Fixes
+---------
+* Fixed bilinear interpolation function to return NaN instead of zero when no
+  valid points are found (corrected issue where
+  std::numeric_limits<std::complex<double>>::quiet_NaN() was incorrectly
+  returning zero).
+
 2025.4.0
 ========
 
