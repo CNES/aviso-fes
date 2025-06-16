@@ -15,6 +15,7 @@ void init_angle(py::module& m) {
       .value("kSchuremanOrder1", fes::angle::Formulae::kSchuremanOrder1)
       .value("kSchuremanOrder3", fes::angle::Formulae::kSchuremanOrder3)
       .value("kMeeus", fes::angle::Formulae::kMeeus)
+      .value("kIERS", fes::angle::Formulae::kIERS)
       .export_values();
 
   py::class_<fes::angle::Astronomic>(m, "AstronomicAngle")
