@@ -90,7 +90,7 @@ class WaveTable(core.WaveTable):
             formulae)
 
     def freq(self) -> VectorFloat64:
-        """Gets the waves frequencies in radians per seconds."""
+        """Gets the waves frequencies in radians per hours."""
         return numpy.array([wave.freq for wave in self], dtype=numpy.float64)
 
     @staticmethod
@@ -155,7 +155,7 @@ class WaveDict(WaveTable):
     """Manages the tidal wave table as a dictionary."""
 
     def freq(self) -> dict[str, float]:
-        """Gets the waves frequencies in radians per seconds."""
+        """Gets the waves frequencies in radians per hours."""
         return {wave.name(): wave.freq for wave in self}
 
     def harmonic_analysis(  # type: ignore[override]

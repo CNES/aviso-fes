@@ -195,6 +195,7 @@ class Wave : public std::enable_shared_from_this<Wave> {
   /// @param[in] p longitude of the moon's perigee
   /// @param[in] n longitude of the moon's ascending node
   /// @param[in] p1 longitude of sun's perigee
+  /// @return The frequency of the wave, expressed in degrees per hour.
   static constexpr auto frequency(const int8_t t, const int8_t s,
                                   const int8_t h, const int8_t p,
                                   const int8_t n, const int8_t p1) -> double {
