@@ -23,6 +23,10 @@
 
         Meeus' formula.
 
+    .. autoattribute:: kIERS
+
+        `IERS' formula <https://hpiers.obspm.fr/eop-pc/models/nutations/nut_oceanic.html>`_.
+
     .. property:: name
 
         Returns the name of the formula.
