@@ -115,16 +115,22 @@ auto Cartesian<T>::interpolate(const geometry::Point& point, Quality& quality,
   auto lon_index = lon_.find_indices(point.lon());
   auto lat_index = lat_.find_indices(point.lat());
 
-  if (!lon_index || !lat_index) {
+  auto reset_values_to_undefined = [&]() -> const ConstituentValues& {
+    constexpr auto undefined_value =
+        std::complex<double>(std::numeric_limits<double>::quiet_NaN(),
+                             std::numeric_limits<double>::quiet_NaN());
+
     for (const auto& item : this->data_) {
-      acc->emplace_back(
-          item.first,
-          std::complex<double>(std::numeric_limits<double>::quiet_NaN(),
-                               std::numeric_limits<double>::quiet_NaN()));
+      acc->emplace_back(item.first, undefined_value);
     }
     quality = Quality::kUndefined;
     return acc->values();
+  };
+
+  if (!lon_index || !lat_index) {
+    return reset_values_to_undefined();
   }
+
   int64_t i1;
   int64_t i2;
   int64_t j1;
@@ -149,6 +155,11 @@ auto Cartesian<T>::interpolate(const geometry::Point& point, Quality& quality,
     auto value = detail::math::bilinear_interpolation<std::complex<double>>(
         std::get<0>(wxy), std::get<1>(wxy), std::get<2>(wxy), std::get<3>(wxy),
         grid(i1, j1), grid(i1, j2), grid(i2, j1), grid(i2, j2), n);
+    // The computed value lies within the grid boundaries, but it is NaN (not a
+    // number).
+    if (std::isnan(value.real()) || std::isnan(value.imag())) {
+      return reset_values_to_undefined();
+    }
     acc->emplace_back(item.first, value);
   }
 
