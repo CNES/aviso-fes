@@ -25,7 +25,7 @@ Documentation
 * Updated latest release date link in README to point to the correct repository.
 
 Compatibility
-------------
+-------------
 * Corrected compatibility with older versions of Eigen.
 
 Build System
