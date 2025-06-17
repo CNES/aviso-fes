@@ -89,6 +89,8 @@ enum Constituent : uint8_t {
   kM0 = 72,       //!< @f$M_0@f$
   kMm2 = 73,      //!< @f$Mm_2@f$
   kMf2 = 74,      //!< @f$Mf_2@f$
+  kL2P = 75,      //!< @f$L2_P@f$
+  kN2P = 76,      //!< @f$N2_P@f$
 };
 
 namespace constituents {
