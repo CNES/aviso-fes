@@ -336,6 +336,30 @@ class Astronomic {
     return (sin_i - (5.0 / 4.0) * detail::math::pow<3>(sin_i)) * factor;
   }
 
+  /// @brief Gets the node factor for formula 146.
+  ///
+  /// @return @f$\sin I \cos^4\frac{1}{2}I/0.3658@f$
+  FES_MATH_CONSTEXPR auto f_146() const noexcept -> double {
+    // SCHUREMAN P.36 (146)
+    auto sin_i = std::sin(i_);
+    auto cos_i_2 = std::cos(0.5 * i_);
+    constexpr auto factor = 1 / 0.3658;
+    return sin_i * detail::math::pow<4>(cos_i_2) * factor;
+  }
+
+  /// @brief Gets the node factor for formula 147.
+  ///
+  /// @return @f$(\cos^2(\frac{1}{2}I)-\frac{2}{3})\sin I
+  /// \cos^2(\frac{1}{2}I/0.1114)@f$
+  FES_MATH_CONSTEXPR auto f_147() const noexcept -> double {
+    // SCHUREMAN P.36 (147)
+    auto sin_i = std::sin(i_);
+    auto cos_i_2 = std::cos(0.5 * i_);
+    constexpr auto factor = 1 / 0.1114;
+    return (detail::math::pow<2>(cos_i_2) - (2.0 / 3.0)) * sin_i *
+           detail::math::pow<2>(cos_i_2 * factor);
+  }
+
  protected:
   /// @f$T@f$: hour angle of mean sun.
   double t_{std::numeric_limits<double>::quiet_NaN()};

@@ -1406,5 +1406,37 @@ class M0 : public Wave {
              &angle::Astronomic::f_mm) {}
 };
 
+/// @brief @f$N_2P@f$
+///
+/// <table>
+/// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
+/// <tr><td>@f$2T - 3s + 2h + 90^{\circ}@f$</td>
+/// <td>@f$+3\xi - 2\nu@f$</td>
+/// <td>@f$f(146)@f$</td></tr>
+/// </table>
+/// @note Schureman: %Table 2, Page 166, Ref. A76
+class N2P : public Wave {
+ public:
+  constexpr N2P()
+      : Wave(kN2P, kShortPeriod, false, 2, -3, 2, 0, 0, 0, 1, 3, -2, 0, 0,
+             &angle::Astronomic::f_146) {}
+};
+
+/// @brief @f$L_2P@f$
+///
+/// <table>
+/// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
+/// <tr><td>@f$2T - s + 2h - 90^{\circ}@f$</td>
+/// <td>@f$+\xi - 2\nu@f$</td>
+/// <td>@f$f(147)@f$</td></tr>
+/// </table>
+/// @note Schureman: %Table 2, Page 166, Ref. A47
+class L2P : public Wave {
+ public:
+  constexpr L2P()
+      : Wave(kL2P, kShortPeriod, false, 2, -1, 2, 0, 0, 0, -1, 1, -2, 0, 0,
+             &angle::Astronomic::f_147) {}
+};
+
 }  // namespace wave
 }  // namespace fes
