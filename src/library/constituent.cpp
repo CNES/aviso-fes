@@ -80,10 +80,14 @@ auto name(Constituent constituent) -> const char* {
       return detail::wave::name::kSigma1;
     case kRho1:
       return detail::wave::name::kRho1;
+    case kM1:
+      return detail::wave::name::kM1;
     case kM11:
       return detail::wave::name::kM11;
     case kM12:
       return detail::wave::name::kM12;
+    case kM13:
+      return detail::wave::name::kM13;
     case kChi1:
       return detail::wave::name::kChi1;
     case kPi1:
@@ -114,8 +118,6 @@ auto name(Constituent constituent) -> const char* {
       return detail::wave::name::kS4;
     case kMNS2:
       return detail::wave::name::kMNS2;
-    case kM13:
-      return detail::wave::name::kM13;
     case kMK4:
       return detail::wave::name::kMK4;
     case kSN4:
@@ -262,11 +264,17 @@ auto parse(const std::string& name) -> Constituent {
   if (iequals(name, wave::name::kRho1)) {
     return kRho1;
   }
+  if (iequals(name, wave::name::kM1)) {
+    return kM1;
+  }
   if (iequals(name, wave::name::kM11)) {
     return kM11;
   }
   if (iequals(name, wave::name::kM12)) {
     return kM12;
+  }
+  if (iequals(name, wave::name::kM13)) {
+    return kM13;
   }
   if (iequals(name, wave::name::kChi1)) {
     return kChi1;
@@ -312,9 +320,6 @@ auto parse(const std::string& name) -> Constituent {
   }
   if (iequals(name, wave::name::kMNS2)) {
     return kMNS2;
-  }
-  if (iequals(name, wave::name::kM13)) {
-    return kM13;
   }
   if (iequals(name, wave::name::kMK4)) {
     return kMK4;

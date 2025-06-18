@@ -139,14 +139,24 @@ inline auto check_wave_table_constructor(const fes::wave::Table& table)
         EXPECT_NEAR(item->freq(), detail::math::radians(13.4715145), 1e-8);
         EXPECT_EQ(item->type(), fes::Wave::kShortPeriod);
         break;
+      case fes::kM1:
+        EXPECT_EQ(item->ident(), fes::kM1);
+        EXPECT_NEAR(item->freq(), detail::math::radians(14.49669394), 1e-8);
+        EXPECT_EQ(item->type(), fes::Wave::kShortPeriod);
+        break;
       case fes::kM11:
         EXPECT_EQ(item->ident(), fes::kM11);
-        EXPECT_NEAR(item->freq(), detail::math::radians(14.4966939), 1e-8);
+        EXPECT_NEAR(item->freq(), detail::math::radians(14.48741027), 1e-8);
         EXPECT_EQ(item->type(), fes::Wave::kShortPeriod);
         break;
       case fes::kM12:
         EXPECT_EQ(item->ident(), fes::kM12);
-        EXPECT_NEAR(item->freq(), detail::math::radians(14.48741027), 1e-8);
+        EXPECT_NEAR(item->freq(), detail::math::radians(14.4966939), 1e-8);
+        EXPECT_EQ(item->type(), fes::Wave::kShortPeriod);
+        break;
+      case fes::kM13:
+        EXPECT_EQ(item->ident(), fes::kM13);
+        EXPECT_NEAR(item->freq(), detail::math::radians(14.49205210), 1e-8);
         EXPECT_EQ(item->type(), fes::Wave::kShortPeriod);
         break;
       case fes::kChi1:
@@ -222,11 +232,6 @@ inline auto check_wave_table_constructor(const fes::wave::Table& table)
       case fes::kMNS2:
         EXPECT_EQ(item->ident(), fes::kMNS2);
         EXPECT_NEAR(item->freq(), detail::math::radians(27.4238337), 1e-8);
-        EXPECT_EQ(item->type(), fes::Wave::kShortPeriod);
-        break;
-      case fes::kM13:
-        EXPECT_EQ(item->ident(), fes::kM13);
-        EXPECT_NEAR(item->freq(), detail::math::radians(14.49669394), 1e-8);
         EXPECT_EQ(item->type(), fes::Wave::kShortPeriod);
         break;
       case fes::kMK4:
@@ -425,8 +430,8 @@ TEST(WaveTable, Admittance) {
   admittance(0.2378, fes::k2Q1, table);
   admittance(0.2706, fes::kSigma1, table);
   admittance(0.1688, fes::kRho1, table);
-  admittance(0.0671, fes::kM11, table);
-  admittance(0.0241, fes::kM12, table);
+  admittance(0.0241, fes::kM11, table);
+  admittance(0.0671, fes::kM12, table);
   admittance(0.0124, fes::kChi1, table);
   admittance(0.0201, fes::kPi1, table);
   admittance(0.0137, fes::kPhi1, table);

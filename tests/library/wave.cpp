@@ -132,11 +132,17 @@ inline auto check_nodal_g(const fes::wave::Table& table,
       case fes::kRho1:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 91.0, 1e-8);
         break;
+      case fes::kM1:
+        EXPECT_NEAR(detail::math::degrees(item->vu()), -89.51674239, 1e-8);
+        break;
       case fes::kM11:
         EXPECT_NEAR(detail::math::degrees(item->vu()), -89.0, 1e-8);
         break;
       case fes::kM12:
         EXPECT_NEAR(detail::math::degrees(item->vu()), -89.0, 1e-8);
+        break;
+      case fes::kM13:
+        // EXPECT_NEAR(detail::math::degrees(item->vu()), -89.0, 1e-8);
         break;
       case fes::kChi1:
         EXPECT_NEAR(detail::math::degrees(item->vu()), -89.0, 1e-8);
@@ -182,9 +188,6 @@ inline auto check_nodal_g(const fes::wave::Table& table,
         break;
       case fes::kMNS2:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 2.0, 1e-8);
-        break;
-      case fes::kM13:
-        EXPECT_NEAR(detail::math::degrees(item->vu()), -89.51674239, 1e-8);
         break;
       case fes::kMK4:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 4.0, 1e-8);
@@ -298,7 +301,7 @@ inline auto check_nodal_a(const fes::wave::Table& table,
       case fes::k2Q1:
       case fes::kSigma1:
       case fes::kRho1:
-      case fes::kM12:
+      case fes::kM11:
         EXPECT_NEAR(item->f(), 1.705420655553602, 1e-8);
         break;
       case fes::kP1:
@@ -345,7 +348,7 @@ inline auto check_nodal_a(const fes::wave::Table& table,
       case fes::kEta2:
         EXPECT_NEAR(item->f(), 4.5244307876905507, 1e-8);
         break;
-      case fes::kM11:
+      case fes::kM12:
       case fes::kChi1:
       case fes::kTheta1:
       case fes::kJ1:
@@ -385,7 +388,7 @@ inline auto check_nodal_a(const fes::wave::Table& table,
       case fes::k2MN2:
         EXPECT_NEAR(item->f(), 0.2720339421821998, 1e-8);
         break;
-      case fes::kM13:
+      case fes::kM1:
         EXPECT_NEAR(item->f(), 3.300330475634, 1e-8);
         break;
       case fes::kMK4:
@@ -411,6 +414,8 @@ inline auto check_nodal_a(const fes::wave::Table& table,
       case fes::kMm2:
       case fes::kMf2:
         EXPECT_NEAR(item->f(), 0.302919608612788327, 1e-8);
+        break;
+      case fes::kM13:
         break;
       default:
         throw std::runtime_error(std::to_string(item->ident()));

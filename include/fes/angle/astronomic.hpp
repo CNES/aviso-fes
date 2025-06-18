@@ -336,6 +336,20 @@ class Astronomic {
     return (sin_i - (5.0 / 4.0) * detail::math::pow<3>(sin_i)) * factor;
   }
 
+  /// @brief Gets the node factor for formula 144.
+  ///
+  /// @return @f$(1-10 \sin^2
+  /// \frac{1}{2}I+15\sin^4\frac{1}{2}I)\cos^2\frac{1}{2}I/0.5873@f$
+  FES_MATH_CONSTEXPR auto f_144() const noexcept -> double {
+    // SCHUREMAN P.36 (144)
+    auto sin_i_2 = std::sin(0.5 * i_);
+    auto cos_i_2 = std::cos(0.5 * i_);
+    constexpr auto factor = 1 / 0.5873;
+    return (1 - 10 * detail::math::pow<2>(sin_i_2) +
+            15 * detail::math::pow<4>(sin_i_2)) *
+           detail::math::pow<2>(cos_i_2) * factor;
+  }
+
   /// @brief Gets the node factor for formula 146.
   ///
   /// @return @f$\sin I \cos^4\frac{1}{2}I/0.3658@f$

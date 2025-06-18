@@ -236,9 +236,7 @@ namespace wave {
 /// @note Schureman: %Table 2, Page 164, Ref. A2
 class Mm : public Wave {
  public:
-  constexpr Mm()
-      : Wave(kMm, kLongPeriod, false, Darwin::Builder().s(1).p(-1).build(),
-             &angle::Astronomic::f_mm) {}
+  Mm();
 };
 
 /// @brief @f$Mf@f$
@@ -252,9 +250,7 @@ class Mm : public Wave {
 /// @note Schureman: %Table 2, Page 164, Ref. A6
 class Mf : public Wave {
  public:
-  constexpr Mf()
-      : Wave(kMf, kLongPeriod, false, Darwin::Builder().s(2).xi(-2).build(),
-             &angle::Astronomic::f_mf) {}
+  Mf();
 };
 
 /// @brief @f$Mtm@f$
@@ -268,10 +264,7 @@ class Mf : public Wave {
 /// @note Schureman: %Table 2, Page 164, Ref. A7
 class Mtm : public Wave {
  public:
-  constexpr Mtm()
-      : Wave(kMtm, kLongPeriod, false,
-             Darwin::Builder().s(3).p(-1).xi(-2).build(),
-             &angle::Astronomic::f_mf) {}
+  Mtm();
 };
 
 /// @brief @f$Msqm@f$
@@ -285,10 +278,7 @@ class Mtm : public Wave {
 /// @note Schureman: %Table 2, Page 164, Ref. A12
 class Msqm : public Wave {
  public:
-  constexpr Msqm()
-      : Wave(kMsqm, kLongPeriod, false,
-             Darwin::Builder().s(4).h(-2).xi(-2).build(),
-             &angle::Astronomic::f_mf) {}
+  Msqm();
 };
 
 /// @brief @f$Ssa@f$
@@ -302,9 +292,7 @@ class Msqm : public Wave {
 /// @note Schureman: %Table 2, Page 164, Ref. B6
 class Ssa : public Wave {
  public:
-  constexpr Ssa()
-      : Wave(kSsa, kLongPeriod, false, Darwin::Builder().h(2).build(),
-             &angle::Astronomic::f_1) {}
+  Ssa();
 };
 
 /// @brief @f$Sa@f$
@@ -318,9 +306,7 @@ class Ssa : public Wave {
 /// @note Schureman: %Table 2, Page 164, Ref. B64
 class Sa : public Wave {
  public:
-  constexpr Sa()
-      : Wave(kSa, kLongPeriod, false, Darwin::Builder().h(1).build(),
-             &angle::Astronomic::f_1) {}
+  Sa();
 };
 
 /// @brief @f$2Q_1@f$
@@ -334,18 +320,7 @@ class Sa : public Wave {
 /// @note Schureman: %Table 2, Page 164, Ref. A17
 class _2Q1 : public Wave {
  public:
-  constexpr _2Q1()
-      : Wave(k2Q1, kShortPeriod, true,
-             Darwin::Builder()
-                 .T(1)
-                 .s(-4)
-                 .h(1)
-                 .p(2)
-                 .shift(1)
-                 .xi(2)
-                 .nu(-1)
-                 .build(),
-             &angle::Astronomic::f_o1) {}
+  _2Q1();
 };
 
 /// @brief @f$\sigma_1@f$
@@ -359,10 +334,7 @@ class _2Q1 : public Wave {
 /// @note Schureman: %Table 2, Page 164, Ref. A20
 class Sigma1 : public Wave {
  public:
-  constexpr Sigma1()
-      : Wave(kSigma1, kShortPeriod, true,
-             Darwin::Builder().T(1).s(-4).h(3).shift(1).xi(2).nu(-1).build(),
-             &angle::Astronomic::f_o1) {}
+  Sigma1();
 };
 
 /// @brief @f$Q_1@f$
@@ -376,18 +348,7 @@ class Sigma1 : public Wave {
 /// @note Schureman: %Table 2, Page 164, Ref. A15
 class Q1 : public Wave {
  public:
-  constexpr Q1()
-      : Wave(kQ1, kShortPeriod, false,
-             Darwin::Builder()
-                 .T(1)
-                 .s(-3)
-                 .h(1)
-                 .p(1)
-                 .shift(1)
-                 .xi(2)
-                 .nu(-1)
-                 .build(),
-             &angle::Astronomic::f_o1) {}
+  Q1();
 };
 
 /// @brief @f$\rho_1@f$
@@ -401,18 +362,7 @@ class Q1 : public Wave {
 /// @note Schureman: %Table 2, Page 164, Ref. A18
 class Rho1 : public Wave {
  public:
-  constexpr Rho1()
-      : Wave(kRho1, kShortPeriod, true,
-             Darwin::Builder()
-                 .T(1)
-                 .s(-3)
-                 .h(3)
-                 .p(-1)
-                 .shift(1)
-                 .xi(2)
-                 .nu(-1)
-                 .build(),
-             &angle::Astronomic::f_o1) {}
+  Rho1();
 };
 
 /// @brief @f$O_1@f$
@@ -426,18 +376,7 @@ class Rho1 : public Wave {
 /// @note Schureman: %Table 2, Page 164, Ref. A14
 class O1 : public Wave {
  public:
-  constexpr O1()
-      : Wave(kO1, kShortPeriod, false,
-             Darwin::Builder()
-                 .T(1)
-                 .s(-2)
-                 .h(1)
-                 .p(0)
-                 .shift(1)
-                 .xi(2)
-                 .nu(-1)
-                 .build(),
-             &angle::Astronomic::f_o1) {}
+  O1();
 };
 
 /// @brief @f$MP_1@f$
@@ -451,38 +390,10 @@ class O1 : public Wave {
 /// @note Schureman: %Table 2, Page 164, Ref. A29
 class MP1 : public Wave {
  public:
-  constexpr MP1()
-      : Wave(kMP1, kShortPeriod, false,
-             Darwin::Builder().T(1).s(-2).h(3).shift(-1).nu(-1).build(),
-             &angle::Astronomic::f_j1) {}
+  MP1();
 };
 
-/// @brief @f$M_{12}@f$
-///
-/// <table>
-/// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
-/// <tr><td>@f$T - s + h - p - 90^{\circ}@f$</td>
-/// <td>@f$+2\xi - \nu@f$</td>
-/// <td>@f$f(O_1)@f$</td></tr>
-/// </table>
-/// @note Schureman: %Table 2, Page 164, Ref. A16
-class M12 : public Wave {
- public:
-  constexpr M12()
-      : Wave(kM12, kShortPeriod, true,
-             Darwin::Builder()
-                 .T(1)
-                 .s(-1)
-                 .h(1)
-                 .p(-1)
-                 .shift(-1)
-                 .xi(2)
-                 .nu(-1)
-                 .build(),
-             &angle::Astronomic::f_o1) {}
-};
-
-/// @brief @f$M_{13}@f$ (= @f$M_{11} + M_{12}@f$)
+/// @brief @f$M1@f$ (= @f$M_{11} + M_{12}@f$)
 ///
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
@@ -490,12 +401,9 @@ class M12 : public Wave {
 /// <td>@f$-\nu@f$</td>
 /// <td>@f$f(M_1)@f$</td></tr>
 /// </table>
-class M13 : public Wave {
+class M1 : public Wave {
  public:
-  constexpr M13()
-      : Wave(kM13, kShortPeriod, false,
-             Darwin::Builder().T(1).s(-1).h(1).p(1).shift(-1).nu(-1).build(),
-             &angle::Astronomic::f_m1) {}
+  M1();
 
   /// Compute nodal corrections from SCHUREMAN (1958).
   ///
@@ -507,7 +415,21 @@ class M13 : public Wave {
   }
 };
 
-/// @brief @f$M_{11}@f$
+/// @brief @f$M1_{1}@f$
+///
+/// <table>
+/// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
+/// <tr><td>@f$T - s + h - p - 90^{\circ}@f$</td>
+/// <td>@f$+2\xi - \nu@f$</td>
+/// <td>@f$f(O_1)@f$</td></tr>
+/// </table>
+/// @note Schureman: %Table 2, Page 164, Ref. A16
+class M11 : public Wave {
+ public:
+  M11();
+};
+
+/// @brief @f$M1_{2}@f$
 ///
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
@@ -516,12 +438,23 @@ class M13 : public Wave {
 /// <td>@f$f(J_1)@f$</td></tr>
 /// </table>
 /// @note Schureman: %Table 2, Page 164, Ref. A23
-class M11 : public Wave {
+class M12 : public Wave {
  public:
-  constexpr M11()
-      : Wave(kM11, kShortPeriod, true,
-             Darwin::Builder().T(1).s(-1).h(1).p(1).shift(-1).nu(-1).build(),
-             &angle::Astronomic::f_j1) {}
+  M12();
+};
+
+/// @brief @f$M1_{3}@f$
+///
+/// <table>
+/// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
+/// <tr><td>@f$T - s + h@f$</td>
+/// <td>@f$\xi -\nu@f$</td>
+/// <td>@f$f(144)@f$</td></tr>
+/// </table>
+/// @note Schureman: %Table 2, Page 165, Ref. A71
+class M13 : public Wave {
+ public:
+  M13();
 };
 
 /// @brief @f$\chi_1@f$
@@ -535,10 +468,7 @@ class M11 : public Wave {
 /// @note Schureman: %Table 2, Page 164, Ref. A27
 class Chi1 : public Wave {
  public:
-  constexpr Chi1()
-      : Wave(kChi1, kShortPeriod, true,
-             Darwin::Builder().T(1).s(-1).h(3).p(-1).shift(-1).nu(-1).build(),
-             &angle::Astronomic::f_j1) {}
+  Chi1();
 };
 
 /// @brief @f$\pi_1@f$
@@ -552,10 +482,7 @@ class Chi1 : public Wave {
 /// @note Schureman: %Table 2, Page 165, Ref. B15
 class Pi1 : public Wave {
  public:
-  constexpr Pi1()
-      : Wave(kPi1, kShortPeriod, true,
-             Darwin::Builder().T(1).h(-2).p1(1).shift(1).build(),
-             &angle::Astronomic::f_1) {}
+  Pi1();
 };
 
 /// @brief @f$P_1@f$
@@ -569,10 +496,7 @@ class Pi1 : public Wave {
 /// @note Schureman: %Table 2, Page 165, Ref. B14
 class P1 : public Wave {
  public:
-  constexpr P1()
-      : Wave(kP1, kShortPeriod, false,
-             Darwin::Builder().T(1).h(-1).shift(1).build(),
-             &angle::Astronomic::f_1) {}
+  P1();
 };
 
 /// @brief @f$S_1@f$
@@ -586,9 +510,7 @@ class P1 : public Wave {
 /// @note Schureman: %Table 2, Page 165, Ref. B71
 class S1 : public Wave {
  public:
-  constexpr S1()
-      : Wave(kS1, kShortPeriod, false, Darwin::Builder().T(1).build(),
-             &angle::Astronomic::f_1) {}
+  S1();
 };
 
 /// @brief @f$K_1@f$
@@ -602,10 +524,7 @@ class S1 : public Wave {
 /// @note Schureman: %Table 2, Page 165, Ref. Note 2
 class K1 : public Wave {
  public:
-  constexpr K1()
-      : Wave(kK1, kShortPeriod, false,
-             Darwin::Builder().T(1).h(1).shift(-1).nuprim(-1).build(),
-             &angle::Astronomic::f_k1) {}
+  K1();
 };
 
 /// @brief @f$\psi_1@f$
@@ -619,10 +538,7 @@ class K1 : public Wave {
 /// @note Schureman: %Table 2, Page 165, Ref. B24
 class Psi1 : public Wave {
  public:
-  constexpr Psi1()
-      : Wave(kPsi1, kShortPeriod, false,
-             Darwin::Builder().T(1).h(2).p1(-1).shift(-1).build(),
-             &angle::Astronomic::f_1) {}
+  Psi1();
 };
 
 /// @brief @f$\phi_1@f$
@@ -636,10 +552,7 @@ class Psi1 : public Wave {
 /// @note Schureman: %Table 2, Page 165, Ref. B31
 class Phi1 : public Wave {
  public:
-  constexpr Phi1()
-      : Wave(kPhi1, kShortPeriod, true,
-             Darwin::Builder().T(1).h(3).shift(-1).build(),
-             &angle::Astronomic::f_1) {}
+  Phi1();
 };
 
 /// @brief @f$\theta_1@f$
@@ -653,10 +566,7 @@ class Phi1 : public Wave {
 /// @note Schureman: %Table 2, Page 164, Ref. A28
 class Theta1 : public Wave {
  public:
-  constexpr Theta1()
-      : Wave(kTheta1, kShortPeriod, true,
-             Darwin::Builder().T(1).s(1).h(-1).p(1).shift(-1).nu(-1).build(),
-             &angle::Astronomic::f_j1) {}
+  Theta1();
 };
 
 /// @brief @f$J_1@f$
@@ -670,10 +580,7 @@ class Theta1 : public Wave {
 /// @note Schureman: %Table 2, Page 164, Ref. A24
 class J1 : public Wave {
  public:
-  constexpr J1()
-      : Wave(kJ1, kShortPeriod, true,
-             Darwin::Builder().T(1).s(1).h(1).p(-1).shift(-1).nu(-1).build(),
-             &angle::Astronomic::f_j1) {}
+  J1();
 };
 
 /// @brief @f$OO_1@f$
@@ -687,10 +594,7 @@ class J1 : public Wave {
 /// @note Schureman: %Table 2, Page 164, Ref. A31
 class OO1 : public Wave {
  public:
-  constexpr OO1()
-      : Wave(kOO1, kShortPeriod, true,
-             Darwin::Builder().T(1).s(2).h(1).shift(-1).xi(-2).nu(-1).build(),
-             &angle::Astronomic::f_oo1) {}
+  OO1();
 };
 
 /// @brief @f$2MNS_2 = M_2 + N_2 + S_2@f$
@@ -704,10 +608,7 @@ class OO1 : public Wave {
 /// @note Schureman: %Table 2, Page 167, Ref. MNS2
 class MNS2 : public Wave {
  public:
-  constexpr MNS2()
-      : Wave(kMNS2, kShortPeriod, false,
-             Darwin::Builder().T(2).s(-5).h(4).p(1).xi(4).nu(-4).build(),
-             &angle::Astronomic::f_m22) {}
+  MNS2();
 };
 
 /// @brief @f$\varepsilon_2@f$
@@ -720,10 +621,7 @@ class MNS2 : public Wave {
 /// </table>
 class Eps2 : public Wave {
  public:
-  constexpr Eps2()
-      : Wave(kEps2, kShortPeriod, true,
-             Darwin::Builder().T(2).s(-5).h(4).p(1).xi(2).nu(-2).build(),
-             &angle::Astronomic::f_m2) {}
+  Eps2();
 };
 
 /// @brief @f$2N_2@f$
@@ -737,10 +635,7 @@ class Eps2 : public Wave {
 /// @note Schureman: %Table 2, Page 165, Ref. A42
 class _2N2 : public Wave {
  public:
-  constexpr _2N2()
-      : Wave(k2N2, kShortPeriod, true,
-             Darwin::Builder().T(2).s(-4).h(2).p(2).xi(2).nu(-2).build(),
-             &angle::Astronomic::f_m2) {}
+  _2N2();
 };
 
 /// @brief @f$\mu_2@f$
@@ -754,10 +649,7 @@ class _2N2 : public Wave {
 /// @note Schureman: %Table 2, Page 165, Ref. A45
 class Mu2 : public Wave {
  public:
-  constexpr Mu2()
-      : Wave(kMu2, kShortPeriod, true,
-             Darwin::Builder().T(2).s(-4).h(4).xi(2).nu(-2).build(),
-             &angle::Astronomic::f_m2) {}
+  Mu2();
 };
 
 /// @brief @f$2MS_2 = 2M_2 - S_2@f$
@@ -770,10 +662,7 @@ class Mu2 : public Wave {
 /// </table>
 class _2MS2 : public Wave {
  public:
-  constexpr _2MS2()
-      : Wave(k2MS2, kShortPeriod, false,
-             Darwin::Builder().T(2).s(-4).h(4).xi(4).nu(-4).build(),
-             &angle::Astronomic::f_m22) {}
+  _2MS2();
 };
 
 /// @brief @f$N_2@f$
@@ -787,10 +676,7 @@ class _2MS2 : public Wave {
 /// @note Schureman: %Table 2, Page 165, Ref. A40
 class N2 : public Wave {
  public:
-  constexpr N2()
-      : Wave(kN2, kShortPeriod, false,
-             Darwin::Builder().T(2).s(-3).h(2).p(1).xi(2).nu(-2).build(),
-             &angle::Astronomic::f_m2) {}
+  N2();
 };
 
 /// @brief @f$\nu_2@f$
@@ -804,10 +690,7 @@ class N2 : public Wave {
 /// @note Schureman: %Table 2, Page 165, Ref. A43
 class Nu2 : public Wave {
  public:
-  constexpr Nu2()
-      : Wave(kNu2, kShortPeriod, true,
-             Darwin::Builder().T(2).s(-3).h(4).p(-1).xi(2).nu(-2).build(),
-             &angle::Astronomic::f_m2) {}
+  Nu2();
 };
 
 /// @brief @f$M_2@f$
@@ -821,10 +704,7 @@ class Nu2 : public Wave {
 /// @note Schureman: %Table 2, Page 165, Ref. A39
 class M2 : public Wave {
  public:
-  constexpr M2()
-      : Wave(kM2, kShortPeriod, false,
-             Darwin::Builder().T(2).s(-2).h(2).xi(2).nu(-2).build(),
-             &angle::Astronomic::f_m2) {}
+  M2();
 };
 
 /// @brief @f$MKS_2 = M_2 + K_2 - S_2@f$
@@ -837,10 +717,7 @@ class M2 : public Wave {
 /// </table>
 class MKS2 : public Wave {
  public:
-  constexpr MKS2()
-      : Wave(kMKS2, kShortPeriod, false,
-             Darwin::Builder().T(2).s(-2).h(4).xi(2).nu(-2).nusec(-2).build(),
-             &angle::Astronomic::f_m2_k2) {}
+  MKS2();
 };
 
 /// @brief @f$\lambda_2@f$
@@ -854,10 +731,7 @@ class MKS2 : public Wave {
 /// @note Schureman: %Table 2, Page 165, Ref. A44
 class Lambda2 : public Wave {
  public:
-  constexpr Lambda2()
-      : Wave(kLambda2, kShortPeriod, true,
-             Darwin::Builder().T(2).s(-1).p(1).shift(2).xi(2).nu(-2).build(),
-             &angle::Astronomic::f_m2) {}
+  Lambda2();
 };
 
 /// @brief @f$L_2@f$
@@ -871,18 +745,7 @@ class Lambda2 : public Wave {
 /// @note Schureman: %Table 2, Page 166, Ref. Note 3
 class L2 : public Wave {
  public:
-  constexpr L2()
-      : Wave(kL2, kShortPeriod, true,
-             Darwin::Builder()
-                 .T(2)
-                 .s(-1)
-                 .h(2)
-                 .p(-1)
-                 .shift(2)
-                 .xi(2)
-                 .nu(-2)
-                 .build(),
-             &angle::Astronomic::f_l2) {}
+  L2();
 
   /// Compute nodal corrections from SCHUREMAN (1958).
   ///
@@ -903,18 +766,7 @@ class L2 : public Wave {
 /// </table>
 class _2MN2 : public Wave {
  public:
-  constexpr _2MN2()
-      : Wave(k2MN2, kShortPeriod, false,
-             Darwin::Builder()
-                 .T(2)
-                 .s(-1)
-                 .h(2)
-                 .p(-1)
-                 .shift(2)
-                 .xi(2)
-                 .nu(-2)
-                 .build(),
-             &angle::Astronomic::f_m23) {}
+  _2MN2();
 };
 
 /// @brief @f$T_2@f$
@@ -928,10 +780,7 @@ class _2MN2 : public Wave {
 /// @note Schureman: %Table 2, Page 166, Ref. B40
 class T2 : public Wave {
  public:
-  constexpr T2()
-      : Wave(kT2, kShortPeriod, true,
-             Darwin::Builder().T(2).h(-1).p1(1).build(),
-             &angle::Astronomic::f_1) {}
+  T2();
 };
 
 /// @brief @f$S_2@f$
@@ -945,9 +794,7 @@ class T2 : public Wave {
 /// @note Schureman: %Table 2, Page 166, Ref. B39
 class S2 : public Wave {
  public:
-  constexpr S2()
-      : Wave(kS2, kShortPeriod, false, Darwin::Builder().T(2).build(),
-             &angle::Astronomic::f_1) {}
+  S2();
 };
 
 /// @brief @f$R_2@f$
@@ -961,10 +808,7 @@ class S2 : public Wave {
 /// @note Schureman: %Table 2, Page 166, Ref. B41
 class R2 : public Wave {
  public:
-  constexpr R2()
-      : Wave(kR2, kShortPeriod, false,
-             Darwin::Builder().T(2).h(1).p1(-1).shift(2).build(),
-             &angle::Astronomic::f_1) {}
+  R2();
 };
 
 /// @brief @f$K_2@f$
@@ -978,10 +822,7 @@ class R2 : public Wave {
 /// @note Schureman: %Table 2, Page 166, Ref. Note 4
 class K2 : public Wave {
  public:
-  constexpr K2()
-      : Wave(kK2, kShortPeriod, false,
-             Darwin::Builder().T(2).h(2).nusec(-2).build(),
-             &angle::Astronomic::f_k2) {}
+  K2();
 };
 
 /// @brief @f$MSN_2 = M_2 + S_2 - N_2@f$
@@ -994,10 +835,7 @@ class K2 : public Wave {
 /// </table>
 class MSN2 : public Wave {
  public:
-  constexpr MSN2()
-      : Wave(kMSN2, kShortPeriod, false,
-             Darwin::Builder().T(2).s(1).p(-1).build(),
-             &angle::Astronomic::f_m22) {}
+  MSN2();
 };
 
 /// @brief @f$\eta_2 = KJ_2@f$
@@ -1011,10 +849,7 @@ class MSN2 : public Wave {
 /// @note Schureman: %Table 2, Page 165, Ref. A49
 class Eta2 : public Wave {
  public:
-  constexpr Eta2()
-      : Wave(kEta2, kShortPeriod, true,
-             Darwin::Builder().T(2).s(1).h(2).p(-1).nu(-2).build(),
-             &angle::Astronomic::f_79) {}
+  Eta2();
 };
 
 /// @brief @f$2SM_2 = 2S_2 - M_2@f$
@@ -1027,10 +862,7 @@ class Eta2 : public Wave {
 /// </table>
 class _2SM2 : public Wave {
  public:
-  constexpr _2SM2()
-      : Wave(k2SM2, kShortPeriod, false,
-             Darwin::Builder().T(2).s(2).h(-2).xi(-2).nu(2).build(),
-             &angle::Astronomic::f_m2) {}
+  _2SM2();
 };
 
 /// @brief @f$MO_3 = M_2 + O_1@f$
@@ -1043,10 +875,7 @@ class _2SM2 : public Wave {
 /// </table>
 class MO3 : public Wave {
  public:
-  constexpr MO3()
-      : Wave(kMO3, kShortPeriod, false,
-             Darwin::Builder().T(3).s(-4).h(3).shift(1).xi(4).nu(-3).build(),
-             &angle::Astronomic::f_m2_o1) {}
+  MO3();
 };
 
 /// @brief @f$2MK_3 = 2M_2 - K_1@f$
@@ -1059,18 +888,7 @@ class MO3 : public Wave {
 /// </table>
 class _2MK3 : public Wave {
  public:
-  constexpr _2MK3()
-      : Wave(k2MK3, kShortPeriod, false,
-             Darwin::Builder()
-                 .T(3)
-                 .s(-4)
-                 .h(3)
-                 .shift(1)
-                 .xi(4)
-                 .nu(-4)
-                 .nuprim(1)
-                 .build(),
-             &angle::Astronomic::f_m22_k1) {}
+  _2MK3();
 };
 
 /// @brief @f$M_3@f$
@@ -1084,10 +902,7 @@ class _2MK3 : public Wave {
 /// @note Schureman: %Table 2, Page 166, Ref. A82
 class M3 : public Wave {
  public:
-  constexpr M3()
-      : Wave(kM3, kShortPeriod, false,
-             Darwin::Builder().T(3).s(-3).h(3).xi(3).nu(-3).build(),
-             &angle::Astronomic::f_m3) {}
+  M3();
 };
 
 /// @brief @f$MK_3 = M_2 + K_1@f$
@@ -1100,18 +915,7 @@ class M3 : public Wave {
 /// </table>
 class MK3 : public Wave {
  public:
-  constexpr MK3()
-      : Wave(kMK3, kShortPeriod, false,
-             Darwin::Builder()
-                 .T(3)
-                 .s(-2)
-                 .h(3)
-                 .shift(-1)
-                 .xi(2)
-                 .nu(-2)
-                 .nuprim(-1)
-                 .build(),
-             &angle::Astronomic::f_m2_k1) {}
+  MK3();
 };
 
 /// @brief @f$N_4 = N_2 + N_2@f$
@@ -1124,10 +928,7 @@ class MK3 : public Wave {
 /// </table>
 class N4 : public Wave {
  public:
-  constexpr N4()
-      : Wave(kN4, kShortPeriod, false,
-             Darwin::Builder().T(4).s(-6).h(4).p(2).xi(4).nu(-4).build(),
-             &angle::Astronomic::f_m22) {}
+  N4();
 };
 
 /// @brief @f$MN_4 = M_2 + N_2@f$
@@ -1140,10 +941,7 @@ class N4 : public Wave {
 /// </table>
 class MN4 : public Wave {
  public:
-  constexpr MN4()
-      : Wave(kMN4, kShortPeriod, false,
-             Darwin::Builder().T(4).s(-5).h(4).p(1).xi(4).nu(-4).build(),
-             &angle::Astronomic::f_m22) {}
+  MN4();
 };
 
 /// @brief @f$M_4 = 2M_2@f$
@@ -1157,10 +955,7 @@ class MN4 : public Wave {
 /// @note Schureman: %Table 2a, Page 167
 class M4 : public Wave {
  public:
-  constexpr M4()
-      : Wave(kM4, kShortPeriod, false,
-             Darwin::Builder().T(4).s(-4).h(4).xi(4).nu(-4).build(),
-             &angle::Astronomic::f_m22) {}
+  M4();
 };
 
 /// @brief @f$SN_4 = S_2 + N_2@f$
@@ -1173,10 +968,7 @@ class M4 : public Wave {
 /// </table>
 class SN4 : public Wave {
  public:
-  constexpr SN4()
-      : Wave(kSN4, kShortPeriod, false,
-             Darwin::Builder().T(4).s(-3).h(2).p(1).xi(2).nu(-2).build(),
-             &angle::Astronomic::f_m2) {}
+  SN4();
 };
 
 /// @brief @f$MS_4 = M_2 + S_2@f$
@@ -1192,10 +984,7 @@ class SN4 : public Wave {
 /// @note Tides, surges and mean sea-level (Page 111, Table 4.4)
 class MS4 : public Wave {
  public:
-  constexpr MS4()
-      : Wave(kMS4, kShortPeriod, false,
-             Darwin::Builder().T(4).s(-2).h(2).xi(2).nu(-2).build(),
-             &angle::Astronomic::f_m2) {}
+  MS4();
 };
 
 /// @brief @f$MK_4 = M_2 + K_2@f$
@@ -1209,10 +998,7 @@ class MS4 : public Wave {
 /// @note Schureman: %Table 2a, Page 167
 class MK4 : public Wave {
  public:
-  constexpr MK4()
-      : Wave(kMK4, kShortPeriod, false,
-             Darwin::Builder().T(4).s(-2).h(4).xi(2).nu(-2).nusec(-2).build(),
-             &angle::Astronomic::f_m2_k2) {}
+  MK4();
 };
 
 /// @brief @f$S_4 = S_2 + S_2@f$
@@ -1225,9 +1011,7 @@ class MK4 : public Wave {
 /// </table>
 class S4 : public Wave {
  public:
-  constexpr S4()
-      : Wave(kS4, kShortPeriod, false, Darwin::Builder().T(4).build(),
-             &angle::Astronomic::f_1) {}
+  S4();
 };
 
 /// @brief @f$SK_4 = S_2 + K_2@f$
@@ -1240,10 +1024,7 @@ class S4 : public Wave {
 /// </table>
 class SK4 : public Wave {
  public:
-  constexpr SK4()
-      : Wave(kSK4, kShortPeriod, false,
-             Darwin::Builder().T(4).h(2).nusec(-2).build(),
-             &angle::Astronomic::f_k2) {}
+  SK4();
 };
 
 /// @brief @f$R_4 = R_2 + R_2@f$
@@ -1256,10 +1037,7 @@ class SK4 : public Wave {
 /// </table>
 class R4 : public Wave {
  public:
-  constexpr R4()
-      : Wave(kR4, kShortPeriod, false,
-             Darwin::Builder().T(4).h(2).p1(-2).build(),
-             &angle::Astronomic::f_1) {}
+  R4();
 };
 
 /// @brief @f$2MN_6 = 2M_2 + N_2@f$
@@ -1272,10 +1050,7 @@ class R4 : public Wave {
 /// </table>
 class _2MN6 : public Wave {
  public:
-  constexpr _2MN6()
-      : Wave(k2MN6, kShortPeriod, false,
-             Darwin::Builder().T(6).s(-7).h(6).p(1).xi(6).nu(-6).build(),
-             &angle::Astronomic::f_m23) {}
+  _2MN6();
 };
 
 /// @brief @f$M_6 = 3M_2@f$
@@ -1288,10 +1063,7 @@ class _2MN6 : public Wave {
 /// </table>
 class M6 : public Wave {
  public:
-  constexpr M6()
-      : Wave(kM6, kShortPeriod, false,
-             Darwin::Builder().T(6).s(-6).h(6).xi(6).nu(-6).build(),
-             &angle::Astronomic::f_m23) {}
+  M6();
 };
 
 /// @brief @f$MSN_6 = M_2 + S_2 + N_2@f$
@@ -1304,10 +1076,7 @@ class M6 : public Wave {
 /// </table>
 class MSN6 : public Wave {
  public:
-  constexpr MSN6()
-      : Wave(kMSN6, kShortPeriod, false,
-             Darwin::Builder().T(6).s(-5).h(4).p(1).xi(4).nu(-4).build(),
-             &angle::Astronomic::f_m22) {}
+  MSN6();
 };
 
 /// @brief @f$2MS_6 = 2M_2 + S_2@f$
@@ -1320,10 +1089,7 @@ class MSN6 : public Wave {
 /// </table>
 class _2MS6 : public Wave {
  public:
-  constexpr _2MS6()
-      : Wave(k2MS6, kShortPeriod, false,
-             Darwin::Builder().T(6).s(-4).h(4).xi(4).nu(-4).build(),
-             &angle::Astronomic::f_m22) {}
+  _2MS6();
 };
 
 /// @brief @f$2MK_6 = 2M_2 + K_2@f$
@@ -1336,10 +1102,7 @@ class _2MS6 : public Wave {
 /// </table>
 class _2MK6 : public Wave {
  public:
-  constexpr _2MK6()
-      : Wave(k2MK6, kShortPeriod, false,
-             Darwin::Builder().T(6).s(-4).h(6).xi(4).nu(-4).nusec(-2).build(),
-             &angle::Astronomic::f_m23_k2) {}
+  _2MK6();
 };
 
 /// @brief @f$2SM_6 = 2S_2 + M_2@f$
@@ -1352,10 +1115,7 @@ class _2MK6 : public Wave {
 /// </table>
 class _2SM6 : public Wave {
  public:
-  constexpr _2SM6()
-      : Wave(k2SM6, kShortPeriod, false,
-             Darwin::Builder().T(6).s(-2).h(2).xi(2).nu(-2).build(),
-             &angle::Astronomic::f_m2) {}
+  _2SM6();
 };
 
 /// @brief @f$MSK_6 = M_2 + K_2 + S_2@f$
@@ -1368,10 +1128,7 @@ class _2SM6 : public Wave {
 /// </table>
 class MSK6 : public Wave {
  public:
-  constexpr MSK6()
-      : Wave(kMSK6, kShortPeriod, false,
-             Darwin::Builder().T(6).s(-2).h(4).xi(2).nu(-2).nuprim(-2).build(),
-             &angle::Astronomic::f_m2_k2) {}
+  MSK6();
 };
 
 /// @brief @f$S_6 = 3S_2@f$
@@ -1384,9 +1141,7 @@ class MSK6 : public Wave {
 /// </table>
 class S6 : public Wave {
  public:
-  constexpr S6()
-      : Wave(kS6, kShortPeriod, false, Darwin::Builder().T(6).build(),
-             &angle::Astronomic::f_1) {}
+  S6();
 };
 
 /// @brief @f$M_8 = 4M_2@f$
@@ -1399,10 +1154,7 @@ class S6 : public Wave {
 /// </table>
 class M8 : public Wave {
  public:
-  constexpr M8()
-      : Wave(kM8, kShortPeriod, false,
-             Darwin::Builder().T(8).s(-8).h(8).xi(8).nu(-8).build(),
-             &angle::Astronomic::f_m24) {}
+  M8();
 };
 
 /// @brief @f$MSf = M_2 - S_2@f$
@@ -1416,10 +1168,7 @@ class M8 : public Wave {
 /// @warning Same frequency as MSf LP : 2s -2h
 class MSf : public Wave {
  public:
-  constexpr MSf()
-      : Wave(kMSf, kLongPeriod, false,
-             Darwin::Builder().s(2).h(-2).xi(2).nu(-2).build(),
-             &angle::Astronomic::f_m2) {}
+  MSf();
 };
 
 /// @brief @f$A5@f$
@@ -1435,9 +1184,7 @@ class MSf : public Wave {
 /// @note Second order long period equilibrium in atlas of FES2014c as MSf_LP
 class A5 : public Wave {
  public:
-  constexpr A5()
-      : Wave(kA5, kLongPeriod, false, Darwin::Builder().s(2).h(-2).build(),
-             &angle::Astronomic::f_mm) {}
+  A5();
 };
 
 /// @brief @f$Sa_1@f$
@@ -1451,9 +1198,7 @@ class A5 : public Wave {
 /// @note Schureman: %Table 2, Page 164, Ref. B2
 class Sa1 : public Wave {
  public:
-  constexpr Sa1()
-      : Wave(kSa1, kLongPeriod, false, Darwin::Builder().h(1).p1(-1).build(),
-             &angle::Astronomic::f_1) {}
+  Sa1();
 };
 
 /// @brief @f$Sta@f$
@@ -1467,9 +1212,7 @@ class Sa1 : public Wave {
 /// @note Schureman: %Table 2, Page 164, Ref. B7
 class Sta : public Wave {
  public:
-  constexpr Sta()
-      : Wave(kSta, kLongPeriod, false, Darwin::Builder().h(3).p1(-1).build(),
-             &angle::Astronomic::f_1) {}
+  Sta();
 };
 
 /// @brief @f$Mm_2@f$
@@ -1483,10 +1226,7 @@ class Sta : public Wave {
 /// @note Schureman: %Table 2, Page 164, Ref. A64
 class Mm2 : public Wave {
  public:
-  constexpr Mm2()
-      : Wave(kMm2, kLongPeriod, false,
-             Darwin::Builder().s(1).shift(-1).xi(-1).build(),
-             &angle::Astronomic::f_141) {}
+  Mm2();
 };
 
 /// @brief @f$Mm_1@f$
@@ -1501,10 +1241,7 @@ class Mm2 : public Wave {
 class Mm1 : public Wave {
  public:
   // Schureman: Ref. A8, Page 164, Table 2.
-  constexpr Mm1()
-      : Wave(kMm1, kLongPeriod, false,
-             Darwin::Builder().s(1).p(1).shift(2).xi(-2).build(),
-             &angle::Astronomic::f_mf) {}
+  Mm1();
 };
 
 /// @brief @f$Mf_1@f$
@@ -1518,9 +1255,7 @@ class Mm1 : public Wave {
 /// @note Schureman: %Table 2, Page 164, Ref. A3
 class Mf1 : public Wave {
  public:
-  constexpr Mf1()
-      : Wave(kMf1, kLongPeriod, false, Darwin::Builder().s(2).p(-2).build(),
-             &angle::Astronomic::f_mm) {}
+  Mf1();
 };
 
 /// @brief @f$Mf_2@f$
@@ -1534,10 +1269,7 @@ class Mf1 : public Wave {
 /// @note Schureman: %Table 2, Page 164, Ref. A65
 class Mf2 : public Wave {
  public:
-  constexpr Mf2()
-      : Wave(kMf2, kLongPeriod, false,
-             Darwin::Builder().s(2).p(-1).shift(-1).xi(-1).build(),
-             &angle::Astronomic::f_141) {}
+  Mf2();
 };
 
 /// @brief @f$M_0@f$
@@ -1551,9 +1283,7 @@ class Mf2 : public Wave {
 /// @note Schureman: %Table 2, Page 164, Ref. A1
 class M0 : public Wave {
  public:
-  constexpr M0()
-      : Wave(kM0, kLongPeriod, false, Darwin::Builder().build(),
-             &angle::Astronomic::f_mm) {}
+  M0();
 };
 
 /// @brief @f$N_2P@f$
@@ -1567,10 +1297,7 @@ class M0 : public Wave {
 /// @note Schureman: %Table 2, Page 166, Ref. A76
 class N2P : public Wave {
  public:
-  constexpr N2P()
-      : Wave(kN2P, kShortPeriod, false,
-             Darwin::Builder().T(2).s(-3).h(2).shift(1).xi(3).nu(-2).build(),
-             &angle::Astronomic::f_146) {}
+  N2P();
 };
 
 /// @brief @f$L_2P@f$
@@ -1584,10 +1311,7 @@ class N2P : public Wave {
 /// @note Schureman: %Table 2, Page 166, Ref. A47
 class L2P : public Wave {
  public:
-  constexpr L2P()
-      : Wave(kL2P, kShortPeriod, false,
-             Darwin::Builder().T(2).s(-1).h(2).shift(-1).xi(1).nu(-2).build(),
-             &angle::Astronomic::f_147) {}
+  L2P();
 };
 
 }  // namespace wave
