@@ -70,10 +70,14 @@ auto Table::wave_factory(const Constituent ident) -> std::shared_ptr<Wave> {
       return std::shared_ptr<Wave>(new wave::Sigma1());
     case kRho1:
       return std::shared_ptr<Wave>(new wave::Rho1());
+    case kM1:
+      return std::shared_ptr<Wave>(new wave::M1());
     case kM11:
       return std::shared_ptr<Wave>(new wave::M11());
     case kM12:
       return std::shared_ptr<Wave>(new wave::M12());
+    case kM13:
+      return std::shared_ptr<Wave>(new wave::M13());
     case kChi1:
       return std::shared_ptr<Wave>(new wave::Chi1());
     case kPi1:
@@ -104,8 +108,6 @@ auto Table::wave_factory(const Constituent ident) -> std::shared_ptr<Wave> {
       return std::shared_ptr<Wave>(new wave::S4());
     case kMNS2:
       return std::shared_ptr<Wave>(new wave::MNS2());
-    case kM13:
-      return std::shared_ptr<Wave>(new wave::M13());
     case kMK4:
       return std::shared_ptr<Wave>(new wave::MK4());
     case kSN4:
@@ -268,10 +270,10 @@ void Table::admittance() {
   // from O1 and K1  (1-2)
 
   // M11
-  set_tide((*this)[kM11], 0.0389 * y->tide() + 0.0282 * z->tide());
+  set_tide((*this)[kM11], 0.0140 * y->tide() + 0.0101 * z->tide());
 
   // M12
-  set_tide((*this)[kM12], 0.0140 * y->tide() + 0.0101 * z->tide());
+  set_tide((*this)[kM12], 0.0389 * y->tide() + 0.0282 * z->tide());
 
   // CHI1
   set_tide((*this)[kChi1], 0.0064 * y->tide() + 0.0060 * z->tide());
