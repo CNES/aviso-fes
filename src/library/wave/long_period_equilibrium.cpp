@@ -228,21 +228,24 @@ auto LongPeriodEquilibrium::lpe_minus_n_waves(const angle::Astronomic& angles,
 
   // FES14C: mass conservation for long period equilibrium
   // Subtraction of the mean of c20 and c30 on ocean, for mass conservation
-  // mean_c20 = -0.014432247
-  // mean_c30 = 0.012469818
+  constexpr auto factor_20 = (1.0 - 0.609 /* H2 */ + 0.302 /* K2 */);
+  constexpr auto factor_30 = (1.0 - 0.291 /* H3 */ + 0.093 /* K3 */);
+  constexpr auto mean_c20 = -0.014432247 / factor_20;
+  // Note: Using factor_20 instead of factor_30 for mean_c30 calculation due
+  // to a bug in the original calculation.
+  constexpr auto mean_c30 = 0.012469818 / factor_20;
+
   auto sy = detail::math::sind(lat);
   auto sy2 = detail::math::pow<2>(sy);
   auto c20 =
       std::sqrt(5.0 / (4.0 * detail::math::pi<double>())) * (1.5 * sy2 - 0.5) +
-      0.014432247;
+      mean_c20;
   auto c30 = std::sqrt(7.0 / (4.0 * detail::math::pi<double>())) *
                  (2.5 * sy2 - 1.5) * sy -
-             0.012469818;
+             mean_c30;
 
   // m -> cm
-  return ((1.0 - 0.609 /* H2 */ + 0.302 /* K2 */) * c20 * h20 +
-          (1.0 - 0.291 /* H3 */ + 0.093 /* K3 */) * c30 * h30) *
-         100;
+  return (factor_20 * c20 * h20 + factor_30 * c30 * h30) * 100;
 }
 
 }  // namespace wave
