@@ -21,7 +21,10 @@ enum class Formulae {
   /// Schureman order 3
   kSchuremanOrder3,
   /// Meeus
-  kMeeus
+  kMeeus,
+  /// IERS (cf.
+  /// https://hpiers.obspm.fr/eop-pc/models/nutations/nut_oceanic.html)
+  kIERS
 };
 
 /// @brief Astronomical angles.
@@ -53,6 +56,9 @@ class Astronomic {
         break;
       case Formulae::kMeeus:
         update_ = &Astronomic::meeus;
+        break;
+      case Formulae::kIERS:
+        update_ = &Astronomic::iers;
         break;
       default:
         throw std::runtime_error("unknown formulae");
@@ -330,6 +336,44 @@ class Astronomic {
     return (sin_i - (5.0 / 4.0) * detail::math::pow<3>(sin_i)) * factor;
   }
 
+  /// @brief Gets the node factor for formula 144.
+  ///
+  /// @return @f$(1-10 \sin^2
+  /// \frac{1}{2}I+15\sin^4\frac{1}{2}I)\cos^2\frac{1}{2}I/0.5873@f$
+  FES_MATH_CONSTEXPR auto f_144() const noexcept -> double {
+    // SCHUREMAN P.36 (144)
+    auto sin_i_2 = std::sin(0.5 * i_);
+    auto cos_i_2 = std::cos(0.5 * i_);
+    constexpr auto factor = 1 / 0.5873;
+    return (1 - 10 * detail::math::pow<2>(sin_i_2) +
+            15 * detail::math::pow<4>(sin_i_2)) *
+           detail::math::pow<2>(cos_i_2) * factor;
+  }
+
+  /// @brief Gets the node factor for formula 146.
+  ///
+  /// @return @f$\sin I \cos^4\frac{1}{2}I/0.3658@f$
+  FES_MATH_CONSTEXPR auto f_146() const noexcept -> double {
+    // SCHUREMAN P.36 (146)
+    auto sin_i = std::sin(i_);
+    auto cos_i_2 = std::cos(0.5 * i_);
+    constexpr auto factor = 1 / 0.3658;
+    return sin_i * detail::math::pow<4>(cos_i_2) * factor;
+  }
+
+  /// @brief Gets the node factor for formula 147.
+  ///
+  /// @return @f$(\cos^2(\frac{1}{2}I)-\frac{2}{3})\sin I
+  /// \cos^2(\frac{1}{2}I/0.1114)@f$
+  FES_MATH_CONSTEXPR auto f_147() const noexcept -> double {
+    // SCHUREMAN P.36 (147)
+    auto sin_i = std::sin(i_);
+    auto cos_i_2 = std::cos(0.5 * i_);
+    constexpr auto factor = 1 / 0.1114;
+    return (detail::math::pow<2>(cos_i_2) - (2.0 / 3.0)) * sin_i *
+           detail::math::pow<2>(cos_i_2 * factor);
+  }
+
  protected:
   /// @f$T@f$: hour angle of mean sun.
   double t_{std::numeric_limits<double>::quiet_NaN()};
@@ -385,6 +429,22 @@ class Astronomic {
   /// 1970-01-01T00:00:00Z.
   FES_MATH_CONSTEXPR auto meeus(const double epoch,
                                 const uint16_t leap_seconds) noexcept -> void;
+
+  /// Calculates the astronomic angles using the the International Earth
+  /// Rotation and Reference Systems Service (IERS)
+  ///
+  /// @brief Calculates the lunisolar fundamental arguments using the IERS
+  /// model.
+  ///
+  /// This method computes the fundamental astronomical arguments based on the
+  /// Simon et al. (1994) model as recommended by the IERS Conventions (2010).
+  ///
+  /// @param[in] epoch Desired UTC time in seconds since 1970-01-01T00:00:00Z.
+  /// @param[in] leap_seconds The number of leap seconds since
+  /// 1970-01-01T00:00:00Z.
+  /// @see IERS Conventions (2010) Chapter 5, Sections 5.7.1 - 5.7.2 (pp. 57-59)
+  FES_MATH_CONSTEXPR auto iers(const double epoch,
+                               const uint16_t leap_seconds) noexcept -> void;
 
   /// Pointer to the function that calculates the astronomic angles.
   void (Astronomic::*update_)(const double epoch,
@@ -519,6 +579,62 @@ FES_MATH_CONSTEXPR auto Astronomic::meeus(const double epoch,
   // Formula 47.7, page 343.
   p_ = detail::math::horner(jc, 83.3532465, 4069.0137287, -0.0103200,
                             -1.0 / 80053.0, 1.0 / 18999000.0);
+}
+
+auto FES_MATH_CONSTEXPR Astronomic::iers(const double epoch,
+                                         const uint16_t leap_seconds) noexcept
+    -> void {
+  // Number of seconds elapsed since 2000-01-01T12:00:00Z (J2000) to epoch
+  constexpr auto j2000 = 946728000.0;
+  // Julian Ephemeris Millennium
+  const auto jc = (utc_2_tdt(epoch, leap_seconds) - j2000) / 3155760000.0;
+  // Arcseconds in a full circle
+  constexpr auto arcseconds_in_circle = 1296000.0;
+
+  // Mean anomaly of the moon (L)
+  auto l = detail::math::arcseconds(
+      std::remainder(detail::math::horner(jc, 485868.249036, 1717915923.2178,
+                                          31.8792, 0.051635, 0.00024470),
+                     arcseconds_in_circle));
+
+  // Mean anomaly of the sun (LP)
+  auto lp = detail::math::arcseconds(
+      std::remainder(detail::math::horner(jc, 1287104.79305, 129596581.0481,
+                                          -0.5532, 0.000136, -0.00001149),
+                     arcseconds_in_circle));
+
+  // L - OM (Mean longitude of the ascending node of the moon)
+  auto f = detail::math::arcseconds(
+      std::remainder(detail::math::horner(jc, 335779.526232, 1739527262.8478,
+                                          -12.7512, -0.001037, 0.00000417),
+                     arcseconds_in_circle));
+
+  // Mean elongation of the moon from the sun (D)
+  auto d = detail::math::arcseconds(
+      std::remainder(detail::math::horner(jc, 1072260.70369, 1602961601.2090,
+                                          -6.3706, 0.006593, -0.00003169),
+                     arcseconds_in_circle));
+
+  // Mean longitude of the ascending node of the moon (OM)
+  auto omega = detail::math::arcseconds(
+      std::remainder(detail::math::horner(jc, 450160.398036, -6962890.5431,
+                                          7.4722, 0.007702, -0.00005939),
+                     arcseconds_in_circle));
+
+  // mean longitude of the moon
+  s_ = detail::math::degrees(f + omega);
+
+  // mean longitude of the sun
+  h_ = detail::math::degrees(f + omega - d);
+
+  // longitude of lunear perigee (P)
+  p_ = detail::math::degrees(f + omega - l);
+
+  // Longitude of solar perigee (p₁)
+  p1_ = detail::math::degrees(-lp + f - d + omega);
+
+  // Longitude of the moon's node (N)
+  n_ = detail::math::degrees(omega);
 }
 
 auto FES_MATH_CONSTEXPR Astronomic::update(const double epoch,

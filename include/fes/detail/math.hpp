@@ -167,6 +167,19 @@ constexpr auto radians(const T& x) noexcept -> T {
   return x * pi<T>() / T(180);
 }
 
+/// Convert angle x from arcseconds to radians.
+///
+/// @tparam T The type of the result.
+/// @param[in] x Angle in arcseconds.
+/// @return Angle in radians.
+template <typename T>
+constexpr auto arcseconds(const T& x) noexcept -> T {
+  // 1 arcsecond = 1/3600 degrees
+  // 1 degree = π/180 radians
+  // => 1 arcsecond = π/(180 * 3600) radians
+  return x * pi<T>() / (T(180) * T(3600));
+}
+
 /// Convert angle x from degrees to radians.
 ///
 /// @tparam T The type of the result.

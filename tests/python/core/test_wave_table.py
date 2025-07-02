@@ -17,8 +17,8 @@ FES_TIDE_TIME_SERIES = pathlib.Path(
 
 def test_constructor():
     wt = core.WaveTable()
-    assert len(wt) == 75
-    assert len([item for item in wt]) == 75
+    assert len(wt) == 76
+    assert len([item for item in wt]) == 76
     assert wt.find('M2') == wt[core.kM2]
     assert wt.find('m2') == wt[core.kM2]
     assert wt.find('M2') != wt[core.kK1]
