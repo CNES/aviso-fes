@@ -14,7 +14,7 @@ repos:
         exclude: docs/make.bat
       - id: trailing-whitespace
   - repo: https://github.com/asottile/pyupgrade
-    rev: "v3.19.1"
+    rev: "v3.20.0"
     hooks:
     - id: pyupgrade
       args: [--py310-plus]
@@ -58,7 +58,7 @@ repos:
       exclude: "leap-seconds.txt"
       args: [-L inout]
   - repo: https://github.com/pre-commit/mirrors-clang-format
-    rev: v20.1.0
+    rev: v20.1.5
     hooks:
       - id: clang-format
         exclude: "(dataset.*json)$"

@@ -51,6 +51,8 @@ constexpr const char* const kL2 = "L2";
 constexpr const char* const kLambda2 = "Lambda2";
 /// @brief M0
 constexpr const char* const kM0 = "M0";
+/// @brief M1
+constexpr const char* const kM1 = "M1";
 /// @brief M11
 constexpr const char* const kM11 = "M11";
 /// @brief M12
