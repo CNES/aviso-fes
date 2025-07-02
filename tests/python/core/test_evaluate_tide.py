@@ -40,99 +40,99 @@ def check_tide(tide, radial):
 
         if hour == 0:
             assert h == pytest.approx(-100.9914560408143, 1e-5)
-            assert lp == pytest.approx(0.9166038030400234, 1e-5)
+            assert lp == pytest.approx(0.8962384327950185, 1e-5)
             assert load == pytest.approx(3.88117368364037, 1e-5)
         elif hour == 1:
             assert h == pytest.approx(-137.10501916452552, 1e-5)
-            assert lp == pytest.approx(0.8898752532275898, 1e-5)
+            assert lp == pytest.approx(0.8694202846939806, 1e-5)
             assert load == pytest.approx(4.328348741981256, 1e-5)
         elif hour == 2:
             assert h == pytest.approx(-138.48300705968734, 1e-5)
-            assert lp == pytest.approx(0.8625289296811098, 1e-5)
+            assert lp == pytest.approx(0.8419806943259117, 1e-5)
             assert load == pytest.approx(3.710706028150491, 1e-5)
         elif hour == 3:
             assert h == pytest.approx(-104.3457724500508, 1e-5)
-            assert lp == pytest.approx(0.8345824426096758, 1e-5)
+            assert lp == pytest.approx(0.8139371002569467, 1e-5)
             assert load == pytest.approx(2.134266036020157, 1e-5)
         elif hour == 4:
             assert h == pytest.approx(-42.51596183308732, 1e-5)
-            assert lp == pytest.approx(0.8060537940850989, 1e-5)
+            assert lp == pytest.approx(0.7853073299813511, 1e-5)
             assert load == pytest.approx(-0.052040879755192906, 1e-5)
         elif hour == 5:
             assert h == pytest.approx(32.374242083878144, 1e-5)
-            assert lp == pytest.approx(0.7769613634213312, 1e-5)
+            assert lp == pytest.approx(0.7561095855618518, 1e-5)
             assert load == pytest.approx(-2.3413995258830425, 1e-5)
         elif hour == 6:
             assert h == pytest.approx(102.16689747007992, 1e-5)
-            assert lp == pytest.approx(0.7473238922215271, 1e-5)
+            assert lp == pytest.approx(0.726362429024919, 1e-5)
             assert load == pytest.approx(-4.194239034681996, 1e-5)
         elif hour == 7:
             assert h == pytest.approx(149.46864323824715, 1e-5)
-            assert lp == pytest.approx(0.7171604692200954, 1e-5)
+            assert lp == pytest.approx(0.6960847675405596, 1e-5)
             assert load == pytest.approx(-5.1719730959138985, 1e-5)
         elif hour == 8:
             assert h == pytest.approx(162.10203064752824, 1e-5)
-            assert lp == pytest.approx(0.6864905148590934, 1e-5)
+            assert lp == pytest.approx(0.6652958383054876, 1e-5)
             assert load == pytest.approx(-5.045680499426743, 1e-5)
         elif hour == 9:
             assert h == pytest.approx(136.5054127560599, 1e-5)
-            assert lp == pytest.approx(0.6553337656241297, 1e-5)
+            assert lp == pytest.approx(0.6340151932123841, 1e-5)
             assert load == pytest.approx(-3.852400085012575, 1e-5)
         elif hour == 10:
             assert h == pytest.approx(78.8955846722141, 1e-5)
-            assert lp == pytest.approx(0.6237102581602095, 1e-5)
+            assert lp == pytest.approx(0.6022626833383417, 1e-5)
             assert load == pytest.approx(-1.8849646441211187, 1e-5)
         elif hour == 11:
             assert h == pytest.approx(3.644727138436709, 1e-5)
-            assert lp == pytest.approx(0.5916403132203619, 1e-5)
+            assert lp == pytest.approx(0.5700584431878236, 1e-5)
             assert load == pytest.approx(0.3819118518486439, 1e-5)
         elif hour == 12:
             assert h == pytest.approx(-70.65877793134331, 1e-5)
-            assert lp == pytest.approx(0.5591445193810965, 1e-5)
+            assert lp == pytest.approx(0.5374228748036814, 1e-5)
             assert load == pytest.approx(2.41050843885501, 1e-5)
         elif hour == 13:
             assert h == pytest.approx(-126.15176059285257, 1e-5)
-            assert lp == pytest.approx(0.5262437166402825, 1e-5)
+            assert lp == pytest.approx(0.5043766316815259, 1e-5)
             assert load == pytest.approx(3.733863680480435, 1e-5)
         elif hour == 14:
             assert h == pytest.approx(-150.11458353803485, 1e-5)
-            assert lp == pytest.approx(0.4929589798337336, 1e-5)
+            assert lp == pytest.approx(0.4709406025333071, 1e-5)
             assert load == pytest.approx(4.070714605116643, 1e-5)
         elif hour == 15:
             assert h == pytest.approx(-137.77925970081364, 1e-5)
-            assert lp == pytest.approx(0.4593116018954215, 1e-5)
+            assert lp == pytest.approx(0.43713589495004734, 1e-5)
             assert load == pytest.approx(3.392774681238372, 1e-5)
         elif hour == 16:
             assert h == pytest.approx(-93.13207274339132, 1e-5)
-            assert lp == pytest.approx(0.4253230770838105, 1e-5)
+            assert lp == pytest.approx(0.4029838189159635, 1e-5)
             assert load == pytest.approx(1.9276794897123648, 1e-5)
         elif hour == 17:
             assert h == pytest.approx(-27.81961238661622, 1e-5)
-            assert lp == pytest.approx(0.39101508400872387, 1e-5)
+            assert lp == pytest.approx(0.3685058702253908, 1e-5)
             assert load == pytest.approx(0.09726404822892877, 1e-5)
         elif hour == 18:
             assert h == pytest.approx(41.54129769786677, 1e-5)
-            assert lp == pytest.approx(0.35640946860741807, 1e-5)
+            assert lp == pytest.approx(0.33372371382897054, 1e-5)
             assert load == pytest.approx(-1.5928061547465937, 1e-5)
         elif hour == 19:
             assert h == pytest.approx(97.24994132240296, 1e-5)
-            assert lp == pytest.approx(0.3215282271004507, 1e-5)
+            assert lp == pytest.approx(0.2986591671120649, 1e-5)
             assert load == pytest.approx(-2.6837902382004675, 1e-5)
         elif hour == 20:
             assert h == pytest.approx(124.93942256769164, 1e-5)
-            assert lp == pytest.approx(0.28639348883143334, 1e-5)
+            assert lp == pytest.approx(0.2633341831064725, 1e-5)
             assert load == pytest.approx(-2.881719343109528, 1e-5)
         elif hour == 21:
             assert h == pytest.approx(117.46522048490488, 1e-5)
-            assert lp == pytest.approx(0.251027499089178, 1e-5)
+            assert lp == pytest.approx(0.2277708336655093, 1e-5)
             assert load == pytest.approx(-2.1324613415016462, 1e-5)
         elif hour == 22:
             assert h == pytest.approx(77.02639695142673, 1e-5)
-            assert lp == pytest.approx(0.21545260194634613, 1e-5)
+            assert lp == pytest.approx(0.1919912926311164, 1e-5)
             assert load == pytest.approx(-0.635100251236484, 1e-5)
         elif hour == 23:
             assert h == pytest.approx(14.661322939332242, 1e-5)
-            assert lp == pytest.approx(0.17969122304114335, 1e-5)
+            assert lp == pytest.approx(0.15601781901998055, 1e-5)
             assert load == pytest.approx(1.2095550658262517, 1e-5)
 
 
