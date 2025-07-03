@@ -1308,7 +1308,7 @@ class N2P : public Wave {
 /// <td>@f$+\xi - 2\nu@f$</td>
 /// <td>@f$f(147)@f$</td></tr>
 /// </table>
-/// @note Schureman: %Table 2, Page 166, Ref. A47
+/// @note Schureman: %Table 2, Page 166, Ref. A79
 class L2P : public Wave {
  public:
   L2P();
