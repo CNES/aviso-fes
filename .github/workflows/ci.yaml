@@ -80,7 +80,7 @@ jobs:
 
   win:
     name: win
-    runs-on: windows-2025
+    runs-on: windows-2022
 
     steps:
     - name: Checkout
@@ -104,6 +104,6 @@ jobs:
     - name: Building Testing Python Package
       shell: bash -l {0}
       run: |
-        python setup.py build_ext --generator="Visual Studio 16 2019"
+        python setup.py build_ext --generator="Visual Studio 17 2022"
         python setup.py build
         pytest -v -ra
