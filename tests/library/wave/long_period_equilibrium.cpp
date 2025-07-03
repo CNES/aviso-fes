@@ -28,7 +28,7 @@ class AstronomicAngle : public fes::angle::Astronomic {
 TEST(WaveOrder2, LpeMinus5WavesNonRegression) {
   auto table = fes::wave::Table();
   auto lpe = fes::wave::LongPeriodEquilibrium(table);
-  EXPECT_NEAR(lpe.lpe_minus_n_waves(AstronomicAngle(), 1), 0.37049504058579608,
+  EXPECT_NEAR(lpe.lpe_minus_n_waves(AstronomicAngle(), 1), 0.41377275320048151,
               1e-6);
 
   table[fes::kMm]->dynamic(true);
@@ -38,7 +38,7 @@ TEST(WaveOrder2, LpeMinus5WavesNonRegression) {
   table[fes::kSsa]->dynamic(true);
 
   lpe = fes::wave::LongPeriodEquilibrium(table);
-  EXPECT_NEAR(lpe.lpe_minus_n_waves(AstronomicAngle(), 1), -0.52432975585203723,
+  EXPECT_NEAR(lpe.lpe_minus_n_waves(AstronomicAngle(), 1), -0.58598307964904195,
               1e-6);
 
   table[fes::kSa1]->dynamic(true);
@@ -48,14 +48,14 @@ TEST(WaveOrder2, LpeMinus5WavesNonRegression) {
   table[fes::kA5]->dynamic(true);
 
   lpe = fes::wave::LongPeriodEquilibrium(table);
-  EXPECT_NEAR(lpe.lpe_minus_n_waves(AstronomicAngle(), 1), -0.47509232232339443,
+  EXPECT_NEAR(lpe.lpe_minus_n_waves(AstronomicAngle(), 1), -0.53097185112613943,
               1e-6);
 
   table[fes::kMm2]->dynamic(true);
   table[fes::kMf2]->dynamic(true);
 
   lpe = fes::wave::LongPeriodEquilibrium(table);
-  EXPECT_NEAR(lpe.lpe_minus_n_waves(AstronomicAngle(), 1), -0.4732370091873217,
+  EXPECT_NEAR(lpe.lpe_minus_n_waves(AstronomicAngle(), 1), -0.52879623974557166,
               1e-6);
 }
 
@@ -63,15 +63,15 @@ TEST(WaveOrder2, LpeMinus5WavesAvisoFES) {
   auto table = fes::wave::Table();
   auto lpe = fes::wave::LongPeriodEquilibrium(table);
   EXPECT_NEAR(lpe.lpe_minus_n_waves(AstronomicAngle(true), 1),
-              -2.8996939083027535, 1e-6);
+              -3.2392765310488252, 1e-6);
 
   table[fes::kMm]->dynamic(true);
   table[fes::kMf]->dynamic(true);
   table[fes::kMtm]->dynamic(true);
   table[fes::kMsqm]->dynamic(true);
   lpe = fes::wave::LongPeriodEquilibrium(table);
-  EXPECT_NEAR(lpe.lpe_minus_n_waves(AstronomicAngle(true), 1), -1.069196011706,
-              1e-6);
+  EXPECT_NEAR(lpe.lpe_minus_n_waves(AstronomicAngle(true), 1),
+              -1.1941264878178992, 1e-6);
 
   table[fes::kSsa]->dynamic(true);
   table[fes::kSa1]->dynamic(true);
@@ -83,5 +83,5 @@ TEST(WaveOrder2, LpeMinus5WavesAvisoFES) {
   table[fes::kMf2]->dynamic(true);
   lpe = fes::wave::LongPeriodEquilibrium(table);
   EXPECT_NEAR(lpe.lpe_minus_n_waves(AstronomicAngle(true), 1),
-              -0.63411272420708709, 1e-6);
+              -0.70850451575143991, 1e-6);
 }
