@@ -3,6 +3,49 @@
 Changelog
 #########
 
+2025.7.0
+========
+
+New Features
+------------
+
+* Added new tidal constituents: M1, M11, M12, M13, N2P, and L2P, with
+  corresponding formulas, classes, and updates to constituent and wave handling.
+* Enhanced Wave class to support initialization with Darwin parameters using a
+  new Darwin builder pattern.
+* Implemented IERS formula for astronomical angle calculations and added related
+  tests.
+* Added ``arcseconds`` function to convert angles from arcseconds to radians.
+
+Bug Fixes
+---------
+
+* Corrected mean_c20 and mean_c30 calculations for mass conservation in long
+  period equilibrium.
+* Updated expected values in tide tests for improved accuracy.
+* Fixed handling of NaN values in Cartesian interpolation by resetting to
+  undefined.
+* Updated frequency documentation to reflect correct units in ``wave.hpp`` and
+  ``wave_table.py``.
+* Updated copyright year in LICENSE and corrected license type in ``setup.cfg``.
+
+Documentation
+-------------
+
+* Improved documentation for formulae, wave constructors, and frequency units
+  for clarity and consistency.
+
+Build System
+------------
+
+* Updated pre-commit hook versions for pyupgrade and clang-format.
+
+Testing
+-------
+
+* Added tests for new wave constituents and additional assertions for IERS
+  astronomical angle calculations.
+
 2025.4.1
 ========
 
