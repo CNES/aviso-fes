@@ -87,6 +87,8 @@ void init_constituent(py::module& m) {
       .value("kMf1", fes::kMf1, ":math:`Mf_{1}`")
       .value("kMf2", fes::kMf2, ":math:`Mf_{2}`")
       .value("kM0", fes::kM0, ":math:`M_{0}`")
+      .value("kN2P", fes::kN2P, ":math:`N2_{P}`")
+      .value("kL2P", fes::kL2P, ":math:`L2_{P}`")
       .export_values();
 
   m.def_submodule("constituents", "Constituent names.")
