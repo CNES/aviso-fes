@@ -1,5 +1,5 @@
 [build-system]
-requires = ["cmake", "setuptools>=45", "packaging>=20.0", "typing_extensions"]
+requires = ["cmake", "setuptools>=45", "packaging>=20.0", "typing_extensions", "wheel", "setuptools_scm"]
 build-backend = "backend"
 backend-path = ["_custom_build"]
 
