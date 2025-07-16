@@ -19,14 +19,19 @@
 
 namespace fes {
 
-/// @brief Indicate the quality of the interpolation
-enum Quality : uint8_t {
-  kExtrapolated1 = 1,  //!< Value extrapolated with one data point
-  kExtrapolated2 = 2,  //!< Value extrapolated with two data points
-  kExtrapolated3 = 3,  //!< Value extrapolated with three data points
-  kInterpolated = 4,   //!< Value correctly interpolated
-  kUndefined = 0,      //!< Value undefined
-};
+/// @brief The quality flag for tidal model interpolation.
+///
+/// The quality flag indicates the reliability of interpolated values from the
+/// tidal model:
+/// * <b>0</b>: Value is undefined (no data available)
+/// * <b>Positive values</b>: Value is interpolated using N data points (where N
+///   equals the quality flag value)
+/// * <b>Negative values</b>: Value is extrapolated using N data points (where N
+///   equals the absolute value of the quality flag)
+using Quality = uint8_t;
+
+/// @brief Undefined interpolation result.
+constexpr Quality kUndefined = 0;
 
 /// @brief Possible tide types
 enum TideType : uint8_t {

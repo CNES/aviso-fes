@@ -12,7 +12,6 @@ __all__ = [
     "Constituent",
     "Formulae",
     "LongPeriodEquilibrium",
-    "Quality",
     "Settings",
     "TideType",
     "Wave",
@@ -50,10 +49,6 @@ kA5: Constituent
 kChi1: Constituent
 kEps2: Constituent
 kEta2: Constituent
-kExtrapolated1: Quality
-kExtrapolated2: Quality
-kExtrapolated3: Quality
-kInterpolated: Quality
 kJ1: Constituent
 kK1: Constituent
 kK2: Constituent
@@ -120,7 +115,6 @@ kSta: Constituent
 kT2: Constituent
 kTheta1: Constituent
 kTide: TideType
-kUndefined: Quality
 
 
 class AbstractTidalModelComplex128:
@@ -153,7 +147,7 @@ class AbstractTidalModelComplex128:
 
     @overload
     def interpolate(self, lon: float, lat: float,
-                    wave_table: WaveTable) -> Quality:
+                    wave_table: WaveTable) -> int:
         ...
 
     def __bool__(self) -> bool:
@@ -205,7 +199,7 @@ class AbstractTidalModelComplex64:
 
     @overload
     def interpolate(self, lon: float, lat: float,
-                    wave_table: WaveTable) -> Quality:
+                    wave_table: WaveTable) -> int:
         ...
 
     def __bool__(self) -> bool:
@@ -505,48 +499,6 @@ class LongPeriodEquilibrium:
         ...
 
     def lpe_minus_n_waves(self, angles: AstronomicAngle, lat: float) -> float:
-        ...
-
-
-class Quality:
-    __members__: ClassVar[dict] = ...  # read-only
-    __entries: ClassVar[dict] = ...
-    kExtrapolated1: ClassVar[Quality] = ...
-    kExtrapolated2: ClassVar[Quality] = ...
-    kExtrapolated3: ClassVar[Quality] = ...
-    kInterpolated: ClassVar[Quality] = ...
-    kUndefined: ClassVar[Quality] = ...
-
-    def __init__(self, value: int) -> None:
-        ...
-
-    def __eq__(self, other: object) -> bool:
-        ...
-
-    def __getstate__(self) -> int:
-        ...
-
-    def __hash__(self) -> int:
-        ...
-
-    def __index__(self) -> int:
-        ...
-
-    def __int__(self) -> int:
-        ...
-
-    def __ne__(self, other: object) -> bool:
-        ...
-
-    def __setstate__(self, state: int) -> None:
-        ...
-
-    @property
-    def name(self) -> str:
-        ...
-
-    @property
-    def value(self) -> int:
         ...
 
 

@@ -82,13 +82,21 @@ Args:
 
 Returns:
   A tuple that contains:
-    - The height of the the diurnal and semi-diurnal constituents of the
+    * The height of the the diurnal and semi-diurnal constituents of the
       tidal spectrum (cm)
-    - The height of the long period wave constituents of the tidal
+    * The height of the long period wave constituents of the tidal
       spectrum (cm)
-    - The quality of the tide calculation. Could be kUndefined if the
-      point is not defined by the model, kInterpolated if the model is
-      interpolated, kExtrapolated if the model is extrapolated.
+    * The quality flag indicating the reliability of the tide
+      calculation at the given position:
+
+      * **0**: the tide is undefined (no model data available at the given
+        position).
+      * **Positive values**: the tide is interpolated at the given
+        position using ``N`` data points (where ``N`` is the
+        number of data points used for the interpolation).
+      * **Negative values**: the tide is extrapolated at the given
+        position using ``-N`` data points (where ``N`` is the
+        number of data points used for the extrapolation).
 
 .. note::
 

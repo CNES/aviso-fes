@@ -17,7 +17,6 @@ These classes are used to map the C++ enumerators to Python.
    core/constituent
    core/formulae
    core/tide_type
-   core/quality
 
 Tidal Constituents
 ------------------

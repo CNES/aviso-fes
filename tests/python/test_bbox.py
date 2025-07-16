@@ -57,7 +57,7 @@ tide:
                                          num_threads=1)
     tide1 = tide1.reshape(shape)
     lp1 = lp1.reshape(shape)
-    m1 = (m1 == pyfes.Quality.kInterpolated).reshape(shape)
+    m1 = (m1 > 0).reshape(shape)
 
     config = config_handler.load(config_path, bbox)
     tide2, lp2, m2 = pyfes.evaluate_tide(config['tide'],
@@ -67,7 +67,7 @@ tide:
                                          num_threads=1)
     tide2 = tide2.reshape(shape)
     lp2 = lp2.reshape(shape)
-    m2 = (m2 == pyfes.Quality.kInterpolated).reshape(shape)
+    m2 = (m2 > 0).reshape(shape)
 
     assert numpy.sum(m1) > numpy.sum(m2)
     assert numpy.sum(numpy.isnan(tide2)) > numpy.sum(numpy.isnan(tide1))

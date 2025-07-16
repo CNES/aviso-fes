@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 from . import core
 from .astronomic_angle import AstronomicAngle
 from .config import load as load_config
-from .core import Constituent, Formulae, Quality, constituents
+from .core import Constituent, Formulae, constituents
 from .leap_seconds import get_leap_seconds
 from .version import __version__
 from .wave_table import WaveDict, WaveTable
@@ -22,7 +22,6 @@ __all__ = [
     'AstronomicAngle',
     'Constituent',
     'Formulae',
-    'Quality',
     'WaveDict',
     'WaveTable',
     '__version__',
@@ -99,40 +98,24 @@ def evaluate_tide(
           tidal spectrum (cm)
         * The height of the long period wave constituents of the tidal
           spectrum (cm)
-        * A flag indicating if the tide is correctly estimated or not. Possible
-          values are
+        * The quality flag indicating the reliability of the tide
+          calculation at the given position:
 
-          .. list-table:: Flag values
-              :header-rows: 1
+          - **0**: the tide is undefined (no model data available at the
+            given position).
+          - **Positive values**: the tide is interpolated at the given
+            position using ``N`` data points (where ``N`` is the
+            number of data points used for the interpolation).
+          - **Negative values**: the tide is extrapolated at the given
+            position using ``-N`` data points (where ``N`` is the
+            number of data points used for the extrapolation).
 
-              * - Flag
-                - Description
-              * - ``0``
-                - The tide is undefined because the position is outside the
-                  domain of the tidal model or the numerical model is
-                  undefined for the requested spatial position. This value
-                  corresponds to the :py:attr:`pyfes.Quality.kUndefined`
-                  quality flag.
-              * - ``1``
-                - The tide is extrapolated with the nearest mesh point. This
-                  value corresponds to the
-                  :py:attr:`pyfes.Quality.kExtrapolated1` quality flag.
-              * - ``2``
-                - The tide is extrapolated using a linear interpolation with
-                  two surrounding grid points. This value corresponds to the
-                  :py:attr:`pyfes.Quality.kExtrapolated2` quality flag.
-              * - ``3``
-                - The tide is extrapolated using a linear interpolation with
-                  three surrounding grid points. This value corresponds to the
-                  :py:attr:`pyfes.Quality.kExtrapolated3` quality flag.
-              * - ``4``
-                - The tide is correctly estimated. This value corresponds to
-                  the :py:attr:`pyfes.Quality.kInterpolated` quality flag.
+    .. note::
 
-        .. note::
-
-            The flag value ``2`` or ``3`` are only possible if the
-            tidal model used is a Cartesian grid.
+      Computed height of the diurnal and semi-diurnal constituents is set
+      to nan if no data is available at the given position. The long period wave
+      constituents is always computed because this value does not depend on
+      model data.
     """
     return core.evaluate_tide(
         tidal_model,  # type: ignore[arg-type]

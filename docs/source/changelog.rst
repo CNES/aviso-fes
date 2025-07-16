@@ -3,6 +3,78 @@
 Changelog
 #########
 
+2025.8.0
+========
+
+Breaking Changes
+----------------
+
+* **Removed the Quality enum**: The ``pyfes.Quality`` enum has been removed
+  from the public API. Quality flags are now returned as integer values instead
+  of enum constants.
+
+  * ``pyfes.Quality.kUndefined`` (0) → ``0``
+  * ``pyfes.Quality.kExtrapolated1`` (1) → ``-1`` (negative values indicate
+    extrapolation)
+  * ``pyfes.Quality.kExtrapolated2`` (2) → ``-2``
+  * ``pyfes.Quality.kExtrapolated3`` (3) → ``-3``
+  * ``pyfes.Quality.kInterpolated`` (4) → positive values (indicate
+    interpolation using N data points)
+
+* **Updated quality flag semantics**: Quality flags returned by interpolation
+  functions now use a more intuitive system:
+
+  * ``0``: Value is undefined (no data available)
+  * **Positive values**: Value is interpolated using :math:`N` data points
+    (where :math:`N` equals the quality flag value)
+  * **Negative values**: Value is extrapolated using :math:`\lvert N\rvert`
+    data points (where :math:`\lvert N\rvert` equals the absolute value)
+
+* **API signature changes**: Functions that previously returned ``Quality``
+  enum values now return ``int8_t`` or ``VectorInt8`` types. This affects:
+
+  * ``evaluate_tide()`` return type changed from ``VectorQuality`` to
+    ``VectorInt8``
+  * ``AbstractTidalModel.interpolate()`` methods now return ``int`` instead of
+    ``Quality``
+
+* **Removed documentation**: The ``pyfes.core.Quality`` class documentation has
+  been removed from the API reference.
+
+Migration Guide
+~~~~~~~~~~~~~~~
+
+**For quality flag checking in user code:**
+
+.. code-block:: python
+
+   # Old code
+   if quality == pyfes.Quality.kUndefined:
+       # handle undefined
+   elif quality == pyfes.Quality.kInterpolated:
+       # handle interpolated
+   elif quality in [pyfes.Quality.kExtrapolated1, pyfes.Quality.kExtrapolated2, pyfes.Quality.kExtrapolated3]:
+       # handle extrapolated
+
+   # New code
+   if quality == 0:
+       # handle undefined
+   elif quality > 0:
+       # handle interpolated (quality = number of data points used)
+   elif quality < 0:
+       # handle extrapolated (abs(quality) = number of data points used)
+
+**For filtering interpolated vs extrapolated values:**
+
+.. code-block:: python
+
+   # Old code
+   interpolated_mask = (quality == pyfes.Quality.kInterpolated)
+
+   # New code
+   interpolated_mask = (quality > 0)
+
+
 2025.7.0
 ========
 

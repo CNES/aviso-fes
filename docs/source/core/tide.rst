@@ -21,30 +21,28 @@
    :param num_threads: Number of threads to use for the computation. If 0, the
         number of threads is automatically determined.
    :return: A tuple of three elements that contains:
+     * The height of the the diurnal and semi-diurnal constituents of the
+       tidal spectrum (cm)
+     * The height of the long period wave constituents of the tidal
+       spectrum (cm)
+     * The quality flag indicating the reliability of the tide
+       calculation at the given position:
 
-        * The height of the diurnal and semi-diurnal constituents of the
-          tidal spectrum (cm)
-        * The height of the long period wave constituents of the tidal
-          spectrum (cm)
-        * A flag indicating if the tide is correctly estimated or not. Possible
-          values are
+       * **0**: the tide is undefined (no model data available at the given
+         position).
+       * **Positive values**: the tide is interpolated at the given
+         position using ``N`` data points (where ``N`` is the
+         number of data points used for the interpolation).
+       * **Negative values**: the tide is extrapolated at the given
+         position using ``-N`` data points (where ``N`` is the
+         number of data points used for the extrapolation).
 
-            ======  ==========================================================
-            0       The tide is undefined because the position is outside the
-                    domain of the tidal model or the numerical model is
-                    undefined for the requested spatial position.
-            1       The tide is extrapolated with the nearest mesh point.
-            2       The tide is extrapolated using a linear interpolation
-                    with two surrounding grid points.
-            3       The tide is extrapolated using a linear interpolation
-                    with three surrounding grid points.
-            4       The tide is correctly estimated.
-            ======  ==========================================================
+    .. note::
 
-        .. note::
-
-            The flag value ``2``, ``4`` or ``8`` are only possible if the
-            tidal model used is a Cartesian grid.
+      Computed height of the diurnal and semi-diurnal constituents is set
+      to nan if no data is available at the given position. The long period wave
+      constituents is always computed because this value does not depend on
+      model data.
 
 .. py:function:: pyfes.core.evaluate_equilibrium_long_period(\
         dates: VectorDateTime64, \

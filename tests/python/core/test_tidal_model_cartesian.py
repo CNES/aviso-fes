@@ -49,7 +49,7 @@ def test_interpolate():
     result, quality = model.interpolate(mx.ravel(), my.ravel())
 
     interpolated = result[core.kS2]
-    interpolated[quality[quality != core.kInterpolated]] = numpy.nan
+    interpolated[quality[quality <= 0]] = numpy.nan
     interpolated = interpolated.reshape(mx.shape).T
     interpolated = numpy.roll(interpolated, 180, axis=1)
 
@@ -63,4 +63,4 @@ def test_interpolate():
     assert len(model) == 0
     result, quality = model.interpolate(mx.ravel(), my.ravel())
     assert result == {}
-    assert numpy.all(quality == core.kUndefined)
+    assert numpy.all(quality == 0)

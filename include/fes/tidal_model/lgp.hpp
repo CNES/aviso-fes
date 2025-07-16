@@ -408,7 +408,7 @@ auto LGP<T, N>::interpolate(const geometry::Point& point, Quality& quality,
     for (const auto& item : this->data_) {
       lgp_acc->emplace_back(item.first, undefined_value);
     }
-    quality = Quality::kUndefined;
+    quality = kUndefined;
     return lgp_acc->values();
   };
 
@@ -441,8 +441,7 @@ auto LGP<T, N>::interpolate(const geometry::Point& point, Quality& quality,
       const auto value = item.second(codes(vertex_id << 1));
       lgp_acc->emplace_back(item.first, static_cast<std::complex<T>>(value));
     }
-    quality = selected_triangle.inside ? Quality::kInterpolated
-                                       : Quality::kExtrapolated1;
+    quality = selected_triangle.inside ? 1 : -1;
     return lgp_acc->values();
   }
 
@@ -486,8 +485,7 @@ auto LGP<T, N>::interpolate(const geometry::Point& point, Quality& quality,
       lgp_acc->emplace_back(item.first, dot);
     }
   }
-  quality = selected_triangle.inside ? Quality::kInterpolated
-                                     : Quality::kExtrapolated1;
+  quality = selected_triangle.inside ? static_cast<Quality>(N * 3) : -1;
   return lgp_acc->values();
 }
 

@@ -160,15 +160,22 @@ inline auto evaluate_tide(const AbstractTidalModel<T>* const tidal_model,
 ///   tidal spectrum.
 /// - The height of the long period wave constituents of the tidal
 ///   spectrum.
-/// - The quality of the tide calculation. Could be kUndefined if the
-///   point is not defined by the model, kInterpolated if the model is
-///   interpolated, kExtrapolated if the model is extrapolated.
+/// - The quality flag indicating the reliability of the tide
+///   calculation at the given position:
+///   - <b>0</b>: the tide is undefined (no data available at the given
+///     position).
+///   - <b>Positive values</b>: the tide is interpolated at the given
+///     position using <pre>N</pre> data points (where <pre>N</pre> is the
+///     number of data points used for the interpolation).
+///   - <b>Negative values</b>: the tide is extrapolated at the given
+///     position using <pre>-N</pre> data points (where <pre>N</pre> is the
+///     number of data points used for the extrapolation).
 /// @note The units of the returned tide are the same as the units of the
 /// constituents loaded in the tidal model.
 /// @note Computed height of the diurnal and semi-diurnal constituents is set
 /// to nan if no data is available at the given position. the long period wave
 /// constituents is always computed because this value does not depend on
-/// input grids.
+/// model data.
 template <typename T>
 auto evaluate_tide(const AbstractTidalModel<T>* const tidal_model,
                    const Eigen::Ref<const Eigen::VectorXd>& epoch,

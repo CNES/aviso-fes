@@ -123,7 +123,7 @@ auto Cartesian<T>::interpolate(const geometry::Point& point, Quality& quality,
     for (const auto& item : this->data_) {
       acc->emplace_back(item.first, undefined_value);
     }
-    quality = Quality::kUndefined;
+    quality = kUndefined;
     return acc->values();
   };
 
@@ -162,12 +162,9 @@ auto Cartesian<T>::interpolate(const geometry::Point& point, Quality& quality,
     }
     acc->emplace_back(item.first, value);
   }
-
-  quality = (n == 4)   ? Quality::kInterpolated
-            : (n == 3) ? Quality::kExtrapolated3
-            : (n == 2) ? Quality::kExtrapolated2
-            : (n == 1) ? Quality::kExtrapolated1
-                       : Quality::kUndefined;
+  // n represents the number of valid grid corners used in the bilinear
+  // interpolation (0, 1, 2, or 4).
+  quality = static_cast<Quality>(n);
   return acc->values();
 }
 

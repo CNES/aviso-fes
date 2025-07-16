@@ -74,10 +74,10 @@ static auto interpolate(const fes::AbstractTidalModel<T>& self,
     auto* acc_ptr = acc.get();
     for (auto ix = start; ix < end; ++ix) {
       const auto point = fes::geometry::Point(lon[ix], lat[ix]);
-      auto quality = fes::Quality::kUndefined;
+      auto quality = fes::kUndefined;
       for (auto&& item : self.interpolate(point, quality, acc_ptr)) {
         values[std::get<0>(item)][ix] =
-            quality == fes::Quality::kUndefined
+            quality == fes::kUndefined
                 ? std::numeric_limits<double>::quiet_NaN()
                 : std::get<1>(item);
       }
@@ -192,14 +192,6 @@ equilibrium wave calculation routine (`lpe_minus_n_waves`).
 }
 
 void init_abstract_tide_model(py::module& m) {
-  py::enum_<fes::Quality>(m, "Quality")
-      .value("kExtrapolated1", fes::Quality::kExtrapolated1)
-      .value("kExtrapolated2", fes::Quality::kExtrapolated2)
-      .value("kExtrapolated3", fes::Quality::kExtrapolated3)
-      .value("kInterpolated", fes::Quality::kInterpolated)
-      .value("kUndefined", fes::Quality::kUndefined)
-      .export_values();
-
   py::enum_<fes::TideType>(m, "TideType")
       .value("kTide", fes::TideType::kTide)
       .value("kRadial", fes::TideType::kRadial)
