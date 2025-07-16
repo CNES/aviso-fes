@@ -113,3 +113,8 @@ src/python/pyfes/version.py
 include/fes/version.hpp
 docs/source/auto_examples
 docs/source/sg_execution_times.rst
+
+# macOS creates .DS_Store files in directories to store custom attributes of a
+# folder. These files are not needed in the repository and can be ignored.
+# More info: https://support.apple.com/en-us/HT201236
+.DS_Store
