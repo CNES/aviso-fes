@@ -28,7 +28,7 @@ namespace fes {
 ///   equals the quality flag value)
 /// * <b>Negative values</b>: Value is extrapolated using N data points (where N
 ///   equals the absolute value of the quality flag)
-using Quality = uint8_t;
+using Quality = int8_t;
 
 /// @brief Undefined interpolation result.
 constexpr Quality kUndefined = 0;

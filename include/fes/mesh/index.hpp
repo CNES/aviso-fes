@@ -22,38 +22,62 @@
 namespace fes {
 namespace mesh {
 
-/// @brief Properties of a triangle selected in a mesh.
+struct VertexAttribute {
+  /// The vertex ID (0, 1, or 2) in the triangle.
+  uint8_t vertex_id;
+  /// The triangle index.
+  int32_t triangle_index;
+};
+
+/// @brief Result of a triangle query.
 ///
-/// Hold the information about a triangle found. This is used to construct the
-/// result of a query to the index when the provided point is inside the mesh.
-struct SelectedTriangle {
-  /// Flag to indicate if the point is inside the mesh.
-  bool inside{};
+/// This structure contains the result of a triangle query. It includes the
+/// triangle index, the query point, the selected triangle, and the nearest
+/// vertices from triangles closest to the query point when the point is
+/// outside the mesh.
+struct TriangleQueryResult {
   /// The triangle index.
   std::int32_t index{-1};
-  /// The point to be used to calculate the interpolation weights. If the query
-  /// point is inside the triangle, this is the query point. Otherwise, it is
-  /// the projection of the query point on the nearest edge.
+  /// The query point used for the search.
   geometry::Point point{};
   /// The selected triangle.
   geometry::Triangle triangle{};
+  /// List of nearest vertices from triangles closest to the query point.
+  std::vector<VertexAttribute> nearest_vertices{};
 
   /// Default constructor.
-  constexpr SelectedTriangle() = default;
+  constexpr TriangleQueryResult() = default;
 
-  /// Construct a new selected triangle.
+  /// @brief Constructs a TriangleQueryResult when the query point is inside the
+  /// mesh.
   ///
-  /// @param[in] inside Flag to indicate if the point is inside the mesh.
   /// @param[in] triangle_index The triangle index.
   /// @param[in] point The point to be used to calculate the interpolation
   /// weights.
   /// @param[in] triangle The selected triangle.
-  inline SelectedTriangle(const bool inside, const std::int32_t triangle_index,
-                          geometry::Point point, geometry::Triangle triangle)
-      : inside(inside),
-        index(triangle_index),
-        point(point),
-        triangle(std::move(triangle)) {}
+  inline TriangleQueryResult(const std::int32_t triangle_index,
+                             geometry::Point point, geometry::Triangle triangle)
+      : index(triangle_index), point(point), triangle(std::move(triangle)) {}
+
+  /// @brief Constructs a TriangleQueryResult when the query point is outside
+  /// the mesh.
+  /// @param nearest_vertices The nearest vertices from triangles closest to the
+  /// query point.
+  /// @param point The point to be used to calculate the interpolation weights.
+  inline TriangleQueryResult(std::vector<VertexAttribute> nearest_vertices,
+                             geometry::Point point)
+      : point(std::move(point)),
+        nearest_vertices(std::move(nearest_vertices)) {}
+
+  /// @brief Check if the requested point is inside the mesh.
+  /// @return True if the point is inside the mesh, false otherwise.
+  constexpr auto is_inside() const noexcept -> bool { return index >= 0; }
+
+  /// @brief Check if the query is valid.
+  /// @return True if the query is valid, false otherwise.
+  inline auto is_valid() const noexcept {
+    return is_inside() || !nearest_vertices.empty();
+  }
 };
 
 /// %Index the triangles of a mesh.
@@ -75,7 +99,7 @@ class Index : public std::enable_shared_from_this<Index> {
   /// @param[in] max_distance The maximum distance to the nearest triangle.
   /// @return The selected triangle.
   auto search(const geometry::Point& point, const double max_distance) const
-      -> SelectedTriangle;
+      -> TriangleQueryResult;
 
   /// Get the number of positions in the index
   inline auto n_positions() const noexcept -> size_t { return lon_.size(); }
@@ -148,6 +172,24 @@ class Index : public std::enable_shared_from_this<Index> {
     return {geometry::Point(lon_(i0), lat_(i0)),
             geometry::Point(lon_(i1), lat_(i1)),
             geometry::Point(lon_(i2), lat_(i2))};
+  }
+
+  /// Filter the vertices of a triangle that are within a maximum distance from
+  /// a given point.
+  inline auto filter_nearby_vertices(
+      const geometry::EarthCenteredEarthFixed& point, const int triangle_index,
+      const double max_distance,
+      std::vector<VertexAttribute>& nearest_vertices) const -> void {
+    const Eigen::Vector3i& vertex_indices = triangles_.row(triangle_index);
+    for (uint8_t vertex_id = 0; vertex_id < 3; ++vertex_id) {
+      const auto vertex_index = vertex_indices(vertex_id);
+      const auto vertex = geometry::EarthCenteredEarthFixed(
+          geometry::Point(lon_(vertex_index), lat_(vertex_index)));
+      const auto distance = detail::geometry::distance(point, vertex);
+      if (distance <= max_distance) {
+        nearest_vertices.push_back({vertex_id, triangle_index});
+      }
+    }
   }
 };
 

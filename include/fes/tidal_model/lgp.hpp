@@ -12,6 +12,7 @@
 #include <limits>
 #include <map>
 #include <memory>
+#include <set>
 #include <sstream>
 #include <unordered_map>
 #include <utility>
@@ -52,7 +53,7 @@ class LGPAccelerator : public Accelerator {
   /// Set the selected triangle for the accelerator.
   ///
   /// @param[in] triangle The selected triangle.
-  auto set(fes::mesh::SelectedTriangle&& triangle) -> void {
+  auto set(fes::mesh::TriangleQueryResult&& triangle) -> void {
     selected_ = triangle;
   }
 
@@ -62,7 +63,7 @@ class LGPAccelerator : public Accelerator {
   /// Get the selected triangle for the accelerator.
   ///
   /// @return The selected triangle.
-  auto get() const noexcept -> const fes::mesh::SelectedTriangle& {
+  auto get() const noexcept -> const fes::mesh::TriangleQueryResult& {
     return selected_;
   }
 
@@ -71,17 +72,14 @@ class LGPAccelerator : public Accelerator {
   /// @param[in] point The point to check.
   /// @return True if the point is in the cache, false otherwise.
   inline auto in_cache(const geometry::Point& point) const -> bool {
-    // If the selected triangle is valid and the point is inside the triangle,
-    // the point is considered to be in the cache. A point that is projected
-    // onto the edge of the nearest triangle will not be considered to be in the
-    // cache.
-    return selected_.index != -1 && selected_.inside &&
-           selected_.triangle.covered_by(point);
+    // Check if the point is within the previously selected triangle to avoid
+    // redundant triangle searches.
+    return selected_.is_inside() && selected_.triangle.covered_by(point);
   }
 
  private:
   /// The selected triangle for the accelerator.
-  mesh::SelectedTriangle selected_{};
+  mesh::TriangleQueryResult selected_{};
 };
 
 /// @brief %LGP tidal models.
@@ -126,9 +124,10 @@ class LGP : public fes::AbstractTidalModel<T> {
     // wave is a vector of values for each LGP codes. The number of values must
     // match the number of LGP codes handled by this instance.
     if (expected_data_size_ != wave.size()) {
-      throw std::invalid_argument("wave size does not match expected size: " +
-                                  std::to_string(wave.size()) +
-                                  " != " + std::to_string(expected_data_size_));
+      throw std::invalid_argument(
+          "Wave data size mismatch for constituent: provided " +
+          std::to_string(wave.size()) + " values, expected " +
+          std::to_string(expected_data_size_) + " values");
     }
     this->data_.emplace(ident, std::move(wave));
   }
@@ -178,8 +177,14 @@ class LGP : public fes::AbstractTidalModel<T> {
   /// @return A vector containing the selected indices. If no bounding box is
   /// set, an empty vector is returned.
   inline auto selected_indices() const -> Vector<int64_t> {
+    if (selected_indices_.empty()) {
+      return Vector<int64_t>();
+    }
+
     const auto size = selected_indices_.size();
     Vector<int64_t> result(size);
+
+    // Extract the keys (original indices) from the map
     auto* ptr = result.data();
     std::for_each(selected_indices_.begin(), selected_indices_.end(),
                   [&ptr](const auto& item) { *ptr++ = item.first; });
@@ -206,6 +211,64 @@ class LGP : public fes::AbstractTidalModel<T> {
   auto setstate_instance(const string_view& data);
 
  private:
+  /// @brief Initialize selected indices based on bounding box.
+  ///
+  /// @param[in] bbox The bounding box to consider when selecting LGP codes.
+  auto initialize_selected_indices(
+      const std::tuple<double, double, double, double>& bbox) -> void;
+
+  /// @brief Validate and calculate expected data size from LGP codes.
+  auto calculate_expected_data_size() -> void;
+
+  /// @brief Process a single vertex for extrapolation.
+  ///
+  /// @param[in] vertex The vertex to process.
+  /// @param[inout] known_points Matrix to store valid vertex positions.
+  /// @param[inout] selected_indices Vector to store selected indices.
+  /// @param[inout] valid_count Counter for valid vertices processed.
+  /// @return True if the vertex was processed successfully, false otherwise.
+  auto process_vertex_for_extrapolation(
+      const mesh::VertexAttribute& vertex,
+      Eigen::Matrix<double, -1, 3>& known_points,
+      std::vector<int64_t>& selected_indices, int64_t& valid_count) const
+      -> bool;
+
+  /// @brief Perform inverse distance weighting interpolation.
+  ///
+  /// @param[in] query_point The point to interpolate at.
+  /// @param[in] known_points Matrix of known vertex positions.
+  /// @param[in] selected_indices Vector of selected indices.
+  /// @param[in] valid_count Number of valid vertices.
+  /// @param[inout] acc Accelerator to store results.
+  auto inverse_distance_weighting(
+      const Eigen::Matrix<double, 1, 3>& query_point,
+      const Eigen::Matrix<double, -1, 3>& known_points,
+      const std::vector<int64_t>& selected_indices, int64_t valid_count,
+      LGPAccelerator* acc) const -> void;
+
+  /// @brief Handle vertex interpolation when point is exactly on a vertex.
+  ///
+  /// @param[in] vertex_id The vertex ID.
+  /// @param[in] codes The LGP codes for the triangle.
+  /// @param[inout] acc Accelerator to store results.
+  /// @param[inout] quality Quality indicator.
+  auto handle_vertex_interpolation(int vertex_id,
+                                   const typename codes_t::ConstRowXpr& codes,
+                                   LGPAccelerator* acc, Quality& quality) const
+      -> void;
+
+  /// @brief Perform LGP interpolation within a triangle.
+  ///
+  /// @param[in] beta The beta coefficients.
+  /// @param[in] codes The LGP codes for the triangle.
+  /// @param[inout] acc Accelerator to store results.
+  /// @param[inout] quality Quality indicator.
+  auto perform_lgp_interpolation(const Eigen::Matrix<double, N * 3, 1>& beta,
+                                 const typename codes_t::ConstRowXpr& codes,
+                                 LGPAccelerator* acc, Quality& quality) const
+      -> void;
+
+ private:
   /// Expected data size for each data set
   int expected_data_size_{};
 
@@ -221,6 +284,12 @@ class LGP : public fes::AbstractTidalModel<T> {
 
   /// %LGP codes for each triangles in the index
   codes_t codes_{};
+
+  /// Extrapolate the wave model at the given point using the nearest vertices
+  /// from the mesh index.
+  auto extrapolate(const geometry::Point& point, Quality& quality,
+                   const std::vector<mesh::VertexAttribute>& nearest_vertices,
+                   LGPAccelerator* acc) const -> void;
 };
 
 /// @brief %LGP1 tidal model.
@@ -332,6 +401,55 @@ class LGP2 : public LGP<T, 2> {
 
 // /////////////////////////////////////////////////////////////////////////////
 template <typename T, int N>
+auto LGP<T, N>::initialize_selected_indices(
+    const std::tuple<double, double, double, double>& bbox) -> void {
+  // Get the selected triangles that intersect the bounding box
+  const auto selected_triangles = index_->selected_triangles(
+      geometry::Box{geometry::Point{std::get<0>(bbox), std::get<1>(bbox)},
+                    geometry::Point{std::get<2>(bbox), std::get<3>(bbox)}});
+
+  // A LGP code could be used by multiple triangles, we need to store the
+  // selected indices to avoid duplicates.
+  std::set<int64_t> selected_indices;
+  for (const auto& ix : selected_triangles) {
+    const auto& codes = codes_.row(ix);
+    for (auto iy = 0; iy < N * 3; ++iy) {
+      selected_indices.insert(codes(iy));
+    }
+  }
+
+  // Finally, we store the selected indices in a map to get the index of each
+  // LGP code.
+  int64_t index = 0;
+  for (const auto& ix : selected_indices) {
+    selected_indices_[ix] = index++;
+  }
+}
+
+// /////////////////////////////////////////////////////////////////////////////
+template <typename T, int N>
+auto LGP<T, N>::calculate_expected_data_size() -> void {
+  // Determine the first and last LGP codes for each triangle
+  auto min_index = std::numeric_limits<int>::max();
+  auto max_index = std::numeric_limits<int>::min();
+  std::for_each(codes_.data(), codes_.data() + codes_.size(),
+                [&min_index, &max_index](const auto& code) {
+                  min_index = std::min(min_index, code);
+                  max_index = std::max(max_index, code);
+                });
+
+  if (min_index < 0) {
+    throw std::invalid_argument("LGP codes must be non-negative");
+  }
+
+  // Store the expected data size to interpolate
+  expected_data_size_ = selected_indices_.empty()
+                            ? max_index + 1
+                            : static_cast<int>(selected_indices_.size());
+}
+
+// /////////////////////////////////////////////////////////////////////////////
+template <typename T, int N>
 LGP<T, N>::LGP(
     std::shared_ptr<mesh::Index> index, LGP::codes_t codes, TideType tide_type,
     const double max_distance,
@@ -349,45 +467,176 @@ LGP<T, N>::LGP(
         " != " + std::to_string(codes_.rows()));
   }
 
-  // A bounding box is provided, we need to select the LGP codes that intersect
-  // the bounding box.
+  // Initialize selected indices if bounding box is provided
   if (bbox) {
-    // Get the selected triangles that intersect the bounding box
-    const auto selected_triangles = index_->selected_triangles(
-        geometry::Box{geometry::Point{std::get<0>(*bbox), std::get<1>(*bbox)},
-                      geometry::Point{std::get<2>(*bbox), std::get<3>(*bbox)}});
-    // A LPG code could be used by multiple triangles, we need to store the
-    // selected indices to avoid duplicates.
-    std::set<int64_t> selected_indices;
-    for (const auto& ix : selected_triangles) {
-      const auto& codes = codes_.row(ix);
-      for (auto iy = 0; iy < N * 3; ++iy) {
-        selected_indices.insert(codes(iy));
+    initialize_selected_indices(*bbox);
+  }
+
+  // Calculate expected data size based on LGP codes
+  calculate_expected_data_size();
+}
+
+// /////////////////////////////////////////////////////////////////////////////
+inline auto transform_to_ecef(const geometry::Point& point)
+    -> Eigen::Matrix<double, 1, 3> {
+  // Convert the point to Earth-Centered Earth-Fixed coordinates
+  auto ecef = static_cast<geometry::EarthCenteredEarthFixed>(point);
+  // Return the coordinates as a 3D matrix
+  return (Eigen::Matrix<double, 1, 3>() << ecef.x(), ecef.y(), ecef.z())
+      .finished();
+}
+
+// /////////////////////////////////////////////////////////////////////////////
+template <typename T, int N>
+auto LGP<T, N>::process_vertex_for_extrapolation(
+    const mesh::VertexAttribute& vertex,
+    Eigen::Matrix<double, -1, 3>& known_points,
+    std::vector<int64_t>& selected_indices, int64_t& valid_count) const
+    -> bool {
+  const auto& code = codes_.row(vertex.triangle_index);
+  const auto& vertex_indices = index_->triangles().row(vertex.triangle_index);
+  const auto lon = index_->lon()(vertex_indices(vertex.vertex_id));
+  const auto lat = index_->lat()(vertex_indices(vertex.vertex_id));
+  const auto ecef = transform_to_ecef(geometry::Point(lon, lat));
+
+  if (!selected_indices_.empty()) {
+    // If the selected indices are provided, we only consider the LGP
+    // codes that are in the selected indices.
+    auto it = selected_indices_.find(code(N * vertex.vertex_id));
+    if (it == selected_indices_.end()) {
+      return false;
+    }
+    known_points.row(valid_count) = ecef;
+    selected_indices.push_back(it->second);
+  } else {
+    // If no selected indices are provided, we consider all the LGP codes
+    // for the vertex.
+    known_points.row(valid_count) = ecef;
+    selected_indices.push_back(code(N * vertex.vertex_id));
+  }
+
+  valid_count++;
+  return true;
+}
+
+// /////////////////////////////////////////////////////////////////////////////
+template <typename T, int N>
+auto LGP<T, N>::inverse_distance_weighting(
+    const Eigen::Matrix<double, 1, 3>& query_point,
+    const Eigen::Matrix<double, -1, 3>& known_points,
+    const std::vector<int64_t>& selected_indices, int64_t valid_count,
+    LGPAccelerator* acc) const -> void {
+  for (const auto& item : this->data_) {
+    const auto& wave = item.second;
+    std::complex<double> sum_of_weights(0, 0);
+    std::complex<double> sum_of_weighted_values(0, 0);
+
+    for (auto i = 0; i < valid_count; ++i) {
+      auto distance = (known_points.row(i) - query_point).norm();
+      auto value = static_cast<std::complex<double>>(wave(selected_indices[i]));
+      auto weight =
+          std::complex<double>(1 / detail::math::pow<2, double>(distance), 0);
+
+      sum_of_weights += weight;
+      sum_of_weighted_values += weight * value;
+    }
+    acc->emplace_back(item.first, sum_of_weighted_values / sum_of_weights);
+  }
+}
+
+// /////////////////////////////////////////////////////////////////////////////
+template <typename T, int N>
+auto LGP<T, N>::extrapolate(
+    const geometry::Point& point, Quality& quality,
+    const std::vector<mesh::VertexAttribute>& nearest_vertices,
+    LGPAccelerator* acc) const -> void {
+  const auto n = nearest_vertices.size();
+  assert(n > 0);
+
+  // Pre-allocate with maximum possible size, will resize later
+  Eigen::Matrix<double, -1, 3> known_points(n, 3);
+  std::vector<int64_t> selected_indices;
+  selected_indices.reserve(n);
+
+  // Number of vertices that will be used for extrapolation
+  int64_t valid_count = 0;
+
+  // Filter valid vertices and collect their positions
+  for (const auto& vertex : nearest_vertices) {
+    process_vertex_for_extrapolation(vertex, known_points, selected_indices,
+                                     valid_count);
+  }
+
+  // Check if we have enough valid vertices for extrapolation
+  if (valid_count == 0) {
+    quality = kUndefined;
+    return;
+  }
+
+  // Resize matrices to actual size needed
+  known_points.conservativeResize(valid_count, 3);
+
+  auto query_point = transform_to_ecef(point);
+
+  // Perform inverse distance weighting interpolation
+  inverse_distance_weighting(query_point, known_points, selected_indices,
+                             valid_count, acc);
+
+  quality = static_cast<Quality>(-std::max<int64_t>(valid_count, 127));
+}
+
+// /////////////////////////////////////////////////////////////////////////////
+template <typename T, int N>
+auto LGP<T, N>::handle_vertex_interpolation(
+    int vertex_id, const typename codes_t::ConstRowXpr& codes,
+    LGPAccelerator* acc, Quality& quality) const -> void {
+  for (const auto& item : this->data_) {
+    const auto value = item.second(codes(vertex_id << 1));
+    acc->emplace_back(item.first, static_cast<std::complex<T>>(value));
+  }
+  quality = 1;
+}
+
+// /////////////////////////////////////////////////////////////////////////////
+template <typename T, int N>
+auto LGP<T, N>::perform_lgp_interpolation(
+    const Eigen::Matrix<double, N * 3, 1>& beta,
+    const typename codes_t::ConstRowXpr& codes, LGPAccelerator* acc,
+    Quality& quality) const -> void {
+  if (selected_indices_.empty()) {
+    // First case: no bounding box is provided, we interpolate all the LGP codes
+    for (const auto& item : this->data_) {
+      const auto& wave = item.second;
+      auto dot = std::complex<double>(0, 0);
+
+      // Read the values for each LGP code
+      for (auto ix = 0; ix < N * 3; ++ix) {
+        dot += beta(ix) * static_cast<std::complex<double>>(wave(codes(ix)));
       }
+      acc->emplace_back(item.first, dot);
     }
-    // Finally, we store the selected indices in a map to get the index of each
-    // LGP code.
-    int64_t index = 0;
-    for (const auto& ix : selected_indices) {
-      selected_indices_[ix] = index++;
+  } else {
+    // Second case: a bounding box is provided, we interpolate the selected LGP
+    // codes
+    for (const auto& item : this->data_) {
+      const auto& wave = item.second;
+      auto dot = std::complex<double>(0, 0);
+
+      for (auto ix = 0; ix < N * 3; ++ix) {
+        const auto it = selected_indices_.find(codes(ix));
+        if (it == selected_indices_.end()) {
+          // If the input coordinates are outside the bounding box, the
+          // LGP codes will not be found in the selected indices. In this case,
+          // we return NaN.
+          quality = kUndefined;
+          return;
+        }
+        dot += beta(ix) * static_cast<std::complex<double>>(wave(it->second));
+      }
+      acc->emplace_back(item.first, dot);
     }
   }
-
-  // Determine the first and last LGP codes for each triangle
-  auto min_index = std::numeric_limits<int>::max();
-  auto max_index = std::numeric_limits<int>::min();
-  std::for_each(codes_.data(), codes_.data() + codes_.size(),
-                [&min_index, &max_index](const auto& code) {
-                  min_index = std::min(min_index, code);
-                  max_index = std::max(max_index, code);
-                });
-  if (min_index < 0) {
-    throw std::invalid_argument("codes_t must be positive");
-  }
-
-  // Store the expected data size to interpolate
-  expected_data_size_ =
-      bbox ? static_cast<int>(selected_indices_.size()) : max_index + 1;
+  quality = static_cast<Quality>(N * 3);
 }
 
 // /////////////////////////////////////////////////////////////////////////////
@@ -421,71 +670,50 @@ auto LGP<T, N>::interpolate(const geometry::Point& point, Quality& quality,
   lgp_acc->clear();
 
   // Get the cached triangle
-  const auto& selected_triangle = lgp_acc->get();
-  if (selected_triangle.index == -1) {
-    // No triangle found, return NaN
+  const auto& query_result = lgp_acc->get();
+  if (!query_result.is_valid()) {
+    // The point is outside the mesh or too far from it, we return NaN
     return reset_values_to_undefined();
+  } else if (!query_result.is_inside()) {
+    // The point is outside the mesh, but within the maximum distance
+    // allowed, we extrapolate the wave model using the nearest vertices from
+    // the mesh index.
+    extrapolate(point, quality, query_result.nearest_vertices, lgp_acc);
+    if (quality == kUndefined) {
+      // If the extrapolation failed, we return NaN
+      return reset_values_to_undefined();
+    }
+    return lgp_acc->values();
   }
 
   // Get the LGP codes for the triangle
-  const auto& codes = codes_.row(selected_triangle.index);
+  const auto& codes = codes_.row(query_result.index);
 
   // If the selected point is one of the vertices of the triangle, then we
   // return values associated with this vertex. The LGP code of vertex 0 is at
-  // index 0, the code of vertex 1 is at index 2 and the code of vertex 3 is at
+  // index 0, the code of vertex 1 is at index 2 and the code of vertex 2 is at
   // index 4.
-  auto vertex_id =
-      selected_triangle.triangle.is_vertex(selected_triangle.point);
+  auto vertex_id = query_result.triangle.is_vertex(query_result.point);
   if (vertex_id != -1) {
-    for (const auto& item : this->data_) {
-      const auto value = item.second(codes(vertex_id << 1));
-      lgp_acc->emplace_back(item.first, static_cast<std::complex<T>>(value));
-    }
-    quality = selected_triangle.inside ? 1 : -1;
+    handle_vertex_interpolation(vertex_id, codes, lgp_acc, quality);
     return lgp_acc->values();
   }
 
   // Calculate ξ and η for the given point
-  const auto xy = selected_triangle.triangle.reference_right_angled(
-      selected_triangle.point);
+  const auto xy =
+      query_result.triangle.reference_right_angled(query_result.point);
 
   // Calculate the beta coefficients for the given point
   const auto beta = calculate_beta(std::get<0>(xy), std::get<1>(xy));
 
-  // Interpolate the wave model for each data set
-  if (selected_indices_.empty()) {
-    // First case: no bounding box is provided, we interpolate all the LGP codes
-    for (const auto& item : this->data_) {
-      const auto& wave = item.second;
-      auto dot = std::complex<double>(0, 0);
+  // Perform LGP interpolation
+  perform_lgp_interpolation(beta, codes, lgp_acc, quality);
 
-      // Read the values for each LGP code
-      for (auto ix = 0; ix < N * 3; ++ix) {
-        dot += beta(ix) * static_cast<std::complex<double>>(wave(codes(ix)));
-      }
-      lgp_acc->emplace_back(item.first, dot);
-    }
-  } else {
-    // Second case: a bounding box is provided, we interpolate the selected LGP
-    // codes
-    for (const auto& item : this->data_) {
-      const auto& wave = item.second;
-      auto dot = std::complex<double>(0, 0);
-
-      for (auto ix = 0; ix < N * 3; ++ix) {
-        const auto it = selected_indices_.find(codes(ix));
-        if (it == selected_indices_.end()) {
-          // If the input coordinates are outside the bounding box, the
-          // LPG codes will not be found in the selected indices. In this case,
-          // we return NaN.
-          return reset_values_to_undefined();
-        }
-        dot += beta(ix) * static_cast<std::complex<double>>(wave(it->second));
-      }
-      lgp_acc->emplace_back(item.first, dot);
-    }
+  // Handle case where point is outside bounding box
+  if (quality == kUndefined) {
+    return reset_values_to_undefined();
   }
-  quality = selected_triangle.inside ? static_cast<Quality>(N * 3) : -1;
+
   return lgp_acc->values();
 }
 

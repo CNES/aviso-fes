@@ -82,7 +82,7 @@ Index::Index(Eigen::VectorXd lon, Eigen::VectorXd lat,
 }
 
 auto Index::search(const geometry::Point& point,
-                   const double max_distance) const -> SelectedTriangle {
+                   const double max_distance) const -> TriangleQueryResult {
   constexpr size_t kMaxNeighbors = 11;
   auto min_distance = std::numeric_limits<double>::max();
   auto triangle_indices = std::set<int>();
@@ -110,30 +110,24 @@ auto Index::search(const geometry::Point& point,
   for (auto& ix : triangle_indices) {
     auto triangle = build_triangle(ix);
     if (triangle.covered_by(point)) {
-      return {true, ix, point, std::move(triangle)};
+      return {ix, point, std::move(triangle)};
     }
   }
 
-  auto result = SelectedTriangle{};
+  // The point is not inside any triangle, so find the nearest triangle vertices
+  // to the query point.
+  auto nearest_vertices = std::vector<VertexAttribute>{};
+  nearest_vertices.reserve(3 * triangle_indices.size());
 
-  // If the nearest vertex is it not too far away, looking for the nearest
-  // triangle.
-  if (min_distance < max_distance) {
-    min_distance = std::numeric_limits<double>::max();
-
-    for (auto& ix : triangle_indices) {
-      auto triangle = build_triangle(ix);
-      auto distance = triangle.distance(point);
-
-      if (distance < min_distance) {
-        min_distance = distance;
-        result.index = ix;
-        result.triangle = std::move(triangle);
-      }
-    }
-    result.point = result.triangle.project(point);
+  for (auto& ix : triangle_indices) {
+    filter_nearby_vertices(cartesian_point, ix, max_distance, nearest_vertices);
   }
-  return result;
+
+  if (nearest_vertices.empty()) {
+    // No vertices found within the max distance, return an empty result.
+    return TriangleQueryResult{};
+  }
+  return TriangleQueryResult{std::move(nearest_vertices), point};
 }
 
 auto Index::selected_triangles(const geometry::Box& bbox) const

@@ -50,26 +50,49 @@ handlers = pyfes.load_config(pathlib.Path().absolute() / 'fes_lpg.yml')
 print(handlers)
 
 # %%
+# Define the area of interest.
+# Here we are interested in the area around the french coast.
+LON_MIN = -5.0
+LON_MAX = 40.0
+LAT_MIN = 10.0
+LAT_MAX = 55.0
+
+# %%
+# Define the step size for the latitude and longitude grid.
+LAT_STEP = 0.25
+LON_STEP = 0.25
+
+# %%
+# Define the interpolation quality flags.
+UNDEFINED = 0
+INTERPOLATED = 1
+EXTRAPOLATED = 2
+
+# %%
 # We can now create a grid to calculate the geocentric ocean tide around the
 # french coast.
-lons = numpy.arange(-5, 40, 0.25)
-lats = numpy.arange(10, 55, 0.25)
+lons = numpy.arange(LON_MIN, LON_MAX, LON_STEP)
+lats = numpy.arange(LAT_MIN, LAT_MAX, LAT_STEP)
 lons, lats = numpy.meshgrid(lons, lats)
 shape = lons.shape
 dates = numpy.full(shape, 'now', dtype='datetime64[us]')
 
 # %%
 # We can now calculate the ocean tide and the radial tide.
-tide, lp, lpg_flag = pyfes.evaluate_tide(handlers['tide'],
-                                         dates.ravel(),
-                                         lons.ravel(),
-                                         lats.ravel(),
-                                         num_threads=0)
-load, load_lp, _ = pyfes.evaluate_tide(handlers['radial'],
-                                       dates.ravel(),
-                                       lons.ravel(),
-                                       lats.ravel(),
-                                       num_threads=0)
+tide, lp, lgp_flag = pyfes.evaluate_tide(
+    handlers['tide'],
+    dates.ravel(),
+    lons.ravel(),
+    lats.ravel(),
+    num_threads=0,
+)
+load, load_lp, _ = pyfes.evaluate_tide(
+    handlers['radial'],
+    dates.ravel(),
+    lons.ravel(),
+    lats.ravel(),
+    num_threads=0,
+)
 
 # %%
 # We can now calculate the geocentric ocean tide (as seen by a satellite).
@@ -78,7 +101,14 @@ geo_tide = geo_tide.reshape(lons.shape)
 
 # %%
 # Mask the land values.
-geo_tide = numpy.ma.masked_where(numpy.isnan(geo_tide), geo_tide)
+lgp_flag = lgp_flag.reshape(lons.shape)
+geo_tide = numpy.ma.masked_where(lgp_flag == 0, geo_tide)
+
+# %%
+# Create an interpolation quality flag array for visualization purposes.
+flags = numpy.zeros(lgp_flag.shape, dtype=numpy.int8)
+flags[lgp_flag > 0] = INTERPOLATED
+flags[lgp_flag < 0] = EXTRAPOLATED
 
 # %%
 # We can now plot the result.
@@ -88,7 +118,8 @@ fig.suptitle(f'Tide and Interpolation Quality Flag on {dates[0, 0]}',
 
 # Plot the geocentric ocean tide
 ax1 = fig.add_subplot(1, 2, 1, projection=cartopy.crs.PlateCarree())
-ax1.set_extent([-5.0, 10.0, 40.0, 55.0], crs=cartopy.crs.PlateCarree())
+ax1.set_extent([LON_MIN, LAT_MIN, LON_MAX, LAT_MAX],
+               crs=cartopy.crs.PlateCarree())
 ax1.coastlines()
 ax1.set_title('Geocentric Ocean Tide')
 ax1.set_xlabel('Longitude')
@@ -96,26 +127,43 @@ ax1.set_ylabel('Latitude')
 mesh1 = ax1.pcolormesh(lons,
                        lats,
                        geo_tide,
-                       cmap='jet',
+                       shading='auto',
                        transform=cartopy.crs.PlateCarree())
 colorbar1 = fig.colorbar(mesh1, ax=ax1, orientation='horizontal', pad=0.05)
 colorbar1.set_label('Geocentric ocean tide (cm)')
 
 # Plot the interpolation quality flag
 ax2 = fig.add_subplot(1, 2, 2, projection=cartopy.crs.PlateCarree())
-ax2.set_extent([-5.0, 10.0, 40.0, 55.0], crs=cartopy.crs.PlateCarree())
+ax2.set_extent([LON_MIN, LAT_MIN, LON_MAX, LAT_MAX],
+               crs=cartopy.crs.PlateCarree())
 ax2.coastlines()
 ax2.set_title('Interpolation Quality Flag')
 ax2.set_xlabel('Longitude')
 ax2.set_ylabel('Latitude')
-mesh2 = ax2.pcolormesh(lons,
-                       lats,
-                       lpg_flag.reshape(lons.shape),
-                       cmap='Dark2_r',
-                       transform=cartopy.crs.PlateCarree(),
-                       vmin=0,
-                       vmax=4)
-colorbar2 = fig.colorbar(mesh2, ax=ax2, orientation='horizontal', pad=0.05)
+cmap = matplotlib.pyplot.get_cmap('Dark2_r', 3)
+mesh2 = ax2.pcolormesh(
+    lons,
+    lats,
+    flags,
+    cmap=cmap,
+    transform=cartopy.crs.PlateCarree(),
+)
+colorbar2 = fig.colorbar(
+    mesh2,
+    ax=ax2,
+    orientation='horizontal',
+    pad=0.05,
+    ticks=[
+        UNDEFINED,
+        INTERPOLATED,
+        EXTRAPOLATED,
+    ],
+)
+colorbar2.set_ticklabels([
+    'Undefined',
+    'Interpolated',
+    'Extrapolated',
+])
 colorbar2.set_label('Interpolation Quality Flag')
 fig.tight_layout()
 matplotlib.pyplot.show()
