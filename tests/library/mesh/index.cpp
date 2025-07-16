@@ -100,10 +100,10 @@ TEST(Index, Serialize) {
 
   auto query =
       index.search({-0.16067459068705148, 0.09857747238454806}, 50'000);
-  EXPECT_TRUE(query.inside);
+  EXPECT_TRUE(query.is_inside());
   EXPECT_EQ(query.index, 5);
 
   query = index.search({-0.4057, 0.0717}, 50'000);
-  EXPECT_TRUE(query.inside);
+  EXPECT_TRUE(query.is_inside());
   EXPECT_EQ(query.index, 10);
 }
