@@ -6,6 +6,25 @@ Changelog
 2025.8.0
 ========
 
+New Features
+------------
+* **Improved LGP extrapolation algorithm**: Previously, extrapolation for points
+  outside the LGP mesh only used the single closest vertex. The new algorithm
+  now considers multiple vertices within the maximum allowed distance, applying
+  inverse distance weighting based on all nearby vertices. This provides
+  smoother transitions in extrapolated regions and more accurate results near
+  mesh boundaries. The quality flag reflects this change by returning a negative
+  value equal to the number of vertices used in the extrapolation (limited to
+  -127).
+* **Enhanced quality flag reporting**: The quality flag now provides more
+  detailed information for extrapolated values. A negative flag (e.g., -3)
+  indicates that the value was extrapolated using that number of vertices (e.g.,
+  3). This allows for a more precise assessment of data quality in extrapolated
+  regions, particularly for LGP meshes. See the Breaking Changes section for
+  details on the updated quality flag semantics.
+* **Updated documentation**: The API documentation has been updated to reflect
+  the new quality flag semantics and the improved LGP extrapolation algorithm.
+
 Breaking Changes
 ----------------
 

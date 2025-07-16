@@ -81,8 +81,9 @@ values, quality = model.interpolate(lon.ravel(), lat.ravel(), num_threads=1)
 # %%
 # Values is dictionary of numpy arrays. Each key is the name of a wave and the
 # value is the interpolated values. Quality is a numpy array of integers. The
-# value is 1 if the point is interpolated and 2 if the point is extrapolated
-# with the nearest point, according to the max_distance parameter.
+# value is positive if the point is interpolated, negative if the point is
+# extrapolated with the nearest vertices and zero if the point is outside the
+# domain.
 print(values)
 
 # %%
@@ -110,10 +111,10 @@ cbar.set_label('Amplitude (cm)')
 matplotlib.pyplot.show()
 
 # %%
-# You can observe that the values near the coast are not interpolated. This is
-# because the model is not defined in this area. It's possible to extrapolate
-# the model by increasing the max_distance parameter. For example, if you set it
-# to 20 km, the model will be extrapolated in the English Channel.
+# The values near the coast are not interpolated because they are outside the
+# model's domain. It is possible to extrapolate the model by increasing the
+# ``max_distance`` parameter. For example, setting it to 20 km allows
+# extrapolation into the English Channel.
 #
 # .. note::
 #
@@ -143,4 +144,3 @@ contour = ax.pcolormesh(lon,
 cbar = matplotlib.pyplot.colorbar(contour, ax=ax, orientation='vertical')
 cbar.set_label('Amplitude (cm)')
 matplotlib.pyplot.show()
-# %%
