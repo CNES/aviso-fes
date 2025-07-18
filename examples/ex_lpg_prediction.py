@@ -53,8 +53,8 @@ print(handlers)
 # Define the area of interest.
 # Here we are interested in the area around the french coast.
 LON_MIN = -5.0
-LON_MAX = 40.0
-LAT_MIN = 10.0
+LON_MAX = 10.0
+LAT_MIN = 40.0
 LAT_MAX = 55.0
 
 # %%
@@ -71,8 +71,8 @@ EXTRAPOLATED = 2
 # %%
 # We can now create a grid to calculate the geocentric ocean tide around the
 # french coast.
-lons = numpy.arange(LON_MIN, LON_MAX, LON_STEP)
-lats = numpy.arange(LAT_MIN, LAT_MAX, LAT_STEP)
+lons = numpy.arange(LON_MIN, LON_MAX + LON_STEP, LON_STEP)
+lats = numpy.arange(LAT_MIN, LAT_MAX + LAT_STEP, LAT_STEP)
 lons, lats = numpy.meshgrid(lons, lats)
 shape = lons.shape
 dates = numpy.full(shape, 'now', dtype='datetime64[us]')
@@ -118,7 +118,7 @@ fig.suptitle(f'Tide and Interpolation Quality Flag on {dates[0, 0]}',
 
 # Plot the geocentric ocean tide
 ax1 = fig.add_subplot(1, 2, 1, projection=cartopy.crs.PlateCarree())
-ax1.set_extent([LON_MIN, LAT_MIN, LON_MAX, LAT_MAX],
+ax1.set_extent([LON_MIN, LON_MAX, LAT_MIN, LAT_MAX],
                crs=cartopy.crs.PlateCarree())
 ax1.coastlines()
 ax1.set_title('Geocentric Ocean Tide')
@@ -134,7 +134,7 @@ colorbar1.set_label('Geocentric ocean tide (cm)')
 
 # Plot the interpolation quality flag
 ax2 = fig.add_subplot(1, 2, 2, projection=cartopy.crs.PlateCarree())
-ax2.set_extent([LON_MIN, LAT_MIN, LON_MAX, LAT_MAX],
+ax2.set_extent([LON_MIN, LON_MAX, LAT_MIN, LAT_MAX],
                crs=cartopy.crs.PlateCarree())
 ax2.coastlines()
 ax2.set_title('Interpolation Quality Flag')
