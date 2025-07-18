@@ -161,6 +161,25 @@ class Index : public std::enable_shared_from_this<Index> {
   /// The R*Tree
   rtree_t rtree_{};
 
+  /// Search the nearest triangles to a point in ECEF coordinates.
+  inline auto nearest(const geometry::EarthCenteredEarthFixed& cartesian_point,
+                      const size_t max_neighbors) const
+      -> std::pair<std::set<int32_t>, double> {
+    auto triangle_indices = std::set<int>();
+    auto min_distance = std::numeric_limits<double>::max();
+    std::for_each(rtree_.qbegin(boost::geometry::index::nearest(cartesian_point,
+                                                                max_neighbors)),
+                  rtree_.qend(),
+                  [&cartesian_point, &min_distance,
+                   &triangle_indices](const auto& item) -> void {
+                    triangle_indices.emplace(item.second.second);
+                    min_distance = std::min(
+                        min_distance,
+                        boost::geometry::distance(cartesian_point, item.first));
+                  });
+    return std::make_pair(std::move(triangle_indices), min_distance);
+  }
+
   /// Build the selected triangle.
   inline auto build_triangle(const int triangle_index) const
       -> geometry::Triangle {

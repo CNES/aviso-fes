@@ -84,27 +84,16 @@ Index::Index(Eigen::VectorXd lon, Eigen::VectorXd lat,
 auto Index::search(const geometry::Point& point,
                    const double max_distance) const -> TriangleQueryResult {
   constexpr size_t kMaxNeighbors = 11;
-  auto min_distance = std::numeric_limits<double>::max();
+  constexpr size_t kExtrapolationNeighbors = 16;
+  auto min_distance = 0.0;
   auto triangle_indices = std::set<int>();
 
   // Query position in ECEF coordinates
   auto cartesian_point = static_cast<geometry::EarthCenteredEarthFixed>(point);
-  // Find the nearest triangles
-  std::for_each(rtree_.qbegin(boost::geometry::index::nearest(cartesian_point,
-                                                              kMaxNeighbors)),
-                rtree_.qend(),
-                [&cartesian_point, &min_distance,
-                 &triangle_indices](const auto& item) -> void {
-                  triangle_indices.emplace(item.second.second);
-                  min_distance = std::min(
-                      min_distance,
-                      boost::geometry::distance(cartesian_point, item.first));
-                });
 
-  // We consider the distance accurate to 1 cm
-  if (min_distance < 1e-2) {
-    min_distance = 0;
-  }
+  // Find the nearest triangles
+  std::tie(triangle_indices, min_distance) =
+      nearest(cartesian_point, kMaxNeighbors);
 
   // Check for each selected triangle if the point is inside.
   for (auto& ix : triangle_indices) {
@@ -114,8 +103,25 @@ auto Index::search(const geometry::Point& point,
     }
   }
 
-  // The point is not inside any triangle, so find the nearest triangle vertices
-  // to the query point.
+  if (min_distance >= max_distance) {
+    // No triangle found within the max distance, return an empty result.
+    return TriangleQueryResult{};
+  }
+
+  // The point is not inside any triangle, so search for the nearest triangle
+  // vertices to the query point.
+  //
+  // Scale the number of neighbors based on the minimum distance to the mesh.
+  // For points far from the mesh (min_distance > 10km), use more neighbors
+  // to improve extrapolation quality. The neighbor count increases linearly
+  // with distance, capped between kExtrapolationNeighbors and 128.
+  auto num_neighbors =
+      std::max(128UL, std::min(kExtrapolationNeighbors,
+                               kExtrapolationNeighbors *
+                                   static_cast<size_t>(min_distance / 10'000)));
+
+  std::tie(triangle_indices, min_distance) =
+      nearest(cartesian_point, num_neighbors);
   auto nearest_vertices = std::vector<VertexAttribute>{};
   nearest_vertices.reserve(3 * triangle_indices.size());
 
