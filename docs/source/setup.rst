@@ -77,6 +77,12 @@ command to customize the build:
 Run the ``python setup.py build-ext --help`` command to view all the options
 available for building the library.
 
+Alternatively, using pip:
+
+.. code-block:: bash
+    pip install numpy netCDF4 git+https://github.com/CNES/aviso-fes.git
+
+
 Test
 ####
 
