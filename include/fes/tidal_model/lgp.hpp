@@ -582,7 +582,7 @@ auto LGP<T, N>::extrapolate(
   inverse_distance_weighting(query_point, known_points, selected_indices,
                              valid_count, acc);
 
-  quality = static_cast<Quality>(-std::max<int64_t>(valid_count, 127));
+  quality = static_cast<Quality>(-std::min<int64_t>(valid_count, 127));
 }
 
 // /////////////////////////////////////////////////////////////////////////////
