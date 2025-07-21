@@ -75,7 +75,7 @@ inline auto split_datetime(const py::handle& datetime)
   }
   throw std::invalid_argument(
       "a datetime.datetime is required (got type " +
-      std::string(py::str(datetime.get_type().attr("__name__"))) + ")");
+      std::string(py::str(py::type::of(datetime).attr("__name__"))) + ")");
 }
 
 /// @brief Return POSIX timestamp as int64_t

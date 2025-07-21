@@ -2,14 +2,20 @@
 #
 # All rights reserved. Use of this source code is governed by a
 # BSD-style license that can be found in the LICENSE file.
+import concurrent.futures
 import datetime
 import pathlib
+import random
+import threading
+import time
 
 import netCDF4
 import numpy
 from pyfes import core
 from pyfes.leap_seconds import get_leap_seconds
 import pytest
+
+from . import is_free_threaded
 
 FES_TIDE_TIME_SERIES = pathlib.Path(
     __file__).parent.parent / 'dataset' / 'fes_tide_time_series.nc'
@@ -95,3 +101,112 @@ def test_harmonic_analysis_with_empty_table():
                              *wt.compute_nodal_modulations(time, leap_seconds))
     assert numpy.all(
         ~numpy.isnan(wt.tide_from_tide_series(time, leap_seconds, w)))
+
+
+def benchmark_wave_table_operations():
+    """Benchmark operations that should be GIL-free."""
+
+    def compute_nodal_modulations(dates, leap_seconds):
+        wave_table = core.WaveTable()
+        return wave_table.compute_nodal_modulations(dates, leap_seconds)
+
+    # Setup test data
+    n_dates = 1000
+    dates = numpy.array([
+        numpy.datetime64('2024-01-01T00:00:00') + numpy.timedelta64(i, 'h')
+        for i in range(n_dates)
+    ])
+    leap_seconds = numpy.full((n_dates, 1), 37, dtype=numpy.uint16)
+
+    # Single-threaded benchmark
+    start = time.time()
+    _ = compute_nodal_modulations(dates, leap_seconds)
+    single_time = time.time() - start
+
+    # Multi-threaded benchmark
+    start = time.time()
+    with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+        futures = [
+            executor.submit(compute_nodal_modulations, dates[i::4],
+                            leap_seconds[i::4]) for i in range(4)
+        ]
+        _ = [f.result() for f in futures]
+    multi_time = time.time() - start
+
+    speedup = single_time / multi_time
+    print(f"Single-threaded: {single_time:.3f}s")
+    print(f"Multi-threaded: {multi_time:.3f}s")
+    print(f"Speedup: {speedup:.2f}x")
+
+    return speedup
+
+
+def test_performance_improvement():
+    """Test that free-threading provides performance benefits."""
+    if not is_free_threaded():
+        pytest.skip('Free-threading not available')
+
+    speedup = benchmark_wave_table_operations()
+    assert speedup > 1
+
+
+def test_concurrent_wave_table_access():
+    """Stress test concurrent access to wave tables."""
+
+    errors = []
+    results = []
+
+    def worker(worker_id):
+        try:
+            # Create independent wave table
+            wave_table = core.WaveTable(['S1', 'S2', 'M2', 'K1', 'O1'])
+
+            # Perform various operations
+            for _ in range(50):
+                # Random operations
+                operation = random.choice(
+                    ['keys', 'values', 'harmonic_analysis'])
+
+                if operation == 'keys':
+                    keys = wave_table.keys()
+                    assert len(keys) > 0
+
+                elif operation == 'values':
+                    values = wave_table.values()
+                    assert len(values) > 0
+
+                elif operation == 'harmonic_analysis':
+                    dates = numpy.random.randint(0, int(1e6),
+                                                 10).astype('datetime64[us]')
+                    leap_seconds = numpy.empty((10, ), dtype=numpy.uint16)
+                    f, vu = wave_table.compute_nodal_modulations(
+                        dates, leap_seconds)
+                    h = numpy.random.random((10, ))
+                    result = wave_table.harmonic_analysis(h, f, vu)
+                    assert result.shape == (5, )
+
+                # Small delay to increase chance of race conditions
+                time.sleep(0.001)
+
+            results.append(f"Worker {worker_id} completed successfully")
+
+        except Exception as e:
+            errors.append(f"Worker {worker_id} failed: {str(e)}")
+
+    # Run many concurrent workers
+    num_workers = 16
+    threads = []
+
+    for i in range(num_workers):
+        thread = threading.Thread(target=worker, args=(i, ))
+        threads.append(thread)
+        thread.start()
+
+    for thread in threads:
+        thread.join()
+
+    # Check results
+    assert len(errors) == 0, f"Errors occurred: {errors}"
+    assert len(
+        results
+    ) == num_workers, f"Expected {num_workers} results, got {len(results)}"

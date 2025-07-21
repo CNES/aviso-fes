@@ -2,7 +2,9 @@
 #
 # All rights reserved. Use of this source code is governed by a
 # BSD-style license that can be found in the LICENSE file.
+import concurrent.futures
 import pathlib
+import time
 
 import netCDF4
 import numpy
@@ -11,6 +13,24 @@ from pyfes.leap_seconds import get_leap_seconds
 import pytest
 
 DATASET = pathlib.Path(__file__).parent.parent / 'dataset'
+
+TIDAL_WAVES = {
+    '2N2': DATASET / '2N2_tide.nc',
+    'K1': DATASET / 'K1_tide.nc',
+    'K2': DATASET / 'K2_tide.nc',
+    'M2': DATASET / 'M2_tide.nc',
+    'M4': DATASET / 'M4_tide.nc',
+    'Mf': DATASET / 'Mf_tide.nc',
+    'Mm': DATASET / 'Mm_tide.nc',
+    'Msqm': DATASET / 'Msqm_tide.nc',
+    'Mtm': DATASET / 'Mtm_tide.nc',
+    'N2': DATASET / 'N2_tide.nc',
+    'O1': DATASET / 'O1_tide.nc',
+    'P1': DATASET / 'P1_tide.nc',
+    'Q1': DATASET / 'Q1_tide.nc',
+    'S1': DATASET / 'S1_tide.nc',
+    'S2': DATASET / 'S2_tide.nc'
+}
 
 
 def load_model(configuration, tide_type):
@@ -137,7 +157,7 @@ def check_tide(tide, radial):
 
 
 def test_tide():
-    radial = {
+    radial_waves = {
         '2N2': DATASET / '2N2_radial.nc',
         'K1': DATASET / 'K1_radial.nc',
         'K2': DATASET / 'K2_radial.nc',
@@ -148,25 +168,8 @@ def test_tide():
         'Q1': DATASET / 'Q1_radial.nc',
         'S2': DATASET / 'S2_radial.nc'
     }
-    tide = {
-        '2N2': DATASET / '2N2_tide.nc',
-        'K1': DATASET / 'K1_tide.nc',
-        'K2': DATASET / 'K2_tide.nc',
-        'M2': DATASET / 'M2_tide.nc',
-        'M4': DATASET / 'M4_tide.nc',
-        'Mf': DATASET / 'Mf_tide.nc',
-        'Mm': DATASET / 'Mm_tide.nc',
-        'Msqm': DATASET / 'Msqm_tide.nc',
-        'Mtm': DATASET / 'Mtm_tide.nc',
-        'N2': DATASET / 'N2_tide.nc',
-        'O1': DATASET / 'O1_tide.nc',
-        'P1': DATASET / 'P1_tide.nc',
-        'Q1': DATASET / 'Q1_tide.nc',
-        'S1': DATASET / 'S1_tide.nc',
-        'S2': DATASET / 'S2_tide.nc'
-    }
-    model_radial = load_model(radial, core.kRadial)
-    model_tide = load_model(tide, core.kTide)
+    radial_model = load_model(radial_waves, core.kRadial)
+    tidal_model = load_model(TIDAL_WAVES, core.kTide)
     dates = numpy.empty((24, ), dtype='M8[ms]')
     lons = numpy.empty((24, ), dtype=numpy.float64)
     lats = numpy.empty((24, ), dtype=numpy.float64)
@@ -176,16 +179,77 @@ def test_tide():
         lons[hour] = -7.688
         lats[hour] = 59.195
     leap_seconds = get_leap_seconds(dates)
-    tide = core.evaluate_tide(model_tide,
+    tide = core.evaluate_tide(tidal_model,
                               dates,
                               leap_seconds,
                               lons,
                               lats,
                               num_threads=1)
-    radial = core.evaluate_tide(model_radial,
-                                dates,
-                                leap_seconds,
-                                lons,
-                                lats,
-                                num_threads=1)
-    check_tide(tide, radial)
+    radial_waves = core.evaluate_tide(radial_model,
+                                      dates,
+                                      leap_seconds,
+                                      lons,
+                                      lats,
+                                      num_threads=1)
+    check_tide(tide, radial_waves)
+
+
+def cpu_intensive_task(tidal_model, dates, leap_seconds, lon, lat, thread_id):
+    """CPU-intensive task that should benefit from free-threading."""
+    start_time = time.time()
+
+    # Simulate heavy computation
+    for _ in range(10):  # Multiple iterations to stress test
+        result = core.evaluate_tide(
+            tidal_model,
+            dates,
+            leap_seconds,
+            lon,
+            lat,
+            num_threads=1  # Force single thread per call for this test
+        )
+
+    end_time = time.time()
+    return {
+        'thread_id': thread_id,
+        'duration': end_time - start_time,
+        'result_shape': result[0].shape if result else None
+    }
+
+
+def test_parallel_tide_evaluation():
+    """Test parallel tide evaluation to verify GIL release."""
+    # Setup test data
+    lon = numpy.linspace(0, 10, 100)
+    lat = numpy.linspace(45, 55, 100)
+    dates = numpy.full(lon.shape, numpy.datetime64('2024-01-01T00:00:00'))
+    leap_seconds = numpy.full(lon.shape, 37, dtype=numpy.uint16)
+
+    # Create a simple tidal model (you'll need to adapt this to your actual model)
+    tidal_model = load_model(TIDAL_WAVES, core.kTide)
+
+    num_threads = 4
+
+    # Sequential execution
+    start_sequential = time.time()
+    for i in range(num_threads):
+        _ = cpu_intensive_task(tidal_model, dates, leap_seconds, lon, lat, i)
+    sequential_time = time.time() - start_sequential
+
+    # Parallel execution
+    start_parallel = time.time()
+    with concurrent.futures.ThreadPoolExecutor(
+            max_workers=num_threads) as executor:
+        futures = [
+            executor.submit(cpu_intensive_task, tidal_model, dates,
+                            leap_seconds, lon, lat, i)
+            for i in range(num_threads)
+        ]
+        _ = [
+            future.result()
+            for future in concurrent.futures.as_completed(futures)
+        ]
+    parallel_time = time.time() - start_parallel
+
+    speedup = sequential_time / parallel_time
+    assert speedup > 1.2

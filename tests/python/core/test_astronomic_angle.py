@@ -3,7 +3,9 @@
 # All rights reserved. Use of this source code is governed by a
 # BSD-style license that can be found in the LICENSE file.
 import datetime
+import threading
 
+import numpy
 from pyfes import core
 import pytest
 
@@ -48,3 +50,54 @@ def test_astronomic_angle():
     assert aa.t == pytest.approx(3.1415926535897931, 1e-6)
     assert aa.x1ra == pytest.approx(1.1723204500596927, 1e-6)
     assert aa.xi == pytest.approx(0.19203231321420278, 1e-6)
+
+
+def test_astronomical_angle_thread_safety():
+    """Test that datetime operations properly acquire GIL."""
+
+    def update_astronomical_angles(thread_id, results):
+        """Function that manipulates dates - should acquire GIL."""
+        try:
+            angle = core.AstronomicAngle()
+
+            # These operations involve Python datetime objects
+            dates = [
+                datetime.datetime(2024, 1, 1, 0, 0, 0),
+                datetime.datetime(2024, 6, 1, 12, 0, 0),
+                datetime.datetime(2024, 12, 31, 23, 59, 59)
+            ]
+
+            for date in dates:
+                # This should handle GIL internally
+                angle.update(date, 37)
+
+            results[thread_id] = {
+                'success': True,
+                'h': angle.h,
+                's': angle.s,
+                'p': angle.p
+            }
+        except Exception as e:
+            results[thread_id] = {'success': False, 'error': str(e)}
+
+    # Run multiple threads manipulating dates
+    num_threads = 8
+    results = {}
+    threads = []
+
+    for i in range(num_threads):
+        thread = threading.Thread(target=update_astronomical_angles,
+                                  args=(i, results))
+        threads.append(thread)
+        thread.start()
+
+    for thread in threads:
+        thread.join()
+
+    # All threads should complete successfully
+    for thread_id, result in results.items():
+        assert result[
+            'success'], f"Thread {thread_id} failed: {result.get('error')}"
+        assert 'h' in result
+        assert 's' in result
+        assert 'p' in result

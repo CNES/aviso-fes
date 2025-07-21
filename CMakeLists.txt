@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10.0)
+cmake_minimum_required(VERSION 3.15.0)
 
 # CMake module search path
 set(CMAKE_MODULE_PATH
@@ -198,7 +198,9 @@ endif()
 
 # Find Python
 if(FES_BUILD_PYTHON_BINDINGS)
-  find_package(Python3 COMPONENTS Interpreter Development)
+  find_package(Python3 3.8 COMPONENTS Interpreter Development)
+  set(PYBIND11_FINDPYTHON ON)
+  set(PYBIND11_USE_SMART_HOLDER ON)
   add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/third_party/pybind11")
 endif()
 
