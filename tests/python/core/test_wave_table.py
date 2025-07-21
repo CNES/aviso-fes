@@ -134,9 +134,9 @@ def benchmark_wave_table_operations():
     multi_time = time.time() - start
 
     speedup = single_time / multi_time
-    print(f"Single-threaded: {single_time:.3f}s")
-    print(f"Multi-threaded: {multi_time:.3f}s")
-    print(f"Speedup: {speedup:.2f}x")
+    print(f'Single-threaded: {single_time:.3f}s')
+    print(f'Multi-threaded: {multi_time:.3f}s')
+    print(f'Speedup: {speedup:.2f}x')
 
     return speedup
 
@@ -188,10 +188,10 @@ def test_concurrent_wave_table_access():
                 # Small delay to increase chance of race conditions
                 time.sleep(0.001)
 
-            results.append(f"Worker {worker_id} completed successfully")
+            results.append(f'Worker {worker_id} completed successfully')
 
         except Exception as e:
-            errors.append(f"Worker {worker_id} failed: {str(e)}")
+            errors.append(f'Worker {worker_id} failed: {str(e)}')
 
     # Run many concurrent workers
     num_workers = 16
@@ -206,7 +206,7 @@ def test_concurrent_wave_table_access():
         thread.join()
 
     # Check results
-    assert len(errors) == 0, f"Errors occurred: {errors}"
+    assert len(errors) == 0, f'Errors occurred: {errors}'
     assert len(
         results
-    ) == num_workers, f"Expected {num_workers} results, got {len(results)}"
+    ) == num_workers, f'Expected {num_workers} results, got {len(results)}'
