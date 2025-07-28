@@ -22,6 +22,36 @@ WORKING_DIRECTORY = pathlib.Path(__file__).parent.absolute()
 # OSX deployment target
 OSX_DEPLOYMENT_TARGET = '10.14'
 
+# Python version file path
+PY_VERSION = WORKING_DIRECTORY / 'src' / 'python' / 'pyfes' / 'version.py'
+
+# C++ version file path
+CXX_VERSION = WORKING_DIRECTORY / 'include' / 'fes' / 'version.hpp'
+
+# Python version file content
+PY_VERSION_TEMPLATE = '''# Copyright (c) 2025 CNES
+#
+# All rights reserved. Use of this source code is governed by a
+# BSD-style license that can be found in the LICENSE file.
+\"\"\"
+Get software version information
+================================
+\"\"\"
+__version__ = "{release}"
+'''
+
+# C++ version file content
+CXX_VERSION_TEMPLATE = """/// @file perth/version.hpp
+/// @brief Version of the library
+#pragma once
+/// Major version of the library
+#define FES_VERSION_MAJOR {major}
+/// Minor version of the library
+#define FES_VERSION_MINOR {minor}
+/// Patch version of the library
+#define FES_VERSION_PATCH {patch}{dev}
+"""
+
 
 def compare_setuptools_version(required: Tuple[int, ...]) -> bool:
     """Compare the version of setuptools with the required version."""
@@ -42,37 +72,57 @@ def distutils_dirname(prefix=None, extname=None) -> pathlib.Path:
         f'{sys.version_info[0]}.{sys.version_info[1]}', extname)
 
 
-def version() -> str:
-    """Returns the version number."""
-    path = WORKING_DIRECTORY / 'src' / 'python' / 'pyfes' / 'version.py'
-    if not path.exists():
-        # Make sure that the working directory is the root of the project,
-        # otherwise setuptools_scm will not be able to find the version number.
-        os.chdir(WORKING_DIRECTORY)
-        import setuptools_scm
-        try:
-            return setuptools_scm.get_version()
-        except:  # noqa: E722
-            warnings.warn(
-                'Unable to find the version number with setuptools_scm.',
-                RuntimeWarning)
-            return '0.0.0'
-    with path.open() as stream:
-        for line in stream:
-            if line.startswith('__version__'):
-                return line.split('=')[1].strip()[1:-1]
-    raise RuntimeError('Unable to find version string.')
+def fetch_package_version() -> str:
+    if not (WORKING_DIRECTORY / '.git').exists():
+        with PY_VERSION.open() as stream:
+            for line in stream:
+                if line.startswith('__version__'):
+                    return line.split('=')[1].strip()[1:-1]
+
+    # Make sure that the working directory is the root of the project,
+    # otherwise setuptools_scm will not be able to find the version number.
+    os.chdir(WORKING_DIRECTORY)
+    import setuptools_scm
+
+    try:
+        return setuptools_scm.get_version()
+    except:  # noqa: E722
+        warnings.warn(
+            'Unable to find the version number with setuptools_scm.',
+            RuntimeWarning,
+            stacklevel=2,
+        )
+        return '0.0.0'
 
 
-def update_version_library() -> None:
+def update_version_file(
+    file_path: pathlib.Path,
+    template: str,
+    **kwargs,
+) -> None:
+    """Update a version file with the given template and keyword arguments."""
+    if file_path.exists():
+        with file_path.open() as stream:
+            existing = stream.read()
+    else:
+        existing = ''
+
+    new_content = template.format(**kwargs)
+
+    if existing != new_content:
+        with file_path.open('w') as stream:
+            stream.write(new_content)
+
+
+def update_version_library(release: str) -> None:
     """Update the version of the library."""
     if not (WORKING_DIRECTORY / '.git').exists():
         return
-    release = version()
+
     pattern = re.compile(r'(?:(\d+)\.)?(?:(\d+)\.)?(\*|\d+)(\.dev\d+)?')
     match = pattern.match(release)
     if match is None:
-        raise RuntimeError(f'Invalid version number: {release}')
+        raise RuntimeError(f"Invalid version number: {release}")
     major, minor, patch, dev = match.groups()
     if minor is None:
         minor = patch
@@ -80,27 +130,19 @@ def update_version_library() -> None:
     if dev is None:
         dev = ''
 
-    header = WORKING_DIRECTORY / 'include' / 'fes' / 'version.hpp'
-
-    if header.exists():
-        with header.open() as stream:
-            existing = ''.join(stream.read())
-    else:
-        existing = ''
-
-    new = f"""/// @file include/fes/version.hpp
-/// @brief Version of the library
-#pragma once
-/// Major version of the library
-#define FES_VERSION_MAJOR {major}
-/// Minor version of the library
-#define FES_VERSION_MINOR {minor}
-/// Patch version of the library
-#define FES_VERSION_PATCH {patch}{dev}
-"""
-    if existing != ''.join(new):
-        with header.open('w') as stream:
-            stream.write(new)
+    update_version_file(
+        CXX_VERSION,
+        CXX_VERSION_TEMPLATE,
+        major=major,
+        minor=minor,
+        patch=patch,
+        dev=dev,
+    )
+    update_version_file(
+        PY_VERSION,
+        PY_VERSION_TEMPLATE,
+        release=release,
+    )
 
 
 # pylint: disable=too-few-public-methods
@@ -262,7 +304,8 @@ def typehints() -> List[Tuple[str, List[str]]]:
 
 def main() -> None:
     """Execute the setup."""
-    update_version_library()
+    release = fetch_package_version()
+    update_version_library(release)
     setuptools.setup(
         cmdclass={
             'build_ext': BuildExt,
@@ -275,6 +318,7 @@ def main() -> None:
                 'data/leap-seconds.txt'
             ],
         },
+        version=release,
     )
 
 
