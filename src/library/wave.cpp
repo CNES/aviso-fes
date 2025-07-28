@@ -14,28 +14,25 @@ namespace fes {
 
 constexpr auto darwin_to_doodson(const std::array<int8_t, 11>& darwin)
     -> std::array<int8_t, 7> {
-  // t, s, h, p, n, p1, shift
-  auto tau = static_cast<int>(darwin[0]);
-  auto s = static_cast<int>(darwin[1]);
-  auto h = static_cast<int>(darwin[2]);
-  auto p = static_cast<int>(darwin[3]);
-  auto n = static_cast<int>(darwin[4]);
-  auto p1 = static_cast<int>(darwin[5]);
-  auto shift = static_cast<int>(darwin[6]);
-  switch (shift) {
-    case 1:
-      shift = -1;
-      break;
-    case -1:
-      shift = 1;
-      break;
-    default:
-      break;
-  }
-  return {static_cast<int8_t>(tau),     static_cast<int8_t>(s + tau),
-          static_cast<int8_t>(h - tau), static_cast<int8_t>(p),
-          static_cast<int8_t>(n),       static_cast<int8_t>(p1),
-          static_cast<int8_t>(shift)};
+  // Extract Darwin coefficients: t, s, h, p, n, p1, shift
+  const auto t = darwin[0];
+  const auto s = darwin[1];
+  const auto h = darwin[2];
+  const auto p = darwin[3];
+  const auto n = darwin[4];
+  const auto p1 = darwin[5];
+
+  // Normalize shift: convert 1 or -1 to their negatives, leave others unchanged
+  const int8_t normalized_shift =
+      (darwin[6] == 1 || darwin[6] == -1) ? -darwin[6] : darwin[6];
+
+  return {t,                           // tau
+          static_cast<int8_t>(s + t),  // s + tau
+          static_cast<int8_t>(h - t),  // h - tau
+          p,                           // p
+          n,                           // n
+          p1,                          // p1
+          normalized_shift};           // normalized shift
 }
 
 // Get the doodson number
@@ -55,15 +52,16 @@ inline auto code(const int number) -> char {
 }
 
 auto Wave::xdo_numerical() const -> std::string {
-  auto result = std::string(7, ' ');
-  auto doodson = darwin_to_doodson(argument_);
-  result[0] = code(doodson[0]);
-  result[1] = code(doodson[1] + 5);
-  result[2] = code(doodson[2] + 5);
-  result[3] = code(doodson[3] + 5);
-  result[4] = code(doodson[4] + 5);
-  result[5] = code(doodson[5] + 5);
-  result[6] = code(doodson[6] + 5);
+  const auto doodson = darwin_to_doodson(argument_);
+  std::string result;
+  result.reserve(7);
+
+  // First element uses raw value, others add offset of 5
+  result.push_back(code(doodson[0]));
+  for (size_t i = 1; i < doodson.size(); ++i) {
+    result.push_back(code(doodson[i] + 5));
+  }
+
   return result;
 }
 
@@ -71,15 +69,11 @@ auto Wave::xdo_alphabetical() const -> std::string {
   constexpr auto xdo = std::array<char, 25>{
       'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'A', 'B', 'C', 'D',
       'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P'};
-  auto result = std::string(7, ' ');
-  auto doodson = darwin_to_doodson(argument_);
-  result[0] = xdo[doodson[0] + 8];
-  result[1] = xdo[doodson[1] + 8];
-  result[2] = xdo[doodson[2] + 8];
-  result[3] = xdo[doodson[3] + 8];
-  result[4] = xdo[doodson[4] + 8];
-  result[5] = xdo[doodson[5] + 8];
-  result[6] = xdo[doodson[6] + 8];
+  auto result = std::string();
+  result.reserve(7);
+  for (const auto& value : darwin_to_doodson(argument_)) {
+    result.push_back(xdo[value + 8]);
+  }
   return result;
 }
 
