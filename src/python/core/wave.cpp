@@ -85,10 +85,29 @@ Returns True if the wave is computed by dynamically.
       .def("period", &fes::Wave::period, R"__doc__(
 Gets the wave period in hours.
 )__doc__")
-      .def("doodson_number", &fes::Wave::doodson_number, R"__doc__(
-Gets the doodson number.
+      .def("xdo_numerical", &fes::Wave::xdo_numerical, R"__doc__(
+Gets the XDO numerical representation of the wave.
 
 Returns:
-    Doodson number.
+    XDO numerical representation.
+)__doc__")
+      .def("xdo_alphabetical", &fes::Wave::xdo_alphabetical,
+           R"__doc__(
+Gets the XDO alphabetical representation of the wave.
+
+Returns:
+    XDO alphabetical representation.
+)__doc__")
+      .def("doodson_numbers", &fes::Wave::doodson_numbers, R"__doc__(
+Gets the Doodson representation of the wave.
+
+.. note::
+
+      The 7th number follows the convention established in Doodson & Warburg's 1941 book.
+      This number can be 0, 1, 2, or -1, representing multiples of 90 degrees
+      added to the tidal argument when using cosine functions.
+
+Returns:
+    Doodson numbers.
 )__doc__");
 }

@@ -604,7 +604,7 @@ class Wave:
     def __init__(self, *args, **kwargs) -> None:
         ...
 
-    def doodson_number(self) -> str:
+    def doodson_numbers(self) -> list[int]:
         ...
 
     def name(self) -> str:
@@ -623,6 +623,12 @@ class Wave:
         ...
 
     def vu(self) -> float:
+        ...
+
+    def xdo_alphabetical(self) -> str:
+        ...
+
+    def xdo_numerical(self) -> str:
         ...
 
     @property

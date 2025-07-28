@@ -164,8 +164,18 @@ class Wave : public std::enable_shared_from_this<Wave> {
   /// Gets the wave name
   inline auto name() const -> const char* { return constituents::name(ident_); }
 
-  /// Gets the doodson's number
-  auto doodson_number() const -> std::string;
+  /// Gets the XDO numerical representation of the wave
+  auto xdo_numerical() const -> std::string;
+
+  /// Gets the XDO alphabetical representation of the wave
+  auto xdo_alphabetical() const -> std::string;
+
+  /// Gets the Doodson number of the wave
+  /// @note The 7th number follows the convention established in Doodson &
+  /// Warburg's 1941 book. This number can be 0, 1, 2, or -1, representing
+  /// multiples of 90 degrees added to the tidal argument when using cosine
+  /// functions
+  auto doodson_numbers() const -> std::array<int8_t, 7>;
 
  protected:
   /// nodal correction for phase

@@ -12,6 +12,32 @@
 
 namespace fes {
 
+constexpr auto darwin_to_doodson(const std::array<int8_t, 11>& darwin)
+    -> std::array<int8_t, 7> {
+  // t, s, h, p, n, p1, shift
+  auto tau = static_cast<int>(darwin[0]);
+  auto s = static_cast<int>(darwin[1]);
+  auto h = static_cast<int>(darwin[2]);
+  auto p = static_cast<int>(darwin[3]);
+  auto n = static_cast<int>(darwin[4]);
+  auto p1 = static_cast<int>(darwin[5]);
+  auto shift = static_cast<int>(darwin[6]);
+  switch (shift) {
+    case 1:
+      shift = -1;
+      break;
+    case -1:
+      shift = 1;
+      break;
+    default:
+      break;
+  }
+  return {static_cast<int8_t>(tau),     static_cast<int8_t>(s + tau),
+          static_cast<int8_t>(h - tau), static_cast<int8_t>(p),
+          static_cast<int8_t>(n),       static_cast<int8_t>(p1),
+          static_cast<int8_t>(shift)};
+}
+
 // Get the doodson number
 inline auto code(const int number) -> char {
   switch (number) {
@@ -28,15 +54,37 @@ inline auto code(const int number) -> char {
   }
 }
 
-auto Wave::doodson_number() const -> std::string {
-  auto result = std::string(6, ' ');
-  result[0] = code(argument_[0]);
-  result[1] = code(argument_[1] + 5);
-  result[2] = code(argument_[2] + 5);
-  result[3] = code(argument_[3] + 5);
-  result[4] = code(argument_[4] + 5);
-  result[5] = code(argument_[5] + 5);
+auto Wave::xdo_numerical() const -> std::string {
+  auto result = std::string(7, ' ');
+  auto doodson = darwin_to_doodson(argument_);
+  result[0] = code(doodson[0]);
+  result[1] = code(doodson[1] + 5);
+  result[2] = code(doodson[2] + 5);
+  result[3] = code(doodson[3] + 5);
+  result[4] = code(doodson[4] + 5);
+  result[5] = code(doodson[5] + 5);
+  result[6] = code(doodson[6] + 5);
   return result;
+}
+
+auto Wave::xdo_alphabetical() const -> std::string {
+  constexpr auto xdo = std::array<char, 25>{
+      'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'A', 'B', 'C', 'D',
+      'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P'};
+  auto result = std::string(7, ' ');
+  auto doodson = darwin_to_doodson(argument_);
+  result[0] = xdo[doodson[0] + 8];
+  result[1] = xdo[doodson[1] + 8];
+  result[2] = xdo[doodson[2] + 8];
+  result[3] = xdo[doodson[3] + 8];
+  result[4] = xdo[doodson[4] + 8];
+  result[5] = xdo[doodson[5] + 8];
+  result[6] = xdo[doodson[6] + 8];
+  return result;
+}
+
+auto Wave::doodson_numbers() const -> std::array<int8_t, 7> {
+  return darwin_to_doodson(argument_);
 }
 
 namespace wave {

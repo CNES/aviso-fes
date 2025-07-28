@@ -29,6 +29,11 @@ distributed by AVISO, with support from CNES (http://www.aviso.altimetry.fr/)*
 The documentation of the FES2022 software is available on the readthedocs
 platform: https://cnes.github.io/aviso-fes/
 
+# CONSTITUENTS
+
+The tidal constituents used in this software are listed in the
+[CONSTITUENTS.md](CONSTITUENTS.md) file.
+
 # LEGACY C VERSION
 
 The legacy C version of the FES software is available on his own branch:
