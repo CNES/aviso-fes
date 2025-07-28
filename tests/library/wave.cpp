@@ -433,6 +433,8 @@ TEST(Wave, NodalA) {
 }
 
 TEST(Wave, DoodsonNumber) {
-  ASSERT_EQ(fes::wave::_2SM2().xdo_numerical(), "273555");
-  ASSERT_EQ(fes::wave::O1().xdo_numerical(), "136555");
+  ASSERT_EQ(fes::wave::_2SM2().xdo_numerical(), "2915555");
+  ASSERT_EQ(fes::wave::_2SM2().xdo_alphabetical(), "BDVZZZZ");
+  ASSERT_EQ(fes::wave::O1().xdo_numerical(), "1455554");
+  ASSERT_EQ(fes::wave::O1().xdo_alphabetical(), "AYZZZZY");
 }
