@@ -40,7 +40,7 @@ def create_cache() -> None:
     CACHE_FILE.write_text(str(int(time.time())))
 
 
-def progress_hook(count, block_size, total_size):
+def progress_hook(count: int, block_size: int, total_size: int) -> None:
     """Progress hook for urllib to show download progress."""
     downloaded = count * block_size
     percent = min(100, (downloaded * 100) // total_size)
@@ -80,10 +80,13 @@ def download_test_data() -> None:
     # Download the dataset
     zip_path = DATASET_DIR / 'dataset.zip'
     try:
+        # Only show progress if running interactively (not in CI)
+        hook = (progress_hook
+                if sys.stderr.isatty() and not os.getenv('CI') else None)
         urllib.request.urlretrieve(
             DATASET_URL,
             zip_path,
-            reporthook=progress_hook,
+            reporthook=hook,
         )
         sys.stderr.write('\n')  # Add newline after progress bar
 
