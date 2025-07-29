@@ -118,3 +118,6 @@ docs/source/sg_execution_times.rst
 # folder. These files are not needed in the repository and can be ignored.
 # More info: https://support.apple.com/en-us/HT201236
 .DS_Store
+
+# Test dataset directory downloaded from osf.io
+tests/python/dataset
