@@ -116,9 +116,10 @@ auto Index::search(const geometry::Point& point,
   // to improve extrapolation quality. The neighbor count increases linearly
   // with distance, capped between kExtrapolationNeighbors and 128.
   auto num_neighbors =
-      std::max(128UL, std::min(kExtrapolationNeighbors,
-                               kExtrapolationNeighbors *
-                                   static_cast<size_t>(min_distance / 10'000)));
+      std::max(static_cast<size_t>(128),
+               std::min(kExtrapolationNeighbors,
+                        kExtrapolationNeighbors *
+                            static_cast<size_t>(min_distance / 10'000)));
 
   std::tie(triangle_indices, min_distance) =
       nearest(cartesian_point, num_neighbors);
