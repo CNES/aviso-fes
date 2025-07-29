@@ -6,6 +6,13 @@ Changelog
 2025.8.0
 ========
 
+.. important::
+
+   **Git History Rewritten**: The git history has been rewritten to remove git 
+   LFS files. The test dataset is now hosted on osf.io and downloaded 
+   automatically during testing. **Existing clones of the repository must be 
+   deleted and cloned again** to avoid conflicts and ensure proper operation.
+
 New Features
 ------------
 * **Improved LGP extrapolation algorithm**: Previously, extrapolation for points
