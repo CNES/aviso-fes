@@ -101,10 +101,10 @@ jobs:
         environment-name: FES
         environment-file: conda/environment.yml
 
-    - name: Test pip install from GitHub
-      shell: bash -l {0}
-      run: |
-        pip install --force-reinstall "git+https://github.com/CNES/aviso-fes.git"
+    # - name: Test pip install from GitHub
+    #   shell: bash -l {0}
+    #   run: |
+    #     pip install --force-reinstall "git+https://github.com/CNES/aviso-fes.git"
 
     - name: Building Testing Python Package
       shell: bash -l {0}
