@@ -122,7 +122,7 @@ def update_version_library(release: str) -> None:
     pattern = re.compile(r'(?:(\d+)\.)?(?:(\d+)\.)?(\*|\d+)(\.dev\d+)?')
     match = pattern.match(release)
     if match is None:
-        raise RuntimeError(f"Invalid version number: {release}")
+        raise RuntimeError(f'Invalid version number: {release}')
     major, minor, patch, dev = match.groups()
     if minor is None:
         minor = patch

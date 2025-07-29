@@ -54,17 +54,17 @@ def progress_hook(count, block_size, total_size):
     def format_bytes(bytes_val):
         for unit in ['B', 'KB', 'MB', 'GB']:
             if bytes_val < 1024.0:
-                return f"{bytes_val:.1f} {unit}"
+                return f'{bytes_val:.1f} {unit}'
             bytes_val /= 1024.0
-        return f"{bytes_val:.1f} TB"
+        return f'{bytes_val:.1f} TB'
 
     downloaded_str = format_bytes(downloaded)
     total_str = format_bytes(total_size)
 
     # Print progress on same line using carriage return to stderr for pytest
     # visibility
-    sys.stderr.write(f"\rDownloading test dataset: {bar} {percent}% "
-                     f"({downloaded_str}/{total_str})")
+    sys.stderr.write(f'\rDownloading test dataset: {bar} {percent}% '
+                     f'({downloaded_str}/{total_str})')
     sys.stderr.flush()
 
 

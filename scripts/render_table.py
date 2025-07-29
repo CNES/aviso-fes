@@ -35,7 +35,7 @@ def _pretty_name(name: str) -> str:
     for greek, latex in GREEK_LETTERS.items():
         if greek in name:
             value = name[-1]
-            return f"{name} (${latex} {value}$)"
+            return f'{name} (${latex} {value}$)'
     return name
 
 
