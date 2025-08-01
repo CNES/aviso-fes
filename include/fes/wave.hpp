@@ -530,7 +530,7 @@ class S1 : public Wave {
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
 /// <tr><td>@f$T + h - 90^{\circ}@f$</td>
-/// <td>@f$- \nu^{\prim}@f$</td>
+/// <td>@f$- \nu^{\prime}@f$</td>
 /// <td>@f$f(K_1)@f$</td></tr>
 /// </table>
 /// @note Schureman: %Table 2, Page 165, Ref. Note 2
