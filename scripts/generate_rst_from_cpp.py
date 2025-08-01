@@ -40,7 +40,7 @@ class ConstituentParser:
                 self.constituent_to_class_map[enum_name] = math_repr.strip()
 
         except FileNotFoundError:
-            print(f"Warning: Could not find {self.constituent_header_path}")
+            print(f'Warning: Could not find {self.constituent_header_path}')
 
     def parse_constituents(self) -> list[dict]:
         """Parse all tidal constituents from the C++ header file."""
@@ -48,7 +48,7 @@ class ConstituentParser:
             with open(self.cpp_header_path) as f:
                 content = f.read()
         except FileNotFoundError:
-            print(f"Error: Could not find {self.cpp_header_path}")
+            print(f'Error: Could not find {self.cpp_header_path}')
             return []
 
         constituents = []
@@ -103,15 +103,15 @@ class ConstituentParser:
                 for enum, math_repr in self.constituent_to_class_map.items():
                     normalized_class = self._normalize_class_name(enum)
                     if normalized_class == class_name:
-                        enum_name = f"k{enum}"
+                        enum_name = f'k{enum}'
                         break
 
                 if not enum_name:
                     # Try to guess enum name from class name
                     if class_name.startswith('_'):
-                        enum_name = f"k{class_name[1:]}"
+                        enum_name = f'k{class_name[1:]}'
                     else:
-                        enum_name = f"k{class_name}"
+                        enum_name = f'k{class_name}'
 
                 constituents.append({
                     'enum_name': enum_name,
@@ -129,9 +129,9 @@ class ConstituentParser:
         """Convert enum name to expected class name."""
         # Handle special cases
         if enum_name.startswith('2'):
-            return f"_{enum_name}"
+            return f'_{enum_name}'
         elif enum_name.startswith('3'):
-            return f"_{enum_name}"
+            return f'_{enum_name}'
         elif enum_name == 'MSqm':
             return 'MSqm'
         elif enum_name == 'Sigma1':
@@ -155,7 +155,7 @@ class ConstituentParser:
               or 'MSN4' in enum_name or 'MSN6' in enum_name
               or 'MNS4' in enum_name):
             if enum_name.startswith('2') or enum_name.startswith('3'):
-                return f"_{enum_name}"
+                return f'_{enum_name}'
 
         return enum_name
 
@@ -207,7 +207,7 @@ class ConstituentParser:
 
         # Create table separator
         separator = '=' * max_width
-        table_sep = (f"        {separator}  {separator}  "
+        table_sep = (f'        {separator}  {separator}  '
                      f'{separator}')
 
         lines.append(table_sep)
@@ -217,8 +217,8 @@ class ConstituentParser:
         v_cell = f":math:`{constituent['v_value']}`"
         u_cell = f":math:`{constituent['u_value']}`"
         f_cell = f":math:`{constituent['factor_f']}`"
-        lines.append(f"        {v_cell:<{max_width}}  {u_cell:<{max_width}}  "
-                     f"{f_cell:<{max_width}}")
+        lines.append(f'        {v_cell:<{max_width}}  {u_cell:<{max_width}}  '
+                     f'{f_cell:<{max_width}}')
         lines.append(table_sep)
         lines.append('')
 
@@ -250,11 +250,11 @@ def main():
     args = parser.parse_args()
 
     if not wave_path.exists():
-        print(f"Error: Wave header file not found: {wave_path}")
+        print(f'Error: Wave header file not found: {wave_path}')
         sys.exit(1)
 
     if not constituent_path.exists():
-        print(f"Error: Constituent header file not found: {constituent_path}")
+        print(f'Error: Constituent header file not found: {constituent_path}')
         sys.exit(1)
 
     parser_obj = ConstituentParser(str(wave_path), str(constituent_path))
@@ -265,12 +265,12 @@ def main():
         sys.exit(1)
 
     if args.verbose:
-        print(f"Found {len(constituents)} constituents:")
+        print(f'Found {len(constituents)} constituents:')
         for c in constituents:
             note_info = ' (with note)' if c['note'] else ' (no note)'
             print(f"  - {c['enum_name']}: {c['math_name']}{note_info}")
     else:
-        print(f"Found {len(constituents)} constituents")
+        print(f'Found {len(constituents)} constituents')
 
     rst_content = parser_obj.generate_rst_content(constituents)
 
@@ -280,10 +280,10 @@ def main():
     with open(output_rst, 'w') as f:
         f.write(rst_content)
 
-    print(f"Generated RST file: {output_rst}")
+    print(f'Generated RST file: {output_rst}')
 
     if args.verbose:
-        print(f"Output file size: {output_rst.stat().st_size} bytes")
+        print(f'Output file size: {output_rst.stat().st_size} bytes')
 
 
 if __name__ == '__main__':

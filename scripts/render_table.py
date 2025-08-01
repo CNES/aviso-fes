@@ -63,7 +63,7 @@ def create_constituent_representation() -> str:
         xdo = component.xdo_alphabetical()
         data[constituent.name] = {
             'speed': numpy.degrees(frequency),
-            'name': f"[{name}]({url(constituent)})",
+            'name': f'[{name}]({url(constituent)})',
             'xdo': f'{xdo[:1]} {xdo[1:4]} {xdo[4:]}',
         }
 
