@@ -56,8 +56,8 @@ auto Table::wave_factory(const Constituent ident) -> std::shared_ptr<Wave> {
       return std::shared_ptr<Wave>(new wave::Mf());
     case kMtm:
       return std::shared_ptr<Wave>(new wave::Mtm());
-    case kMsqm:
-      return std::shared_ptr<Wave>(new wave::Msqm());
+    case kMSqm:
+      return std::shared_ptr<Wave>(new wave::MSqm());
     case kEps2:
       return std::shared_ptr<Wave>(new wave::Eps2());
     case kLambda2:
@@ -172,6 +172,52 @@ auto Table::wave_factory(const Constituent ident) -> std::shared_ptr<Wave> {
       return std::shared_ptr<Wave>(new wave::Mf2());
     case kM0:
       return std::shared_ptr<Wave>(new wave::M0());
+    case kL2P:
+      return std::shared_ptr<Wave>(new wave::L2P());
+    case kN2P:
+      return std::shared_ptr<Wave>(new wave::N2P());
+    case kMSK2:
+      return std::shared_ptr<Wave>(new wave::MSK2());
+    case kSKM2:
+      return std::shared_ptr<Wave>(new wave::SKM2());
+    case kOQ2:
+      return std::shared_ptr<Wave>(new wave::OQ2());
+    case k3MS4:
+      return std::shared_ptr<Wave>(new wave::_3MS4());
+    case kMNu4:
+      return std::shared_ptr<Wave>(new wave::MNu4());
+    case k2MSN4:
+      return std::shared_ptr<Wave>(new wave::_2MSN4());
+    case k2NS2:
+      return std::shared_ptr<Wave>(new wave::_2NS2());
+    case kMNuS2:
+      return std::shared_ptr<Wave>(new wave::MNuS2());
+    case k2MK2:
+      return std::shared_ptr<Wave>(new wave::_2MK2());
+    case kNKM2:
+      return std::shared_ptr<Wave>(new wave::NKM2());
+    case kML4:
+      return std::shared_ptr<Wave>(new wave::ML4());
+    case kSO1:
+      return std::shared_ptr<Wave>(new wave::SO1());
+    case kSO3:
+      return std::shared_ptr<Wave>(new wave::SO3());
+    case kNK4:
+      return std::shared_ptr<Wave>(new wave::NK4());
+    case kMNK6:
+      return std::shared_ptr<Wave>(new wave::MNK6());
+    case k2NM6:
+      return std::shared_ptr<Wave>(new wave::_2NM6());
+    case k3MS8:
+      return std::shared_ptr<Wave>(new wave::_3MS8());
+    case kSK3:
+      return std::shared_ptr<Wave>(new wave::SK3());
+    case k2MNS4:
+      return std::shared_ptr<Wave>(new wave::_2MNS4());
+    case k2SMu2:
+      return std::shared_ptr<Wave>(new wave::_2SMu2());
+    case k2MP5:
+      return std::shared_ptr<Wave>(new wave::_2MP5());
     default:
       throw std::invalid_argument("wave identifier not recognized: " +
                                   std::to_string(ident));

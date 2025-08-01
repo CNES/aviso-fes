@@ -241,7 +241,9 @@ namespace wave {
 /// <table>
 /// <caption id="multi_row">Mm</caption>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
-/// <tr><td>@f$s - p@f$</td><td>@f$0@f$</td><td>@f$f(Mm)@f$</td></tr>
+/// <tr><td>@f$s - p@f$</td>
+/// <td>@f$0@f$</td>
+/// <td>@f$f(Mm)@f$</td></tr>
 /// </table>
 /// @note Schureman: %Table 2, Page 164, Ref. A2
 class Mm : public Wave {
@@ -277,7 +279,7 @@ class Mtm : public Wave {
   Mtm();
 };
 
-/// @brief @f$Msqm@f$
+/// @brief @f$MSqm@f$
 ///
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
@@ -286,9 +288,9 @@ class Mtm : public Wave {
 /// <td>@f$f(Mf)@f$</td></tr>
 /// </table>
 /// @note Schureman: %Table 2, Page 164, Ref. A12
-class Msqm : public Wave {
+class MSqm : public Wave {
  public:
-  Msqm();
+  MSqm();
 };
 
 /// @brief @f$Ssa@f$
@@ -723,7 +725,7 @@ class M2 : public Wave {
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
 /// <tr><td>@f$2T - 2s + 4h@f$</td>
 /// <td>@f$+2\xi - 2\nu -2\nu^{\prime \prime}@f$</td>
-/// <td>@f$f(M_2) ^times f(K_2)@f$</td></tr>
+/// <td>@f$f(M_2) \times f(K_2)@f$</td></tr>
 /// </table>
 class MKS2 : public Wave {
  public:
@@ -881,7 +883,7 @@ class _2SM2 : public Wave {
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
 /// <tr><td>@f$3T - 4s + 3h + 90^{\circ}@f$</td>
 /// <td>@f$4\xi - 3\nu@f$</td>
-/// <td>@f$f(M_2) ^times f(O_1)@f$</td></tr>
+/// <td>@f$f(M_2) \times f(O_1)@f$</td></tr>
 /// </table>
 class MO3 : public Wave {
  public:
@@ -894,7 +896,7 @@ class MO3 : public Wave {
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
 /// <tr><td>@f$3T - 4s + 3h + 90^{\circ}@f$</td>
 /// <td>@f$4\xi - 4\nu + \nu^{\prime}@f$</td>
-/// <td>@f$f(M_2)^2 ^times f(K_1)@f$</td></tr>
+/// <td>@f$f(M_2)^2 \times f(K_1)@f$</td></tr>
 /// </table>
 class _2MK3 : public Wave {
  public:
@@ -921,7 +923,7 @@ class M3 : public Wave {
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
 /// <tr><td>@f$3T - 2s + 3h - 90^{\circ}@f$</td>
 /// <td>@f$2\xi - 2\nu - \nu^{\prime}@f$</td>
-/// <td>@f$f(M_2) ^times f(K_1)@f$</td></tr>
+/// <td>@f$f(M_2) \times f(K_1)@f$</td></tr>
 /// </table>
 class MK3 : public Wave {
  public:
@@ -1108,7 +1110,7 @@ class _2MS6 : public Wave {
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
 /// <tr><td>@f$6T - 4s + 6h@f$</td>
 /// <td>@f$4\xi - 4\nu - 2\nu^{\prime \prime}@f$</td>
-/// <td>@f$f(M_2)^2 ^times f(K_2)@f$</td></tr>
+/// <td>@f$f(M_2)^2 \times f(K_2)@f$</td></tr>
 /// </table>
 class _2MK6 : public Wave {
  public:
@@ -1134,7 +1136,7 @@ class _2SM6 : public Wave {
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
 /// <tr><td>@f$6T - 2s + 4h@f$</td>
 /// <td>@f$2\xi - 2\nu - 2\nu^{\prime}@f$</td>
-/// <td>@f$f(M_2) ^times f(K_2)@f$</td></tr>
+/// <td>@f$f(M_2) \times f(K_2)@f$</td></tr>
 /// </table>
 class MSK6 : public Wave {
  public:
@@ -1322,6 +1324,279 @@ class N2P : public Wave {
 class L2P : public Wave {
  public:
   L2P();
+};
+
+/// @brief @f$MSK2@f$
+///
+/// <table>
+/// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
+/// <tr><td>@f$22T - 2s@f$</td>
+/// <td>@f$2\xi -2\nu + 2\nu^{\prime\prime}@f$</td>
+/// <td>@f$f(M_2) \times f(K_2)@f$</td></tr>
+/// </table>
+class MSK2 : public Wave {
+ public:
+  MSK2();
+};
+
+/// @brief @f$SKM2@f$
+///
+/// <table>
+/// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
+/// <tr><td>@f$2T + 2s@f$</td>
+/// <td>@f$-2\xi + 2\nu - 2\nu^{\prime\prime}@f$</td>
+/// <td>@f$f(M_2) \times f(K_2)@f$</td></tr>
+/// </table>
+class SKM2 : public Wave {
+ public:
+  SKM2();
+};
+
+/// @brief @f$OQ2@f$
+///
+/// <table>
+/// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
+/// <tr><td>@f$2T - 5s + 2h + 1p + 180^{\circ}@f$</td>
+/// <td>@f$0@f$</td>
+/// <td>@f$f(O_1) \times f(Q_1)@f$</td></tr>
+/// </table>
+class OQ2 : public Wave {
+ public:
+  OQ2();
+};
+
+/// @brief @f$3MS4@f$
+///
+/// <table>
+/// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
+/// <tr><td>@f$4T - 6s + 6h@f$</td>
+/// <td>@f$6\xi - 6\nu@f$</td>
+/// <td>@f$f(M_2)^3@f$</td></tr>
+/// </table>
+class _3MS4 : public Wave {
+ public:
+  _3MS4();
+};
+
+/// @brief @f$MNu4 = M2 + Nu2@f$
+///
+/// <table>
+/// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
+/// <tr><td>@f$4T -5s + 6h -p@f$</td>
+/// <td>@f$4\xi - 4\nu@f$</td>
+/// <td>@f$f(M_2)^2@f$</td></tr>
+/// </table>
+class MNu4 : public Wave {
+ public:
+  MNu4();
+};
+
+/// @brief @f$2MSN4 = M2 + S2 - N2@f$
+///
+/// <table>
+/// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
+/// <tr><td>@f$4T - s + 2h - p@f$</td>
+/// <td>@f$2\xi - 2\nu@f$</td>
+/// <td>@f$f(M_2)^3@f$</td></tr>
+/// </table>
+class _2MSN4 : public Wave {
+ public:
+  _2MSN4();
+};
+
+/// @brief @f$2NS2@f$
+///
+/// <table>
+/// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
+/// <tr><td>@f$2T - 6s + 4h + 2p@f$</td>
+/// <td>@f$4\xi - 4\nu@f$</td>
+/// <td>@f$f(M_2)^2@f$</td></tr>
+/// </table>
+class _2NS2 : public Wave {
+ public:
+  _2NS2();
+};
+
+/// @brief @f$MNuS2 = M2 + Nu2 - S2@f$
+///
+/// <table>
+/// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
+/// <tr><td>@f$2T - 5s + 6h - p@f$</td>
+/// <td>@f$4\xi - 4\nu@f$</td>
+/// <td>@f$f(M_2)^2@f$</td></tr>
+/// </table>
+class MNuS2 : public Wave {
+ public:
+  MNuS2();
+};
+
+/// @brief @f$2MK2@f$
+///
+/// <table>
+/// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
+/// <tr><td>@f$2T - 4s + 2h@f$</td>
+/// <td>@f$4\xi - 4\nu + 2\nu^{\prime\prime}@f$</td>
+/// <td>@f$f(M_2)^2 \times f(K_2)@f$</td></tr>
+/// </table>
+class _2MK2 : public Wave {
+ public:
+  _2MK2();
+};
+
+/// @brief @f$NKM2 = N2 + K2 - M2@f$
+///
+/// <table>
+/// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
+/// <tr><td>@f$2T -s + 2h + p@f$</td>
+/// <td>@f$-2\nu^{\prime\prime}@f$</td>
+/// <td>@f$f(M_2)^2 \times f(K_2)@f$</td></tr>
+/// </table>
+class NKM2 : public Wave {
+ public:
+  NKM2();
+};
+
+/// @brief @f$ML4 = M2 + L2@f$
+///
+/// <table>
+/// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
+/// <tr><td>@f$4T - 3s + 4h - p@f$</td>
+/// <td>@f$4\xi - 4\nu@f$</td>
+/// <td>@f$f(M_2) \times f(L_2)@f$</td></tr>
+/// </table>
+class ML4 : public Wave {
+ public:
+  ML4();
+};
+
+/// @brief @f$SO1@f$
+///
+/// <table>
+/// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
+/// <tr><td>@f$T + 2s - h - 90^{\circ}@f$</td>
+/// <td>@f$-\nu@f$</td>
+/// <td>@f$f(O_1)@f$</td></tr>
+/// </table>
+class SO1 : public Wave {
+ public:
+  SO1();
+};
+
+/// @brief @f$SO3@f$
+///
+/// <table>
+/// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
+/// <tr><td>@f$3T -2s + 1h + 90^{\circ}@f$</td>
+/// <td>@f$2\xi - \nu@f$</td>
+/// <td>@f$f(O_1)@f$</td></tr>
+/// </table>
+class SO3 : public Wave {
+ public:
+  SO3();
+};
+
+/// @brief @f$NK4 = N2 + K2@f$
+///
+/// <table>
+/// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
+/// <tr><td>@f$4T - 3s + 4h + p@f$</td>
+/// <td>@f$2\xi - 2\nu - 2\nu^{\prime\prime}@f$</td>
+/// <td>@f$f(M_2) \times f(K_2)@f$</td></tr>
+/// </table>
+class NK4 : public Wave {
+ public:
+  NK4();
+};
+
+/// @brief @f$MNK6 = M2 + N2 + K2@f$
+///
+/// <table>
+/// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
+/// <tr><td>@f$6T - 5s + 6h + p@f$</td>
+/// <td>@f$4\xi - 4\nu - 2\nu^{\prime\prime}@f$</td>
+/// <td>@f$f(M_2)^2 \times f(K_2)@f$</td></tr>
+/// </table>
+class MNK6 : public Wave {
+ public:
+  MNK6();
+};
+
+/// @brief @f$3MNL6 = 3M2 + N2 - L2@f$
+///
+/// <table>
+/// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
+/// <tr><td>@f$6T - 8s + 6h + 2p@f$</td>
+/// <td>@f$6\xi - 6\nu@f$</td>
+/// <td>@f$f(M_2)^4 \times f(L_2)@f$</td></tr>
+/// </table>
+class _2NM6 : public Wave {
+ public:
+  _2NM6();
+};
+
+/// @brief @f$3MS8 = M2 + S2@f$
+///
+/// <table>
+/// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
+/// <tr><td>@f$8T - 6s + 6h@f$</td>
+/// <td>@f$6\xi - 6\nu@f$</td>
+/// <td>@f$f(M_2)^3@f$</td></tr>
+/// </table>
+class _3MS8 : public Wave {
+ public:
+  _3MS8();
+};
+
+/// @brief @f$SK3@f$
+///
+/// <table>
+/// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
+/// <tr><td>@f$3T + h - 90^{\circ}@f$</td>
+/// <td>@f$-1\nu^{\prime}@f$</td>
+/// <td>@f$f(K_1)@f$</td></tr>
+/// </table>
+class SK3 : public Wave {
+ public:
+  SK3();
+};
+
+/// @brief @f$2MNS4 = 2M2 + N2 - S2@f$
+///
+/// <table>
+/// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
+/// <tr><td>@f$4T - 7s + 6h + p@f$</td>
+/// <td>@f$-6\xi - 6\nu@f$</td>
+/// <td>@f$f(M_2)^3@f$</td></tr>
+/// </table>
+class _2MNS4 : public Wave {
+ public:
+  _2MNS4();
+};
+
+/// @brief @f$2SMu2 = S2 - Mu2@f$
+///
+/// <table>
+/// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
+/// <tr><td>@f$2T + 4s - 4h@f$</td>
+/// <td>@f$-2\xi + 2\nu@f$</td>
+/// <td>@f$f(M_2)@f$</td></tr>
+/// </table>
+class _2SMu2 : public Wave {
+ public:
+  _2SMu2();
+};
+
+/// @brief @f$2MP5 = 2M2 + P1@f$
+///
+/// <table>
+/// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
+/// <tr><td>@f$5T -4s + 3h@f$</td>
+/// <td>@f$4\xi - 4\nu@f$</td>
+/// <td>@f$f(M_2)^2@f$</td></tr>
+/// </table>
+class _2MP5 : public Wave {
+ public:
+  _2MP5();
 };
 
 }  // namespace wave

@@ -105,8 +105,8 @@ constexpr const char* const kMSK6 = "MSK6";
 constexpr const char* const kMSN2 = "MSN2";
 /// @brief MSN6
 constexpr const char* const kMSN6 = "MSN6";
-/// @brief Msqm
-constexpr const char* const kMsqm = "Msqm";
+/// @brief MSqm
+constexpr const char* const kMSqm = "MSqm";
 /// @brief Mtm
 constexpr const char* const kMtm = "Mtm";
 /// @brief Mu2
@@ -163,6 +163,52 @@ constexpr const char* const kSta = "Sta";
 constexpr const char* const kT2 = "T2";
 /// @brief Theta1
 constexpr const char* const kTheta1 = "Theta1";
+/// @brief L2P
+constexpr const char* const kL2P = "L2P";
+/// @brief N2P
+constexpr const char* const kN2P = "N2P";
+/// @brief MSK2
+constexpr const char* const kMSK2 = "MSK2";
+/// @brief SKM2
+constexpr const char* const kSKM2 = "SKM2";
+/// @brief OQ2
+constexpr const char* const kOQ2 = "OQ2";
+/// @brief 3MS4
+constexpr const char* const k3MS4 = "3MS4";
+/// @brief MNu4
+constexpr const char* const kMNu4 = "MNu4";
+/// @brief 2MSN4
+constexpr const char* const k2MSN4 = "2MSN4";
+/// @brief 2NS2
+constexpr const char* const k2NS2 = "2NS2";
+/// @brief MNuS2
+constexpr const char* const kMNuS2 = "MNuS2";
+/// @brief 2MK2
+constexpr const char* const k2MK2 = "2MK2";
+/// @brief NKM2
+constexpr const char* const kNKM2 = "NKM2";
+/// @brief ML4
+constexpr const char* const kML4 = "ML4";
+/// @brief SO1
+constexpr const char* const kSO1 = "SO1";
+/// @brief SO3
+constexpr const char* const kSO3 = "SO3";
+/// @brief NK4
+constexpr const char* const kNK4 = "NK4";
+/// @brief MNK6
+constexpr const char* const kMNK6 = "MNK6";
+/// @brief k2NM6
+constexpr const char* const k2NM6 = "2NM6";
+/// @brief 3MS8
+constexpr const char* const k3MS8 = "3MS8";
+/// @brief SK3
+constexpr const char* const kSK3 = "SK3";
+/// @brief 2MNS4
+constexpr const char* const k2MNS4 = "2MNS4";
+/// @brief 2SMu2
+constexpr const char* const k2SMu2 = "2SMu2";
+/// @brief 2MP5
+constexpr const char* const k2MP5 = "2MP5";
 
 }  // namespace name
 }  // namespace wave

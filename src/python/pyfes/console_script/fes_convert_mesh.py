@@ -14,7 +14,6 @@ WAVE_MAP = {
     'MKS2': 'MKS2',
     'R2': 'R2',
     'O1': 'O1',
-    'MSqm': 'Msqm',
     'E2': 'Eps2',
     'Mm': 'Mm',
     'S2': 'S2',

@@ -22,7 +22,7 @@ TIDAL_WAVES = {
     'M4': DATASET / 'M4_tide.nc',
     'Mf': DATASET / 'Mf_tide.nc',
     'Mm': DATASET / 'Mm_tide.nc',
-    'Msqm': DATASET / 'Msqm_tide.nc',
+    'MSqm': DATASET / 'Msqm_tide.nc',
     'Mtm': DATASET / 'Mtm_tide.nc',
     'N2': DATASET / 'N2_tide.nc',
     'O1': DATASET / 'O1_tide.nc',

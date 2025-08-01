@@ -104,8 +104,8 @@ inline auto check_wave_table_constructor(const fes::wave::Table& table)
         EXPECT_NEAR(item->freq(), detail::math::radians(1.642407762), 1e-8);
         EXPECT_EQ(item->type(), fes::Wave::kLongPeriod);
         break;
-      case fes::kMsqm:
-        EXPECT_EQ(item->ident(), fes::kMsqm);
+      case fes::kMSqm:
+        EXPECT_EQ(item->ident(), fes::kMSqm);
         EXPECT_NEAR(item->freq(), detail::math::radians(2.113928850), 1e-8);
         EXPECT_EQ(item->type(), fes::Wave::kLongPeriod);
         break;
@@ -394,7 +394,121 @@ inline auto check_wave_table_constructor(const fes::wave::Table& table)
         EXPECT_NEAR(item->freq(), 0, 1e-8);
         EXPECT_EQ(item->type(), fes::Wave::kLongPeriod);
         break;
-
+      case fes::kL2P:
+        EXPECT_EQ(item->ident(), fes::kL2P);
+        EXPECT_NEAR(item->freq(), detail::math::radians(29.5331207461), 1e-8);
+        EXPECT_EQ(item->type(), fes::Wave::kShortPeriod);
+        break;
+      case fes::kN2P:
+        EXPECT_EQ(item->ident(), fes::kN2P);
+        EXPECT_NEAR(item->freq(), detail::math::radians(28.435087682), 1e-8);
+        EXPECT_EQ(item->type(), fes::Wave::kShortPeriod);
+        break;
+      case fes::kMSK2:
+        EXPECT_EQ(item->ident(), fes::kMSK2);
+        EXPECT_NEAR(item->freq(), detail::math::radians(28.9019669359), 1e-8);
+        EXPECT_EQ(item->type(), fes::Wave::kShortPeriod);
+        break;
+      case fes::kSKM2:
+        EXPECT_EQ(item->ident(), fes::kSKM2);
+        EXPECT_NEAR(item->freq(), detail::math::radians(31.0980330641), 1e-8);
+        EXPECT_EQ(item->type(), fes::Wave::kShortPeriod);
+        break;
+      case fes::kOQ2:
+        EXPECT_EQ(item->ident(), fes::kOQ2);
+        EXPECT_NEAR(item->freq(), detail::math::radians(27.3416964522), 1e-8);
+        EXPECT_EQ(item->type(), fes::Wave::kShortPeriod);
+        break;
+      case fes::k3MS4:
+        EXPECT_EQ(item->ident(), fes::k3MS4);
+        EXPECT_NEAR(item->freq(), detail::math::radians(56.952312642), 1e-8);
+        EXPECT_EQ(item->type(), fes::Wave::kShortPeriod);
+        break;
+      case fes::kMNu4:
+        EXPECT_EQ(item->ident(), fes::kMNu4);
+        EXPECT_NEAR(item->freq(), detail::math::radians(57.4966873397), 1e-8);
+        EXPECT_EQ(item->type(), fes::Wave::kShortPeriod);
+        break;
+      case fes::k2MSN4:
+        EXPECT_EQ(item->ident(), fes::k2MSN4);
+        EXPECT_NEAR(item->freq(), detail::math::radians(59.5284789117), 1e-8);
+        EXPECT_EQ(item->type(), fes::Wave::kShortPeriod);
+        break;
+      case fes::k2NS2:
+        EXPECT_EQ(item->ident(), fes::k2NS2);
+        EXPECT_NEAR(item->freq(), detail::math::radians(26.8794590326), 1e-8);
+        EXPECT_EQ(item->type(), fes::Wave::kShortPeriod);
+        break;
+      case fes::kMNuS2:
+        EXPECT_EQ(item->ident(), fes::kMNuS2);
+        EXPECT_NEAR(item->freq(), detail::math::radians(27.4966873397), 1e-8);
+        EXPECT_EQ(item->type(), fes::Wave::kShortPeriod);
+        break;
+      case fes::k2MK2:
+        EXPECT_EQ(item->ident(), fes::k2MK2);
+        EXPECT_NEAR(item->freq(), detail::math::radians(27.8860711499), 1e-8);
+        EXPECT_EQ(item->type(), fes::Wave::kShortPeriod);
+        break;
+      case fes::kNKM2:
+        EXPECT_EQ(item->ident(), fes::kNKM2);
+        EXPECT_NEAR(item->freq(), detail::math::radians(29.5377625804), 1e-8);
+        EXPECT_EQ(item->type(), fes::Wave::kShortPeriod);
+        break;
+      case fes::kML4:
+        EXPECT_EQ(item->ident(), fes::kML4);
+        EXPECT_NEAR(item->freq(), detail::math::radians(58.5125831257), 1e-8);
+        EXPECT_EQ(item->type(), fes::Wave::kShortPeriod);
+        break;
+      case fes::kSO1:
+        EXPECT_EQ(item->ident(), fes::kSO1);
+        EXPECT_NEAR(item->freq(), detail::math::radians(16.0569644251), 1e-8);
+        EXPECT_EQ(item->type(), fes::Wave::kShortPeriod);
+        break;
+      case fes::kSO3:
+        EXPECT_EQ(item->ident(), fes::kSO3);
+        EXPECT_NEAR(item->freq(), detail::math::radians(43.9430355749), 1e-8);
+        EXPECT_EQ(item->type(), fes::Wave::kShortPeriod);
+        break;
+      case fes::kNK4:
+        EXPECT_EQ(item->ident(), fes::kNK4);
+        EXPECT_NEAR(item->freq(), detail::math::radians(58.5218667944), 1e-8);
+        EXPECT_EQ(item->type(), fes::Wave::kShortPeriod);
+        break;
+      case fes::kMNK6:
+        EXPECT_EQ(item->ident(), fes::kMNK6);
+        EXPECT_NEAR(item->freq(), detail::math::radians(87.5059710084), 1e-8);
+        EXPECT_EQ(item->type(), fes::Wave::kShortPeriod);
+        break;
+      case fes::k2NM6:
+        EXPECT_EQ(item->ident(), fes::k2NM6);
+        EXPECT_NEAR(item->freq(), detail::math::radians(85.8635632466), 1e-8);
+        EXPECT_EQ(item->type(), fes::Wave::kShortPeriod);
+        break;
+      case fes::k3MS8:
+        EXPECT_EQ(item->ident(), fes::k3MS8);
+        EXPECT_NEAR(item->freq(), detail::math::radians(116.952312642), 1e-8);
+        EXPECT_EQ(item->type(), fes::Wave::kShortPeriod);
+        break;
+      case fes::kSK3:
+        EXPECT_EQ(item->ident(), fes::kSK3);
+        EXPECT_NEAR(item->freq(), detail::math::radians(45.0410686391), 1e-8);
+        EXPECT_EQ(item->type(), fes::Wave::kShortPeriod);
+        break;
+      case fes::k2MNS4:
+        EXPECT_EQ(item->ident(), fes::k2MNS4);
+        EXPECT_NEAR(item->freq(), detail::math::radians(56.4079379443), 1e-8);
+        EXPECT_EQ(item->type(), fes::Wave::kShortPeriod);
+        break;
+      case fes::k2SMu2:
+        EXPECT_EQ(item->ident(), fes::k2SMu2);
+        EXPECT_NEAR(item->freq(), detail::math::radians(32.031791572), 1e-8);
+        EXPECT_EQ(item->type(), fes::Wave::kShortPeriod);
+        break;
+      case fes::k2MP5:
+        EXPECT_EQ(item->ident(), fes::k2MP5);
+        EXPECT_NEAR(item->freq(), detail::math::radians(72.927139789), 1e-8);
+        EXPECT_EQ(item->type(), fes::Wave::kShortPeriod);
+        break;
       default:
         throw std::runtime_error(std::to_string(item->ident()));
     }

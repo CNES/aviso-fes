@@ -23,8 +23,8 @@ FES_TIDE_TIME_SERIES = pathlib.Path(
 
 def test_constructor():
     wt = core.WaveTable()
-    assert len(wt) == 76
-    assert len([item for item in wt]) == 76
+    assert len(wt) == 99
+    assert len([item for item in wt]) == 99
     assert wt.find('M2') == wt[core.kM2]
     assert wt.find('m2') == wt[core.kM2]
     assert wt.find('M2') != wt[core.kK1]
@@ -65,7 +65,7 @@ def test_harmonic_analysis():
         h = dataset['ocean'][:] * 1e-2
 
     wt = core.WaveTable([
-        'Mm', 'Mf', 'Mtm', 'Msqm', '2Q1', 'Sigma1', 'Q1', 'Rho1', 'O1', 'MP1',
+        'Mm', 'Mf', 'Mtm', 'MSqm', '2Q1', 'Sigma1', 'Q1', 'Rho1', 'O1', 'MP1',
         'M11', 'M12', 'M13', 'Chi1', 'Pi1', 'P1', 'S1', 'K1', 'Psi1', 'Phi1',
         'Theta1', 'J1', 'OO1', 'MNS2', 'Eps2', '2N2', 'Mu2', '2MS2', 'N2',
         'Nu2', 'M2', 'MKS2', 'Lambda2', 'L2', '2MN2', 'T2', 'S2', 'R2', 'K2',

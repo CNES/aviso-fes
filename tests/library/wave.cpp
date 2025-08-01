@@ -111,7 +111,7 @@ inline auto check_nodal_g(const fes::wave::Table& table,
       case fes::kMtm:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 0.0, 1e-12);
         break;
-      case fes::kMsqm:
+      case fes::kMSqm:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 0.0, 1e-8);
         break;
       case fes::kEps2:
@@ -285,6 +285,75 @@ inline auto check_nodal_g(const fes::wave::Table& table,
       case fes::kM0:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 0.0, 1e-8);
         break;
+      case fes::kL2P:
+        EXPECT_NEAR(detail::math::degrees(item->vu()), -88, 1e-8);
+        break;
+      case fes::kN2P:
+        EXPECT_NEAR(detail::math::degrees(item->vu()), 92, 1e-8);
+        break;
+      case fes::kMSK2:
+        EXPECT_NEAR(detail::math::degrees(item->vu()), 2, 1e-8);
+        break;
+      case fes::kSKM2:
+        EXPECT_NEAR(detail::math::degrees(item->vu()), 2, 1e-8);
+        break;
+      case fes::kOQ2:
+        EXPECT_NEAR(detail::math::degrees(item->vu()), 180, 1e-8);
+        break;
+      case fes::k3MS4:
+        EXPECT_NEAR(detail::math::degrees(item->vu()), 4, 1e-8);
+        break;
+      case fes::kMNu4:
+        EXPECT_NEAR(detail::math::degrees(item->vu()), 4, 1e-8);
+        break;
+      case fes::k2MSN4:
+        EXPECT_NEAR(detail::math::degrees(item->vu()), 4, 1e-8);
+        break;
+      case fes::k2NS2:
+        EXPECT_NEAR(detail::math::degrees(item->vu()), 2, 1e-8);
+        break;
+      case fes::kMNuS2:
+        EXPECT_NEAR(detail::math::degrees(item->vu()), 2, 1e-8);
+        break;
+      case fes::k2MK2:
+        EXPECT_NEAR(detail::math::degrees(item->vu()), 2, 1e-8);
+        break;
+      case fes::kNKM2:
+        EXPECT_NEAR(detail::math::degrees(item->vu()), 2, 1e-8);
+        break;
+      case fes::kML4:
+        EXPECT_NEAR(detail::math::degrees(item->vu()), 4, 1e-8);
+        break;
+      case fes::kSO1:
+        EXPECT_NEAR(detail::math::degrees(item->vu()), -89, 1e-8);
+        break;
+      case fes::kSO3:
+        EXPECT_NEAR(detail::math::degrees(item->vu()), 93, 1e-8);
+        break;
+      case fes::kNK4:
+        EXPECT_NEAR(detail::math::degrees(item->vu()), 4, 1e-8);
+        break;
+      case fes::kMNK6:
+        EXPECT_NEAR(detail::math::degrees(item->vu()), 6, 1e-8);
+        break;
+      case fes::k2NM6:
+        EXPECT_NEAR(detail::math::degrees(item->vu()), 6, 1e-8);
+        break;
+      case fes::k3MS8:
+        EXPECT_NEAR(detail::math::degrees(item->vu()), 8, 1e-8);
+        break;
+      case fes::kSK3:
+        EXPECT_NEAR(detail::math::degrees(item->vu()), -87, 1e-8);
+        break;
+      case fes::k2MNS4:
+        EXPECT_NEAR(detail::math::degrees(item->vu()), 4, 1e-8);
+        break;
+      case fes::k2SMu2:
+        EXPECT_NEAR(detail::math::degrees(item->vu()), 2, 1e-8);
+        break;
+      case fes::k2MP5:
+        EXPECT_NEAR(detail::math::degrees(item->vu()), 4, 1e-8);
+        break;
       default:
         throw std::runtime_error(item->name());
     }
@@ -302,6 +371,8 @@ inline auto check_nodal_a(const fes::wave::Table& table,
       case fes::kSigma1:
       case fes::kRho1:
       case fes::kM11:
+      case fes::kSO1:
+      case fes::kSO3:
         EXPECT_NEAR(item->f(), 1.705420655553602, 1e-8);
         break;
       case fes::kP1:
@@ -322,6 +393,7 @@ inline auto check_nodal_a(const fes::wave::Table& table,
         EXPECT_NEAR(item->f(), 1.0, 1e-8);
         break;
       case fes::kK1:
+      case fes::kSK3:
         EXPECT_NEAR(item->f(), 1.0661482919660317, 1e-8);
         break;
       case fes::k2N2:
@@ -336,6 +408,7 @@ inline auto check_nodal_a(const fes::wave::Table& table,
       case fes::k2SM6:
       case fes::k2SM2:
       case fes::kMSf:
+      case fes::k2SMu2:
         EXPECT_NEAR(item->f(), 0.64794930999090794, 1e-8);
         break;
       case fes::kL2:
@@ -366,11 +439,15 @@ inline auto check_nodal_a(const fes::wave::Table& table,
       case fes::kMSN6:
       case fes::k2MS2:
       case fes::kMSN2:
+      case fes::kMNu4:
+      case fes::kMNuS2:
+      case fes::k2MP5:
+      case fes::k2NS2:
         EXPECT_NEAR(item->f(), 0.4198383083176937, 1e-8);
         break;
       case fes::kMf:
       case fes::kMtm:
-      case fes::kMsqm:
+      case fes::kMSqm:
       case fes::kMm1:
         EXPECT_NEAR(item->f(), 4.4871572767653438, 1e-8);
         break;
@@ -386,6 +463,10 @@ inline auto check_nodal_a(const fes::wave::Table& table,
       case fes::kM6:
       case fes::k2MN6:
       case fes::k2MN2:
+      case fes::k3MS4:
+      case fes::k2MSN4:
+      case fes::k3MS8:
+      case fes::k2MNS4:
         EXPECT_NEAR(item->f(), 0.2720339421821998, 1e-8);
         break;
       case fes::kM1:
@@ -393,6 +474,9 @@ inline auto check_nodal_a(const fes::wave::Table& table,
         break;
       case fes::kMK4:
       case fes::kMSK6:
+      case fes::kMSK2:
+      case fes::kSKM2:
+      case fes::kNK4:
       case fes::kMKS2:
         EXPECT_NEAR(item->f(), 0.64794930999090794 * 2.9715447147317122, 1e-8);
         break;
@@ -416,6 +500,32 @@ inline auto check_nodal_a(const fes::wave::Table& table,
         EXPECT_NEAR(item->f(), 0.302919608612788327, 1e-8);
         break;
       case fes::kM13:
+        break;
+      case fes::kL2P:
+        EXPECT_NEAR(item->f(), 5.4040577532657145809, 1e-8);
+        break;
+      case fes::kN2P:
+        EXPECT_NEAR(item->f(), 1.3644178238453521512, 1e-8);
+        break;
+      case fes::kOQ2:
+        EXPECT_NEAR(item->f(), detail::math::pow<2>(1.705420655553602), 1e-8);
+        break;
+      case fes::k2MK2:
+      case fes::kNKM2:
+      case fes::kMNK6:
+        EXPECT_NEAR(
+            item->f(),
+            detail::math::pow<2>(0.64794930999090794) * 2.9715447147317122,
+            1e-8);
+        break;
+      case fes::kML4:
+        EXPECT_NEAR(item->f(), 0.64794930999090794 * 0.64794930999090794, 1e-8);
+        break;
+      case fes::k2NM6:
+        EXPECT_NEAR(
+            item->f(),
+            detail::math::pow<4>(0.64794930999090794) * 0.64794930999090794,
+            1e-8);
         break;
       default:
         throw std::runtime_error(std::to_string(item->ident()));

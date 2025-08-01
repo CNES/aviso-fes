@@ -66,8 +66,8 @@ auto name(Constituent constituent) -> const char* {
       return detail::wave::name::kMf;
     case kMtm:
       return detail::wave::name::kMtm;
-    case kMsqm:
-      return detail::wave::name::kMsqm;
+    case kMSqm:
+      return detail::wave::name::kMSqm;
     case kEps2:
       return detail::wave::name::kEps2;
     case kLambda2:
@@ -182,6 +182,52 @@ auto name(Constituent constituent) -> const char* {
       return detail::wave::name::kMf2;
     case kM0:
       return detail::wave::name::kM0;
+    case kL2P:
+      return detail::wave::name::kL2P;
+    case kN2P:
+      return detail::wave::name::kN2P;
+    case kMSK2:
+      return detail::wave::name::kMSK2;
+    case kSKM2:
+      return detail::wave::name::kSKM2;
+    case kOQ2:
+      return detail::wave::name::kOQ2;
+    case k3MS4:
+      return detail::wave::name::k3MS4;
+    case kMNu4:
+      return detail::wave::name::kMNu4;
+    case k2MSN4:
+      return detail::wave::name::k2MSN4;
+    case k2NS2:
+      return detail::wave::name::k2NS2;
+    case kMNuS2:
+      return detail::wave::name::kMNuS2;
+    case k2MK2:
+      return detail::wave::name::k2MK2;
+    case kNKM2:
+      return detail::wave::name::kNKM2;
+    case kML4:
+      return detail::wave::name::kML4;
+    case kSO1:
+      return detail::wave::name::kSO1;
+    case kSO3:
+      return detail::wave::name::kSO3;
+    case kNK4:
+      return detail::wave::name::kNK4;
+    case kMNK6:
+      return detail::wave::name::kMNK6;
+    case k2NM6:
+      return detail::wave::name::k2NM6;
+    case k3MS8:
+      return detail::wave::name::k3MS8;
+    case kSK3:
+      return detail::wave::name::kSK3;
+    case k2MNS4:
+      return detail::wave::name::k2MNS4;
+    case k2SMu2:
+      return detail::wave::name::k2SMu2;
+    case k2MP5:
+      return detail::wave::name::k2MP5;
     default:
       throw std::invalid_argument("unknown wave: " +
                                   std::to_string(constituent));
@@ -243,8 +289,8 @@ auto parse(const std::string& name) -> Constituent {
   if (iequals(name, wave::name::kMtm)) {
     return kMtm;
   }
-  if (iequals(name, wave::name::kMsqm)) {
-    return kMsqm;
+  if (iequals(name, wave::name::kMSqm)) {
+    return kMSqm;
   }
   if (iequals(name, wave::name::kEps2)) {
     return kEps2;
@@ -416,6 +462,78 @@ auto parse(const std::string& name) -> Constituent {
   }
   if (iequals(name, wave::name::kM0)) {
     return kM0;
+  }
+  if (iequals(name, wave::name::kL2P)) {
+    return kL2P;
+  }
+  if (iequals(name, wave::name::kN2P)) {
+    return kN2P;
+  }
+  if (iequals(name, wave::name::kMSK2)) {
+    return kMSK2;
+  }
+  if (iequals(name, wave::name::kSKM2)) {
+    return kSKM2;
+  }
+  if (iequals(name, wave::name::kOQ2)) {
+    return kOQ2;
+  }
+  if (iequals(name, wave::name::k3MS4)) {
+    return k3MS4;
+  }
+  if (iequals(name, wave::name::kMNu4)) {
+    return kMNu4;
+  }
+  if (iequals(name, wave::name::k2MSN4)) {
+    return k2MSN4;
+  }
+  if (iequals(name, wave::name::k2NS2)) {
+    return k2NS2;
+  }
+  if (iequals(name, wave::name::kMNuS2)) {
+    return kMNuS2;
+  }
+  if (iequals(name, wave::name::k2MK2)) {
+    return k2MK2;
+  }
+  if (iequals(name, wave::name::kNKM2)) {
+    return kNKM2;
+  }
+  if (iequals(name, wave::name::kML4)) {
+    return kML4;
+  }
+  if (iequals(name, wave::name::kSO1)) {
+    return kSO1;
+  }
+  if (iequals(name, wave::name::kSO3)) {
+    return kSO3;
+  }
+  if (iequals(name, wave::name::kNK4)) {
+    return kNK4;
+  }
+  if (iequals(name, wave::name::kMNK6)) {
+    return kMNK6;
+  }
+  if (iequals(name, wave::name::k2NM6)) {
+    return k2NM6;
+  }
+  if (iequals(name, wave::name::k3MS8)) {
+    return k3MS8;
+  }
+  if (iequals(name, wave::name::kSK3)) {
+    return kSK3;
+  }
+  if (iequals(name, wave::name::k2MNS4)) {
+    return k2MNS4;
+  }
+  if (iequals(name, wave::name::k2SMu2)) {
+    return k2SMu2;
+  }
+  if (iequals(name, wave::name::k2MP5)) {
+    return k2MP5;
+  }
+  if (iequals(name, wave::name::k2MP5)) {
+    return k2MP5;
   }
   throw std::invalid_argument("invalid tidal constituent: " + name);
 }

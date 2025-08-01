@@ -163,7 +163,7 @@ auto LongPeriodEquilibrium::disable_dynamic_wave(const Table& table) -> void {
     order2_.row(86).fill(0);
     order2_.row(87).fill(0);
   }
-  if (table[kMsqm]->dynamic()) {
+  if (table[kMSqm]->dynamic()) {
     order2_.row(98).fill(0);
     order2_.row(99).fill(0);
     order2_.row(100).fill(0);

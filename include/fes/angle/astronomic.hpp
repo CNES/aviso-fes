@@ -312,11 +312,39 @@ class Astronomic {
     return f_m2() * f_o1();
   }
 
+  /// @brief Gets the node factor of @f$f(M_2) \times f(L_2)@f$.
+  ///
+  /// @return @f$f(M_2) \times f(L_2)@f$
+  FES_MATH_CONSTEXPR auto f_m2_l2() const noexcept -> double {
+    return f_m2() * f_l2();
+  }
+
+  /// @brief Gets the node factor of @f$f(M_2)^4 \times f(L_2)@f$.
+  ///
+  /// @return @f$f(M_2)^4 \times f(L_2)@f$
+  FES_MATH_CONSTEXPR auto f_m24_l2() const noexcept -> double {
+    return f_m24() * f_l2();
+  }
+
+  /// @brief Gets the node factor of @f$f(O_1)^2@f$.
+  ///
+  /// @return @f$f(O_1)^2@f$
+  FES_MATH_CONSTEXPR auto f_o12() const noexcept -> double {
+    return detail::math::pow<2>(f_o1());
+  }
+
   /// @brief Gets the node factor of @f$f(M_2)^2 \times f(K_1)@f$.
   ///
   /// @return @f$f(M_2)^2 \times f(K_1)@f$
   FES_MATH_CONSTEXPR auto f_m22_k1() const noexcept -> double {
     return f_m22() * f_k1();
+  }
+
+  /// @brief Gets the node factor of @f$f(M_2)^2 \times f(K_2)@f$.
+  ///
+  /// @return @f$f(M_2)^2 \times f(K_2)@f$
+  FES_MATH_CONSTEXPR auto f_m22_k2() const noexcept -> double {
+    return f_m22() * f_k2();
   }
 
   /// @brief Gets the node factor of @f$f(M_2)^3 \times f(K_2)@f$.

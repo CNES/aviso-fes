@@ -96,8 +96,8 @@ Mtm::Mtm()
            Darwin::Builder().s(3).p(-1).xi(-2).build(),
            &angle::Astronomic::f_mf) {}
 
-Msqm::Msqm()
-    : Wave(kMsqm, kLongPeriod, false,
+MSqm::MSqm()
+    : Wave(kMSqm, kLongPeriod, false,
            Darwin::Builder().s(4).h(-2).xi(-2).build(),
            &angle::Astronomic::f_mf) {}
 
@@ -484,6 +484,113 @@ L2P::L2P()
     : Wave(kL2P, kShortPeriod, false,
            Darwin::Builder().T(2).s(-1).h(2).shift(-1).xi(1).nu(-2).build(),
            &angle::Astronomic::f_147) {}
+
+MSK2::MSK2()
+    : Wave(kMSK2, kShortPeriod, false,
+           Darwin::Builder().T(2).s(-2).xi(2).nu(-2).nusec(2).build(),
+           &angle::Astronomic::f_m2_k2) {}
+
+SKM2::SKM2()
+    : Wave(kSKM2, kShortPeriod, false,
+           Darwin::Builder().T(2).s(2).xi(-2).nu(2).nusec(-2).build(),
+           &angle::Astronomic::f_m2_k2) {}
+
+OQ2::OQ2()
+    : Wave(kOQ2, kShortPeriod, false,
+           Darwin::Builder().T(2).s(-5).h(2).p(1).shift(2).build(),
+           &angle::Astronomic::f_o12) {}  // f(O1) * f(Q1) = f(O1)^2
+
+_3MS4::_3MS4()
+    : Wave(k3MS4, kShortPeriod, false,
+           Darwin::Builder().T(4).s(-6).h(6).xi(6).nu(-6).build(),
+           &angle::Astronomic::f_m23) {}
+
+MNu4::MNu4()
+    : Wave(kMNu4, kShortPeriod, false,
+           Darwin::Builder().T(4).s(-5).h(6).p(-1).xi(4).nu(-4).build(),
+           &angle::Astronomic::f_m22) {}
+
+_2MSN4::_2MSN4()
+    : Wave(k2MSN4, kShortPeriod, false,
+           Darwin::Builder().T(4).s(-1).h(2).p(-1).xi(2).nu(-2).build(),
+           &angle::Astronomic::f_m23) {}
+
+_2NS2::_2NS2()
+    : Wave(k2NS2, kShortPeriod, false,
+           Darwin::Builder().T(2).s(-6).h(4).p(2).xi(4).nu(-4).build(),
+           &angle::Astronomic::f_m22) {}
+
+MNuS2::MNuS2()
+    : Wave(kMNuS2, kShortPeriod, false,
+           Darwin::Builder().T(2).s(-5).h(6).p(-1).xi(4).nu(-4).build(),
+           &angle::Astronomic::f_m22) {}
+
+_2MK2::_2MK2()
+    : Wave(k2MK2, kShortPeriod, false,
+           Darwin::Builder().T(2).s(-4).h(2).xi(4).nu(-4).nusec(2).build(),
+           &angle::Astronomic::f_m22_k2) {}
+
+NKM2::NKM2()
+    : Wave(kNKM2, kShortPeriod, false,
+           Darwin::Builder().T(2).s(-1).h(2).p(1).nusec(-2).build(),
+           &angle::Astronomic::f_m22_k2) {}
+
+ML4::ML4()
+    : Wave(kML4, kShortPeriod, false,
+           Darwin::Builder().T(4).s(-3).h(4).p(-1).xi(4).nu(-4).build(),
+           &angle::Astronomic::f_m2_l2) {}
+
+SO1::SO1()
+    : Wave(kSO1, kShortPeriod, false,
+           Darwin::Builder().T(1).s(2).h(-1).shift(-1).nu(-1).build(),
+           &angle::Astronomic::f_o1) {}
+
+SO3::SO3()
+    : Wave(kSO3, kShortPeriod, false,
+           Darwin::Builder().T(3).s(-2).h(1).shift(1).xi(2).nu(-1).build(),
+           &angle::Astronomic::f_o1) {}
+
+NK4::NK4()
+    : Wave(
+          kNK4, kShortPeriod, false,
+          Darwin::Builder().T(4).s(-3).h(4).p(1).xi(2).nu(-2).nusec(-2).build(),
+          &angle::Astronomic::f_m2_k2) {}
+
+MNK6::MNK6()
+    : Wave(
+          kMNK6, kShortPeriod, false,
+          Darwin::Builder().T(6).s(-5).h(6).p(1).xi(4).nu(-4).nusec(-2).build(),
+          &angle::Astronomic::f_m22_k2) {}
+
+_2NM6::_2NM6()
+    : Wave(k2NM6, kShortPeriod, false,
+           Darwin::Builder().T(6).s(-8).h(6).p(2).xi(6).nu(-6).build(),
+           &angle::Astronomic::f_m24_l2) {}
+
+_3MS8::_3MS8()
+    : Wave(k3MS8, kShortPeriod, false,
+           Darwin::Builder().T(8).s(-6).h(6).xi(6).nu(-6).build(),
+           &angle::Astronomic::f_m23) {}
+
+SK3::SK3()
+    : Wave(kSK3, kShortPeriod, false,
+           Darwin::Builder().T(3).h(1).shift(-1).nuprim(-1).build(),
+           &angle::Astronomic::f_k1) {}
+
+_2MNS4::_2MNS4()
+    : Wave(k2MNS4, kShortPeriod, false,
+           Darwin::Builder().T(4).s(-7).h(6).p(1).xi(6).nu(-6).build(),
+           &angle::Astronomic::f_m23) {}
+
+_2SMu2::_2SMu2()
+    : Wave(k2SMu2, kShortPeriod, false,
+           Darwin::Builder().T(2).s(4).h(-4).xi(-2).nu(2).build(),
+           &angle::Astronomic::f_m2) {}
+
+_2MP5::_2MP5()
+    : Wave(k2MP5, kShortPeriod, false,
+           Darwin::Builder().T(5).s(-4).h(3).shift(1).xi(4).nu(-4).build(),
+           &angle::Astronomic::f_m22) {}
 
 }  // namespace wave
 }  // namespace fes
