@@ -212,13 +212,13 @@ class ConstituentParser:
 
         lines.append(table_sep)
         lines.append(f"        {'V':<{max_width}}  {'u':<{max_width}}  "
-                     f"{'Factor-f':<{max_width}}")
+                     f"{'Factor-f'}")
         lines.append(table_sep)
         v_cell = f":math:`{constituent['v_value']}`"
         u_cell = f":math:`{constituent['u_value']}`"
         f_cell = f":math:`{constituent['factor_f']}`"
         lines.append(f'        {v_cell:<{max_width}}  {u_cell:<{max_width}}  '
-                     f'{f_cell:<{max_width}}')
+                     f'{f_cell}')
         lines.append(table_sep)
         lines.append('')
 
