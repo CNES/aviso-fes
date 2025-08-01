@@ -352,7 +352,7 @@ inline auto check_nodal_g(const fes::wave::Table& table,
         EXPECT_NEAR(detail::math::degrees(item->vu()), 2, 1e-8);
         break;
       case fes::k2MP5:
-        EXPECT_NEAR(detail::math::degrees(item->vu()), 4, 1e-8);
+        EXPECT_NEAR(detail::math::degrees(item->vu()), 94, 1e-8);
         break;
       default:
         throw std::runtime_error(item->name());

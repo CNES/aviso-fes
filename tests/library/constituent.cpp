@@ -17,7 +17,7 @@ inline auto check_parse(const fes::wave::Table& table) -> void {
 TEST(Constituents, Parse) {
   check_parse(fes::wave::Table());
   EXPECT_THROW(fes::constituents::parse("__x__"), std::invalid_argument);
-  EXPECT_EQ(fes::constituents::parse("msqm"), fes::kMsqm);
+  EXPECT_EQ(fes::constituents::parse("msqm"), fes::kMSqm);
 }
 
 TEST(Constituents, ListParseAndGetName) {

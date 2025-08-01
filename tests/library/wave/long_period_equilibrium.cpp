@@ -34,7 +34,7 @@ TEST(WaveOrder2, LpeMinus5WavesNonRegression) {
   table[fes::kMm]->dynamic(true);
   table[fes::kMf]->dynamic(true);
   table[fes::kMtm]->dynamic(true);
-  table[fes::kMsqm]->dynamic(true);
+  table[fes::kMSqm]->dynamic(true);
   table[fes::kSsa]->dynamic(true);
 
   lpe = fes::wave::LongPeriodEquilibrium(table);
@@ -68,7 +68,7 @@ TEST(WaveOrder2, LpeMinus5WavesAvisoFES) {
   table[fes::kMm]->dynamic(true);
   table[fes::kMf]->dynamic(true);
   table[fes::kMtm]->dynamic(true);
-  table[fes::kMsqm]->dynamic(true);
+  table[fes::kMSqm]->dynamic(true);
   lpe = fes::wave::LongPeriodEquilibrium(table);
   EXPECT_NEAR(lpe.lpe_minus_n_waves(AstronomicAngle(true), 1),
               -1.1941264878178992, 1e-6);
