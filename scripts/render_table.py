@@ -26,6 +26,8 @@ GREEK_LETTERS = {
     'Tau': '{\\tau}',
 }
 
+URL = 'https://cnes.github.io/aviso-fes/core/constituent.html'
+
 
 def _pretty_name(name: str) -> str:
     """
@@ -38,6 +40,14 @@ def _pretty_name(name: str) -> str:
     return name
 
 
+def url(constituent: pyfes.core.Wave) -> str:
+    """
+    Generate a URL for the constituent based on its name.
+    The URL is constructed to point to the constituent documentation.
+    """
+    return f'{URL}#pyfes.core.{str(constituent.ident)}'
+
+
 def create_constituent_representation() -> str:
     """ """
     table = pyfes.WaveTable()
@@ -45,7 +55,6 @@ def create_constituent_representation() -> str:
         '| Name | Speed (deg/h) | XDO |',
         '| --- | --- | --- |',
     ]
-
     data = {}
     for constituent in table:
         component = table[constituent.ident]
@@ -54,7 +63,7 @@ def create_constituent_representation() -> str:
         xdo = component.xdo_alphabetical()
         data[constituent.name] = {
             'speed': numpy.degrees(frequency),
-            'name': name,
+            'name': f"[{name}]({url(constituent)})",
             'xdo': f'{xdo[:1]} {xdo[1:4]} {xdo[4:]}',
         }
 

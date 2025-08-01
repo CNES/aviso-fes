@@ -80,6 +80,7 @@ available for building the library.
 Alternatively, using pip:
 
 .. code-block:: bash
+
     pip install numpy netCDF4 git+https://github.com/CNES/aviso-fes.git
 
 
