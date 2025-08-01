@@ -29,15 +29,15 @@ GREEK_LETTERS = {
 URL = 'https://cnes.github.io/aviso-fes/core/constituent.html'
 
 
-def _pretty_name(name: str) -> str:
+def _pretty_name(name: str) -> tuple[str, str | None]:
     """
     Convert the greek letter in the name to its LaTeX representation.
     If the name does not contain a greek letter, return it unchanged.
     """
     for greek, latex in GREEK_LETTERS.items():
         if greek in name:
-            return f'{name} (${name.replace(greek, latex)}$)'
-    return name
+            return name, f'${name.replace(greek, latex)}$'
+    return name, None
 
 
 def url(constituent: pyfes.core.Wave) -> str:
@@ -58,12 +58,15 @@ def create_constituent_representation() -> str:
     data = {}
     for constituent in table:
         component = table[constituent.ident]
-        name = _pretty_name(component.name())
+        name, greek_notation = _pretty_name(component.name())
+        name = f'[{name}]({url(constituent)})'
+        if greek_notation:
+            name += f' ({greek_notation})'
         frequency = component.freq
         xdo = component.xdo_alphabetical()
         data[constituent.name] = {
             'speed': numpy.degrees(frequency),
-            'name': f'[{name}]({url(constituent)})',
+            'name': name,
             'xdo': f'{xdo[:1]} {xdo[1:4]} {xdo[4:]}',
         }
 

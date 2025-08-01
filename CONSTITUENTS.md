@@ -34,42 +34,42 @@ documentation](https://cnes.github.io/aviso-fes/core/constituent.html).
 | [Mtm](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kMtm) | 1.6424078  | Z CZY ZZZ |
 | [MSqm](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kMSqm) | 2.1139289  | Z DXZ ZZZ |
 | [2Q1](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.k2Q1) | 12.8542862  | A WZB ZZY |
-| [Sigma1 (${\sigma}1$)](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kSigma1) | 12.9271398  | A WBZ ZZY |
+| [Sigma1](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kSigma1) (${\sigma}1$) | 12.9271398  | A WBZ ZZY |
 | [Q1](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kQ1) | 13.3986609  | A XZA ZZY |
-| [Rho1 (${\rho}1$)](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kRho1) | 13.4715145  | A XBY ZZY |
+| [Rho1](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kRho1) (${\rho}1$) | 13.4715145  | A XBY ZZY |
 | [O1](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kO1) | 13.9430356  | A YZZ ZZY |
 | [MP1](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kMP1) | 14.0251729  | A YBZ ZZA |
 | [M11](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kM11) | 14.4874103  | A ZZY ZZA |
 | [M13](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kM13) | 14.4920521  | A ZZZ ZZZ |
 | [M1](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kM1) | 14.4966939  | A ZZA ZZA |
 | [M12](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kM12) | 14.4966939  | A ZZA ZZA |
-| [Chi1 (${\chi}1$)](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kChi1) | 14.5695476  | A ZBY ZZA |
-| [Pi1 (${\pi}1$)](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kPi1) | 14.9178647  | A AWZ ZAY |
+| [Chi1](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kChi1) (${\chi}1$) | 14.5695476  | A ZBY ZZA |
+| [Pi1](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kPi1) (${\pi}1$) | 14.9178647  | A AWZ ZAY |
 | [P1](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kP1) | 14.9589314  | A AXZ ZZY |
 | [S1](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kS1) | 15.0000000  | A AYZ ZZZ |
 | [K1](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kK1) | 15.0410686  | A AZZ ZZA |
-| [Psi1 (${\psi}1$)](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kPsi1) | 15.0821353  | A AAZ ZYA |
-| [Phi1 (${\phi}1$)](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kPhi1) | 15.1232059  | A ABZ ZZA |
-| [Theta1 (${\theta}1$)](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kTheta1) | 15.5125897  | A BXA ZZA |
+| [Psi1](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kPsi1) (${\psi}1$) | 15.0821353  | A AAZ ZYA |
+| [Phi1](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kPhi1) (${\phi}1$) | 15.1232059  | A ABZ ZZA |
+| [Theta1](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kTheta1) (${\theta}1$) | 15.5125897  | A BXA ZZA |
 | [J1](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kJ1) | 15.5854433  | A BZY ZZA |
 | [SO1](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kSO1) | 16.0569644  | A CXZ ZZA |
 | [OO1](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kOO1) | 16.1391017  | A CZZ ZZA |
 | [2NS2](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.k2NS2) | 26.8794590  | B VBB ZZZ |
 | [OQ2](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kOQ2) | 27.3416965  | B WZA ZZB |
 | [MNS2](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kMNS2) | 27.4238337  | B WBA ZZZ |
-| [Eps2 (${\epsilon}2$)](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kEps2) | 27.4238337  | B WBA ZZZ |
-| [MNuS2 ($M{\nu}S2$)](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kMNuS2) | 27.4966873  | B WDY ZZZ |
+| [Eps2](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kEps2) (${\epsilon}2$) | 27.4238337  | B WBA ZZZ |
+| [MNuS2](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kMNuS2) ($M{\nu}S2$) | 27.4966873  | B WDY ZZZ |
 | [2MK2](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.k2MK2) | 27.8860711  | B XZZ ZZZ |
 | [2N2](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.k2N2) | 27.8953548  | B XZB ZZZ |
-| [Mu2 (${\mu}2$)](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kMu2) | 27.9682084  | B XBZ ZZZ |
+| [Mu2](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kMu2) (${\mu}2$) | 27.9682084  | B XBZ ZZZ |
 | [2MS2](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.k2MS2) | 27.9682084  | B XBZ ZZZ |
 | [N2P](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kN2P) | 28.4350877  | B YZZ ZZY |
 | [N2](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kN2) | 28.4397295  | B YZA ZZZ |
-| [Nu2 (${\nu}2$)](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kNu2) | 28.5125831  | B YBY ZZZ |
+| [Nu2](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kNu2) (${\nu}2$) | 28.5125831  | B YBY ZZZ |
 | [MSK2](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kMSK2) | 28.9019669  | B ZXZ ZZZ |
 | [M2](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kM2) | 28.9841042  | B ZZZ ZZZ |
 | [MKS2](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kMKS2) | 29.0662415  | B ZBZ ZZZ |
-| [Lambda2 (${\lambda}2$)](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kLambda2) | 29.4556253  | B AXA ZZB |
+| [Lambda2](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kLambda2) (${\lambda}2$) | 29.4556253  | B AXA ZZB |
 | [L2](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kL2) | 29.5284789  | B AZY ZZB |
 | [2MN2](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.k2MN2) | 29.5284789  | B AZY ZZB |
 | [L2P](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kL2P) | 29.5331207  | B AZZ ZZA |
@@ -79,10 +79,10 @@ documentation](https://cnes.github.io/aviso-fes/core/constituent.html).
 | [R2](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kR2) | 30.0410667  | B BYZ ZYB |
 | [K2](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kK2) | 30.0821373  | B BZZ ZZZ |
 | [MSN2](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kMSN2) | 30.5443747  | B CXY ZZZ |
-| [Eta2 (${\eta}2$)](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kEta2) | 30.6265120  | B CZY ZZZ |
+| [Eta2](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kEta2) (${\eta}2$) | 30.6265120  | B CZY ZZZ |
 | [2SM2](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.k2SM2) | 31.0158958  | B DVZ ZZZ |
 | [SKM2](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kSKM2) | 31.0980331  | B DXZ ZZZ |
-| [2SMu2 ($2S{\mu}2$)](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.k2SMu2) | 32.0317916  | B FTZ ZZZ |
+| [2SMu2](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.k2SMu2) ($2S{\mu}2$) | 32.0317916  | B FTZ ZZZ |
 | [MO3](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kMO3) | 42.9271398  | C YZZ ZZY |
 | [2MK3](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.k2MK3) | 42.9271398  | C YZZ ZZY |
 | [M3](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kM3) | 43.4761563  | C ZZZ ZZZ |
@@ -93,7 +93,7 @@ documentation](https://cnes.github.io/aviso-fes/core/constituent.html).
 | [N4](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kN4) | 56.8794590  | D XZB ZZZ |
 | [3MS4](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.k3MS4) | 56.9523126  | D XBZ ZZZ |
 | [MN4](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kMN4) | 57.4238337  | D YZA ZZZ |
-| [MNu4 ($M{\nu}4$)](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kMNu4) | 57.4966873  | D YBY ZZZ |
+| [MNu4](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kMNu4) ($M{\nu}4$) | 57.4966873  | D YBY ZZZ |
 | [M4](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kM4) | 57.9682084  | D ZZZ ZZZ |
 | [SN4](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kSN4) | 58.4397295  | D AXA ZZZ |
 | [ML4](https://cnes.github.io/aviso-fes/core/constituent.html#pyfes.core.Constituent.kML4) | 58.5125831  | D AZY ZZZ |
