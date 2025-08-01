@@ -4,6 +4,7 @@
 # BSD-style license that can be found in the LICENSE file.
 import concurrent.futures
 import pathlib
+import sys
 import time
 
 import netCDF4
@@ -217,6 +218,8 @@ def cpu_intensive_task(tidal_model, dates, leap_seconds, lon, lat, thread_id):
     }
 
 
+@pytest.mark.skipif(sys.platform.startswith('win'),
+                    reason='Not relevant on Windows')
 def test_parallel_tide_evaluation():
     """Test parallel tide evaluation to verify GIL release."""
     # Setup test data
