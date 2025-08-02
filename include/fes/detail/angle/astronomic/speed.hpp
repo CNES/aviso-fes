@@ -12,50 +12,56 @@ namespace angle {
 namespace astronomic {
 namespace speed {
 
-/// Number of seconds in one Julian century
-constexpr double kJulianCentury = 3155760000.0;
+/// Number of hours in one Julian century (36525 days * 24 hours).
+constexpr double kHoursPerJulianCentury = 876600.0;
 
 /// @brief s
 ///
 /// Compute the speed in degree by hour for the moon's mean longitude.
+/// Based on Simon et al. (1994) value of 481267.88123421 deg/cy.
 constexpr auto s() noexcept -> double {
-  return (((1336.0 * 360.0 + 307.892) / kJulianCentury)) * 3600.0;
+  return 481267.88123421 / kHoursPerJulianCentury;
 }
 
 /// @brief h
 ///
 /// Compute the speed in degree by hour for the sun's mean longitude.
+/// Based on Simon et al. (1994) value of 36000.76982779 deg/cy.
 constexpr auto h() noexcept -> double {
-  return (((100.0 * 360.0 + 0.769) / kJulianCentury)) * 3600.0;
+  return 36000.76982779 / kHoursPerJulianCentury;
 }
 
 /// @brief p
 ///
 /// Compute the speed in degree by hour for the longitude of moon's perigee.
+/// Based on Simon et al. (1994) value of 4069.01372879 deg/cy.
 constexpr auto p() noexcept -> double {
-  return (((11.0 * 360.0 + 109.032) / kJulianCentury)) * 3600.0;
+  return 4069.01372879 / kHoursPerJulianCentury;
 }
 
 /// @brief \f$N'\f$
 ///
 /// Compute the speed in degree by hour for the longitude of moon's ascending
-/// node.
+/// node. This is the negative of the rate of N.
+/// Based on Simon et al. (1994) value of -1934.13626197 deg/cy for N.
 constexpr auto n() noexcept -> double {
-  return (((-5.0 * 360.0 - 134.142) / kJulianCentury)) * 3600.0;
+  return -(-1934.13626197 / kHoursPerJulianCentury);
 }
 
 /// @brief \f$p_1\f$
 ///
 /// Compute the speed in degree by hour for the longitude of sun's
 /// perigee.
+/// Based on Simon et al. (1994) value of 1.71945766 deg/cy.
 constexpr auto p1() noexcept -> double {
-  return ((1.719 / kJulianCentury)) * 3600;
+  return 1.71945766 / kHoursPerJulianCentury;
 }
 
 /// @brief \f$\tau\f$
 ///
 /// Compute the speed in degree by hour for the local mean lunar time.
-constexpr auto tau() noexcept -> double { return 15.0 - s() + h(); }
+/// This is the rate of change of the hour angle of the mean moon.
+constexpr auto tau() noexcept -> double { return 15.0 - (s() - h()); }
 
 }  // namespace speed
 }  // namespace astronomic
