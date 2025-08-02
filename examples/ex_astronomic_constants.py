@@ -105,40 +105,55 @@ def schureman_recomputed_values() -> AstronomicConstants:
 
 
 # %%
-def astronomic_constants() -> AstronomicConstants:
-    """Astronomic constants."""
-    # Mass (of sun/mass) of earthy (S/E)
-    SE = 332946.0487
+def updated_astronomic_constants() -> AstronomicConstants:
+    """
+    Provides updated astronomic constants based on IERS Conventions (2010).
 
-    # Mass of moon/mass of earth (M/E)
-    ME = 0.0123000371
+    The "solar factor" (s) is the ratio of the tide-generating forces of the
+    Sun and Moon, calculated as: s = (M_sun / M_moon) * (a_moon / a_sun)^3
+    This is equivalent to (S/E) / (M/E) * (a_moon / AU)^3.
+    """
+    # Mass of Sun / Mass of Earth (S/E) from G*M_sun and G*M_earth
+    # IERS 2010 recommends using the geocentric gravitational constant (GE)
+    # and the heliocentric gravitational constant (GS). GS/GE = (S/E).
+    SE = 332946.0487  # This value is surprisingly stable and close to IERS.
 
-    # Solar parallex
-    c1 = dms_to_deg(0, 0, 8.794_143)
+    # Mass of Moon / Mass of Earth (M/E)
+    # IERS Conventions (2010), Table 1.1
+    ME = 0.0123000371  # This value is also very precise.
 
-    # Lunar equatorial parallex
-    c = dms_to_deg(0, 57, 2.70)
-    mean_earth_radius = 6_371_008.771415059
-    earth_equatorial_radius = 6_378_137.0
+    # Instead of parallaxes, modern conventions use the semi-major axes.
+    # Semi-major axis of lunar orbit (a_moon) in meters
+    # IERS Conventions (2010), Table 1.1
+    a_moon = 384402e3  # meters (Note: this is an average value)
 
-    # Mean solar parallax in respect to mean radius
-    ac1 = (mean_earth_radius / earth_equatorial_radius) * c1
+    # Astronomical Unit (a_sun or AU) in meters
+    # IERS Conventions (2010), a defining constant. IAU 2012 resolution.
+    AU = 149597870700.0  # meters
 
-    # Mean lunar parallax in respect to mean radius
-    ac = (mean_earth_radius / earth_equatorial_radius) * c
-
-    # Solar coefficient U1 (SE) * ac1^3
-    u1: float = SE * ac1**3
-
-    # Basic factor U (ME) * ac^3
-    u: float = ME * ac**3
+    # The ratio of tide-generating forces (Solar Factor 's')
+    # s = (SE / ME) * (a_moon / AU)**3
+    s = (SE / ME) * (a_moon / AU)**3
 
     return AstronomicConstants(
-        i=math.radians(dms_to_deg(5, 8, 43.3546)),
-        w=math.radians(dms_to_deg(23, 26, 21.45)),
-        e1=0.016_71,
-        e=0.054_9006,
-        s=u1 / u,
+        # Inclination of the mean lunar orbit to the mean ecliptic (I)
+        # IERS Conventions (2010), Chapter 5, eq. 5.76
+        i=math.radians(dms_to_deg(5, 8, 43.4)),  # 5.14539°
+
+        # Obliquity of the ecliptic for J2000.0 (ε)
+        # IERS Conventions (2010), Table 1.1
+        w=math.radians(dms_to_deg(23, 26, 21.406)),
+
+        # Eccentricity of the Earth's mean orbit for J2000.0
+        # IERS Conventions (2010), Chapter 5
+        e1=0.016708634,
+
+        # Eccentricity of the Moon's mean orbit for J2000.0
+        # IERS Conventions (2010), Chapter 5
+        e=0.054900489,
+
+        # The calculated solar factor
+        s=s,
     )
 
 
@@ -201,7 +216,8 @@ print(f'a67 = {a67:.4f}')
 #
 # .. math::
 #
-#   sin(2\omega) \times \{1 - 3/2 \times sin^2(i)\} = 0.7214
+#   \left[\sin2I\cos\nu \right]_0
+#   = sin(2\omega) \times \{1 - 3/2 \times sin^2(i)\} = 0.7214
 #
 # .. math::
 #
@@ -263,13 +279,67 @@ print(f'a71 = {a71:.4f}')
 #
 # .. math::
 #
-#       sin(I) -5/4 \times sin^3(I) = 0.3192
+#       sin(\overline{I}) -5/4 \times sin^3(\overline{I}) = 0.3192
 #
 # .. math::
 #
-#       f(141) = sin(I) - 5/4 \times sin^3(i) / 0.3192
+#       f(141) = sin(\overline{I}) - 5/4 \times sin^3(\overline{I}) / 0.3192
 a141 = math.sin(const.w) - 5 / 4 * math.sin(const.w)**3
 print(f'a141 = {a141:.4f}')
+
+# %%
+# Formulae 144, 138
+# -----------------
+# `Page 35, 36`
+#
+# .. math::
+#
+#       (1 - 10 \sin^2(\frac{1}{2}\overline{I})
+#       + 15 \sin^4(\frac{1}{2}\overline{I}))
+#       \cos^2(\frac{1}{2}\overline{I}) = 0.5873
+#
+# .. math::
+#
+#       f(144) = (1 - 10 \sin^2(\frac{1}{2}I)
+#       + 15 \sin^4(\frac{1}{2}I))
+#       \cos^2(\frac{1}{2}I) / 0.5873
+a144 = (1 - 10 * math.sin(0.5 * const.w)**2 +
+        15 * math.sin(0.5 * const.w)**4) * math.cos(0.5 * const.w)**2
+print(f'a144 = {a144:.4f}')
+
+# %%
+# Formulae 146, 139
+# -----------------
+# `Page 35, 36`
+#
+# .. math::
+#
+#      \sin \overline{I} \cos^4(\frac{1}{2}\overline{I}) = 0.5658
+#
+# .. math::
+#
+#     f(146) = \sin(I) \cos^4(\frac{1}{2}I) / 0.5658
+a146 = math.sin(const.w) * math.cos(0.5 * const.w)**4
+print(f'a146 = {a146:.4f}')
+
+# %%
+# Formulae 147, 139
+# -----------------
+# `Page 35, 36`
+#
+# .. math::
+#
+#       (\cos^2(\frac{1}{2}\overline{I}) - 2/3)
+#       \sin(\overline{I})\cos^2(\frac{1}{2}\overline{I})
+#       = 0.1114
+#
+# .. math::
+#
+#       f(147) = \left[(\cos^2(\frac{1}{2}I) - 2/3)
+#       \sin(I)\cos^2(\frac{1}{2}I)\right] / 0.1114
+a147 = ((math.cos(0.5 * const.w)**2 - 2 / 3) * math.sin(const.w) *
+        math.cos(0.5 * const.w)**2)
+print(f'a147 = {a147:.4f}')
 
 # %%
 # Formulae 149, 140
@@ -278,12 +348,17 @@ print(f'a141 = {a141:.4f}')
 #
 # .. math::
 #
-#       cos^6(\frac{1}{2}I) + cos^4(\frac{1}{2}I) \times sin^2(\frac{1}{2}I)
+#       cos^6(\frac{1}{2}I)
+#       + cos^4(\frac{1}{2}I)
+#       \times sin^2(\frac{1}{2}I) = 0.8758
 #
 # .. math::
 #
 #       f(M_3) = cos^6(\frac{1}{2}I) / 0.8758
-#
+a82 = a70**(3 / 2)
+print(f'a82 = {a82:.4f}')
+
+# %%
 # Formulae 207, 195
 # -----------------
 # `Page 41`
@@ -337,6 +412,27 @@ print(f'term A47 = {term_a47:.4f}')
 print(f'term B47 = {term_b47:.4f}')
 
 # %%
+# Formulae 224
+# ------------
+# `Page 45`
+#
+# .. math::
+#
+#       \nu^{\prime}=tan^{-1}\frac{A \sin\nu}{A \cos \nu + B}
+#       = tan^{-1} \frac{\sin 2I \sin \nu}{\sin 2I \cos \nu + 0.3347}
+#
+# where
+#
+# .. math::
+#
+#       A=0.5023*\sin(2I)
+#
+# .. math::
+#
+#       B=0.1681
+#
+print(f'{term_b22/term_a47:.4f}')
+# %%
 # Formulae 226
 # ------------
 # `Page 45`
@@ -366,6 +462,8 @@ print(f'a226 = {a226:.4f}')
 #
 #       f(K_1) = (0.8965 \times sin^2(2I) + 0.6001 \times sin(2I) \times
 #       cos(\upsilon) + 0.1006)^\frac{1}{2}
+print(f'{a226:.4f}, {term_a22 ** 2:.4f}, '
+      f'{term_a22 * term_b22 * 2:.4f}, {term_b22 ** 2:.4f}')
 print(f'{(term_a22 ** 2) / a226 ** 2:.4f}')
 print(f'{(term_a22 * term_b22 * 2) / a226 ** 2:.4f}')
 print(f'{term_b22 ** 2 / a226 ** 2:.4f}')
@@ -400,6 +498,43 @@ print(f'a226 = {a234:.4f}')
 #
 #       f(K_2) = (19.0444 \times sin^4(I) + 2.7702 \times sin^2(I) \times
 #       cos(2\upsilon) + 0.0981)^\frac{1}{2}
+print(f'{a234:.4f}')
 print(f'{term_a47**2 / a234**2:.4f}')
 print(f'{(term_a47 * term_b47 * 2) / a234**2:.4f}')
 print(f'{term_b47**2 / a234**2:.4f}')
+
+# %%
+# Fundamental astronomical data
+# -----------------------------
+# `Page 156`
+#
+# .. math::
+#
+#       cos(I) = cos(i) \times cos(\omega) - sin(i)
+#       \times sin(\omega) \times cos(N)
+print(f'cos(i) * cos(ω) = {math.cos(const.i) * math.cos(const.w):.5f}')
+print(f'sin(i) * sin(ω) = {math.sin(const.i) * math.sin(const.w):.5f}')
+# %%
+# .. math::
+#
+#       tan \frac{1}{2}(N - \xi + \nu)
+#       = \frac{cos \frac{1}{2}(\omega - i)}
+#       {cos \frac{1}{2}(\omega + i)} tan \frac{1}{2}N
+#       = 1.01883 tan \frac{1}{2}N
+
+numerator = math.cos(0.5 * (const.w - const.i))
+denominator = math.cos(0.5 * (const.w + const.i))
+print(f'{numerator/denominator:.5f} * tan(1/2(N))')
+
+# %%
+# .. math::
+#
+#       tan \frac{1}{2}(N - \xi - \nu)
+#       = \frac{sin \frac{1}{2}(\omega - i)}
+#       {sin \frac{1}{2}(\omega + i)} tan \frac{1}{2}N
+#       = 0.64412 * tan(1/2(N))
+numerator = math.sin(0.5 * (const.w - const.i))
+denominator = math.sin(0.5 * (const.w + const.i))
+print(f'{numerator/denominator:.5f} * tan(1/2(N))')
+
+# %%
