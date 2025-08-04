@@ -513,6 +513,8 @@ print(f'f219 = {f219:.4f}')
 # %%
 # Formulae 224 (P. 45)
 # --------------------
+# This provides the ratio of the solar coefficient to the lunar coefficient
+# for the K1 tide.
 #
 # .. math::
 #
@@ -520,7 +522,9 @@ print(f'f219 = {f219:.4f}')
 #   = tan^{-1} \frac{\sin 2I \sin \nu}{\sin 2I \cos\nu + 0.3347}
 #
 # where :math:`A = 0.5023 \sin(2I)` and :math:`B = 0.1681`.
-print(f'{f217/f218:.4f}')
+f224 = round_to_4_decimal(f217 / f216)
+print(f'f224 = {f224:.4f}')
+
 # %%
 # Formula 226 (P. 45)
 # -------------------
@@ -575,6 +579,21 @@ f227_3 = round_to_4_decimal(f217**2) / denominator
 print(f'{f227_1:.4f}')
 print(f'{f227_2:.4f}')
 print(f'{f227_3:.4f}')
+
+# %%
+# Formulae 232 (P. 45)
+# --------------------
+# This provides the ratio of the solar coefficient to the lunar coefficient
+# for the K2 tide.
+#
+# .. math::
+#
+#   \nu^{\prime\prime}=tan^{-1}\frac{A \sin 2\nu}{A \cos 2\nu + B}
+#   = tan^{-1} \frac{\sin 2I \sin 2\nu}{\sin 2I \cos 2\nu + 0.0727}
+#
+# where :math:`A = 0.5023 \sin(2I)` and :math:`B = 0.0365`.
+f232 = round_to_4_decimal(f219 / f218)
+print(f'f232 = {f232:.4f}')
 
 # %%
 # Formula 234 (P. 46)
