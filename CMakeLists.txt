@@ -206,8 +206,10 @@ endif()
 target_include_directories(
   fes PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
              $<INSTALL_INTERFACE:include>)
-target_compile_definitions(
-  fes PUBLIC FES_USE_IERS_CONSTANTS=${FES_USE_IERS_CONSTANTS})
+if(FES_USE_IERS_CONSTANTS)
+  target_compile_definitions(
+    fes PUBLIC FES_USE_IERS_CONSTANTS=${FES_USE_IERS_CONSTANTS})
+endif()
 
 if(FES_ENABLE_COVERAGE)
   add_coverage(fes)
