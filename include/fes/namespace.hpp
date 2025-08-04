@@ -11,6 +11,9 @@
 /// @brief FES root namespace
 namespace fes {
 
+/// @brief Constants used in the FES library.
+namespace numbers {}
+
 /// @brief Astronomical angles.
 namespace angle {}
 
