@@ -639,7 +639,7 @@ print(f'{f235_3:.4f}')
 # .. math::
 #
 #   \cos(I) = \cos(i)\cos(\omega) - \sin(i)\sin(\omega)\cos(N)
-#   = 0.91370 - 0.03569
+#   = 0.91370 - 0.03569\cos(N)
 cos_i_cos_w = math.cos(const.i) * math.cos(const.w)
 sin_i_sin_w = math.sin(const.i) * math.sin(const.w)
 print(f'cos(i) * cos(ω) = {cos_i_cos_w:.5f}')
@@ -662,7 +662,7 @@ print(f'{tan_coeff_1:.5f}')
 #   \tan \frac{1}{2}(N - \xi - \nu)
 #   = \frac{\sin \frac{1}{2}(\omega - i)}{\sin \frac{1}{2}(\omega + i)}
 #       \tan \frac{1}{2}N
-#   = 0.64412 * tan(1/2(N))
+#   = 0.64412 \tan(\frac{1}{2}N)
 numerator = math.sin(0.5 * (const.w - const.i))
 denominator = math.sin(0.5 * (const.w + const.i))
 tan_coeff_2 = numerator / denominator
