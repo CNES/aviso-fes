@@ -163,11 +163,12 @@ class BuildExt(setuptools.command.build_ext.build_ext):
                      ('cxx-compiler=', None, 'Preferred C++ compiler'),
                      ('generator=', None, 'Selected CMake generator'),
                      ('mkl=', None, 'Using MKL as BLAS library'),
+                     ('iers=', None, 'Use IERS 2010 constants'),
                      ('reconfigure', None,
                       'Forces CMake to reconfigure this project')]
 
     boolean_options = setuptools.command.build_ext.build_ext.boolean_options
-    boolean_options += ['mkl']
+    boolean_options += ['mkl', 'iers']
 
     def initialize_options(self) -> None:
         """Set default values for all the options that this command
@@ -176,6 +177,7 @@ class BuildExt(setuptools.command.build_ext.build_ext):
         self.cmake_args = None
         self.cxx_compiler = None
         self.generator = None
+        self.iers = None
         self.mkl = None
         self.reconfigure = None
 
@@ -214,6 +216,9 @@ class BuildExt(setuptools.command.build_ext.build_ext):
 
         if conda_prefix is not None:
             result.append('-DCMAKE_PREFIX_PATH=' + conda_prefix)
+
+        if self.iers:
+            result.append('-DFES_USE_IERS_CONSTANTS=ON')
 
         if self.mkl:
             self.set_mklroot()

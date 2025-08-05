@@ -12,6 +12,7 @@ def usage(args: dict[str, str | list[str] | None]) -> argparse.Namespace:
     """Parse the command line arguments."""
     parser = argparse.ArgumentParser('Custom build backend')
     parser.add_argument('--cxx-compiler', help='Preferred C++ compiler')
+    parser.add_argument('--iers', help='Use IERS 2010 constants')
     parser.add_argument('--generator', help='Selected CMake generator')
     parser.add_argument('--cmake-args', help='Additional arguments for CMake')
     parser.add_argument('--mkl', help='Using MKL as BLAS library')
@@ -40,6 +41,8 @@ class _CustomBuildMetaBackend(setuptools.build_meta._BuildMetaBackend):
         setuptools_args = []
         if args.cxx_compiler:
             setuptools_args.append(f'--cxx-compiler={args.cxx_compiler}')
+        if decode_bool(args.iers):
+            setuptools_args.append('--iers=yes')
         if args.generator:
             setuptools_args.append(f'--generator={args.generator}')
         if args.cmake_args:

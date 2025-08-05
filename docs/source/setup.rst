@@ -65,6 +65,11 @@ command to customize the build:
       - Additional arguments for CMake
     * - ``--cxx-compiler``
       - Preferred C++ compiler
+    * - ``--iers``
+      - Use IERS 2010 constants for tidal potential. By default, the
+        library uses the constants from Paul Schureman's
+        "Manual of Harmonic Analysis and Prediction of Tides" (Special
+        Publication No. 98, 1940 Edition).
     * - ``--generator``
       - Selected CMake generator
     * - ``--mkl``
