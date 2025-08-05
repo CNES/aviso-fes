@@ -17,9 +17,8 @@ C++, you must have Python 3, at least Python version 3.10, a C++ compiler and
 
 The compiling C++ requires the following development library:
 
-
-    * `Boost <https://www.boost.org/>`_
-    * `Eigen3 <http://eigen.tuxfamily.org/>`_
+* `Boost <https://www.boost.org/>`_
+* `Eigen3 <http://eigen.tuxfamily.org/>`_
 
 Eigen3 can utilize optimized libraries such as `Intel Math Kernel Library (MKL)
 <https://software.intel.com/en-us/mkl>`_, `OpenBlas
@@ -38,8 +37,8 @@ You can install these packages on Ubuntu by typing the following command:
 You need, also, to install Python libraries before configuring and installing
 this software:
 
-    * `numpy <https://www.numpy.org/>`_
-    * `netCDF4 <https://unidata.github.io/netcdf4-python/>`_
+* `numpy <https://www.numpy.org/>`_
+* `netCDF4 <https://unidata.github.io/netcdf4-python/>`_
 
 You can install these packages on Ubuntu by typing the following command:
 
@@ -97,7 +96,7 @@ Requirements
 
 Running tests require the following Python libraries:
 
-    * `pytest <https://docs.pytest.org/en/latest/>`_
+* `pytest <https://docs.pytest.org/en/latest/>`_
 
 Running tests
 -------------
