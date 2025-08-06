@@ -3,13 +3,9 @@ set -e
 TMP_CONTENT_DIR=/tmp/pyfes
 mkdir -p $TMP_CONTENT_DIR
 cp -r examples binder $TMP_CONTENT_DIR
-for item in $(find . -name "*.nc")
-do
-    dirname=$(dirname $item)
-    mkdir -p $TMP_CONTENT_DIR/$dirname
-    cp $item $TMP_CONTENT_DIR/$item
-done
-
+mkdir -p $TMP_CONTENT_DIR/tests/python
+wget -q https://osf.io/download/yfr24 -O $TMP_CONTENT_DIR/tests/python/dataset.zip
+unzip -q $TMP_CONTENT_DIR/tests/python/dataset.zip -d $TMP_CONTENT_DIR/tests/python/
 find . -delete
 
 GENERATED_NOTEBOOKS_DIR=.generated-notebooks
