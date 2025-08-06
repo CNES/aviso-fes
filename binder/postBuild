@@ -17,7 +17,7 @@ NON_NOTEBOOKS=$(find $GENERATED_NOTEBOOKS_DIR -type f | grep -v -E '\.(ipynb|yml
 rm -f $NON_NOTEBOOKS
 
 mkdir -p notebooks/auto_examples
-mv $TMP_CONTENT_DIR/tests notebooks/auto_examples
+mv $TMP_CONTENT_DIR/tests notebooks
 cp -v $GENERATED_NOTEBOOKS_DIR/*.ipynb notebooks/auto_examples/
 cp -v $GENERATED_NOTEBOOKS_DIR/*.yml notebooks/auto_examples/
 rm -rf $GENERATED_NOTEBOOKS_DIR
