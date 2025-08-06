@@ -16,11 +16,11 @@ find $GENERATED_NOTEBOOKS_DIR -name '*.py' -exec sphinx_gallery_py2jupyter '{}' 
 NON_NOTEBOOKS=$(find $GENERATED_NOTEBOOKS_DIR -type f | grep -v -E '\.(ipynb|yml)')
 rm -f $NON_NOTEBOOKS
 
-mv $TMP_CONTENT_DIR/binder .
-mv $TMP_CONTENT_DIR/tests .
-rm -rf $TMP_CONTENT_DIR
-
-mkdir -p notebooks
-cp -v $GENERATED_NOTEBOOKS_DIR/*.ipynb notebooks/
-cp -v $GENERATED_NOTEBOOKS_DIR/*.yml notebooks/
+mkdir -p notebooks/auto_examples
+mv $TMP_CONTENT_DIR/tests notebooks/auto_examples
+cp -v $GENERATED_NOTEBOOKS_DIR/*.ipynb notebooks/auto_examples/
+cp -v $GENERATED_NOTEBOOKS_DIR/*.yml notebooks/auto_examples/
 rm -rf $GENERATED_NOTEBOOKS_DIR
+
+mv $TMP_CONTENT_DIR/binder .
+rm -rf $TMP_CONTENT_DIR
