@@ -29,7 +29,7 @@ import pyfes
 # %%
 # First we create an environment variable to store the path to the model file.
 # The configuration file is fully documented in the
-# :ref:`documentation <confguration_file>`.
+# :ref:`documentation <configuration_file>`.
 #
 # .. note::
 #

@@ -13,11 +13,66 @@ use it for scientific purposes**. You can download the model from the `AVISO
 <https://www.aviso.altimetry.fr/en/data/products/auxiliary-products/global-tide-fes.html>`_
 website.
 
-.. note::
+Theoretical Background: The Harmonic Method
+--------------------------------------------
 
-   This new code is under development and it is designed to handle the new finite
-   element grids of FES2022. It will become official at the end of this year. For
-   now, we do not provide support for this new version.
+The prediction of tides is based on the principle of **harmonic analysis**, a
+method developed into a practical application by Sir William Thomson
+(Lord Kelvin) around 1867. The core idea is that the complex, periodic motion of
+the tide at any location can be resolved into the sum of a series of simpler,
+regular wave-like components known as **tidal constituents**. Each constituent
+corresponds to a distinct astronomical forcing, such as the gravitational pull
+of the Moon or Sun, or orbital variations like the evection and variation of the
+moon.
+
+As detailed in Schureman's manual [Schureman1940]_, the height of the tide, *h*,
+at any time, *t*, can be expressed by the fundamental equation of harmonic
+prediction:
+
+.. math::
+
+    h(t) = H_0 + A \cos(at + \alpha) + B \cos(bt + \beta) + C \cos(ct + \gamma) + \dots
+
+Where:
+    * :math:`H_0` is the mean height of the water level above the chart datum.
+    * Each cosine term represents a single **tidal constituent** (e.g., the
+      principal lunar semidiurnal tide, :math:`M_2`; the principal solar
+      semidiurnal tide, :math:`S_2`; etc.).
+    * Amplitude (:math:`A`, :math:`B`, :math:`C`...): This is the strength, or
+      half the range, of each constituent. It is a location-specific value
+      determined from the analysis of tidal observations.
+    * Speed (:math:`a`, :math:`b`, :math:`c`...): This is the angular speed of
+      the constituent, representing how quickly its phase changes. Speeds are
+      constant for each constituent and are derived from universal astronomical
+      data, such as the rotation of the Earth and the orbital periods of the
+      Moon and Sun.
+    * Phase Lag (:math:`\alpha`, :math:`\beta`, :math:`\gamma`...): Also known
+      as the **epoch** (:math:`\kappa`), this value represents the timing of
+      a constituent's high water relative to its theoretical astronomical
+      forcing. Like the amplitude, it is a location-specific constant found
+      through observation.
+
+The :term:`FES` models, such as FES2022, are sophisticated global atlases that provide
+the location-specific amplitudes (:math:`H`) and phase lags (:math:`\kappa`)
+for a large number of tidal constituents. The **PyFES** library acts as the
+harmonic prediction engine. When a user requests a tide prediction for a
+specific location and time, the library:
+
+1.  Retrieves the amplitude and phase for each constituent from the FES model
+    maps at the desired location.
+2.  Calculates the astronomical argument (the angle inside the cosine function)
+    for the specified time using the known astronomical speeds of each constituent.
+3.  Applies the fundamental prediction equation shown above, summing the
+    contributions of all constituents.
+4.  Adds the local mean sea level (:math:`H_0`) to produce the final predicted
+    tide height relative to the datum.
+
+References
+~~~~~~~~~~
+
+.. [Schureman1940] Schureman, P. (1940). *Manual of Harmonic Analysis and
+    Prediction of Tides*. U.S. Coast and Geodetic Survey, Special
+    Publication No. 98.
 
 Bibliography
 ------------
@@ -57,3 +112,4 @@ Contact
    pyfes
    api
    core
+   glossary

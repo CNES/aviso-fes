@@ -35,7 +35,7 @@ Configuration file
 
 This function provides a way to load the tidal model from a configuration
 file. For more information on the configuration file format, see the
-:ref:`configuration file format <confguration_file>` section.
+:ref:`configuration file format <configuration_file>` section.
 
 .. currentmodule:: pyfes
 

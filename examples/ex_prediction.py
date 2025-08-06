@@ -33,7 +33,7 @@ os.environ['DATASET_DIR'] = str(pathlib.Path().absolute().parent / 'tests' /
 # Now we need to create the instances of the model used to calculate the ocean
 # tide and the radial tide. To do this, we need to create a YAML file that
 # describes the models and their parameters. The configuration file is fully
-# documented in the :ref:`documentation <confguration_file>`.
+# documented in the :ref:`documentation <configuration_file>`.
 #
 # .. note::
 #
