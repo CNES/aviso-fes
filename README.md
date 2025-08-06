@@ -61,7 +61,7 @@ The complete documentation for PyFES is available on
 [GitHub](https://cnes.github.io/aviso-fes/), including:
 
 - **Installation guides** for different platforms
-- **API reference** with detailed function documentation  
+- **API reference** with detailed function documentation
 - **Tutorial notebooks** with step-by-step examples
 - **Theoretical background** on tidal prediction methods
 
