@@ -5,6 +5,7 @@
 /// @file include/fes/detail/thread.hpp
 /// @brief Parallelization
 #pragma once
+#include <exception>
 #include <thread>
 #include <utility>
 #include <vector>
