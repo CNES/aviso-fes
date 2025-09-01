@@ -31,6 +31,13 @@ New Features
   details on the updated quality flag semantics.
 * **Updated documentation**: The API documentation has been updated to reflect
   the new quality flag semantics and the improved LGP extrapolation algorithm.
+* Added new tidal constituents: M1, M11, M12, M13, N2P, and L2P, with
+  corresponding formulas, classes, and updates to constituent and wave handling.
+* Enhanced Wave class to support initialization with Darwin parameters using a
+  new Darwin builder pattern.
+* Implemented IERS formula for astronomical angle calculations and added related
+  tests.
+* Added ``arcseconds`` function to convert angles from arcseconds to radians.
 
 Breaking Changes
 ----------------
@@ -99,21 +106,6 @@ Migration Guide
 
    # New code
    interpolated_mask = (quality > 0)
-
-
-2025.7.0
-========
-
-New Features
-------------
-
-* Added new tidal constituents: M1, M11, M12, M13, N2P, and L2P, with
-  corresponding formulas, classes, and updates to constituent and wave handling.
-* Enhanced Wave class to support initialization with Darwin parameters using a
-  new Darwin builder pattern.
-* Implemented IERS formula for astronomical angle calculations and added related
-  tests.
-* Added ``arcseconds`` function to convert angles from arcseconds to radians.
 
 Bug Fixes
 ---------
