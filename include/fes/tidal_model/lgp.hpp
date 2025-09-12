@@ -251,11 +251,10 @@ class LGP : public fes::AbstractTidalModel<T> {
   /// @param[in] vertex_id The vertex ID.
   /// @param[in] codes The LGP codes for the triangle.
   /// @param[inout] acc Accelerator to store results.
-  /// @param[inout] quality Quality indicator.
+  /// @return True if interpolation was successful, false otherwise.
   auto handle_vertex_interpolation(int vertex_id,
                                    const typename codes_t::ConstRowXpr& codes,
-                                   LGPAccelerator* acc, Quality& quality) const
-      -> void;
+                                   LGPAccelerator* acc) const -> bool;
 
   /// @brief Perform LGP interpolation within a triangle.
   ///
@@ -589,12 +588,29 @@ auto LGP<T, N>::extrapolate(
 template <typename T, int N>
 auto LGP<T, N>::handle_vertex_interpolation(
     int vertex_id, const typename codes_t::ConstRowXpr& codes,
-    LGPAccelerator* acc, Quality& quality) const -> void {
-  for (const auto& item : this->data_) {
-    const auto value = item.second(codes(vertex_id << 1));
-    acc->emplace_back(item.first, static_cast<std::complex<T>>(value));
+    LGPAccelerator* acc) const -> void {
+  const auto ix = codes(vertex_id * N);
+  if (selected_indices_.empty()) {
+    // First case: no bounding box is provided, we directly use the LGP codes
+    // for the vertex.
+    for (const auto& item : this->data_) {
+      const auto value = item.second(ix);
+      acc->emplace_back(item.first, static_cast<std::complex<T>>(value));
+    }
+  } else {
+    // Second case: a bounding box is provided, we need to check if the LGP
+    // code for the vertex is in the selected indices.
+    auto it = selected_indices_.find(ix);
+    if (it == selected_indices_.end()) {
+      return false;
+    }
+
+    for (const auto& item : this->data_) {
+      const auto value = item.second(it->second);
+      acc->emplace_back(item.first, static_cast<std::complex<T>>(value));
+    }
   }
-  quality = 1;
+  return true;
 }
 
 // /////////////////////////////////////////////////////////////////////////////
@@ -695,7 +711,12 @@ auto LGP<T, N>::interpolate(const geometry::Point& point, Quality& quality,
   // index 4.
   auto vertex_id = query_result.triangle.is_vertex(query_result.point);
   if (vertex_id != -1) {
-    handle_vertex_interpolation(vertex_id, codes, lgp_acc, quality);
+    if (!handle_vertex_interpolation(vertex_id, codes, lgp_acc)) {
+      return reset_values_to_undefined();
+    }
+    // Since the interpolation point coincides with a vertex, the interpolation
+    // quality is optimal.
+    quality = static_cast<Quality>(N * 3);
     return lgp_acc->values();
   }
 
