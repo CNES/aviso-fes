@@ -588,7 +588,7 @@ auto LGP<T, N>::extrapolate(
 template <typename T, int N>
 auto LGP<T, N>::handle_vertex_interpolation(
     int vertex_id, const typename codes_t::ConstRowXpr& codes,
-    LGPAccelerator* acc) const -> void {
+    LGPAccelerator* acc) const -> bool {
   const auto ix = codes(vertex_id * N);
   if (selected_indices_.empty()) {
     // First case: no bounding box is provided, we directly use the LGP codes
