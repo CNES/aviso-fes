@@ -544,16 +544,12 @@ class LGP(Common):
                     if self.bbox is not None:
                         selected_indices = instance.selected_indices()
 
-                amp: Vector
-                pha: Vector
+                amp = numpy.ma.filled(ds.variables[amp_name][:], numpy.nan)
+                pha = numpy.ma.filled(ds.variables[pha_name][:], numpy.nan)
+
                 if selected_indices is not None:
-                    amp = numpy.ma.filled(
-                        ds.variables[amp_name][selected_indices], numpy.nan)
-                    pha = numpy.ma.filled(
-                        ds.variables[pha_name][selected_indices], numpy.nan)
-                else:
-                    amp = numpy.ma.filled(ds.variables[amp_name][:], numpy.nan)
-                    pha = numpy.ma.filled(ds.variables[pha_name][:], numpy.nan)
+                    amp = amp[selected_indices]
+                    pha = pha[selected_indices]
 
                 if ds.variables[pha_name].units in ['degree', 'degrees']:
                     pha = numpy.radians(pha)
