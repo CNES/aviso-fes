@@ -77,7 +77,8 @@ tide:
     numpy.testing.assert_equal(lp1[m2], lp2[m2])
 
 
-def test_bbox_lgp2(tmp_path):
+@pytest.mark.parametrize('bbox', [(-10, -10, 10, 10), (170, -10, 190, 10)])
+def test_bbox_lgp2(tmp_path, bbox):
     """Test the configuration of the lgp2 tide."""
     lon, lat, shape, dates = generate_coordinates()
 
@@ -109,7 +110,7 @@ tide:
                                         num_threads=0)
     tide1 = tide1.reshape(shape)
     lp1 = lp1.reshape(shape)
-    config = config_handler.load(config_path, (-10, -10, 10, 10))
+    config = config_handler.load(config_path, bbox)
     tide2, lp2, _ = pyfes.evaluate_tide(config['tide'],
                                         dates.ravel(),
                                         lon.ravel(),
