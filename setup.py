@@ -296,6 +296,38 @@ class BuildExt(setuptools.command.build_ext.build_ext):
     # pylint: enable=too-many-instance-attributes
 
 
+class DownloadTestData(setuptools.Command):
+    """Custom command to download test data."""
+
+    description = 'Download test data required for running tests'
+
+    def initialize_options(self) -> None:
+        """Set default values for all the options that this command supports."""
+        pass
+
+    def finalize_options(self) -> None:
+        """Set final values for all the options that this command supports."""
+        pass
+
+    def run(self) -> None:
+        """Download the test data."""
+        # Prevent creation of __pycache__ folders
+        old_dont_write_bytecode = sys.dont_write_bytecode
+        sys.dont_write_bytecode = True
+
+        # Import the function from conftest.py
+        sys.path.insert(0, str(WORKING_DIRECTORY))
+        try:
+            from conftest import download_test_data
+            download_test_data()
+        finally:
+            # Restore original setting
+            sys.dont_write_bytecode = old_dont_write_bytecode
+            # Clean up sys.path
+            if str(WORKING_DIRECTORY) in sys.path:
+                sys.path.remove(str(WORKING_DIRECTORY))
+
+
 def typehints() -> List[Tuple[str, List[str]]]:
     """Get the list of type information files."""
     pyi = []
@@ -314,6 +346,7 @@ def main() -> None:
     setuptools.setup(
         cmdclass={
             'build_ext': BuildExt,
+            'download_test_data': DownloadTestData,
         },  # type: ignore
         data_files=typehints(),
         ext_modules=[CMakeExtension(name='pyfes.core')],

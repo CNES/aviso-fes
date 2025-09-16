@@ -304,7 +304,9 @@ if(FES_ENABLE_COVERAGE)
 endif()
 
 message(STATUS "")
-message(STATUS "========== FES Configuration Summary ==========")
+message(
+  STATUS
+    "====================[ FES Configuration Summary ]=====================")
 message(STATUS "Version                : ${FES_VERSION}.${FES_VERSION_TYPE}")
 if(FES_VERSION_TYPE MATCHES "dev")
   message(STATUS "Release Type           : Development")

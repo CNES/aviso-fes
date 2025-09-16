@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # Copyright (c) 2025 CNES
 #
 # All rights reserved. Use of this source code is governed by a
@@ -133,6 +132,3 @@ def push_front_syspath():
 
 
 push_front_syspath()
-
-if __name__ == '__main__':
-    download_test_data()
