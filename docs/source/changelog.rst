@@ -3,6 +3,35 @@
 Changelog
 #########
 
+2025.9.1
+========
+
+Bug Fixes
+----------
+* **Fixed bounding box filtering for vertex interpolation in LGP models**:
+  Resolved a bug where vertex interpolation in LGP tidal models didn't properly
+  handle bounding box constraints. When a query point coincided exactly with a
+  mesh vertex, the interpolation would bypass the selected_indices_ check,
+  potentially returning invalid results for points outside the specified
+  bounding box.
+* **Fixed Box construction when crossing dateline in LPG mesh triangle
+  selection**: Resolved an issue where bounding box construction failed when
+  crossing the international dateline during LPG mesh triangle selection.
+* **Improved error handling for vertex interpolation**: Changed the return type
+  of ``handle_vertex_interpolation`` to bool for better error handling.
+* **Enhanced test coverage**: Parameterized bbox in ``test_bbox_lgp2`` for
+  improved test coverage.
+
+Performance Improvements
+------------------------
+* **Improved NetCDF reading performance**: Enhanced performance by loading all
+  elements before subsampling the area of interest, reducing I/O overhead.
+
+Maintenance
+-----------
+* **Updated pre-commit hooks**: Updated pre-commit hooks to their latest versions
+  for improved code quality checks.
+
 2025.9.0
 ========
 
