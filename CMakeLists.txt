@@ -334,5 +334,7 @@ message(STATUS "C++ Extensions         : ${CMAKE_CXX_EXTENSIONS}")
 message(STATUS "Position Independent   : ${CMAKE_POSITION_INDEPENDENT_CODE}")
 message(STATUS "CXX Flags              : ${CMAKE_CXX_FLAGS}")
 message(STATUS "Install RPATH          : ${CMAKE_INSTALL_RPATH}")
-message(STATUS "===============================================")
+message(
+  STATUS
+    "=======================================================================")
 message(STATUS "")
