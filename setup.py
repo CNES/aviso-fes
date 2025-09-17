@@ -300,6 +300,7 @@ class DownloadTestData(setuptools.Command):
     """Custom command to download test data."""
 
     description = 'Download test data required for running tests'
+    user_options: List[Tuple[str, Optional[str], str]] = []
 
     def initialize_options(self) -> None:
         """Set default values for all the options that this command supports."""
