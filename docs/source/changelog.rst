@@ -11,7 +11,7 @@ Bug Fixes
 * **Fixed bounding box filtering for vertex interpolation in LGP models**:
   Resolved a bug where vertex interpolation in LGP tidal models didn't properly
   handle bounding box constraints. When a query point coincided exactly with a
-  mesh vertex, the interpolation would bypass the selected_indices_ check,
+  mesh vertex, the interpolation would bypass the ``selected_indices_`` check,
   potentially returning invalid results for points outside the specified
   bounding box.
 * **Fixed Box construction when crossing dateline in LPG mesh triangle
