@@ -112,4 +112,5 @@ Contact
    pyfes
    api
    core
+   cxx
    glossary
