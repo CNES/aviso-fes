@@ -2,13 +2,13 @@
 //
 // All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
+/// @file include/fes/constituent.hpp
+/// @brief Define the tidal constituents handled by the library.
 #pragma once
 #include <array>
 #include <cstdint>
 #include <string>
 #include <vector>
-/// @file include/fes/constituent.hpp
-/// @brief Define the tidal constituents handled by the library.
 
 namespace fes {
 
