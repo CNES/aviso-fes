@@ -14,6 +14,19 @@ units as the tidal model.
 
 .. autofunction:: pyfes.evaluate_tide
 
+Tide evaluation from constituents
+---------------------------------
+
+This function evaluates the tidal height at a given time and location using
+the provided tidal constituents. The location is given as latitude and
+longitude in degrees. The time is given as numpy datetime64 array. The tidal
+height is returned as a tuple of two numpy arrays: the first array contains the
+short-period tide heights, and the second array contains the long-period tide
+heights. Both arrays have the same length as the time array. The tidal heights
+are given in the same units as the tidal model.
+
+.. autofunction:: pyfes.evaluate_tide_from_constituents
+
 Equilibrium long period tide evaluation
 ---------------------------------------
 

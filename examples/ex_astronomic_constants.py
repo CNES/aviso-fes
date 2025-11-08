@@ -1,6 +1,6 @@
 """********************************
 Astronomic Constants Calculation
-********************************.
+********************************
 
 This notebook verifies the calculations of key coefficients found in Paul
 Schureman's "Manual of Harmonic Analysis and Prediction of Tides" (Special

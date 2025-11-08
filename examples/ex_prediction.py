@@ -1,6 +1,6 @@
 """******************
 Prediction example
-******************.
+******************
 
 In this example, we will use the model to predict the tidal elevation on a
 specific location, like a tide gauge.

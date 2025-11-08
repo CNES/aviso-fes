@@ -76,10 +76,17 @@ kM3: Constituent
 kM4: Constituent
 kM6: Constituent
 kM8: Constituent
+kMeeus: Formulae
+kMf: Constituent
+kMf1: Constituent
+kMf2: Constituent
 kMK3: Constituent
 kMK4: Constituent
 kMKS2: Constituent
 kML4: Constituent
+kMm: Constituent
+kMm1: Constituent
+kMm2: Constituent
 kMN4: Constituent
 kMNK6: Constituent
 kMNS2: Constituent
@@ -88,18 +95,11 @@ kMNuS2: Constituent
 kMO3: Constituent
 kMP1: Constituent
 kMS4: Constituent
+kMSf: Constituent
 kMSK2: Constituent
 kMSK6: Constituent
 kMSN2: Constituent
 kMSN6: Constituent
-kMSf: Constituent
-kMeeus: Formulae
-kMf: Constituent
-kMf1: Constituent
-kMf2: Constituent
-kMm: Constituent
-kMm1: Constituent
-kMm2: Constituent
 kMsqm: Constituent
 kMtm: Constituent
 kMu2: Constituent
@@ -125,17 +125,17 @@ kS1: Constituent
 kS2: Constituent
 kS4: Constituent
 kS6: Constituent
+kSa: Constituent
+kSa1: Constituent
+kSchuremanOrder1: Formulae
+kSchuremanOrder3: Formulae
+kSigma1: Constituent
 kSK3: Constituent
 kSK4: Constituent
 kSKM2: Constituent
 kSN4: Constituent
 kSO1: Constituent
 kSO3: Constituent
-kSa: Constituent
-kSa1: Constituent
-kSchuremanOrder1: Formulae
-kSchuremanOrder3: Formulae
-kSigma1: Constituent
 kSsa: Constituent
 kSta: Constituent
 kT2: Constituent
@@ -503,6 +503,7 @@ class Constituent:
 class Formulae:
     __members__: ClassVar[dict] = ...  # read-only
     __entries: ClassVar[dict] = ...
+    kIERS: ClassVar[Formulae] = ...
     kMeeus: ClassVar[Formulae] = ...
     kSchuremanOrder1: ClassVar[Formulae] = ...
     kSchuremanOrder3: ClassVar[Formulae] = ...

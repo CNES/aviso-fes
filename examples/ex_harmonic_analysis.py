@@ -1,6 +1,6 @@
 """*****************
 Harmonic Analysis
-*****************.
+*****************
 
 This example demonstrates how to perform harmonic analysis on a signal using the
 :func:`harmonic_analysis <pyfes.wave_table.WaveTable.harmonic_analysis>`

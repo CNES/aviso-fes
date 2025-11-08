@@ -30,6 +30,7 @@ __all__ = [
     '__version__',
     'constituents',
     'evaluate_tide_from_constituents',
+    'get_leap_seconds',
     'load_config',
 ]
 

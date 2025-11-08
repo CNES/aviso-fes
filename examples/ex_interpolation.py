@@ -1,6 +1,6 @@
 """******************
 Mesh Interpolation
-******************.
+******************
 
 This example demonstrates how to interpolate a tidal model stored in a mesh
 using LGP2 discretization.

@@ -1,6 +1,6 @@
 """***************************************************
 Tidal Elevation Prediction using LPG Discretization
-***************************************************.
+***************************************************
 
 This example demonstrates how to use the model with LPG discretization to
 predict tidal elevation in a specified area of interest.

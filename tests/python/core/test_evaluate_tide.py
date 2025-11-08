@@ -36,6 +36,50 @@ TIDAL_WAVES = {
     'S2': DATASET / 'S2_tide.nc',
 }
 
+#: Real Tide Gauge Constituents from TICON-3 for Brest (amplitude in cm, phase
+#: in degrees).
+BREST_TICON3_DATA = {
+    'M2': (205.113, 109.006),
+    'K1': (6.434, 75.067),
+    'N2': (41.695, 90.633),
+    'O1': (6.587, 327.857),
+    'P1': (2.252, 63.658),
+    'Q1': (2.040, 281.362),
+    'K2': (21.361, 145.892),
+    'S2': (74.876, 148.283),
+    'S1': (0.797, 11.441),
+    'SA': (4.905, 322.761),
+    'T2': (4.171, 138.535),
+    'MF': (1.031, 175.663),
+    'MM': (0.425, 199.741),
+    '2N2': (5.699, 72.786),
+    'M4': (5.437, 105.940),
+    'J1': (0.241, 123.005),
+    'SSA': (2.047, 98.898),
+    'MSF': (0.356, 24.980),
+    'MSQM': (0.115, 254.934),  # Noted as MSQ in TICON-3
+    'EPS2': (1.968, 89.471),  # Noted as EP2 in TICON-3
+    'L2': (6.392, 102.910),
+    'M3': (1.977, 15.860),
+    'R2': (0.534, 158.066),
+    'MU2': (8.566, 105.087),  # Noted as MI2 in TICON-3
+    'MTM': (0.110, 142.031),
+    'NU2': (7.780, 86.614),  # Noted as NI2 in TICON-3
+    'LAMBDA2': (2.625, 75.845),  # Noted as LM2 in TICON-3
+    'MN4': (1.937, 60.491),
+    'MS4': (3.258, 181.835),
+    'MKS2': (0.758, 173.969),  # Noted as MKS in TICON-3
+    'N4': (0.291, 9.263),
+    'M6': (3.153, 354.764),
+    'M8': (0.231, 231.883),
+    'S4': (0.217, 289.151),
+    '2Q1': (0.376, 234.893),
+    'OO1': (0.136, 213.353),
+    'M1': (0.535, 83.038),
+}
+#: Location of the Brest tide gauge (longitude, latitude).
+BREST_LOCATION = (-4.495, 48.383)
+
 
 def load_model(
     configuration: dict[str, pathlib.Path],
@@ -220,3 +264,32 @@ def test_parallel_tide_evaluation() -> None:
 
     speedup = sequential_time / parallel_time
     assert speedup > 1
+
+
+def test_evaluate_tide_from_constituents() -> None:
+    """Test evaluate_tide_from_constituents function."""
+    start_date = numpy.datetime64('2024-01-01T00:00:00')
+    end_date = numpy.datetime64('2024-01-02T00:00:00')
+    dates = numpy.arange(start_date, end_date, numpy.timedelta64(1, 'h'))
+
+    constituents = {
+        core.constituents.parse(key): value
+        for key, value in BREST_TICON3_DATA.items()
+    }
+
+    tide, long_period = core.evaluate_tide_from_constituents(
+        constituents,
+        dates,
+        numpy.full(dates.shape, 37, dtype=numpy.uint16),
+        BREST_LOCATION[0],
+        BREST_LOCATION[1],
+        None,
+        1,
+    )
+    assert len(tide) == len(dates)
+    assert len(long_period) == len(dates)
+    # Simple checks on the output ranges
+    assert -250 < tide.min() < 0
+    assert 0 < tide.max() < 250
+    assert -10 < long_period.min() < 10
+    assert -10 < long_period.max() < 10
