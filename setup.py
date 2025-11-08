@@ -4,7 +4,8 @@
 # All rights reserved. Use of this source code is governed by a
 # BSD-style license that can be found in the LICENSE file.
 # Working directory
-from typing import List, Optional, Tuple
+"""Setup script for the pyfes package."""
+
 import os
 import pathlib
 import platform
@@ -29,16 +30,13 @@ PY_VERSION = WORKING_DIRECTORY / 'src' / 'python' / 'pyfes' / 'version.py'
 CXX_VERSION = WORKING_DIRECTORY / 'include' / 'fes' / 'version.hpp'
 
 # Python version file content
-PY_VERSION_TEMPLATE = '''# Copyright (c) 2025 CNES
+PY_VERSION_TEMPLATE = """# Copyright (c) 2025 CNES
 #
 # All rights reserved. Use of this source code is governed by a
 # BSD-style license that can be found in the LICENSE file.
-\"\"\"
-Get software version information
-================================
-\"\"\"
+\"\"\"Get software version information\"\"\"
 __version__ = "{release}"
-'''
+"""
 
 # C++ version file content
 CXX_VERSION_TEMPLATE = """/// @file perth/version.hpp
@@ -53,26 +51,38 @@ CXX_VERSION_TEMPLATE = """/// @file perth/version.hpp
 """
 
 
-def compare_setuptools_version(required: Tuple[int, ...]) -> bool:
+def compare_setuptools_version(required: tuple[int, ...]) -> bool:
     """Compare the version of setuptools with the required version."""
     current = tuple(map(int, setuptools.__version__.split('.')[:2]))
     return current >= required
 
 
-def distutils_dirname(prefix=None, extname=None) -> pathlib.Path:
-    """Returns the name of the build directory."""
+def distutils_dirname(
+    prefix: str | None = None,
+    extname: str | None = None,
+) -> pathlib.Path:
+    """Return the name of the build directory."""
     prefix = 'lib' or prefix
     extname = '' if extname is None else os.sep.join(extname.split('.')[:-1])
     if compare_setuptools_version((62, 1)):
         return pathlib.Path(
-            WORKING_DIRECTORY, 'build', f'{prefix}.{sysconfig.get_platform()}-'
-            f'{sys.implementation.cache_tag}', extname)
+            WORKING_DIRECTORY,
+            'build',
+            f'{prefix}.{sysconfig.get_platform()}-'
+            f'{sys.implementation.cache_tag}',
+            extname,
+        )
     return pathlib.Path(
-        WORKING_DIRECTORY, 'build', f'{prefix}.{sysconfig.get_platform()}-'
-        f'{sys.version_info[0]}.{sys.version_info[1]}', extname)
+        WORKING_DIRECTORY,
+        'build',
+        f'{prefix}.{sysconfig.get_platform()}-'
+        f'{sys.version_info[0]}.{sys.version_info[1]}',
+        extname,
+    )
 
 
 def fetch_package_version() -> str:
+    """Fetch the version of the package."""
     if not (WORKING_DIRECTORY / '.git').exists():
         with PY_VERSION.open() as stream:
             for line in stream:
@@ -82,7 +92,7 @@ def fetch_package_version() -> str:
     # Make sure that the working directory is the root of the project,
     # otherwise setuptools_scm will not be able to find the version number.
     os.chdir(WORKING_DIRECTORY)
-    import setuptools_scm
+    import setuptools_scm  # noqa: PLC0415
 
     try:
         return setuptools_scm.get_version()
@@ -98,7 +108,7 @@ def fetch_package_version() -> str:
 def update_version_file(
     file_path: pathlib.Path,
     template: str,
-    **kwargs,
+    **kwargs: str,
 ) -> None:
     """Update a version file with the given template and keyword arguments."""
     if file_path.exists():
@@ -145,34 +155,32 @@ def update_version_library(release: str) -> None:
     )
 
 
-# pylint: disable=too-few-public-methods
 class CMakeExtension(setuptools.Extension):
     """Python extension to build."""
 
-    def __init__(self, name):
+    def __init__(self, name: str) -> None:
+        """Initialize the extension."""
         super().__init__(name, sources=[])
 
-    # pylint: enable=too-few-public-methods
 
-
-# pylint: disable=too-many-instance-attributes
 class BuildExt(setuptools.command.build_ext.build_ext):
     """Build everything needed to install."""
+
     user_options = setuptools.command.build_ext.build_ext.user_options
-    user_options += [('cmake-args=', None, 'Additional arguments for CMake'),
-                     ('cxx-compiler=', None, 'Preferred C++ compiler'),
-                     ('generator=', None, 'Selected CMake generator'),
-                     ('mkl=', None, 'Using MKL as BLAS library'),
-                     ('iers=', None, 'Use IERS 2010 constants'),
-                     ('reconfigure', None,
-                      'Forces CMake to reconfigure this project')]
+    user_options += [
+        ('cmake-args=', None, 'Additional arguments for CMake'),
+        ('cxx-compiler=', None, 'Preferred C++ compiler'),
+        ('generator=', None, 'Selected CMake generator'),
+        ('mkl=', None, 'Using MKL as BLAS library'),
+        ('iers=', None, 'Use IERS 2010 constants'),
+        ('reconfigure', None, 'Forces CMake to reconfigure this project'),
+    ]
 
     boolean_options = setuptools.command.build_ext.build_ext.boolean_options
     boolean_options += ['mkl', 'iers']
 
     def initialize_options(self) -> None:
-        """Set default values for all the options that this command
-        supports."""
+        """Initialize options."""
         super().initialize_options()
         self.cmake_args = None
         self.cxx_compiler = None
@@ -182,7 +190,7 @@ class BuildExt(setuptools.command.build_ext.build_ext):
         self.reconfigure = None
 
     def run(self) -> None:
-        """Carry out the action."""
+        """Run the build process."""
         for ext in self.extensions:
             self.build_cmake(ext)
         super().run()
@@ -206,21 +214,20 @@ class BuildExt(setuptools.command.build_ext.build_ext):
         """Set the MKLROOT environment variable if the MKL header is found."""
         mkl_header = pathlib.Path(sys.prefix, 'include', 'mkl.h')
         if not mkl_header.exists():
-            mkl_header = pathlib.Path(sys.prefix, 'Library', 'include',
-                                      'mkl.h')
+            mkl_header = pathlib.Path(sys.prefix, 'Library', 'include', 'mkl.h')
 
         if mkl_header.exists():
             os.environ['MKLROOT'] = sys.prefix
 
     @staticmethod
-    def conda_prefix() -> Optional[str]:
-        """Returns the conda prefix."""
+    def conda_prefix() -> str | None:
+        """Return the conda prefix if available."""
         if 'CONDA_PREFIX' in os.environ:
             return os.environ['CONDA_PREFIX']
         return None
 
-    def set_cmake_user_options(self) -> List[str]:
-        """Sets the options defined by the user."""
+    def set_cmake_user_options(self) -> list[str]:
+        """Return a list of CMake options set by the user."""
         result = []
 
         conda_prefix = self.conda_prefix()
@@ -239,8 +246,8 @@ class BuildExt(setuptools.command.build_ext.build_ext):
 
         return result
 
-    def cmake_arguments(self, cfg: str, extdir: str) -> List[str]:
-        """Returns the cmake arguments."""
+    def cmake_arguments(self, cfg: str, extdir: str) -> list[str]:
+        """Return the list of CMake arguments."""
         cmake_args: list[str] = [
             '-DCMAKE_BUILD_TYPE=' + cfg,
             '-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + extdir,
@@ -258,11 +265,12 @@ class BuildExt(setuptools.command.build_ext.build_ext):
         # If the extension is built in the "root/build/lib.*" directory,
         # then it is not an editable install.
         if distutils_dirname().resolve() != extdir.parent:
-            return pathlib.Path(
-                self.build_lib).joinpath(*ext.name.split('.')[:-1])
+            return pathlib.Path(self.build_lib).joinpath(
+                *ext.name.split('.')[:-1]
+            )
         return extdir
 
-    def build_cmake(self, ext) -> None:
+    def build_cmake(self, ext: CMakeExtension) -> None:
         """Execute cmake to build the Python extension."""
         # These dirs will be created in build_py, so if you don't have
         # any python sources to bundle, the dirs will be missing
@@ -281,7 +289,8 @@ class BuildExt(setuptools.command.build_ext.build_ext):
             cmake_args.append('-G' + self.generator)
         elif is_windows:
             cmake_args.append(
-                '-G' + os.environ.get('CMAKE_GEN', 'Visual Studio 17 2022'))
+                '-G' + os.environ.get('CMAKE_GEN', 'Visual Studio 17 2022')
+            )
 
         if not is_windows:
             build_args += ['--', f'-j{os.cpu_count()}']
@@ -302,21 +311,26 @@ class BuildExt(setuptools.command.build_ext.build_ext):
         os.chdir(str(build_temp))
 
         # Has CMake ever been executed?
-        configure = (self.reconfigure is not None) if pathlib.Path(
-            build_temp, 'CMakeFiles',
-            'TargetDirectories.txt').exists() else True
+        configure = (
+            (self.reconfigure is not None)
+            if pathlib.Path(
+                build_temp, 'CMakeFiles', 'TargetDirectories.txt'
+            ).exists()
+            else True
+        )
 
         if configure:
-            self.spawn(['cmake', str(WORKING_DIRECTORY)] + cmake_args)
-        if not self.dry_run:  # type: ignore
+            self.spawn(['cmake', str(WORKING_DIRECTORY), *cmake_args])
+        if not self.dry_run:
             cmake_cmd = [
-                'cmake', '--build', '.', '--target',
-                ext.name.split('.')[-1]
+                'cmake',
+                '--build',
+                '.',
+                '--target',
+                ext.name.split('.')[-1],
             ]
             self.spawn(cmake_cmd + build_args)
         os.chdir(str(WORKING_DIRECTORY))
-
-    # pylint: enable=too-many-instance-attributes
 
 
 def main() -> None:
@@ -326,13 +340,20 @@ def main() -> None:
     setuptools.setup(
         cmdclass={
             'build_ext': BuildExt,
-        },  # type: ignore
+        },
         ext_modules=[CMakeExtension(name='pyfes.core')],
+        # Use src layout for python packages
+        packages=setuptools.find_namespace_packages(where='src/python'),
+        package_dir={
+            '': 'src/python',
+        },
         include_package_data=True,
         package_data={
             'pyfes': [
-                'py.typed', 'core/*.pyi', 'tests/dataset/*.nc',
-                'data/leap-seconds.txt'
+                'py.typed',
+                'core/*.pyi',
+                'tests/dataset/*.nc',
+                'data/leap-seconds.txt',
             ],
         },
         version=release,

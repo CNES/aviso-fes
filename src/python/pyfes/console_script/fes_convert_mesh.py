@@ -2,6 +2,8 @@
 #
 # All rights reserved. Use of this source code is governed by a
 # BSD-style license that can be found in the LICENSE file.
+"""Convert FES mesh and tidal wave files into a NetCDF dataset."""
+
 import argparse
 import os
 
@@ -42,12 +44,12 @@ WAVE_MAP = {
     'M2': 'M2',
     'L2': 'L2',
     '2N2': '2N2',
-    'Nu2': 'Nu2'
+    'Nu2': 'Nu2',
 }
 
 
 def load_mesh(
-    filename: str
+    filename: str,
 ) -> tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray, numpy.ndarray]:
     """Load the mesh from a netCDF file."""
     with netCDF4.Dataset(filename) as ds:
@@ -69,19 +71,18 @@ def load_data(filename: str) -> tuple[numpy.ndarray, numpy.ndarray]:
     return amp, phase
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
     """Parse the command line arguments."""
     parser = argparse.ArgumentParser()
-    parser.add_argument('mesh',
-                        help='The list of mesh files to convert.',
-                        type=str,
-                        nargs='+')
+    parser.add_argument(
+        'mesh', help='The list of mesh files to convert.', type=str, nargs='+'
+    )
     parser.add_argument('output', help='The output file to write', type=str)
     return parser.parse_args()
 
 
-def main():
-    """Main function."""
+def main() -> None:
+    """Convert mesh and tidal wave files into a NetCDF dataset."""
     args = parse_args()
     waves = {}
 
@@ -111,30 +112,30 @@ def main():
         ds.createDimension('six', 6)
         ds.createDimension('lgp2_nodes', len(waves['O1'][0]))
 
-        x_var = ds.createVariable('lon', 'f8', ('coordinates', ), zlib=True)
+        x_var = ds.createVariable('lon', 'f8', ('coordinates',), zlib=True)
         x_var.units = 'degrees_east'
         x_var.long_name = 'longitude'
-        y_var = ds.createVariable('lat', 'f8', ('coordinates', ), zlib=True)
+        y_var = ds.createVariable('lat', 'f8', ('coordinates',), zlib=True)
         y_var.units = 'degrees_north'
         y_var.long_name = 'latitude'
-        triangles_var = ds.createVariable('triangle',
-                                          'i4', ('triangles', 'three'),
-                                          zlib=True)
+        triangles_var = ds.createVariable(
+            'triangle', 'i4', ('triangles', 'three'), zlib=True
+        )
         triangles_var.long_name = 'element_connectivity'
-        lgp2_var = ds.createVariable('lgp2',
-                                     'i4', ('triangles', 'six'),
-                                     zlib=True)
+        lgp2_var = ds.createVariable(
+            'lgp2', 'i4', ('triangles', 'six'), zlib=True
+        )
         lgp2_var.long_name = 'lgp2_connectivity'
 
         for wave_name in sorted(waves):
-            var = ds.createVariable(wave_name + '_amplitude',
-                                    'f4', ('lgp2_nodes', ),
-                                    zlib=True)
+            var = ds.createVariable(
+                wave_name + '_amplitude', 'f4', ('lgp2_nodes',), zlib=True
+            )
             var.long_name = wave_name + ' amplitude'
             var.units = 'cm'
-            var = ds.createVariable(wave_name + '_phase',
-                                    'f4', ('lgp2_nodes', ),
-                                    zlib=True)
+            var = ds.createVariable(
+                wave_name + '_phase', 'f4', ('lgp2_nodes',), zlib=True
+            )
             var.long_name = wave_name + ' phase'
             var.units = 'degrees'
 

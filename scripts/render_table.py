@@ -1,3 +1,9 @@
+# Copyright (c) 2025 CNES
+#
+# All rights reserved. Use of this source code is governed by a
+# BSD-style license that can be found in the LICENSE file.
+"""Generate a Markdown table for the tidal constituents."""
+
 import pathlib
 
 import numpy
@@ -30,9 +36,10 @@ URL = 'https://cnes.github.io/aviso-fes/core/constituent.html'
 
 
 def _pretty_name(name: str) -> tuple[str, str | None]:
-    """
-    Convert the greek letter in the name to its LaTeX representation.
-    If the name does not contain a greek letter, return it unchanged.
+    """Return the name and its LaTeX representation.
+
+    Convert any Greek letter in name to its LaTeX form. If the name does
+    not contain a Greek letter, return the original name and None.
     """
     for greek, latex in GREEK_LETTERS.items():
         if greek in name:
@@ -41,15 +48,12 @@ def _pretty_name(name: str) -> tuple[str, str | None]:
 
 
 def url(constituent: pyfes.core.Wave) -> str:
-    """
-    Generate a URL for the constituent based on its name.
-    The URL is constructed to point to the constituent documentation.
-    """
-    return f'{URL}#pyfes.core.{str(constituent.ident)}'
+    """Generate a documentation URL for a constituent."""
+    return f'{URL}#pyfes.core.{constituent.ident!s}'
 
 
 def create_constituent_representation() -> str:
-    """ """
+    """Generate a Markdown table for the tidal constituents."""
     table = pyfes.WaveTable()
     lines = [
         '| Name | Speed (deg/h) | XDO |',
@@ -71,15 +75,14 @@ def create_constituent_representation() -> str:
         }
 
     lines.extend(
-        f"| {values['name']} | {values['speed']:.7f}  | {values['xdo']} |"
-        for values in sorted(data.values(), key=lambda item: item['speed']))
+        f'| {values["name"]} | {values["speed"]:.7f}  | {values["xdo"]} |'
+        for values in sorted(data.values(), key=lambda item: item['speed'])
+    )
     return '\n'.join(lines)
 
 
-def main():
-    """
-    Main function to run the script.
-    """
+def main() -> None:
+    """Generate the CONSTITUENTS.md file."""
     with open(ROOT / 'CONSTITUENTS.md', 'w') as stream:
         stream.write(f"""# Tidal Constituents
 

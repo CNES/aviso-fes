@@ -3,6 +3,7 @@
 # All rights reserved. Use of this source code is governed by a
 # BSD-style license that can be found in the LICENSE file.
 """Properties of tidal constituents."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -40,24 +41,28 @@ class WaveTable(core.WaveTable):
         <https://github.com/CNES/aviso-fes/blob/main/include/fes/constituent.hpp>`_
         fields.
 
-        Example:
+    Example:
             >>> from pyfes import WaveTable, Constituent
-            >>> wt = WaveTable (["M2", "S2", "N2", "K1"])
+            >>> wt = WaveTable(['M2', 'S2', 'N2', 'K1'])
             >>> wt.keys()
             ['K1', 'N2', 'M2', 'S2']
 
         To determine the actual ordering of constituents, use the
         :py:func:`~pyfes.constituents.known()` function.
+
     """
 
     def __repr__(self) -> str:
+        """Return the string representation of the WaveTable."""
         constituents: list[str] = self.keys()
         if len(constituents) > MAX_CONSTITUENTS:
-            constituents = constituents[:4] + ['...'] + constituents[-4:]
+            constituents = [*constituents[:4], '...', *constituents[-4:]]
 
-        return '{}.{}({})'.format(self.__class__.__module__,
-                                  self.__class__.__name__,
-                                  ', '.join(constituents))
+        return '{}.{}({})'.format(
+            self.__class__.__module__,
+            self.__class__.__name__,
+            ', '.join(constituents),
+        )
 
     def compute_nodal_modulations(
         self,
@@ -74,23 +79,34 @@ class WaveTable(core.WaveTable):
                 arguments for a given date. Default is
                 :py:attr:`pyfes.Formulae.kSchuremanOrder1
                 <pyfes.core.Formulae.kSchuremanOrder1>`.
+
         Returns:
             The nodal modulations for amplitude and phase.
+
         """
         if isinstance(dates, list) and all(
-                isinstance(item, datetime.datetime) for item in dates):
+            isinstance(item, datetime.datetime) for item in dates
+        ):
             datetime64: VectorDateTime64 = numpy.array(
                 [core.datemanip.as_int64(item) for item in dates],
-                dtype='datetime64[us]')
+                dtype='datetime64[us]',
+            )
             return super().compute_nodal_modulations(datetime64, leap_seconds)
         # The method throws an error if the dates are not datetime64
         return super().compute_nodal_modulations(
             dates,  # type: ignore[arg-type]
             leap_seconds,
-            formulae)
+            formulae,
+        )
 
     def freq(self) -> VectorFloat64:
-        """Gets the waves frequencies in radians per hours."""
+        """Return the waves' frequencies in radians per hour.
+
+        Returns:
+            1-D array of dtype numpy.float64 with the frequency of each wave
+            (radians per hour), in the same order as iteration.
+
+        """
         return numpy.array([wave.freq for wave in self], dtype=numpy.float64)
 
     @staticmethod
@@ -99,7 +115,8 @@ class WaveTable(core.WaveTable):
         f: VectorFloat64,
         vu: VectorFloat64,
     ) -> VectorComplex128:
-        """Harmonic Analysis.
+        r"""Harmonic Analysis.
+
         The harmonic analysis method consists in expressing the ocean tidal
         variations as a sum of independent constituents accordingly to the
         tidal potential spectrum. Then the sea surface elevation at a point
@@ -147,6 +164,7 @@ class WaveTable(core.WaveTable):
 
         Returns:
             The complex number representing the different reconstructed waves.
+
         """
         return core.WaveTable.harmonic_analysis(h, f, vu)
 
@@ -155,7 +173,14 @@ class WaveDict(WaveTable):
     """Manages the tidal wave table as a dictionary."""
 
     def freq(self) -> dict[str, float]:
-        """Gets the waves frequencies in radians per hours."""
+        """Return wave frequencies in radians per hour.
+
+        Keys are wave names and values are frequencies (radians per hour).
+
+        Returns:
+            Mapping from wave name to frequency in radians per hour.
+
+        """
         return {wave.name(): wave.freq for wave in self}
 
     def harmonic_analysis(  # type: ignore[override]
@@ -178,33 +203,43 @@ class WaveDict(WaveTable):
             it.
         .. seealso::
             :py:meth:`WaveTable.harmonic_analysis`
+
         """
         analysis: VectorComplex128 = super().harmonic_analysis(h, f, vu)
-        return dict(zip(self.keys(), analysis))
+        return dict(zip(self.keys(), analysis, strict=False))
 
     def tide_from_tide_series(
-            self,
-            dates: VectorDateTime64,
-            leap_seconds: VectorUInt16,
-            wave: dict[str, VectorComplex128],
-            formulae: Formulae = Formulae.kSchuremanOrder3) -> VectorFloat64:
-        """Calculates the tide of a given time series.
+        self,
+        dates: VectorDateTime64,
+        leap_seconds: VectorUInt16,
+        wave: dict[str, VectorComplex128],
+        formulae: Formulae = Formulae.kSchuremanOrder3,
+    ) -> VectorFloat64:
+        """Calculate the tide for a time series.
+
+        Compute the tide at the given dates using the provided tidal wave
+        properties.
 
         Args:
-            dates: time series data
+            dates: Time series dates.
             leap_seconds: Leap seconds for the dates provided.
+            wave: Tidal wave properties as a mapping from wave name to complex
+            amplitudes.
             formulae: Astronomic formulae used to evaluate the astronomic
-                arguments for a given date. Default is
-                :py:attr:`Formulae.kSchuremanOrder3`.
-            wave: Tidal wave properties.
+            arguments for a given date. Default is
+            :py:attr:`Formulae.kSchuremanOrder3`.
 
         Returns:
-            The tide calculated for the time series provided.
+            The tide calculated for the provided time series.
+
         """
         if len(wave) != len(self):
-            raise ValueError('wave must contain as many items as tidal '
-                             'constituents loaded')
+            raise ValueError(
+                'wave must contain as many items as tidal constituents loaded'
+            )
         wave_properties: VectorComplex128 = numpy.array(
-            [wave[item] for item in self])
-        return super().tide_from_tide_series(dates, leap_seconds,
-                                             wave_properties, formulae)
+            [wave[item] for item in self]
+        )
+        return super().tide_from_tide_series(
+            dates, leap_seconds, wave_properties, formulae
+        )

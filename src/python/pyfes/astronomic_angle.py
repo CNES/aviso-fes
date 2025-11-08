@@ -3,6 +3,7 @@
 # All rights reserved. Use of this source code is governed by a
 # BSD-style license that can be found in the LICENSE file.
 """Astronomic angle computation."""
+
 from __future__ import annotations
 
 import datetime
@@ -31,9 +32,11 @@ class AstronomicAngle(core.AstronomicAngle):
             for a given date. Default is
             :py:attr:`pyfes.Formulae.kSchuremanOrder1
             <pyfes.core.Formulae.kSchuremanOrder1>`.
+
     """
 
     def __init__(self, formulae: Formulae = Formulae.kSchuremanOrder1) -> None:
+        """Initialize the AstronomicAngle."""
         super().__init__(formulae)
         self.date: datetime.datetime | None = None
 
@@ -46,6 +49,7 @@ class AstronomicAngle(core.AstronomicAngle):
         Args:
             date: Date for which the astronomic angles are computed. If None,
                 the current date is used.
+
         """
         if date is None:
             date = datetime.datetime.utcnow()
@@ -54,4 +58,5 @@ class AstronomicAngle(core.AstronomicAngle):
         self.date = date
 
     def __repr__(self) -> str:
+        """Return the string representation of the AstronomicAngle."""
         return f'{self.__class__.__name__}({self.date})'

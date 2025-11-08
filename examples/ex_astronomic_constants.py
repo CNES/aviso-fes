@@ -1,7 +1,6 @@
-"""
-********************************
+"""********************************
 Astronomic Constants Calculation
-********************************
+********************************.
 
 This notebook verifies the calculations of key coefficients found in Paul
 Schureman's "Manual of Harmonic Analysis and Prediction of Tides" (Special
@@ -9,6 +8,7 @@ Publication No. 98, 1940 Edition). The Python script provided has been used to
 recompute these values based on the astronomical constants and formulas detailed
 in the manual.
 """
+
 # %%
 import dataclasses
 import math
@@ -24,6 +24,7 @@ def dms_to_deg(degrees: float, minutes: float, seconds: float) -> float:
 
     Returns:
         float: The decimal degrees value.
+
     """
     return degrees + minutes / 60 + seconds / 3600
 
@@ -37,6 +38,7 @@ def round_to_4_decimal(value: float, enabled: bool = True) -> float:
 
     Returns:
         float: The rounded value.
+
     """
     return round(value, 4) if enabled else value
 
@@ -45,7 +47,8 @@ def round_to_4_decimal(value: float, enabled: bool = True) -> float:
 @dataclasses.dataclass
 class AstronomicConstants:
     """Astronomic constants used in the Manual Of Harmonic Analysis and
-    Prediction of Tides."""
+    Prediction of Tides.
+    """
 
     #: Inclination of moon's orbit to plane of ecliptic
     i: float
@@ -62,31 +65,36 @@ class AstronomicConstants:
     #: Solar factor
     s: float
 
-    def __str__(self):
-        return ('Astronomic Constants:\n'
-                f'  Inclination (i): {round_to_4_decimal(self.i)} rad\n'
-                f'  Obliquity (w): {round_to_4_decimal(self.w)} rad\n'
-                "  Eccentricity of Earth's orbit (e1): "
-                f'{round_to_4_decimal(self.e1)}\n'
-                "  Eccentricity of Moon's orbit (e): "
-                f'{round_to_4_decimal(self.e)}\n'
-                f'  Solar factor (s): {round_to_4_decimal(self.s)}')
+    def __str__(self) -> str:
+        return (
+            'Astronomic Constants:\n'
+            f'  Inclination (i): {round_to_4_decimal(self.i)} rad\n'
+            f'  Obliquity (w): {round_to_4_decimal(self.w)} rad\n'
+            "  Eccentricity of Earth's orbit (e1): "
+            f'{round_to_4_decimal(self.e1)}\n'
+            "  Eccentricity of Moon's orbit (e): "
+            f'{round_to_4_decimal(self.e)}\n'
+            f'  Solar factor (s): {round_to_4_decimal(self.s)}'
+        )
 
 
 # %%
 def schureman_values() -> AstronomicConstants:
     """Returns the Schureman's values as written in the book."""
-    return AstronomicConstants(i=math.radians(5.145),
-                               w=math.radians(23.452),
-                               e1=0.016_75,
-                               e=0.054_90,
-                               s=0.4602)
+    return AstronomicConstants(
+        i=math.radians(5.145),
+        w=math.radians(23.452),
+        e1=0.016_75,
+        e=0.054_90,
+        s=0.4602,
+    )
 
 
 # %%
 def schureman_recomputed_values() -> AstronomicConstants:
     """Returns the Schureman's values recomputed with the given values written
-    in the book."""
+    in the book.
+    """
     # Distance of the center of the earth to the center of the moon
     # (in miles)
     # R = 239_000
@@ -132,8 +140,7 @@ def schureman_recomputed_values() -> AstronomicConstants:
 
 # %%
 def updated_astronomic_constants() -> AstronomicConstants:
-    """
-    Provides updated astronomic constants based on IERS Conventions (2010).
+    """Provides updated astronomic constants based on IERS Conventions (2010).
 
     The "solar factor" (s) is the ratio of the tide-generating forces of the
     Sun and Moon, calculated as: s = (M_sun / M_moon) * (a_moon / a_sun)^3
@@ -159,25 +166,21 @@ def updated_astronomic_constants() -> AstronomicConstants:
 
     # The ratio of tide-generating forces (Solar Factor 's')
     # s = (SE / ME) * (a_moon / AU)**3
-    s = (SE / ME) * (a_moon / AU)**3
+    s = (SE / ME) * (a_moon / AU) ** 3
 
     return AstronomicConstants(
         # Inclination of the mean lunar orbit to the mean ecliptic (I)
         # IERS Conventions (2010), Chapter 5, eq. 5.76
         i=math.radians(dms_to_deg(5, 8, 43.4)),  # 5.14539°
-
         # Obliquity of the ecliptic for J2000.0 (ε)
         # IERS Conventions (2010), Table 1.1
         w=math.radians(dms_to_deg(23, 26, 21.406)),
-
         # Eccentricity of the Earth's mean orbit for J2000.0
         # IERS Conventions (2010), Chapter 5
         e1=0.016708634,
-
         # Eccentricity of the Moon's mean orbit for J2000.0
         # IERS Conventions (2010), Chapter 5
         e=0.054900489,
-
         # The calculated solar factor
         s=s,
     )
@@ -216,7 +219,8 @@ print(const)
 #
 #   f(Mm) = \{2/3 - sin^2(I)\} / 0.5021
 f65 = round_to_4_decimal(
-    (2 / 3 - math.sin(const.w)**2) * (1 - 3 / 2 * math.sin(const.i)**2))
+    (2 / 3 - math.sin(const.w) ** 2) * (1 - 3 / 2 * math.sin(const.i) ** 2)
+)
 print(f'f65 = {f65:.4f}')
 
 # %%
@@ -234,7 +238,7 @@ print(f'f65 = {f65:.4f}')
 # .. math::
 #
 #       f(Mf) = sin^2(I) / 0.1578
-f66 = round_to_4_decimal(math.sin(const.w)**2 * math.cos(0.5 * const.i)**4)
+f66 = round_to_4_decimal(math.sin(const.w) ** 2 * math.cos(0.5 * const.i) ** 4)
 print(f'f66 = {f66:.4f}')
 
 # %%
@@ -253,8 +257,10 @@ print(f'f66 = {f66:.4f}')
 #
 #   f(O_1) = sin(I) \times cos^2(\frac{1}{2}I) / 0.3800
 f67 = round_to_4_decimal(
-    math.sin(const.w) * math.cos(0.5 * const.w)**2 *
-    math.cos(0.5 * const.i)**4)
+    math.sin(const.w)
+    * math.cos(0.5 * const.w) ** 2
+    * math.cos(0.5 * const.i) ** 4
+)
 print(f'f67 = {f67:.4f}')
 
 # %%
@@ -273,7 +279,8 @@ print(f'f67 = {f67:.4f}')
 #
 #   f(J_1) = sin(2I) / 0.7214
 f68 = round_to_4_decimal(
-    math.sin(2 * const.w) * (1 - 3 / 2 * math.sin(const.i)**2))
+    math.sin(2 * const.w) * (1 - 3 / 2 * math.sin(const.i) ** 2)
+)
 print(f'f68 = {f68:.4f}')
 
 # %%
@@ -292,8 +299,10 @@ print(f'f68 = {f68:.4f}')
 #
 #   f(OO_1) = sin(I) \times sin^2(\frac{1}{2}I) / 0.0164
 f69 = round_to_4_decimal(
-    math.sin(const.w) * math.sin(0.5 * const.w)**2 *
-    math.cos(0.5 * const.i)**4)
+    math.sin(const.w)
+    * math.sin(0.5 * const.w) ** 2
+    * math.cos(0.5 * const.i) ** 4
+)
 print(f'f69 = {f69:.4f}')
 
 # %%
@@ -312,7 +321,8 @@ print(f'f69 = {f69:.4f}')
 #
 #   f(M_2) = cos^4(\frac{1}{2}I) / 0.9154
 f70 = round_to_4_decimal(
-    math.cos(0.5 * const.w)**4 * math.cos(0.5 * const.i)**4)
+    math.cos(0.5 * const.w) ** 4 * math.cos(0.5 * const.i) ** 4
+)
 print(f'f70 = {f70:.4f}')
 
 # %%
@@ -331,7 +341,8 @@ print(f'f70 = {f70:.4f}')
 #
 #   f(79) = \sin^2I / 0.1565
 f71 = round_to_4_decimal(
-    math.sin(const.w)**2 * (1 - 3 / 2 * math.sin(const.i)**2))
+    math.sin(const.w) ** 2 * (1 - 3 / 2 * math.sin(const.i) ** 2)
+)
 print(f'f71 = {f71:.4f}')
 
 # %%
@@ -350,7 +361,7 @@ print(f'f71 = {f71:.4f}')
 # .. math::
 #
 #   f(141) = \sin(I) - \frac{5}{4} \times \sin^3(I) / 0.3192
-f141 = round_to_4_decimal(math.sin(const.w) - 5 / 4 * math.sin(const.w)**3)
+f141 = round_to_4_decimal(math.sin(const.w) - 5 / 4 * math.sin(const.w) ** 3)
 print(f'f141 = {f141:.4f}')
 
 # %%
@@ -371,8 +382,9 @@ print(f'f141 = {f141:.4f}')
 #   f(144) = \left(1 - 10 \sin^2(\frac{1}{2}I) + 15 \sin^4(\frac{1}{2}I)\right)
 #   \cos^2(\frac{1}{2}I) / 0.5873
 f144 = round_to_4_decimal(
-    (1 - 10 * math.sin(0.5 * const.w)**2 + 15 * math.sin(0.5 * const.w)**4) *
-    math.cos(0.5 * const.w)**2)
+    (1 - 10 * math.sin(0.5 * const.w) ** 2 + 15 * math.sin(0.5 * const.w) ** 4)
+    * math.cos(0.5 * const.w) ** 2
+)
 print(f'f144 = {f144:.4f}')
 
 # %%
@@ -390,7 +402,7 @@ print(f'f144 = {f144:.4f}')
 # .. math::
 #
 #     f(146) = \sin(I) \cos^4(\frac{1}{2}I) / 0.3658
-f146 = round_to_4_decimal(math.sin(const.w) * math.cos(0.5 * const.w)**4)
+f146 = round_to_4_decimal(math.sin(const.w) * math.cos(0.5 * const.w) ** 4)
 print(f'f146 = {f146:.4f}')
 
 # %%
@@ -408,8 +420,11 @@ print(f'f146 = {f146:.4f}')
 #
 #       f(147) = \left[\left(\cos^2(\frac{1}{2}I) - 2/3\right)
 #       \sin(I)\cos^2(\frac{1}{2}I)\right] / 0.1114
-f147 = round_to_4_decimal((math.cos(0.5 * const.w)**2 - 2 / 3) *
-                          math.sin(const.w) * math.cos(0.5 * const.w)**2)
+f147 = round_to_4_decimal(
+    (math.cos(0.5 * const.w) ** 2 - 2 / 3)
+    * math.sin(const.w)
+    * math.cos(0.5 * const.w) ** 2
+)
 print(f'f147 = {f147:.4f}')
 
 # %%
@@ -426,7 +441,8 @@ print(f'f147 = {f147:.4f}')
 #
 #       f(M_3) = cos^6(\frac{1}{2}I) / 0.8758
 f149 = round_to_4_decimal(
-    math.cos(0.5 * const.w)**6 * math.cos(0.5 * const.i)**6)
+    math.cos(0.5 * const.w) ** 6 * math.cos(0.5 * const.i) ** 6
+)
 print(f'f149 = {f149:.4f}')
 
 # %%
@@ -460,9 +476,11 @@ print(f'f149 = {f149:.4f}')
 #
 #   f(M_ 1) = f(O_ 1) \times 1 / Q_a
 f197_1 = round_to_4_decimal(
-    (1 / 4) + (9 / 4) * (math.cos(const.w)**2 / math.cos(0.5 * const.w)**4))
+    (1 / 4) + (9 / 4) * (math.cos(const.w) ** 2 / math.cos(0.5 * const.w) ** 4)
+)
 f197_2 = round_to_4_decimal(
-    (3 / 2) * (math.cos(const.w) / math.cos(0.5 * const.w)**2))
+    (3 / 2) * (math.cos(const.w) / math.cos(0.5 * const.w) ** 2)
+)
 print(f'f197_1 = {f197_1:.3f}')
 print(f'f197_2 = {f197_2:.3f}')
 
@@ -501,10 +519,12 @@ print(f'f197_2 = {f197_2:.3f}')
 #       = 0.0365 \cos (2T+2h)
 f216 = round_to_4_decimal(1 / 2 + 3 / 4 * const.e**2)
 f217 = round_to_4_decimal(
-    (1 / 2 + 3 / 4 * const.e1**2) * const.s * math.sin(2 * const.w))
+    (1 / 2 + 3 / 4 * const.e1**2) * const.s * math.sin(2 * const.w)
+)
 f218 = round_to_4_decimal(1 / 2 + 3 / 4 * const.e**2)
 f219 = round_to_4_decimal(
-    (1 / 2 + 3 / 4 * const.e1**2) * const.s * math.sin(const.w)**2)
+    (1 / 2 + 3 / 4 * const.e1**2) * const.s * math.sin(const.w) ** 2
+)
 print(f'f216 = {f216:.4f}')
 print(f'f217 = {f217:.4f}')
 print(f'f218 = {f218:.4f}')

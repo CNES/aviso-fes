@@ -2,6 +2,8 @@
 #
 # All rights reserved. Use of this source code is governed by a
 # BSD-style license that can be found in the LICENSE file.
+"""Configuration for pytest."""
+
 import os
 import pathlib
 import shutil
@@ -10,6 +12,8 @@ import sysconfig
 import time
 import urllib.request
 import zipfile
+import pytest
+
 
 # Check Python requirement
 MAJOR = sys.version_info[0]
@@ -26,6 +30,9 @@ DATASET_DIR = pathlib.Path(__file__).parent / 'tests' / 'python' / 'dataset'
 
 # Cache file for dataset download status
 CACHE_FILE = DATASET_DIR / '.download_cache'
+
+# use kibibyte (KiB) for 1024 bytes
+BYTES_PER_KIBIBYTE = 1024
 
 
 def is_download_cached() -> bool:
@@ -51,20 +58,22 @@ def progress_hook(count: int, block_size: int, total_size: int) -> None:
     bar = '█' * filled_length + '░' * (bar_length - filled_length)
 
     # Format file sizes
-    def format_bytes(bytes_val):
+    def format_bytes(bytes_val: int) -> str:
         for unit in ['B', 'KB', 'MB', 'GB']:
-            if bytes_val < 1024.0:
-                return f'{bytes_val:.1f} {unit}'
-            bytes_val /= 1024.0
-        return f'{bytes_val:.1f} TB'
+            if bytes_val < BYTES_PER_KIBIBYTE:
+                return f'{bytes_val} {unit}'
+            bytes_val //= BYTES_PER_KIBIBYTE
+        return f'{bytes_val} TB'
 
     downloaded_str = format_bytes(downloaded)
     total_str = format_bytes(total_size)
 
     # Print progress on same line using carriage return to stderr for pytest
     # visibility
-    sys.stderr.write(f'\rDownloading test dataset: {bar} {percent}% '
-                     f'({downloaded_str}/{total_str})')
+    sys.stderr.write(
+        f'\rDownloading test dataset: {bar} {percent}% '
+        f'({downloaded_str}/{total_str})'
+    )
     sys.stderr.flush()
 
 
@@ -81,8 +90,11 @@ def download_test_data() -> None:
     zip_path = DATASET_DIR / 'dataset.zip'
     try:
         # Only show progress if running interactively (not in CI)
-        hook = (progress_hook
-                if sys.stderr.isatty() and not os.getenv('CI') else None)
+        hook = (
+            progress_hook
+            if sys.stderr.isatty() and not os.getenv('CI')
+            else None
+        )
         urllib.request.urlretrieve(
             DATASET_URL,
             zip_path,
@@ -105,26 +117,37 @@ def download_test_data() -> None:
         raise
 
 
-def build_dirname(extname=None):
-    """Returns the name of the build directory."""
+def build_dirname(extname: str | None = None) -> pathlib.Path:
+    """Return the build directory path."""
     extname = '' if extname is None else os.sep.join(extname.split('.')[:-1])
-    path = pathlib.Path(WORKING_DIRECTORY, 'build',
-                        f'lib.{sysconfig.get_platform()}-{MAJOR}.{MINOR}',
-                        extname)
+    path = pathlib.Path(
+        WORKING_DIRECTORY,
+        'build',
+        f'lib.{sysconfig.get_platform()}-{MAJOR}.{MINOR}',
+        extname,
+    )
     if path.exists():
         return path
     return pathlib.Path(
-        WORKING_DIRECTORY, 'build',
+        WORKING_DIRECTORY,
+        'build',
         f'lib.{sysconfig.get_platform()}-{sys.implementation.cache_tag}',
-        extname)
+        extname,
+    )
 
 
-def pytest_sessionstart(session):
-    """Hook to run before any tests are collected."""
+def pytest_sessionstart(session: pytest.Session) -> None:
+    """Download test data before collecting tests.
+
+    This pytest_sessionstart hook runs once at the start of the test session,
+    before any tests are collected. It ensures required test data is present
+    for the test run; if data cannot be retrieved, raise an exception to
+    fail the session early.
+    """
     download_test_data()
 
 
-def push_front_syspath():
+def push_front_syspath() -> None:
     """Add the build directory to the front of sys.path."""
     if WORKING_DIRECTORY.joinpath('setup.py').exists():
         # We are in the root directory of the development tree

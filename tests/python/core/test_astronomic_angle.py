@@ -5,12 +5,12 @@
 import datetime
 import threading
 
-import numpy
 from pyfes import core
 import pytest
 
 
-def test_astronomic_angle():
+def test_astronomic_angle() -> None:
+    """Test the computation of astronomical angles."""
     aa = core.AstronomicAngle(core.kMeeus)
     aa.update(datetime.datetime(2000, 1, 1), 32)
     assert isinstance(aa, core.AstronomicAngle)
@@ -52,10 +52,10 @@ def test_astronomic_angle():
     assert aa.xi == pytest.approx(0.19203231321420278, 1e-6)
 
 
-def test_astronomical_angle_thread_safety():
+def test_astronomical_angle_thread_safety() -> None:
     """Test that datetime operations properly acquire GIL."""
 
-    def update_astronomical_angles(thread_id, results):
+    def update_astronomical_angles(thread_id, results) -> None:
         """Function that manipulates dates - should acquire GIL."""
         try:
             angle = core.AstronomicAngle()
@@ -64,7 +64,7 @@ def test_astronomical_angle_thread_safety():
             dates = [
                 datetime.datetime(2024, 1, 1, 0, 0, 0),
                 datetime.datetime(2024, 6, 1, 12, 0, 0),
-                datetime.datetime(2024, 12, 31, 23, 59, 59)
+                datetime.datetime(2024, 12, 31, 23, 59, 59),
             ]
 
             for date in dates:
@@ -75,19 +75,20 @@ def test_astronomical_angle_thread_safety():
                 'success': True,
                 'h': angle.h,
                 's': angle.s,
-                'p': angle.p
+                'p': angle.p,
             }
         except Exception as e:
             results[thread_id] = {'success': False, 'error': str(e)}
 
     # Run multiple threads manipulating dates
     num_threads = 8
-    results = {}
+    results: dict[int, dict[str, float | bool]] = {}
     threads = []
 
     for i in range(num_threads):
-        thread = threading.Thread(target=update_astronomical_angles,
-                                  args=(i, results))
+        thread = threading.Thread(
+            target=update_astronomical_angles, args=(i, results)
+        )
         threads.append(thread)
         thread.start()
 
@@ -96,8 +97,9 @@ def test_astronomical_angle_thread_safety():
 
     # All threads should complete successfully
     for thread_id, result in results.items():
-        assert result[
-            'success'], f"Thread {thread_id} failed: {result.get('error')}"
+        assert result['success'], (
+            f'Thread {thread_id} failed: {result.get("error")}'
+        )
         assert 'h' in result
         assert 's' in result
         assert 'p' in result

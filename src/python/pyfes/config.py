@@ -2,9 +2,7 @@
 #
 # All rights reserved. Use of this source code is governed by a
 # BSD-style license that can be found in the LICENSE file.
-"""
-Tidal Model Configuration Module
-================================
+"""Tidal Model Configuration Module.
 
 This module provides functionality to create a tidal model from a YAML file that
 describes the type of grid model (Cartesian, lgp1, lgp2) and the waves modelled
@@ -54,29 +52,37 @@ MAX_INTERPOLATION_DEPTH = 10
 WAVE_DIMENSIONS = 2
 
 #: Alias to LPG classes known to this software.
-LGPModel = type[tidal_model.LGP1Complex64
-                | tidal_model.LGP1Complex128
-                | tidal_model.LGP2Complex64
-                | tidal_model.LGP2Complex128]
+LGPModel = type[
+    tidal_model.LGP1Complex64
+    | tidal_model.LGP1Complex128
+    | tidal_model.LGP2Complex64
+    | tidal_model.LGP2Complex128
+]
 
 #: Alias to Cartesian classes known to this software.
-CartesianModel = type[tidal_model.CartesianComplex64
-                      | tidal_model.CartesianComplex128]
+CartesianModel = type[
+    tidal_model.CartesianComplex64 | tidal_model.CartesianComplex128
+]
 
 
 class Loader(yaml.Loader):
-    """Allows to load the objects defined for this software from YAML
-    documents."""
+    """Load objects from YAML documents."""
 
 
 class InterpolationError(Exception):
-    """Exception thrown when the user tries to interpolate an environment
-    variable that is not defined."""
+    """Indicate that an undefined environment variable was referenced.
+
+    Raised when interpolation of an environment variable fails because the
+    variable is not set in the environment.
+    """
 
 
 class InterpolationDepthError(Exception):
-    """Exception thrown when the interpolation of an environment variable
-    defines itself."""
+    """Signal a self-referential environment variable interpolation.
+
+    Raised when an environment variable used during interpolation expands to a
+    value that references itself, causing excessive recursion.
+    """
 
 
 def _expand(rawval: str) -> str:
@@ -85,13 +91,14 @@ def _expand(rawval: str) -> str:
     Args:
         rawval: String to parse
 
-    Returns
+    Returns:
         The interpolated character string.
 
     Raises:
         InterpolationError: If the environment variable found is not defined.
         InterpolationDepthError :If the environment variable found defines
             itself.
+
     """
     result: str = rawval
     if '$' not in result:
@@ -115,22 +122,30 @@ def _expand(rawval: str) -> str:
             result += tail
         else:
             raise InterpolationError(
-                f"The shell variable {name!r} doesn't exist.")
+                f"The shell variable {name!r} doesn't exist."
+            )
     if '$' in result and interpolation:
         raise InterpolationDepthError(
-            f'Value interpolation too deeply recursive: {rawval!r}.')
+            f'Value interpolation too deeply recursive: {rawval!r}.'
+        )
     return result
 
 
-def _parse(contents: Any) -> Any:
-    """Interpolation of the environment variables contained in the YAML
-    document.
+def _parse(contents: Any) -> Any:  # noqa: ANN401
+    """Interpolate environment variables in a YAML document.
+
+    Recursively traverse mappings, sequences, and strings in `contents` and
+    expand any environment-variable references found in strings.
 
     Args:
-        contents: The YAML document to parse.
+        contents: A YAML document represented as nested dicts, lists, and
+            strings.
 
     Returns:
-        The YAML document with the environment variables interpolated.
+        The input structure with environment variables expanded in all
+        strings. The operation may modify `contents` in place and returns
+        the (possibly mutated) structure.
+
     """
     if isinstance(contents, dict):
         for key in contents:
@@ -143,40 +158,54 @@ def _parse(contents: Any) -> Any:
     return contents
 
 
+@dataclasses.dataclass(frozen=True)
+class BoundingBox:
+    """Represent a bounding box in 2D space."""
+
+    x0: int
+    x1: int
+    y0: int
+    y1: int
+
+
 def extract_data_with_bounding_box(
     nx: int,
     ny: int,
-    x0: int,
-    x1: int,
-    y0: int,
-    y1: int,
+    bbox: BoundingBox,
     ncvar: netCDF4.Variable,
 ) -> Matrix:
     """Extract the data from a NetCDF variable with a bounding box."""
     flip = ncvar.shape == (nx, ny)
     # If the provided bounding box traverses the date line, we need to
     # split the bounding box into two parts.
-    if x0 > x1:
-        slices1 = [slice(y0, y1 + 1), slice(x0, nx)]
-        slices2 = [slice(y0, y1 + 1), slice(0, x1 + 1)]
+    if bbox.x0 > bbox.x1:
+        slices1 = [slice(bbox.y0, bbox.y1 + 1), slice(bbox.x0, nx)]
+        slices2 = [slice(bbox.y0, bbox.y1 + 1), slice(0, bbox.x1 + 1)]
         if flip:
             slices1 = slices1[::-1]
             slices2 = slices2[::-1]
         array1 = numpy.ma.filled(ncvar[slices1], numpy.nan)
         array2 = numpy.ma.filled(ncvar[slices2], numpy.nan)
         return numpy.concatenate((array1, array2), axis=ncvar.shape.index(nx))
-    slices = [slice(y0, y1 + 1), slice(x0, x1 + 1)]
+    slices = [slice(bbox.y0, bbox.y1 + 1), slice(bbox.x0, bbox.x1 + 1)]
     if flip:
         slices = slices[::-1]
     return numpy.ma.filled(ncvar[slices], numpy.nan)
 
 
+@dataclasses.dataclass(frozen=True)
+class VariableNames:
+    """Variable names used to load a cartesian tidal model."""
+
+    lon: str = 'longitude'
+    lat: str = 'latitude'
+    amp: str = 'amplitude'
+    pha: str = 'phase'
+
+
 def load_cartesian_model(
     path: str,
-    lon_name: str,
-    lat_name: str,
-    amp_name: str,
-    pha_name: str,
+    var_names: VariableNames,
     epsilon: float,
     bbox: tuple[float, float, float, float] | None,
 ) -> tuple[Vector, Vector, Matrix, bool]:
@@ -184,10 +213,7 @@ def load_cartesian_model(
 
     Args:
         path: Path to the tidal model to be loaded into memory
-        lon_name: Name of the longitude variable
-        lat_name: Name of the latitude variable
-        amp_name: Name of the amplitude variable
-        pha_name: Name of the phase variable
+        var_names: Variable names to use for loading the model
         epsilon: The tolerance used to determine if the longitude axis is
             circular.
         bbox: Bounding box to consider when loading the tidal model. It is
@@ -197,13 +223,15 @@ def load_cartesian_model(
     Returns:
         A tuple containing the longitude, latitude, tidal model and a flag
         indicating if grid is longitude-major.
+
     """
-
     with netCDF4.Dataset(path) as ds:
-        lon: Vector = ds.variables[lon_name][:]
-        lat: Vector = ds.variables[lat_name][:]
-        longitude_major = ds.variables[amp_name].shape[0] == lon.size
+        lon: Vector = ds.variables[var_names.lon][:]
+        lat: Vector = ds.variables[var_names.lat][:]
+        longitude_major = ds.variables[var_names.amp].shape[0] == lon.size
 
+        nc_amp = ds.variables[var_names.amp]
+        nc_pha = ds.variables[var_names.pha]
         amp: Matrix
         pha: Matrix
 
@@ -218,31 +246,26 @@ def load_cartesian_model(
             amp = extract_data_with_bounding_box(
                 len(x_axis),
                 len(y_axis),
-                x0,
-                x1,
-                y0,
-                y1,
-                ds.variables[amp_name],
+                BoundingBox(x0, x1, y0, y1),
+                nc_amp,
             )
             pha = extract_data_with_bounding_box(
                 len(x_axis),
                 len(y_axis),
-                x0,
-                x1,
-                y0,
-                y1,
-                ds.variables[pha_name],
+                BoundingBox(x0, x1, y0, y1),
+                nc_pha,
             )
-            lat = lat[y0:y1 + 1]
-            lon = (lon[x0:x1 + 1] if x0 <= x1 else numpy.concatenate(
-                (lon[x0:], lon[:x1 + 1])))
+            lat = lat[y0 : y1 + 1]
+            lon = (
+                lon[x0 : x1 + 1]
+                if x0 <= x1
+                else numpy.concatenate((lon[x0:], lon[: x1 + 1]))
+            )
         else:
-            amp = numpy.ma.filled(ds.variables[amp_name][:], numpy.nan)
-            pha = numpy.ma.filled(ds.variables[pha_name][:], numpy.nan)
+            amp = numpy.ma.filled(nc_amp[:], numpy.nan)
+            pha = numpy.ma.filled(nc_pha[:], numpy.nan)
 
-        if ds.variables[pha_name].units.lower() in [
-                'degree', 'degrees', 'deg'
-        ]:
+        if nc_pha.units.lower() in ['degree', 'degrees', 'deg']:
             pha = numpy.radians(pha)
 
     wave: Matrix = amp * numpy.cos(pha) + 1j * amp * numpy.sin(pha)
@@ -286,8 +309,8 @@ class Common:
     bbox: tuple[float, float, float, float] | None = None
 
     def __post_init__(self) -> None:
-        if self.tidal_type not in tuple(item.name.lower()
-                                        for item in TideType):
+        """Validate the configuration."""
+        if self.tidal_type not in tuple(item.name.lower() for item in TideType):
             raise ValueError(f'Unknown tidal type: {self.tidal_type!r}.')
         if not self.longitude:
             raise ValueError('longitude cannot be empty.')
@@ -304,6 +327,44 @@ class Common:
         return list(map(constituents.parse, self.dynamic))
 
 
+# Define a named tuple to hold the properties of the cartesian grid.
+class GridProperties(NamedTuple):
+    """Properties of the cartesian grid."""
+
+    #: The data type handled by the tidal model.
+    dtype: numpy.dtype
+    #: Latitude axis.
+    lat: Vector
+    #: Longitude axis.
+    lon: Vector
+    #: Shape of the tidal model.
+    shape: tuple[int, ...]
+    #: Flag to indicate if the grid is longitude-major.
+    longitude_major: bool
+
+    def __ne__(self, other: object) -> bool:
+        """Check if two GridProperties are different."""
+        if not isinstance(other, GridProperties):
+            return NotImplemented
+        return (
+            self.dtype != other.dtype
+            and self.shape != other.shape
+            and self.longitude_major != other.longitude_major
+            and not numpy.allclose(self.lon, other.lon)
+            and not numpy.allclose(self.lat, other.lat)
+        )
+
+
+class TidalModelInstance(NamedTuple):
+    """Tidal model instance.
+
+    This class holds the tidal model and its grid properties.
+    """
+
+    instance: TidalModel
+    properties: GridProperties
+
+
 @dataclasses.dataclass(frozen=True)
 class Cartesian(Common):
     """Configuration for the Cartesian model."""
@@ -318,6 +379,7 @@ class Cartesian(Common):
     epsilon: float = 1e-6
 
     def __post_init__(self) -> None:
+        """Validate the configuration."""
         super().__post_init__()
         try:
             list(map(constituents.parse, self.paths))
@@ -333,36 +395,6 @@ class Cartesian(Common):
 
     def load(self) -> TidalModel:
         """Load the tidal model defined by the configuration."""
-
-        # Define a named tuple to hold the properties of the cartesian grid.
-        class GridProperties(NamedTuple):
-            """Properties of the cartesian grid."""
-
-            #: The data type handled by the tidal model.
-            dtype: numpy.dtype
-            #: Latitude axis.
-            lat: Vector
-            #: Longitude axis.
-            lon: Vector
-            #: Shape of the tidal model.
-            shape: tuple[int, ...]
-            #: Flag to indicate if the grid is longitude-major.
-            longitude_major: bool
-
-            def __ne__(self, other: object) -> bool:
-                if not isinstance(other, GridProperties):
-                    return NotImplemented
-                return (self.dtype != other.dtype and self.shape != other.shape
-                        and self.longitude_major != other.longitude_major
-                        and not numpy.allclose(self.lon, other.lon)
-                        and not numpy.allclose(self.lat, other.lat))
-
-        # The tidal model instance consists of the tidal model and the grid
-        # properties.
-        class TidalModelInstance(NamedTuple):
-            instance: TidalModel
-            properties: GridProperties
-
         model: TidalModelInstance | None = None
 
         # Loop over each constituent and its corresponding NetCDF file path.
@@ -378,17 +410,21 @@ class Cartesian(Common):
             # Load the tidal model for this constituent.
             lon, lat, wave, longitude_major = load_cartesian_model(
                 path,
-                self.longitude,
-                self.latitude,
-                self.amplitude,
-                self.phase,
+                VariableNames(
+                    self.longitude,
+                    self.latitude,
+                    self.amplitude,
+                    self.phase,
+                ),
                 self.epsilon,
                 self.bbox,
             )
 
             if wave.ndim != WAVE_DIMENSIONS:
-                raise ValueError(f'defined constituent {constituent!r} has '
-                                 f'invalid shape: {wave.shape!r}.')
+                raise ValueError(
+                    f'defined constituent {constituent!r} has '
+                    f'invalid shape: {wave.shape!r}.'
+                )
 
             # Create the tidal model if it doesn't exist yet.
             if model is None:
@@ -423,11 +459,11 @@ class Cartesian(Common):
                 model = TidalModelInstance(instance, properties)
             # Check that the properties of the loaded grid match the first one.
             elif model.properties != GridProperties(
-                    wave.dtype,
-                    lat,
-                    lon,
-                    wave.shape,
-                    longitude_major,
+                wave.dtype,
+                lat,
+                lon,
+                wave.shape,
+                longitude_major,
             ):
                 raise ValueError(f'Inconsistent tidal model: {path!r}.')
 
@@ -469,6 +505,7 @@ class LGP(Common):
     type: str = 'lgp1'
 
     def __post_init__(self) -> None:
+        """Validate the configuration."""
         super().__post_init__()
         try:
             list(map(constituents.parse, self.constituents))
@@ -491,12 +528,12 @@ class LGP(Common):
             self.amplitude.format(constituent='M2')
         except KeyError as err:
             raise ValueError(
-                f'Invalid amplitude pattern: {self.amplitude!r}.') from err
+                f'Invalid amplitude pattern: {self.amplitude!r}.'
+            ) from err
         try:
             self.phase.format(constituent='M2')
         except KeyError as err:
-            raise ValueError(
-                f'Invalid phase pattern: {self.phase!r}.') from err
+            raise ValueError(f'Invalid phase pattern: {self.phase!r}.') from err
 
     def _lgp_class(self, dtype: numpy.dtype) -> LGPModel:
         """Return the class of the LGP tidal model."""
@@ -532,7 +569,8 @@ class LGP(Common):
 
                 if instance is None:
                     type_name: LGPModel = self._lgp_class(
-                        (ds.variables[amp_name].dtype.type(0) + 1j).dtype)
+                        (ds.variables[amp_name].dtype.type(0) + 1j).dtype
+                    )
 
                     instance = type_name(
                         mesh.Index(lon, lat, triangles),
@@ -568,14 +606,23 @@ class LGP(Common):
 
 
 def parse(path: str | os.PathLike) -> dict[str, Any]:
-    """Load a YAML file and interpolate, if necessary, the environment
-    variables contained in the YAML document.
+    """Load a YAML configuration file.
+
+    Open and parse the YAML file at the given path and interpolate any
+    environment variables referenced in the document. The parsed YAML is
+    returned as a dictionary.
 
     Args:
-        path: Path to the configuration file to be loaded into memory
+        path: Path to the configuration file to load. May be a str or an
+            os.PathLike object.
 
     Returns:
-        A dictionary defining the YAML document.
+        dict[str, Any]: The parsed YAML document.
+
+    Raises:
+        OSError: If the file cannot be opened.
+        yaml.YAMLError: If the YAML cannot be parsed.
+
     """
     with open(path, encoding='utf-8') as stream:
         return _parse(yaml.load(stream, Loader=Loader))
@@ -597,12 +644,15 @@ def _load_model(
 
     Returns:
         The tidal model loaded from the configuration file.
+
     """
 
     def tidal_type_exists(config: dict[str, Any], section: str) -> None:
         if 'tidal_type' in config[section]:
-            raise TypeError(f'{section}.__init__() got an '
-                            'unexpected keyword argument "tidal_type"')
+            raise TypeError(
+                f'{section}.__init__() got an '
+                'unexpected keyword argument "tidal_type"'
+            )
 
     if 'cartesian' in settings:
         tidal_type_exists(settings, 'cartesian')
@@ -613,8 +663,9 @@ def _load_model(
         settings['lgp'].update(tidal_type=tidal_type)
         return LGP(bbox=bbox, **settings['lgp']).load()
 
-    raise ValueError('No tidal model found. Expected either "cartesian" or '
-                     '"lgp".')
+    raise ValueError(
+        'No tidal model found. Expected either "cartesian" or "lgp".'
+    )
 
 
 def load(
@@ -634,6 +685,7 @@ def load(
         performed. The dictionary contains the tidal models to be used.
         The key is the type of the tidal model (e.g. ``tide``, ``radial``) and
         the value is the tidal model.
+
     """
     models: dict[str, TidalModel] = {}
     user_settings: dict[str, Any] = parse(path)
@@ -644,8 +696,10 @@ def load(
     key: str
     for key, settings in user_settings.items():
         if key not in ['tide', 'radial']:
-            raise ValueError(f'Configuration file {path!r} is invalid. '
-                             f'Expected "tide" or "radial" section.')
+            raise ValueError(
+                f'Configuration file {path!r} is invalid. '
+                f'Expected "tide" or "radial" section.'
+            )
         try:
             models[key] = _load_model(settings, tidal_type=key, bbox=bbox)
         except TypeError as err:
@@ -657,6 +711,7 @@ def load(
                 raise ValueError(
                     f'Configuration file {path!r} is invalid. '
                     f'Unknown keyword: {unknown_key!r} in section '
-                    f'{section!r}.') from err
+                    f'{section!r}.'
+                ) from err
             raise err from None
     return models

@@ -2,6 +2,8 @@
 #
 # All rights reserved. Use of this source code is governed by a
 # BSD-style license that can be found in the LICENSE file.
+"""Custom build backend for setuptools with custom options."""
+
 import argparse
 from collections.abc import Mapping
 import os
@@ -37,7 +39,7 @@ class _CustomBuildMetaBackend(setuptools.build_meta._BuildMetaBackend):
     Reference: https://setuptools.pypa.io/en/latest/build_meta.html
     """
 
-    def run_setup(self, setup_script='setup.py'):
+    def run_setup(self, setup_script: str = 'setup.py') -> None:
         """Run the setup script."""
         config_settings = getattr(self, 'config_settings', None)
         args = usage(config_settings or {})  # type: ignore[arg-type]
@@ -54,8 +56,12 @@ class _CustomBuildMetaBackend(setuptools.build_meta._BuildMetaBackend):
             setuptools_args.append('--mkl=yes')
 
         if setuptools_args:
-            sys.argv = (sys.argv[:1] + ['build_ext'] + setuptools_args +
-                        sys.argv[1:])
+            sys.argv = [
+                *sys.argv[:1],
+                'build_ext',
+                *setuptools_args,
+                *sys.argv[1:],
+            ]
         return super().run_setup(setup_script)
 
     def build_wheel(
@@ -135,4 +141,5 @@ build_sdist = _backend.build_sdist
 get_requires_for_build_wheel = _backend.get_requires_for_build_wheel
 get_requires_for_build_editable = _backend.get_requires_for_build_editable
 prepare_metadata_for_build_editable = (
-    _backend.prepare_metadata_for_build_editable)
+    _backend.prepare_metadata_for_build_editable
+)

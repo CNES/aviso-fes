@@ -3,6 +3,7 @@
 # All rights reserved. Use of this source code is governed by a
 # BSD-style license that can be found in the LICENSE file.
 """Tidal model prediction library."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -57,19 +58,22 @@ class Settings(core.Settings):
         period will be divided differently based on the number of threads,
         resulting in variations in the way angles are updated depending on the
         number of threads used.
+
     """
 
-    def __init__(self,
-                 *,
-                 astronomic_formulae: Formulae = Formulae.kSchuremanOrder1,
-                 time_tolerance: float = 0.0) -> None:
+    def __init__(
+        self,
+        *,
+        astronomic_formulae: Formulae = Formulae.kSchuremanOrder1,
+        time_tolerance: float = 0.0,
+    ) -> None:
         super().__init__(
             astronomic_formulae,
             time_tolerance,
         )
 
 
-def evaluate_tide(
+def evaluate_tide(  # noqa: PLR0913
     tidal_model: core.AbstractTidalModelComplex128
     | core.AbstractTidalModelComplex64,
     date: VectorDateTime64,
@@ -116,6 +120,7 @@ def evaluate_tide(
       to nan if no data is available at the given position. The long period wave
       constituents is always computed because this value does not depend on
       model data.
+
     """
     return core.evaluate_tide(
         tidal_model,  # type: ignore[arg-type]
@@ -163,6 +168,7 @@ def evaluate_equilibrium_long_period(
     Returns:
         The height of the long period wave constituents of the tidal spectrum
         (cm).
+
     """
     return core.evaluate_equilibrium_long_period(
         date,

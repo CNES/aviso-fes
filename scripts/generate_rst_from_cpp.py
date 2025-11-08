@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
-"""
-Script to automatically generate RST file for tidal constituents from C++
-header file.
+# Copyright (c) 2025 CNES
+#
+# All rights reserved. Use of this source code is governed by a
+# BSD-style license that can be found in the LICENSE file.
+"""Generate RST entries for tidal constituents from a C++ header.
 
-This script parses the wave.hpp file and extracts constituent documentation
-to generate corresponding RST entries for the constituent.rst file.
+Parse the wave.hpp and constituent.hpp headers to extract constituent
+documentation and produce RST entries for docs/source/core/constituent.rst.
 """
 
 import argparse
@@ -19,13 +21,18 @@ ROOT = Path(__file__).resolve().parent.parent
 class ConstituentParser:
     """Parser for extracting tidal constituent information from C++ header."""
 
-    def __init__(self, cpp_header_path: str, constituent_header_path: str):
+    def __init__(
+        self,
+        cpp_header_path: str,
+        constituent_header_path: str,
+    ) -> None:
+        """Initialize the parser with paths to C++ header files."""
         self.cpp_header_path = Path(cpp_header_path)
         self.constituent_header_path = Path(constituent_header_path)
         self.constituent_to_class_map: dict[str, str] = {}
         self._load_constituent_mapping()
 
-    def _load_constituent_mapping(self):
+    def _load_constituent_mapping(self) -> None:
         """Load mapping from enum values to class names from constituent.hpp."""
         try:
             with open(self.constituent_header_path) as f:
@@ -54,11 +61,13 @@ class ConstituentParser:
         constituents = []
 
         # Split content by class definitions to process each one individually
-        class_pattern = (r'/// @brief @f\$([^@]+)@f\$(?:\s*\([^)]*\))?\s*\n'
-                         r'///\s*\n'
-                         r'/// <table>.*?'
-                         r'/// </table>\s*\n'
-                         r'((?:/// @[^@]*?)*?)class\s+([A-Za-z0-9_]+)\s*:')
+        class_pattern = (
+            r'/// @brief @f\$([^@]+)@f\$(?:\s*\([^)]*\))?\s*\n'
+            r'///\s*\n'
+            r'/// <table>.*?'
+            r'/// </table>\s*\n'
+            r'((?:/// @[^@]*?)*?)class\s+([A-Za-z0-9_]+)\s*:'
+        )
 
         matches = re.finditer(class_pattern, content, re.DOTALL)
 
@@ -68,7 +77,7 @@ class ConstituentParser:
             class_name = match.group(3)
 
             # Extract the full table section for this constituent
-            full_match_text = content[match.start():match.end()]
+            full_match_text = content[match.start() : match.end()]
 
             # Extract table information
             table_match = re.search(
@@ -77,7 +86,10 @@ class ConstituentParser:
                 r'/// <tr><td>@f\$([^@]+)@f\$</td>\s*\n'
                 r'/// <td>@f\$([^@]+)@f\$</td>\s*\n'
                 r'/// <td>@f\$([^@]+)@f\$</td></tr>\s*\n'
-                r'/// </table>', full_match_text, re.DOTALL)
+                r'/// </table>',
+                full_match_text,
+                re.DOTALL,
+            )
 
             if table_match:
                 v_value = table_match.group(1).strip()
@@ -89,7 +101,9 @@ class ConstituentParser:
                 if notes_section:
                     note_match = re.search(
                         r'/// @note\s+(.+?)(?=\n///[^@]|\n(?!///)|\nclass|$)',
-                        notes_section, re.DOTALL)
+                        notes_section,
+                        re.DOTALL,
+                    )
                     if note_match:
                         note = note_match.group(1).strip()
                         # Clean up the note text
@@ -100,7 +114,7 @@ class ConstituentParser:
 
                 # Find corresponding enum name
                 enum_name = None
-                for enum, math_repr in self.constituent_to_class_map.items():
+                for enum in self.constituent_to_class_map.keys():
                     normalized_class = self._normalize_class_name(enum)
                     if normalized_class == class_name:
                         enum_name = f'k{enum}'
@@ -113,49 +127,39 @@ class ConstituentParser:
                     else:
                         enum_name = f'k{class_name}'
 
-                constituents.append({
-                    'enum_name': enum_name,
-                    'math_name': math_name,
-                    'class_name': class_name,
-                    'v_value': v_value,
-                    'u_value': u_value,
-                    'factor_f': factor_f,
-                    'note': note
-                })
+                constituents.append(
+                    {
+                        'enum_name': enum_name,
+                        'math_name': math_name,
+                        'class_name': class_name,
+                        'v_value': v_value,
+                        'u_value': u_value,
+                        'factor_f': factor_f,
+                        'note': note,
+                    }
+                )
 
         return constituents
 
     def _normalize_class_name(self, enum_name: str) -> str:
         """Convert enum name to expected class name."""
-        # Handle special cases
-        if enum_name.startswith('2'):
+        # Handle numeric prefixes
+        if enum_name[0] in ('2', '3'):
             return f'_{enum_name}'
-        elif enum_name.startswith('3'):
-            return f'_{enum_name}'
-        elif enum_name == 'MSqm':
-            return 'MSqm'
-        elif enum_name == 'Sigma1':
-            return 'Sigma1'
-        elif enum_name == 'Rho1':
-            return 'Rho1'
-        elif enum_name == 'Chi1':
-            return 'Chi1'
-        elif enum_name == 'Theta1':
-            return 'Theta1'
-        elif enum_name == 'Pi1':
-            return 'Pi1'
-        elif enum_name == 'Phi1':
-            return 'Phi1'
-        elif enum_name == 'Psi1':
-            return 'Psi1'
-        elif ('MNS2' in enum_name or 'MS2' in enum_name or 'MN2' in enum_name
-              or 'SM2' in enum_name or 'MK3' in enum_name or 'MK6' in enum_name
-              or 'MS4' in enum_name or 'MS6' in enum_name or 'MS8' in enum_name
-              or 'MN4' in enum_name or 'MN6' in enum_name
-              or 'MSN4' in enum_name or 'MSN6' in enum_name
-              or 'MNS4' in enum_name):
-            if enum_name.startswith('2') or enum_name.startswith('3'):
-                return f'_{enum_name}'
+
+        # Names that don't need modification
+        unchanged_names = {
+            'MSqm',
+            'Sigma1',
+            'Rho1',
+            'Chi1',
+            'Theta1',
+            'Pi1',
+            'Phi1',
+            'Psi1',
+        }
+        if enum_name in unchanged_names:
+            return enum_name
 
         return enum_name
 
@@ -169,7 +173,8 @@ class ConstituentParser:
         rst_lines.append('')
         rst_lines.append(
             '    This enum class encapsulates the tidal constituents '
-            'known by the library.')
+            'known by the library.'
+        )
         rst_lines.append('')
         rst_lines.append('    .. method:: __init__(self, value)')
         rst_lines.append('')
@@ -188,37 +193,39 @@ class ConstituentParser:
         lines = []
 
         # Attribute directive
-        lines.append(f"    .. autoattribute:: {constituent['enum_name']}")
+        lines.append(f'    .. autoattribute:: {constituent["enum_name"]}')
         lines.append('')
 
         # Math name
-        lines.append(f"        :math:`{constituent['math_name']}`")
+        lines.append(f'        :math:`{constituent["math_name"]}`')
         lines.append('')
 
         # Table
         # Calculate column widths
-        v_width = max(len('V'), len(f":math:`{constituent['v_value']}`"))
-        u_width = max(len('u'), len(f":math:`{constituent['u_value']}`"))
-        factor_width = max(len('Factor-f'),
-                           len(f":math:`{constituent['factor_f']}`"))
+        v_width = max(len('V'), len(f':math:`{constituent["v_value"]}`'))
+        u_width = max(len('u'), len(f':math:`{constituent["u_value"]}`'))
+        factor_width = max(
+            len('Factor-f'), len(f':math:`{constituent["factor_f"]}`')
+        )
 
         # Ensure minimum width and make all equal
         max_width = max(v_width, u_width, factor_width, 10)
 
         # Create table separator
         separator = '=' * max_width
-        table_sep = (f'        {separator}  {separator}  '
-                     f'{separator}')
+        table_sep = f'        {separator}  {separator}  {separator}'
 
         lines.append(table_sep)
-        lines.append(f"        {'V':<{max_width}}  {'u':<{max_width}}  "
-                     f"{'Factor-f'}")
+        lines.append(
+            f'        {"V":<{max_width}}  {"u":<{max_width}}  {"Factor-f"}'
+        )
         lines.append(table_sep)
-        v_cell = f":math:`{constituent['v_value']}`"
-        u_cell = f":math:`{constituent['u_value']}`"
-        f_cell = f":math:`{constituent['factor_f']}`"
-        lines.append(f'        {v_cell:<{max_width}}  {u_cell:<{max_width}}  '
-                     f'{f_cell}')
+        v_cell = f':math:`{constituent["v_value"]}`'
+        u_cell = f':math:`{constituent["u_value"]}`'
+        f_cell = f':math:`{constituent["factor_f"]}`'
+        lines.append(
+            f'        {v_cell:<{max_width}}  {u_cell:<{max_width}}  {f_cell}'
+        )
         lines.append(table_sep)
         lines.append('')
 
@@ -226,14 +233,14 @@ class ConstituentParser:
         if constituent['note']:
             lines.append('        .. note::')
             lines.append('')
-            lines.append(f"            {constituent['note']}")
+            lines.append(f'            {constituent["note"]}')
             lines.append('')
 
         return lines
 
 
-def main():
-    """Main function to run the generator."""
+def main() -> None:
+    """Generate RST file for tidal constituents from C++ header file."""
     parser = argparse.ArgumentParser(
         description='Generate RST file for tidal constituents from "'
         '"C++ header file.',
@@ -242,10 +249,9 @@ def main():
     wave_path = ROOT / 'include' / 'fes' / 'wave.hpp'
     constituent_path = ROOT / 'include' / 'fes' / 'constituent.hpp'
     output_rst = ROOT / 'docs' / 'source' / 'core' / 'constituent.rst'
-    parser.add_argument('--verbose',
-                        '-v',
-                        action='store_true',
-                        help='Enable verbose output')
+    parser.add_argument(
+        '--verbose', '-v', action='store_true', help='Enable verbose output'
+    )
 
     args = parser.parse_args()
 
@@ -268,7 +274,7 @@ def main():
         print(f'Found {len(constituents)} constituents:')
         for c in constituents:
             note_info = ' (with note)' if c['note'] else ' (no note)'
-            print(f"  - {c['enum_name']}: {c['math_name']}{note_info}")
+            print(f'  - {c["enum_name"]}: {c["math_name"]}{note_info}')
     else:
         print(f'Found {len(constituents)} constituents')
 

@@ -1,7 +1,6 @@
-"""
-********************
+"""********************
 Tide mapping example
-********************
+********************.
 
 In this example, we will use the model to predict the tidal elevation on a
 global grid.
@@ -15,6 +14,7 @@ global grid.
 
 First, we import the required modules.
 """
+
 # %%
 from __future__ import annotations
 
@@ -28,8 +28,9 @@ import pyfes
 
 # %%
 # First we create an environment variable to store the path to the model file.
-os.environ['DATASET_DIR'] = str(pathlib.Path().absolute().parent / 'tests' /
-                                'python' / 'dataset')
+os.environ['DATASET_DIR'] = str(
+    pathlib.Path().absolute().parent / 'tests' / 'python' / 'dataset'
+)
 
 # %%
 # Now we need to create the instances of the model used to calculate the ocean
@@ -43,8 +44,11 @@ os.environ['DATASET_DIR'] = str(pathlib.Path().absolute().parent / 'tests' /
 #     `GitHub repository
 #     <https://github.com/CNES/aviso-fes/blob/main/examples/fes_slev.yml>`_.
 #
-handlers: dict[str, pyfes.core.AbstractTidalModelComplex128
-               | pyfes.core.AbstractTidalModelComplex64]
+handlers: dict[
+    str,
+    pyfes.core.AbstractTidalModelComplex128
+    | pyfes.core.AbstractTidalModelComplex64,
+]
 handlers = pyfes.load_config(pathlib.Path().absolute() / 'fes_slev.yml')
 
 # %%
@@ -75,16 +79,12 @@ dates = numpy.full(shape, 'now', dtype='datetime64[us]')
 
 # %%
 # We can now calculate the ocean tide and the radial tide.
-tide, lp, _ = pyfes.evaluate_tide(handlers['tide'],
-                                  dates.ravel(),
-                                  lons.ravel(),
-                                  lats.ravel(),
-                                  num_threads=0)
-load, load_lp, _ = pyfes.evaluate_tide(handlers['radial'],
-                                       dates.ravel(),
-                                       lons.ravel(),
-                                       lats.ravel(),
-                                       num_threads=0)
+tide, lp, _ = pyfes.evaluate_tide(
+    handlers['tide'], dates.ravel(), lons.ravel(), lats.ravel(), num_threads=0
+)
+load, load_lp, _ = pyfes.evaluate_tide(
+    handlers['radial'], dates.ravel(), lons.ravel(), lats.ravel(), num_threads=0
+)
 
 # %%
 # We can now calculate the geocentric ocean tide (as seen by a satellite).
@@ -104,10 +104,8 @@ ax.set_global()
 ax.set_title(f'Tide on {dates[0, 0]}')
 ax.set_xlabel('Longitude')
 ax.set_ylabel('Latitude')
-mesh = ax.pcolormesh(lons,
-                     lats,
-                     geo_tide,
-                     cmap='jet',
-                     transform=cartopy.crs.PlateCarree())
+mesh = ax.pcolormesh(
+    lons, lats, geo_tide, cmap='jet', transform=cartopy.crs.PlateCarree()
+)
 colorbar = fig.colorbar(mesh, ax=ax)
 colorbar.set_label('Geocentric ocean tide (cm)', rotation=270, labelpad=20)

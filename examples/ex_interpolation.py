@@ -1,13 +1,13 @@
-"""
-******************
+"""******************
 Mesh Interpolation
-******************
+******************.
 
 This example demonstrates how to interpolate a tidal model stored in a mesh
 using LGP2 discretization.
 
 First, we import the required modules.
 """
+
 # %%
 from __future__ import annotations
 
@@ -20,8 +20,13 @@ import numpy
 import pyfes
 
 # %%
-MODEL = str(pathlib.Path().absolute().parent / 'tests' / 'python' / 'dataset' /
-            'fes_2014.nc')
+MODEL = str(
+    pathlib.Path().absolute().parent
+    / 'tests'
+    / 'python'
+    / 'dataset'
+    / 'fes_2014.nc'
+)
 
 
 # %%
@@ -31,7 +36,7 @@ def load_model(
     wave: str,
     max_distance: float = 0.0,
 ) -> pyfes.core.tidal_model.LGP2Complex64:
-    """"Load a tidal wave model from a netCDF file.
+    """ "Load a tidal wave model from a netCDF file.
 
     Args:
         model: Path to the netCDF file.
@@ -41,8 +46,9 @@ def load_model(
 
     Returns:
         The tidal wave model.
+
     """
-    with netCDF4.Dataset(model, 'r') as ds:  # type: ignore
+    with netCDF4.Dataset(model, 'r') as ds:
         lon = ds.variables['lon'][:]
         lat = ds.variables['lat'][:]
         triangle = ds.variables['triangle'][:]
@@ -99,13 +105,15 @@ fig = matplotlib.pyplot.figure(figsize=(10, 10))
 ax = fig.add_subplot(1, 1, 1, projection=cartopy.crs.PlateCarree())
 ax.set_extent([-5.0, 10.0, 40.0, 55.0], crs=cartopy.crs.PlateCarree())
 ax.coastlines()
-contour = ax.pcolormesh(lon,
-                        lat,
-                        grid,
-                        transform=cartopy.crs.PlateCarree(),
-                        cmap='terrain',
-                        vmin=0.0,
-                        vmax=400.0)
+contour = ax.pcolormesh(
+    lon,
+    lat,
+    grid,
+    transform=cartopy.crs.PlateCarree(),
+    cmap='terrain',
+    vmin=0.0,
+    vmax=400.0,
+)
 cbar = matplotlib.pyplot.colorbar(contour, ax=ax, orientation='vertical')
 cbar.set_label('Amplitude (cm)')
 matplotlib.pyplot.show()
@@ -134,13 +142,15 @@ fig = matplotlib.pyplot.figure(figsize=(10, 10))
 ax = fig.add_subplot(1, 1, 1, projection=cartopy.crs.PlateCarree())
 ax.set_extent([-5.0, 10.0, 40.0, 55.0], crs=cartopy.crs.PlateCarree())
 ax.coastlines()
-contour = ax.pcolormesh(lon,
-                        lat,
-                        grid,
-                        transform=cartopy.crs.PlateCarree(),
-                        cmap='terrain',
-                        vmin=0.0,
-                        vmax=400.0)
+contour = ax.pcolormesh(
+    lon,
+    lat,
+    grid,
+    transform=cartopy.crs.PlateCarree(),
+    cmap='terrain',
+    vmin=0.0,
+    vmax=400.0,
+)
 cbar = matplotlib.pyplot.colorbar(contour, ax=ax, orientation='vertical')
 cbar.set_label('Amplitude (cm)')
 matplotlib.pyplot.show()

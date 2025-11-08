@@ -16,7 +16,7 @@ def test_evalute_tide_lgp2(tmp_path) -> None:
     config = f"""
 tide:
     lgp:
-        path: {DATASET / "fes_2014.nc"}
+        path: {DATASET / 'fes_2014.nc'}
         codes: lgp2
         amplitude: "{{constituent}}_amp"
         phase: "{{constituent}}_phase"
@@ -38,17 +38,15 @@ tide:
         stream.write(config)
     handler = config_handler.load(config_path)
 
-    dates = numpy.empty((24, ), dtype='M8[ms]')
-    lons = numpy.empty((24, ), dtype=numpy.float64)
-    lats = numpy.empty((24, ), dtype=numpy.float64)
+    dates = numpy.empty((24,), dtype='M8[ms]')
+    lons = numpy.empty((24,), dtype=numpy.float64)
+    lats = numpy.empty((24,), dtype=numpy.float64)
 
     for hour in range(24):
         dates[hour] = numpy.datetime64(f'1983-01-01T{hour:02d}:00:00')
         lons[hour] = -7.688
         lats[hour] = 59.195
-    tide, _, _ = evaluate_tide(handler['tide'],
-                               dates,
-                               lons,
-                               lats,
-                               num_threads=1)
-    assert tide.shape == (24, )
+    tide, _, _ = evaluate_tide(
+        handler['tide'], dates, lons, lats, num_threads=1
+    )
+    assert tide.shape == (24,)

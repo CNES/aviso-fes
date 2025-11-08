@@ -1,7 +1,6 @@
-"""
-***************************************************
+"""***************************************************
 Tidal Elevation Prediction using LPG Discretization
-***************************************************
+***************************************************.
 
 This example demonstrates how to use the model with LPG discretization to
 predict tidal elevation in a specified area of interest.
@@ -15,6 +14,7 @@ predict tidal elevation in a specified area of interest.
 
 First, we import the required modules.
 """
+
 # %%
 from __future__ import annotations
 
@@ -37,11 +37,15 @@ import pyfes
 #     `GitHub repository
 #     <https://github.com/CNES/aviso-fes/blob/main/examples/fes_lpg.yml>`_.
 #
-os.environ['DATASET_DIR'] = str(pathlib.Path().absolute().parent / 'tests' /
-                                'python' / 'dataset')
+os.environ['DATASET_DIR'] = str(
+    pathlib.Path().absolute().parent / 'tests' / 'python' / 'dataset'
+)
 
-handlers: dict[str, pyfes.core.AbstractTidalModelComplex128
-               | pyfes.core.AbstractTidalModelComplex64]
+handlers: dict[
+    str,
+    pyfes.core.AbstractTidalModelComplex128
+    | pyfes.core.AbstractTidalModelComplex64,
+]
 handlers = pyfes.load_config(pathlib.Path().absolute() / 'fes_lpg.yml')
 
 # %%
@@ -113,29 +117,30 @@ flags[lgp_flag < 0] = EXTRAPOLATED
 # %%
 # We can now plot the result.
 fig = matplotlib.pyplot.figure(figsize=(15, 10))
-fig.suptitle(f'Tide and Interpolation Quality Flag on {dates[0, 0]}',
-             fontsize=16)
+fig.suptitle(
+    f'Tide and Interpolation Quality Flag on {dates[0, 0]}', fontsize=16
+)
 
 # Plot the geocentric ocean tide
 ax1 = fig.add_subplot(1, 2, 1, projection=cartopy.crs.PlateCarree())
-ax1.set_extent([LON_MIN, LON_MAX, LAT_MIN, LAT_MAX],
-               crs=cartopy.crs.PlateCarree())
+ax1.set_extent(
+    [LON_MIN, LON_MAX, LAT_MIN, LAT_MAX], crs=cartopy.crs.PlateCarree()
+)
 ax1.coastlines()
 ax1.set_title('Geocentric Ocean Tide')
 ax1.set_xlabel('Longitude')
 ax1.set_ylabel('Latitude')
-mesh1 = ax1.pcolormesh(lons,
-                       lats,
-                       geo_tide,
-                       shading='auto',
-                       transform=cartopy.crs.PlateCarree())
+mesh1 = ax1.pcolormesh(
+    lons, lats, geo_tide, shading='auto', transform=cartopy.crs.PlateCarree()
+)
 colorbar1 = fig.colorbar(mesh1, ax=ax1, orientation='horizontal', pad=0.05)
 colorbar1.set_label('Geocentric ocean tide (cm)')
 
 # Plot the interpolation quality flag
 ax2 = fig.add_subplot(1, 2, 2, projection=cartopy.crs.PlateCarree())
-ax2.set_extent([LON_MIN, LON_MAX, LAT_MIN, LAT_MAX],
-               crs=cartopy.crs.PlateCarree())
+ax2.set_extent(
+    [LON_MIN, LON_MAX, LAT_MIN, LAT_MAX], crs=cartopy.crs.PlateCarree()
+)
 ax2.coastlines()
 ax2.set_title('Interpolation Quality Flag')
 ax2.set_xlabel('Longitude')
@@ -159,11 +164,13 @@ colorbar2 = fig.colorbar(
         EXTRAPOLATED,
     ],
 )
-colorbar2.set_ticklabels([
-    'Undefined',
-    'Interpolated',
-    'Extrapolated',
-])
+colorbar2.set_ticklabels(
+    [
+        'Undefined',
+        'Interpolated',
+        'Extrapolated',
+    ]
+)
 colorbar2.set_label('Interpolation Quality Flag')
 fig.tight_layout()
 matplotlib.pyplot.show()

@@ -7,7 +7,8 @@ from pyfes import core
 import pytest
 
 
-def test_axis():
+def test_axis() -> None:
+    """Test the Axis class."""
     points = numpy.arange(0, 10, 0.1)
     x = core.Axis(points)
     assert len(x) == len(points)

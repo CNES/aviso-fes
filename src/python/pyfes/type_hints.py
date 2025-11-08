@@ -60,6 +60,7 @@
     A numpy array whose data type is a composition of simpler data types
     organised as a sequence of named fields.
 """
+
 from typing import TYPE_CHECKING, Annotated, Any, Literal, TypeVar
 
 try:
@@ -79,6 +80,7 @@ import numpy
 
 if TYPE_CHECKING:
     from numpy.typing import NDArray
+
     DType = TypeVar('DType', bound=numpy.generic)
     Vector = Annotated[NDArray[DType], Literal['N']]
     Matrix = Annotated[NDArray[DType], Literal['N', 'M']]
@@ -96,10 +98,10 @@ if TYPE_CHECKING:
     MatrixComplex128 = Matrix[numpy.complex128]
     NDArrayStructured = numpy.ndarray[Any, numpy.dtype[numpy.void]]
 else:
-    ScalarType_co = TypeVar('ScalarType_co',
-                            bound=numpy.generic,
-                            covariant=True)
-    DType = GenericAlias(numpy.dtype, (ScalarType_co, ))
+    ScalarType_co = TypeVar(
+        'ScalarType_co', bound=numpy.generic, covariant=True
+    )
+    DType = GenericAlias(numpy.dtype, (ScalarType_co,))
 
     Vector = GenericAlias(numpy.ndarray, (Any, DType))
     Matrix = GenericAlias(numpy.ndarray, (Any, DType))
@@ -114,5 +116,6 @@ else:
     MatrixInt32 = GenericAlias(numpy.ndarray, (Any, DType))
     MatrixFloat64 = GenericAlias(numpy.ndarray, (Any, DType))
     MatrixComplex128 = GenericAlias(numpy.ndarray, (Any, DType))
-    NDArrayStructured = GenericAlias(numpy.ndarray,
-                                     (Any, numpy.dtype[numpy.void]))
+    NDArrayStructured = GenericAlias(
+        numpy.ndarray, (Any, numpy.dtype[numpy.void])
+    )
