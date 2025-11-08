@@ -2,3 +2,65 @@
 requires = ["cmake", "setuptools>=45", "packaging>=20.0", "typing_extensions", "wheel", "setuptools-scm"]
 build-backend = "backend"
 backend-path = ["_custom_build"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 80
+exclude = ["*.pyi", "docs", "docs/**"]
+
+[tool.ruff.lint.pycodestyle]
+max-line-length = 80
+
+[tool.ruff.lint]
+ignore = ["D203", "D213"]
+select = [
+  "ANN",    # flake8-annotations
+  "B",      # flake8-bugbear
+  "C",      # flake8-comprehensions
+  "C4",     # comprehensions
+  "C90",    # mccabe
+  "D",      # docstring lints
+  "E",      # pycodestyle errors
+  "F",      # pyflakes
+  "FA",     # flake8-future-annotations
+  "FLY",    # flynt
+  "G",      # flake8-logging-format
+  "INT",    # flake8-gettext
+  "NPY002", # numpy-legacy-random
+  "PERF",   # Perflint
+  "PGH",    # pygrep-hooks
+  "PIE",    # misc lints
+  "PL",     # pylint
+  "PT",     # flake8-pytest-style
+  "PYI",    # flake8-pyi
+  "RSE",    # flake8-raise
+  "RUF",    # Ruff-specific rules
+  "SLOT",   # flake8-slots
+  "T10",    # flake8-debugger
+  "TCH",    # type-checking imports
+  "W",      # pycodestyle warnings
+  "YTT",    # flake8-2020
+]
+
+[tool.ruff.lint.per-file-ignores]
+"bang_core/thread_safe_netcdf.py" = ["ANN"]
+"**/tests/**" = ["D", "S", "ANN"]
+
+[tool.ruff.lint.isort]
+lines-after-imports = 2
+known-first-party = ["bang_core"]
+split-on-trailing-comma = false
+
+[tool.ruff.format]
+# Like Black, use double quotes for strings.
+quote-style = "double"
+docstring-code-format = true
+
+# Like Black, indent with spaces, rather than tabs.
+indent-style = "space"
+
+# Like Black, respect magic trailing commas.
+skip-magic-trailing-comma = false
+
+# Like Black, automatically detect the appropriate line ending.
+line-ending = "auto"
