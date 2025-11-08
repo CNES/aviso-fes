@@ -342,21 +342,6 @@ def main() -> None:
             'build_ext': BuildExt,
         },
         ext_modules=[CMakeExtension(name='pyfes.core')],
-        # Use src layout for python packages
-        packages=setuptools.find_namespace_packages(where='src/python'),
-        package_dir={
-            '': 'src/python',
-        },
-        include_package_data=True,
-        package_data={
-            'pyfes': [
-                'py.typed',
-                'core/*.pyi',
-                'tests/dataset/*.nc',
-                'data/leap-seconds.txt',
-            ],
-        },
-        version=release,
     )
 
 

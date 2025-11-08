@@ -1,7 +1,63 @@
 [build-system]
-requires = ["cmake", "setuptools>=45", "packaging>=20.0", "typing_extensions", "wheel", "setuptools-scm"]
+requires = ["cmake", "setuptools>=64", "packaging>=20.0", "typing_extensions", "wheel", "setuptools-scm"]
 build-backend = "backend"
 backend-path = ["_custom_build"]
+
+[project]
+name = "pyfes"
+description = "Tidal constituents analysis in Python"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "BSD-3-Clause"
+license-files = ["LICENSE"]
+authors = [
+    {name = "CNES/CLS/LEGOS", email = "fbriol@gmail.com"}
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Natural Language :: English",
+    "Operating System :: POSIX",
+    "Operating System :: MacOS",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+dependencies = [
+    "numpy",
+    "netCDF4",
+]
+dynamic = ["version"]
+
+[project.urls]
+Homepage = "https://github.com/CNES/pangeo-pyfes"
+
+[project.scripts]
+fes_convert_mesh = "pyfes.console_scripts.fes_convert_mesh:main"
+
+[tool.setuptools]
+zip-safe = false
+include-package-data = false
+
+[tool.setuptools.packages]
+find = {where = ["src/python"]}
+
+[tool.setuptools.package-dir]
+"" = "src/python"
+
+[tool.setuptools.package-data]
+pyfes = [
+    "py.typed",
+    "core/*.pyi",
+    "tests/dataset/*.nc",
+    "data/leap-seconds.txt",
+]
+"*" = ["py.typed"]
+
+[tool.setuptools_scm]
 
 [tool.ruff]
 target-version = "py312"
@@ -48,8 +104,10 @@ select = [
 [tool.ruff.lint.isort]
 force-to-top = ["typing", "collections.abc"]
 lines-after-imports = 2
-known-first-party = ["bang_core"]
+known-first-party = ["pyfes"]
 split-on-trailing-comma = false
+combine-as-imports = true
+force-sort-within-sections = true
 
 
 [tool.ruff.format]
