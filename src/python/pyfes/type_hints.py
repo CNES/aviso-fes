@@ -62,19 +62,8 @@
 """
 
 from typing import TYPE_CHECKING, Annotated, Any, Literal, TypeVar
+from types import GenericAlias
 
-try:
-    from types import GenericAlias  # type: ignore[attr-defined]
-except ImportError:
-    # pylint: disable=ungrouped-imports
-    # For Python < 3.9 we use a backport of GenericAlias provided by
-    # numpy
-    # isort: off
-    from numpy._typing._generic_alias import (  # type: ignore[misc,no-redef]
-        _GenericAlias as GenericAlias,  # yapf: disable
-    )
-    # isort: on
-    # pylint: enable=ungrouped-imports
 
 import numpy
 
