@@ -9,6 +9,34 @@
 
 namespace fes {
 
+auto evaluate_tide_from_constituents(
+    const std::map<Constituent, std::complex<double>>& constituents,
+    const Eigen::Ref<const Eigen::VectorXd>& epoch,
+    const Eigen::Ref<const fes::Vector<uint16_t>>& leap_seconds,
+    const double longitude, const double latitude, const Settings& settings,
+    const size_t num_threads) -> std::tuple<Eigen::VectorXd, Eigen::VectorXd> {
+  // Checks the input parameters
+  detail::check_eigen_shape("epoch", epoch, "leap_seconds", leap_seconds);
+  // Allocates the result vectors
+  auto tide = Eigen::VectorXd(epoch.size());
+  auto long_period = Eigen::VectorXd(epoch.size());
+  // Worker responsible for the calculation of the tide at a given position
+  auto worker = [&](const int64_t start, const int64_t end) {
+    auto acc = Accelerator(settings.astronomic_formulae(),
+                           settings.time_tolerance(), 0);
+    auto wave_table = detail::build_wave_table_from_constituents(constituents);
+    auto lpe = wave::LongPeriodEquilibrium(wave_table);
+
+    for (auto ix = start; ix < end; ++ix) {
+      std::tie(tide(ix), long_period(ix)) = detail::compute_tide_from_waves(
+          wave_table, lpe, acc, epoch[ix], leap_seconds[ix], latitude);
+    }
+  };
+
+  detail::parallel_for(worker, epoch.size(), num_threads);
+  return {tide, long_period};
+}
+
 auto evaluate_equilibrium_long_period(
     const Eigen::Ref<const Eigen::VectorXd>& epoch,
     const Eigen::Ref<const fes::Vector<uint16_t>>& leap_seconds,

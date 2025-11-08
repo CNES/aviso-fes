@@ -59,13 +59,52 @@ auto evaluate_tide(const fes::AbstractTidalModel<T>* const tidal_model,
   }
 }
 
+inline auto evaluate_tide_from_constituents(
+    const std::map<fes::Constituent, std::pair<double, double>>& constituents,
+    py::array& dates,
+    const Eigen::Ref<const fes::Vector<uint16_t>>& leap_seconds,
+    const double longitudes, const double latitudes,
+    const boost::optional<fes::Settings>& settings,
+    const size_t num_threads = 0)
+    -> std::tuple<Eigen::VectorXd, Eigen::VectorXd> {
+  if (dates.size() != leap_seconds.size()) {
+    throw std::invalid_argument(
+        "epoch and leap_seconds must have the same size");
+  }
+  auto epoch = fes::python::npdatetime64_to_epoch(dates);
+  {
+    py::gil_scoped_release gil;
+    // Convert amplitude/phase constituents to complex constituents
+    auto complex_constituents =
+        std::map<fes::Constituent, std::complex<double>>();
+    for (const auto& item : constituents) {
+      complex_constituents[item.first] = std::polar(
+          item.second.first, fes::detail::math::radians(item.second.second));
+    }
+
+    return fes::evaluate_tide_from_constituents(
+        complex_constituents, epoch, leap_seconds, longitudes, latitudes,
+        settings.value_or(fes::Settings()), num_threads);
+  }
+}
+
 template <typename T>
 void init_tide(py::module& m) {
-  m.def("evaluate_tide", &evaluate_tide<T>, py::arg("tidal_model"),
-        py::arg("date"), py::arg("leap_seconds"), py::arg("longitude"),
-        py::arg("latitude"), py::arg("settings") = boost::none,
-        py::arg("num_threads") = 0,
-        R"__doc(
+  m.def(
+      "evaluate_tide",
+      [](const fes::AbstractTidalModel<T>* const tidal_model, py::array& date,
+         const Eigen::Ref<const fes::Vector<uint16_t>>& leap_seconds,
+         const Eigen::Ref<const Eigen::VectorXd>& longitude,
+         const Eigen::Ref<const Eigen::VectorXd>& latitude,
+         const boost::optional<fes::Settings>& settings,
+         const size_t num_threads) {
+        return evaluate_tide<T>(tidal_model, date, leap_seconds, longitude,
+                                latitude, settings, num_threads);
+      },
+      py::arg("tidal_model"), py::arg("date"), py::arg("leap_seconds"),
+      py::arg("longitude"), py::arg("latitude"),
+      py::arg("settings") = boost::none, py::arg("num_threads") = 0,
+      R"__doc(
 Ocean tide calculation
 
 Args:
@@ -110,6 +149,53 @@ Returns:
 void init_tide(py::module& m) {
   init_tide<double>(m);
   init_tide<float>(m);
+
+  m.def(
+      "evaluate_tide_from_constituents",
+      [](const std::map<fes::Constituent, std::pair<double, double>>&
+             constituents,
+         py::array& date,
+         const Eigen::Ref<const fes::Vector<uint16_t>>& leap_seconds,
+         const double longitude, const double latitude,
+         const boost::optional<fes::Settings>& settings,
+         const size_t num_threads) {
+        return evaluate_tide_from_constituents(constituents, date, leap_seconds,
+                                               longitude, latitude, settings,
+                                               num_threads);
+      },
+      py::arg("constituents"), py::arg("date"), py::arg("leap_seconds"),
+      py::arg("longitude"), py::arg("latitude"),
+      py::arg("settings") = boost::none, py::arg("num_threads") = 0,
+      R"__doc(
+Ocean tide calculation
+
+Unlike the other overloads of this function, this function does not use
+a tidal model to interpolate constituents, but computes the tidal prediction
+directly from a list of tidal constituents whose properties (amplitude and
+phase) are known. This is typically used for tide gauge analysis and
+prediction, where the constituents have been previously determined from
+harmonic analysis of observed sea level data.
+
+Args:
+  constituents: A map of tidal constituents with their amplitude and phase
+    (degrees) properties.
+  date: Date of the tide calculation
+  leap_seconds: Leap seconds at the date of the tide calculation
+  longitude: Longitude in degrees for the position at which the tide is
+    calculated
+  latitude: Latitude in degrees for the position at which the tide is
+    calculated
+  settings: Settings for the tide computation.
+  num_threads: Number of threads to use for the computation. If 0, the
+    number of threads is automatically determined.
+
+Returns:
+  A tuple that contains:
+    * The height of the the diurnal and semi-diurnal constituents of the
+      tidal spectrum (same units as the input constituents)
+    * The height of the long period wave constituents of the tidal
+      spectrum (same units as the input constituents)
+)__doc");
 
   m.def("evaluate_equilibrium_long_period", &evaluate_equilibrium_long_period,
         py::arg("dates"), py::arg("leap_seconds"), py::arg("latitudes"),

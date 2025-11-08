@@ -17,6 +17,8 @@ from .version import __version__
 from .wave_table import WaveDict, WaveTable
 
 if TYPE_CHECKING:
+    from collections.abc import Mapping
+
     from .type_hints import VectorDateTime64, VectorFloat64, VectorInt8
 
 __all__ = [
@@ -27,6 +29,7 @@ __all__ = [
     'WaveTable',
     '__version__',
     'constituents',
+    'evaluate_tide_from_constituents',
     'load_config',
 ]
 
@@ -44,8 +47,7 @@ class Settings(core.Settings):
             0 seconds, indicating that astronomical angles do not remain
             constant with time.
 
-    .. note::
-
+    Note:
         The parameter ``time_tolerance`` allows for the adjustment of
         astronomical angle calculations. When its value is set to zero, the
         angles will be recalculated each time the date changes. Otherwise, they
@@ -114,8 +116,7 @@ def evaluate_tide(  # noqa: PLR0913
             position using ``-N`` data points (where ``N`` is the
             number of data points used for the extrapolation).
 
-    .. note::
-
+    Note:
       Computed height of the diurnal and semi-diurnal constituents is set
       to nan if no data is available at the given position. The long period wave
       constituents is always computed because this value does not depend on
@@ -124,6 +125,79 @@ def evaluate_tide(  # noqa: PLR0913
     """
     return core.evaluate_tide(
         tidal_model,  # type: ignore[arg-type]
+        date,
+        get_leap_seconds(date),
+        longitude,
+        latitude,
+        settings,
+        num_threads,
+    )
+
+
+def evaluate_tide_from_constituents(  # noqa: PLR0913
+    constituents: Mapping[Constituent, tuple[float, float]],
+    date: VectorDateTime64,
+    longitude: float,
+    latitude: float,
+    *,
+    settings: Settings | None = None,
+    num_threads: int = 0,
+) -> tuple[VectorFloat64, VectorFloat64]:
+    """Compute the tide from known tidal constituents.
+
+    Unlike :py:func:`evaluate_tide` which interpolates constituents from a
+    tidal model, this function computes the tidal prediction directly from a
+    list of tidal constituents whose properties (amplitude and phase) are known.
+    This is typically used for tide gauge analysis and prediction, where the
+    constituents have been previously determined from harmonic analysis of
+    observed sea level data.
+
+    Args:
+        constituents: Dictionary mapping tidal constituents to their
+            (amplitude, phase) properties. Amplitude is in centimeters and
+            phase is in degrees.
+        date: Date of the tide calculation.
+        longitude: Longitude in degrees for the position.
+        latitude: Latitude in degrees for the position.
+        settings: Settings used for the tide calculation. See
+            :py:class:`Settings` for more details.
+        num_threads: Number of threads to use for the calculation. If 0, all
+            available threads are used.
+
+    Returns:
+        * The height of the diurnal and semi-diurnal constituents of the
+          tidal spectrum (cm)
+        * The height of the long period wave constituents of the tidal
+          spectrum (cm)
+
+    Example:
+        >>> import pyfes
+        >>> import numpy as np
+        >>> # Define constituents from harmonic analysis
+        >>> constituents = {
+        ...     pyfes.core.kM2: (50.0, 120.0),  # 50cm amplitude, 120° phase
+        ...     pyfes.core.kS2: (20.0, 90.0),  # 20cm amplitude, 90° phase
+        ...     pyfes.core.kK1: (15.0, 45.0),  # 15cm amplitude, 45° phase
+        ... }
+        >>> # Calculate tide at a specific location over time
+        >>> dates = np.arange(
+        ...     np.datetime64('2024-01-01'),
+        ...     np.datetime64('2024-01-02'),
+        ...     np.timedelta64(1, 'h'),
+        ... )
+        >>> tide, lp = pyfes.evaluate_tide_from_constituents(
+        ...     constituents, dates, -5.0, 48.0
+        ... )
+
+    Note:
+        The constituents dictionary should map each
+        :py:class:`pyfes.Constituent` to a tuple of (amplitude, phase). The
+        amplitude and phase values are typically obtained from prior harmonic
+        analysis of observed tide gauge data.
+
+    """
+    return core.evaluate_tide_from_constituents(
+        constituents,  # type: ignore[arg-type]
         date,
         get_leap_seconds(date),
         longitude,

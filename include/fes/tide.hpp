@@ -79,6 +79,68 @@ static auto build_wave_table(const AbstractTidalModel<T>* const tidal_model)
   return result;
 }
 
+/// Build wave table from known constituents
+///
+/// @param[in] constituents A map of tidal constituents with their
+/// complex-valued (amplitude and phase) properties.
+/// @return The wave table.
+static inline auto build_wave_table_from_constituents(
+    const std::map<Constituent, std::complex<double>>& constituents)
+    -> wave::Table {
+  auto wave_table = wave::Table();
+  for (const auto& item : constituents) {
+    auto& wave = wave_table[item.first];
+    wave->dynamic(true);
+    wave->admittance(false);
+    wave->tide(item.second);
+  }
+  return wave_table;
+}
+
+/// Compute tide for a single epoch from a prepared wave table
+///
+/// This function handles the core tide computation logic that is common
+/// to both model-based and constituent-based tide calculations.
+///
+/// @param[inout] wave_table Wave table with tide data already set
+/// @param[inout] lpe Long period equilibrium handler
+/// @param[inout] acc Accelerator for angle calculation
+/// @param[in] epoch Time in seconds since 1970-01-01T00:00:00Z
+/// @param[in] leap_seconds Leap seconds at this epoch
+/// @param[in] latitude Latitude in degrees for long period calculation
+/// @param[in] compute_lpe Whether to compute long period equilibrium
+/// @return Tuple of (short_period_tide, long_period_tide)
+static inline auto compute_tide_from_waves(
+    wave::Table& wave_table, wave::LongPeriodEquilibrium& lpe, Accelerator& acc,
+    const double epoch, const uint16_t leap_seconds, const double latitude,
+    const bool compute_lpe = true) -> std::tuple<double, double> {
+  // Update the astronomic angle used to evaluate the tidal constituents.
+  const auto& angles = acc.calculate_angle(epoch, leap_seconds);
+
+  // Adjusts nodal corrections to the tidal estimate date.
+  wave_table.compute_nodal_corrections(angles);
+
+  // Initialize long period equilibrium ocean tides
+  auto h_long_period =
+      compute_lpe ? lpe.lpe_minus_n_waves(angles, latitude) : 0.0;
+
+  // Calculation of the missing waves of the model by admittance.
+  wave_table.admittance();
+
+  // Summation of all the tidal constituents to compute the tide
+  auto h = 0.0;
+  for (const auto& wave : wave_table) {
+    auto phi = wave->vu();
+    auto tide = wave->f() * (wave->tide().real() * std::cos(phi) +
+                             wave->tide().imag() * std::sin(phi));
+    if (wave->admittance() || wave->dynamic()) {
+      wave->type() == Wave::kShortPeriod ? h += tide : h_long_period += tide;
+    }
+  }
+
+  return {h, h_long_period};
+}
+
 /// Compute the tidal prediction for a given point.
 ///
 /// @tparam T The type of tidal constituents modelled.
@@ -107,36 +169,29 @@ inline auto evaluate_tide(const AbstractTidalModel<T>* const tidal_model,
                           wave::LongPeriodEquilibrium& long_period,
                           Accelerator* acc)
     -> std::tuple<double, double, Quality> {
-  // Update the astronomic angle used to evaluate the tidal constituents.
-  const auto& angles = acc->calculate_angle(epoch, leap_seconds);
-  // Adjusts nodal corrections to the tidal estimate date.
-  wave_table.compute_nodal_corrections(angles);
-
   // Interpolation, at the requested position, of the waves provided by the
   // model used.
   auto quality =
       tidal_model->interpolate({longitude, latitude}, wave_table, acc);
-  // Initialization, depending on the type of tide calculated, of he long
-  // period wave constituents of the tidal spectrum
-  auto h_long_period = tidal_model->tide_type() == fes::kTide
-                           ? long_period.lpe_minus_n_waves(angles, latitude)
-                           : 0.0;
-  // Calculation of the missing waves of the model by admittance.
-  wave_table.admittance();
-  // If the point is not defined by the model, the tide is set to NaN.
+
+  // If the point is not defined by the model, we still compute the long
+  // period equilibrium (it doesn't depend on the model) but set tide to NaN.
   if (quality == kUndefined) {
+    // We need to compute angles and long period for undefined points
+    const auto& angles = acc->calculate_angle(epoch, leap_seconds);
+    wave_table.compute_nodal_corrections(angles);
+    auto h_long_period = tidal_model->tide_type() == fes::kTide
+                             ? long_period.lpe_minus_n_waves(angles, latitude)
+                             : 0.0;
     return {std::numeric_limits<double>::quiet_NaN(), h_long_period, quality};
   }
-  auto h = 0.0;
-  for (const auto& wave : wave_table) {
-    auto phi = wave->vu();
-    auto tide = wave->f() * (wave->tide().real() * std::cos(phi) +
-                             wave->tide().imag() * std::sin(phi));
-    if (wave->admittance() || wave->dynamic()) {
-      wave->type() == Wave::kShortPeriod ? h += tide : h_long_period += tide;
-    }
-  }
-  return {h, h_long_period, quality};
+
+  // Compute the tide using the common helper function
+  const auto compute_lpe = tidal_model->tide_type() == fes::kTide;
+  auto tides = compute_tide_from_waves(wave_table, long_period, *acc, epoch,
+                                       leap_seconds, latitude, compute_lpe);
+
+  return {std::get<0>(tides), std::get<1>(tides), quality};
 }
 
 }  // namespace detail
@@ -212,6 +267,41 @@ auto evaluate_tide(const AbstractTidalModel<T>* const tidal_model,
   detail::parallel_for(worker, epoch.size(), num_threads);
   return {tide, long_period, quality};
 }
+
+/// @brief Compute the ocean tide from a list of known tidal constituents.
+///
+/// Unlike the other evaluate_tide overload which interpolates constituents from
+/// a tidal model, this function computes the tidal prediction directly from a
+/// list of tidal constituents whose properties (amplitude and phase) are known.
+/// This is typically used for tide gauge analysis and prediction, where the
+/// constituents have been previously determined from harmonic analysis of
+/// observed sea level data.
+///
+/// @param[in] constituents A map of tidal constituents with their
+/// complex-valued (amplitude and phase) properties.
+/// @param[in] epoch Date of the tide calculation expressed in number of seconds
+/// elapsed since 1970-01-01T00:00:00Z (can be a vector of multiple times).
+/// @param[in] leap_seconds Number of leap seconds elapsed since
+/// 1970-01-01T00:00:00Z (corresponding to each epoch value).
+/// @param[in] longitude Longitude in degrees for the position.
+/// @param[in] latitude Latitude in degrees for the position.
+/// @param[in] settings Settings for the tide computation.
+/// @param[in] num_threads Number of threads to use for the computation. If 0,
+/// the number of threads is automatically determined.
+/// @return A tuple containing:
+/// - The height of the diurnal and semi-diurnal constituents of the tidal
+///   spectrum for each epoch.
+/// - The height of the long period wave constituents of the tidal spectrum
+///   for each epoch.
+/// @note The units of the returned tide are the same as the units of the input
+/// constituents.
+auto evaluate_tide_from_constituents(
+    const std::map<Constituent, std::complex<double>>& constituents,
+    const Eigen::Ref<const Eigen::VectorXd>& epoch,
+    const Eigen::Ref<const fes::Vector<uint16_t>>& leap_seconds,
+    const double longitude, const double latitude,
+    const Settings& settings = Settings(), const size_t num_threads = 0)
+    -> std::tuple<Eigen::VectorXd, Eigen::VectorXd>;
 
 /// @brief Compute the long period equilibrium ocean tides.
 ///

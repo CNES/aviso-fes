@@ -1,4 +1,5 @@
 from typing import ClassVar, Dict, Iterator, List, Optional, Tuple, overload
+from collections.abc import Mapping
 import datetime
 
 from . import constituents, datemanip, mesh, tidal_model
@@ -794,4 +795,16 @@ def evaluate_tide(
     settings: Optional[Settings] = ...,
     num_threads: int = ...
 ) -> Tuple[VectorFloat64, VectorFloat64, VectorUInt8]:
+    ...
+
+
+def evaluate_tide_from_constituents(
+    constituents: Mapping[Constituent, tuple[float, float]],
+    date: VectorDateTime64,
+    leap_seconds: VectorUInt16,
+    longitude: float,
+    latitude: float,
+    settings: Optional[Settings] = ...,
+    num_threads: int = ...
+) -> tuple[VectorFloat64, VectorFloat64]:
     ...
