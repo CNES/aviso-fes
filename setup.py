@@ -329,7 +329,7 @@ class BuildExt(setuptools.command.build_ext.build_ext):
                 '--target',
                 ext.name.split('.')[-1],
             ]
-            self.spawn(cmake_cmd + build_args)
+            self.spawn(cmake_cmd + build_args)  # type: ignore[arg-type]
         os.chdir(str(WORKING_DIRECTORY))
 
 
