@@ -420,10 +420,8 @@ auto Table::harmonic_analysis(const Eigen::Ref<const Eigen::VectorXd>& h,
 
 auto Table::tide_from_tide_series(
     const Eigen::Ref<const Eigen::VectorXd>& epoch,
-    const Eigen::Ref<const Vector<uint16_t>>& leap_seconds,
     const Eigen::Ref<const Eigen::VectorXcd>& wave,
     const angle::Formulae& formulae) const -> Eigen::VectorXd {
-  detail::check_eigen_shape("epoch", epoch, "leap_seconds", leap_seconds);
   if (static_cast<size_t>(wave.rows()) != size()) {
     throw std::invalid_argument(
         "wave must contain as many elements as the number of waves in the "
@@ -440,7 +438,7 @@ auto Table::tide_from_tide_series(
 
   for (auto ix = 0; ix < epoch.rows(); ++ix) {
     double tide = 0;
-    angles.update(epoch(ix), leap_seconds(ix));
+    angles.update(epoch(ix));
     wt.compute_nodal_corrections(angles);
 
     for (size_t jx = 0; jx < wt.size(); ++jx) {
@@ -455,7 +453,7 @@ auto Table::tide_from_tide_series(
   return result;
 }
 
-auto Table::tide_from_mapping(const double epoch, const uint16_t leap_seconds,
+auto Table::tide_from_mapping(const double epoch,
                               const DynamicRef<const Eigen::MatrixXcd>& wave,
                               const angle::Formulae& formulae,
                               const size_t num_threads) const
@@ -470,8 +468,7 @@ auto Table::tide_from_mapping(const double epoch, const uint16_t leap_seconds,
     // The wave properties of the object must be immutable for the provided
     // instance.
     auto wt = Table(*this);
-    wt.compute_nodal_corrections(
-        angle::Astronomic(formulae, epoch, leap_seconds));
+    wt.compute_nodal_corrections(angle::Astronomic(formulae, epoch));
 
     for (auto ix = start; ix < end; ++ix) {
       for (size_t jx = 0; jx < wt.size(); ++jx) {
@@ -489,11 +486,8 @@ auto Table::tide_from_mapping(const double epoch, const uint16_t leap_seconds,
 
 auto Table::compute_nodal_modulations(
     const Eigen::Ref<const Eigen::VectorXd>& epoch,
-    const Eigen::Ref<const fes::Vector<uint16_t>>& leap_seconds,
     const angle::Formulae& formulae) const
     -> std::tuple<Eigen::MatrixXd, Eigen::MatrixXd> {
-  detail::check_eigen_shape("epoch", epoch, "leap_seconds", leap_seconds);
-
   auto f = Eigen::MatrixXd(size(), epoch.size());
   auto vu = Eigen::MatrixXd(size(), epoch.size());
 
@@ -505,7 +499,7 @@ auto Table::compute_nodal_modulations(
   auto wt = Table(*this);
 
   for (auto ix = 0; ix < epoch.size(); ++ix) {
-    angles.update(epoch(ix), leap_seconds(ix));
+    angles.update(epoch(ix));
     wt.compute_nodal_corrections(angles);
 
     for (size_t jx = 0; jx < wt.size(); ++jx) {

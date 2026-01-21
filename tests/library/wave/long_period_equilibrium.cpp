@@ -11,7 +11,13 @@ namespace detail = fes::detail;
 class AstronomicAngle : public fes::angle::Astronomic {
  public:
   AstronomicAngle(const bool overload_angle = false)
-      : fes::angle::Astronomic(fes::angle::Formulae::kMeeus, 1.0, 0.0) {
+      : fes::angle::Astronomic() {
+    s_ = 3.4550013579944832;
+    h_ = 4.8910358580921542;
+    p_ = 5.2822083020245900;
+    n_ = 6.0263705975251547;
+    p1_ = 4.9291820072528578;
+
     if (!overload_angle) {
       return;
     }

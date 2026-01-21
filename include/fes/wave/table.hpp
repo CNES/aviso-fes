@@ -272,15 +272,12 @@ class Table {
   ///
   /// @param[in] epoch Desired UTC time expressed in number of seconds elapsed
   /// since 1970-01-01T00:00:00.
-  /// @param[in] leap_seconds The number of leap seconds since
-  /// 1970-01-01T00:00:00Z.
   /// @param[in] wave Tidal wave properties computed by an harmonic analysis.
   /// @return the tide at the given time.
   /// @param[in] formulae The formulae used to compute the astronomical angles.
   /// @return the tide at the given time.
   auto tide_from_tide_series(
       const Eigen::Ref<const Eigen::VectorXd>& epoch,
-      const Eigen::Ref<const Vector<uint16_t>>& leap_seconds,
       const Eigen::Ref<const Eigen::VectorXcd>& wave,
       const angle::Formulae& formulae = angle::Formulae::kSchuremanOrder3) const
       -> Eigen::VectorXd;
@@ -290,15 +287,12 @@ class Table {
   ///
   /// @param[in] epoch Desired UTC time expressed in number of seconds elapsed
   /// since 1970-01-01T00:00:00.
-  /// @param[in] leap_seconds The number of leap seconds since
-  /// 1970-01-01T00:00:00Z.
   /// @param[in] wave Tidal wave properties computed by an harmonic analysis.
   /// @param[in] formulae The formulae used to compute the astronomical angles.
   /// @param[in] num_threads Number of threads to use for the computation. If
   /// set to 0, the number of threads is automatically determined.
   auto tide_from_mapping(
-      double epoch, uint16_t leap_seconds,
-      const DynamicRef<const Eigen::MatrixXcd>& wave,
+      double epoch, const DynamicRef<const Eigen::MatrixXcd>& wave,
       const angle::Formulae& formulae = angle::Formulae::kSchuremanOrder3,
       size_t num_threads = 0) const -> Eigen::MatrixXd;
 
@@ -306,17 +300,13 @@ class Table {
   ///
   /// @param[in] epoch: Desired UTC time expressed in number of seconds elapsed
   /// since 1970-01-01T00:00:00.
-  /// @param[in] leap_seconds The number of leap seconds since
-  /// 1970-01-01T00:00:00Z.
   /// @param[in] formulae The formulae used to compute the astronomical angles.
   /// @return The nodal correction for amplitude, v greenwich argument) + u
   /// (nodal correction for phase).
   /// @throw std::invalid_argument if the size of the epoch vector is not
   /// equal to the size of the leap seconds vector.
-  auto compute_nodal_modulations(
-      const Eigen::Ref<const Eigen::VectorXd>& epoch,
-      const Eigen::Ref<const Vector<uint16_t>>& leap_seconds,
-      const angle::Formulae& formulae) const
+  auto compute_nodal_modulations(const Eigen::Ref<const Eigen::VectorXd>& epoch,
+                                 const angle::Formulae& formulae) const
       -> std::tuple<Eigen::MatrixXd, Eigen::MatrixXd>;
 
  private:

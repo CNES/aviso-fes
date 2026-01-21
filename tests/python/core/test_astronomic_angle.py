@@ -12,7 +12,7 @@ import pytest
 def test_astronomic_angle() -> None:
     """Test the computation of astronomical angles."""
     aa = core.AstronomicAngle(core.kMeeus)
-    aa.update(datetime.datetime(2000, 1, 1), 32)
+    aa.update(datetime.datetime(2000, 1, 1))
     assert isinstance(aa, core.AstronomicAngle)
     assert aa.h == pytest.approx(4.886470984554807, rel=1e-6)
     assert aa.n == pytest.approx(2.1829004947295840, rel=1e-6)
@@ -28,7 +28,7 @@ def test_astronomic_angle() -> None:
     assert aa.xi == pytest.approx(0.19203231321420278, rel=1e-6)
 
     aa = core.AstronomicAngle(core.kSchuremanOrder3)
-    aa.update(datetime.datetime(2000, 1, 1), 32)
+    aa.update(datetime.datetime(2000, 1, 1))
     assert aa.h == pytest.approx(4.886452090906138, rel=1e-6)
     assert aa.n == pytest.approx(2.1828609691751804, rel=1e-6)
     assert aa.p == pytest.approx(1.4537574500601673, rel=1e-6)
@@ -37,7 +37,7 @@ def test_astronomic_angle() -> None:
     assert aa.t == pytest.approx(3.141592653589793, rel=1e-6)
 
     aa = core.AstronomicAngle(core.kIERS)
-    aa.update(datetime.datetime(2000, 1, 1), 32)
+    aa.update(datetime.datetime(2000, 1, 1))
     assert aa.h == pytest.approx(4.8864743802966597, 1e-6)
     assert aa.n == pytest.approx(2.1829004947295840, 1e-6)
     assert aa.nu == pytest.approx(0.20721813091600161, 1e-6)
@@ -69,7 +69,7 @@ def test_astronomical_angle_thread_safety() -> None:
 
             for date in dates:
                 # This should handle GIL internally
-                angle.update(date, 37)
+                angle.update(date)
 
             results[thread_id] = {
                 'success': True,

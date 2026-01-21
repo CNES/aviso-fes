@@ -258,7 +258,7 @@ class AstronomicAngle:
     def __init__(self, formulae: Formulae = ...) -> None:
         ...
 
-    def update(self, date: datetime.datetime, leap_seconds: int) -> None:
+    def update(self, date: datetime.datetime) -> None:
         ...
 
     @property
@@ -717,7 +717,6 @@ class WaveTable:
     def compute_nodal_modulations(
             self,
             dates: VectorDateTime64,
-            leap_seconds: VectorUInt16,
             formulae: Formulae = ...) -> Tuple[MatrixFloat64, MatrixFloat64]:
         ...
 
@@ -739,7 +738,6 @@ class WaveTable:
 
     def tide_from_mapping(self,
                           date: datetime.datetime,
-                          leap_seconds: int,
                           mapping: MatrixComplex128,
                           formulae: Formulae = ...,
                           num_threads: int = ...) -> MatrixFloat64:
@@ -747,7 +745,6 @@ class WaveTable:
 
     def tide_from_tide_series(self,
                               dates: VectorDateTime64,
-                              leap_seconds: VectorUInt16,
                               wave: VectorComplex128,
                               formulae: Formulae = ...) -> VectorFloat64:
         ...
@@ -766,7 +763,6 @@ class WaveTable:
 
 
 def evaluate_equilibrium_long_period(dates: VectorDateTime64,
-                                     leap_seconds: VectorUInt16,
                                      latitudes: VectorFloat64,
                                      settings: Settings | None = ...,
                                      num_threads: int = ...) -> VectorFloat64:
@@ -777,7 +773,6 @@ def evaluate_equilibrium_long_period(dates: VectorDateTime64,
 def evaluate_tide(
     tidal_model: AbstractTidalModelComplex128,
     date: VectorDateTime64,
-    leap_seconds: VectorUInt16,
     longitude: VectorFloat64,
     latitude: VectorFloat64,
     settings: Optional[Settings] = ...,
@@ -790,7 +785,6 @@ def evaluate_tide(
 def evaluate_tide(
     tidal_model: AbstractTidalModelComplex64,
     date: VectorDateTime64,
-    leap_seconds: VectorUInt16,
     longitude: VectorFloat64,
     latitude: VectorFloat64,
     settings: Optional[Settings] = ...,
@@ -802,7 +796,6 @@ def evaluate_tide(
 def evaluate_tide_from_constituents(
     constituents: Mapping[Constituent, tuple[float, float]],
     date: VectorDateTime64,
-    leap_seconds: VectorUInt16,
     longitude: float,
     latitude: float,
     settings: Optional[Settings] = ...,

@@ -74,7 +74,7 @@ cluster  # noqa: B018
 def compute_nodal_modulations(client, waves, time_series):
     """Compute nodal corrections for a given time series."""
     t = time_series.astype('datetime64[s]')
-    f, v0u = waves.compute_nodal_modulations(t, pyfes.get_leap_seconds(t))
+    f, v0u = waves.compute_nodal_modulations(t)
     return (
         dask.array.from_delayed(
             client.scatter(f, broadcast=True), shape=f.shape, dtype=f.dtype
@@ -243,7 +243,6 @@ nwaves, ni, nj = analysis.shape
 ts = time_series[0].astype('datetime64[s]')
 tide = wave_table.tide_from_mapping(
     ts.astype('float64'),
-    pyfes.get_leap_seconds(ts),
     analysis.reshape(nwaves, ni * nj),
 ).reshape(ni, nj)
 

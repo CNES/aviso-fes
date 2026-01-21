@@ -19,7 +19,6 @@ if TYPE_CHECKING:
         VectorComplex128,
         VectorDateTime64,
         VectorFloat64,
-        VectorUInt16,
     )
 
 #: Maximum number of tidal constituents to display in the representation
@@ -67,14 +66,12 @@ class WaveTable(core.WaveTable):
     def compute_nodal_modulations(
         self,
         dates: list[datetime.datetime] | VectorDateTime64,
-        leap_seconds: VectorUInt16,
         formulae: Formulae = Formulae.kSchuremanOrder1,
     ) -> tuple[VectorFloat64, VectorFloat64]:
         """Compute nodal modulations for amplitude and phase.
 
         Args:
             dates: Dates for which the nodal modulations are computed.
-            leap_seconds: Leap seconds for the dates provided.
             formulae: Astronomic formulae used to evaluate the astronomic
                 arguments for a given date. Default is
                 :py:attr:`pyfes.Formulae.kSchuremanOrder1
@@ -91,11 +88,10 @@ class WaveTable(core.WaveTable):
                 [core.datemanip.as_int64(item) for item in dates],
                 dtype='datetime64[us]',
             )
-            return super().compute_nodal_modulations(datetime64, leap_seconds)
+            return super().compute_nodal_modulations(datetime64, formulae)
         # The method throws an error if the dates are not datetime64
         return super().compute_nodal_modulations(
             dates,  # type: ignore[arg-type]
-            leap_seconds,
             formulae,
         )
 
@@ -211,7 +207,6 @@ class WaveDict(WaveTable):
     def tide_from_tide_series(
         self,
         dates: VectorDateTime64,
-        leap_seconds: VectorUInt16,
         wave: dict[str, VectorComplex128],
         formulae: Formulae = Formulae.kSchuremanOrder3,
     ) -> VectorFloat64:
@@ -222,7 +217,6 @@ class WaveDict(WaveTable):
 
         Args:
             dates: Time series dates.
-            leap_seconds: Leap seconds for the dates provided.
             wave: Tidal wave properties as a mapping from wave name to complex
             amplitudes.
             formulae: Astronomic formulae used to evaluate the astronomic
@@ -240,6 +234,4 @@ class WaveDict(WaveTable):
         wave_properties: VectorComplex128 = numpy.array(
             [wave[item] for item in self]
         )
-        return super().tide_from_tide_series(
-            dates, leap_seconds, wave_properties, formulae
-        )
+        return super().tide_from_tide_series(dates, wave_properties, formulae)

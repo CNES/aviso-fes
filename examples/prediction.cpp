@@ -283,9 +283,6 @@ int main() {
     times[i] =
         std::chrono::duration<double>(current.time_since_epoch()).count();
   }
-  // Setup the leap seconds (TAI-UTC)
-  // In production, these should be set according to the dates
-  auto leap_seconds = Eigen::Vector<uint16_t, -1>::Constant(times.size(), 21);
 
   // Set the location (longitude, latitude) in degrees
   auto lon = Eigen::VectorXd::Constant(times.size(), -7.688);
@@ -293,16 +290,16 @@ int main() {
 
   // Evaluate the radial load tide (long period and interpolation quality are
   // ignored)
-  Eigen::VectorXd load = std::get<0>(fes::evaluate_tide(
-      radial_handler.get(), times, leap_seconds, lon, lat, settings));
+  Eigen::VectorXd load = std::get<0>(
+      fes::evaluate_tide(radial_handler.get(), times, lon, lat, settings));
 
   // Evaluate the ocean tide (interpolation quality is ignored here, but in
   // production you should check this to differentiate between interpolated and
   // extrapolated points)
   Eigen::VectorXd tide;
   Eigen::VectorXd lp;
-  std::tie(tide, lp, std::ignore) = fes::evaluate_tide(
-      tide_handler.get(), times, leap_seconds, lon, lat, settings);
+  std::tie(tide, lp, std::ignore) =
+      fes::evaluate_tide(tide_handler.get(), times, lon, lat, settings);
 
   // Print header with better formatting
   std::cout << "\n" << std::string(110, '=') << std::endl;

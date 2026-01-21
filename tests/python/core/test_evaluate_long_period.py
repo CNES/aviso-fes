@@ -26,9 +26,7 @@ def test_evaluate_equilibrium_long_period() -> None:
             time_utc * 1e6
         ).astype(numpy.int64).astype('m8[us]')
 
-    computed = core.evaluate_equilibrium_long_period(
-        time_utc, numpy.zeros(time_utc.shape, dtype=numpy.uint16), latitude
-    )
+    computed = core.evaluate_equilibrium_long_period(time_utc, latitude)
 
     # In GDR product, equilibrium_long_period is set to 0 when the position is
     # on land

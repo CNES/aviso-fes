@@ -30,17 +30,15 @@ Args:
 )__doc__")
       .def(
           "update",
-          [](fes::angle::Astronomic& self, const py::handle& date,
-             const int16_t leap_seconds) {
-            self.update(fes::python::datemanip::as_float64(date), leap_seconds);
+          [](fes::angle::Astronomic& self, const py::handle& date) {
+            self.update(fes::python::datemanip::as_float64(date));
           },
-          py::arg("date"), py::arg("leap_seconds"),
+          py::arg("date"),
           R"__doc__(
 Update the astronomic angles.
 
 Args:
   date: Desired UTC time
-  leap_seconds: Number of leap seconds to add to UTC time to get TAI time
 )__doc__")
       .def_property_readonly("t", &fes::angle::Astronomic::t,
                              "Hour angle of mean sun")

@@ -14,7 +14,7 @@ class AstronomicAngleForNodalG : public fes::angle::Astronomic {
  public:
   // -2208988800 = 1900-01-01 00:00:00 UTC
   AstronomicAngleForNodalG()
-      : fes::angle::Astronomic(fes::angle::Formulae::kMeeus, -2208988800.0, 0) {
+      : fes::angle::Astronomic(fes::angle::Formulae::kMeeus, -2208988800.0) {
     t_ = detail::math::radians(1.0);
     h_ = detail::math::radians(1.0);
     s_ = detail::math::radians(1.0);
@@ -34,7 +34,7 @@ class AstronomicAngleForNodalA : public fes::angle::Astronomic {
  public:
   // -2208988800 = 1900-01-01 00:00:00 UTC
   AstronomicAngleForNodalA()
-      : fes::angle::Astronomic(fes::angle::Formulae::kMeeus, -2208988800.0, 0) {
+      : fes::angle::Astronomic(fes::angle::Formulae::kMeeus, -2208988800.0) {
     t_ = 1;
     h_ = 1;
     s_ = 1;

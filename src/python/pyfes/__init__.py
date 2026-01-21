@@ -12,7 +12,6 @@ from . import core
 from .astronomic_angle import AstronomicAngle
 from .config import load as load_config
 from .core import Constituent, Formulae, constituents
-from .leap_seconds import get_leap_seconds
 from .version import __version__
 from .wave_table import WaveDict, WaveTable
 
@@ -30,7 +29,6 @@ __all__ = [
     '__version__',
     'constituents',
     'evaluate_tide_from_constituents',
-    'get_leap_seconds',
     'load_config',
 ]
 
@@ -127,7 +125,6 @@ def evaluate_tide(  # noqa: PLR0913
     return core.evaluate_tide(
         tidal_model,  # type: ignore[arg-type]
         date,
-        get_leap_seconds(date),
         longitude,
         latitude,
         settings,
@@ -200,7 +197,6 @@ def evaluate_tide_from_constituents(  # noqa: PLR0913
     return core.evaluate_tide_from_constituents(
         constituents,  # type: ignore[arg-type]
         date,
-        get_leap_seconds(date),
         longitude,
         latitude,
         settings,
@@ -247,7 +243,6 @@ def evaluate_equilibrium_long_period(
     """
     return core.evaluate_equilibrium_long_period(
         date,
-        get_leap_seconds(date),
         latitude,
         settings,
         num_threads,

@@ -17,60 +17,47 @@
 namespace py = pybind11;
 
 auto evaluate_equilibrium_long_period(
-    py::array& dates,
-    const Eigen::Ref<const fes::Vector<uint16_t>>& leap_seconds,
-    const Eigen::Ref<const fes::Vector<double>>& latitudes,
+    py::array& dates, const Eigen::Ref<const fes::Vector<double>>& latitudes,
     const boost::optional<fes::Settings>& settings, const size_t num_threads)
     -> Eigen::VectorXd {
-  if (dates.size() != latitudes.size() || dates.size() != leap_seconds.size()) {
-    throw std::invalid_argument(
-        "dates, latitudes and leap_seconds must have the same size");
+  if (dates.size() != latitudes.size()) {
+    throw std::invalid_argument("dates and latitudes must have the same size");
   }
   auto epoch = fes::python::npdatetime64_to_epoch(dates);
   {
     py::gil_scoped_release gil;
     return fes::evaluate_equilibrium_long_period(
-        epoch, leap_seconds, latitudes, settings.value_or(fes::Settings()),
-        num_threads);
+        epoch, latitudes, settings.value_or(fes::Settings()), num_threads);
   }
 }
 
 template <typename T>
 auto evaluate_tide(const fes::AbstractTidalModel<T>* const tidal_model,
                    py::array& dates,
-                   const Eigen::Ref<const fes::Vector<uint16_t>>& leap_seconds,
                    const Eigen::Ref<const Eigen::VectorXd>& longitudes,
                    const Eigen::Ref<const Eigen::VectorXd>& latitudes,
                    const boost::optional<fes::Settings>& settings,
                    const size_t num_threads = 0)
     -> std::tuple<Eigen::VectorXd, Eigen::VectorXd, fes::Vector<fes::Quality>> {
-  if (dates.size() != leap_seconds.size() ||
-      dates.size() != longitudes.size() || dates.size() != latitudes.size()) {
+  if (dates.size() != longitudes.size() || dates.size() != latitudes.size()) {
     throw std::invalid_argument(
-        "epoch, leap_seconds, longitudes and latitudes must have the same "
+        "epoch, longitudes and latitudes must have the same "
         "size");
   }
   auto epoch = fes::python::npdatetime64_to_epoch(dates);
   {
     py::gil_scoped_release gil;
-    return fes::evaluate_tide(tidal_model, epoch, leap_seconds, longitudes,
-                              latitudes, settings.value_or(fes::Settings()),
-                              num_threads);
+    return fes::evaluate_tide(tidal_model, epoch, longitudes, latitudes,
+                              settings.value_or(fes::Settings()), num_threads);
   }
 }
 
 inline auto evaluate_tide_from_constituents(
     const std::map<fes::Constituent, std::pair<double, double>>& constituents,
-    py::array& dates,
-    const Eigen::Ref<const fes::Vector<uint16_t>>& leap_seconds,
-    const double longitudes, const double latitudes,
+    py::array& dates, const double longitudes, const double latitudes,
     const boost::optional<fes::Settings>& settings,
     const size_t num_threads = 0)
     -> std::tuple<Eigen::VectorXd, Eigen::VectorXd> {
-  if (dates.size() != leap_seconds.size()) {
-    throw std::invalid_argument(
-        "epoch and leap_seconds must have the same size");
-  }
   auto epoch = fes::python::npdatetime64_to_epoch(dates);
   {
     py::gil_scoped_release gil;
@@ -83,7 +70,7 @@ inline auto evaluate_tide_from_constituents(
     }
 
     return fes::evaluate_tide_from_constituents(
-        complex_constituents, epoch, leap_seconds, longitudes, latitudes,
+        complex_constituents, epoch, longitudes, latitudes,
         settings.value_or(fes::Settings()), num_threads);
   }
 }
@@ -93,24 +80,22 @@ void init_tide(py::module& m) {
   m.def(
       "evaluate_tide",
       [](const fes::AbstractTidalModel<T>* const tidal_model, py::array& date,
-         const Eigen::Ref<const fes::Vector<uint16_t>>& leap_seconds,
          const Eigen::Ref<const Eigen::VectorXd>& longitude,
          const Eigen::Ref<const Eigen::VectorXd>& latitude,
          const boost::optional<fes::Settings>& settings,
          const size_t num_threads) {
-        return evaluate_tide<T>(tidal_model, date, leap_seconds, longitude,
-                                latitude, settings, num_threads);
+        return evaluate_tide<T>(tidal_model, date, longitude, latitude,
+                                settings, num_threads);
       },
-      py::arg("tidal_model"), py::arg("date"), py::arg("leap_seconds"),
-      py::arg("longitude"), py::arg("latitude"),
-      py::arg("settings") = boost::none, py::arg("num_threads") = 0,
+      py::arg("tidal_model"), py::arg("date"), py::arg("longitude"),
+      py::arg("latitude"), py::arg("settings") = boost::none,
+      py::arg("num_threads") = 0,
       R"__doc(
 Ocean tide calculation
 
 Args:
   tidal_model: Tidal model used to interpolate the modelized waves
   date: Date of the tide calculation
-  leap_seconds: Leap seconds at the date of the tide calculation
   longitude: Longitude in degrees for the position at which the tide is
     calculated
   latitude: Latitude in degrees for the position at which the tide is
@@ -154,18 +139,15 @@ void init_tide(py::module& m) {
       "evaluate_tide_from_constituents",
       [](const std::map<fes::Constituent, std::pair<double, double>>&
              constituents,
-         py::array& date,
-         const Eigen::Ref<const fes::Vector<uint16_t>>& leap_seconds,
-         const double longitude, const double latitude,
+         py::array& date, const double longitude, const double latitude,
          const boost::optional<fes::Settings>& settings,
          const size_t num_threads) {
-        return evaluate_tide_from_constituents(constituents, date, leap_seconds,
-                                               longitude, latitude, settings,
-                                               num_threads);
+        return evaluate_tide_from_constituents(constituents, date, longitude,
+                                               latitude, settings, num_threads);
       },
-      py::arg("constituents"), py::arg("date"), py::arg("leap_seconds"),
-      py::arg("longitude"), py::arg("latitude"),
-      py::arg("settings") = boost::none, py::arg("num_threads") = 0,
+      py::arg("constituents"), py::arg("date"), py::arg("longitude"),
+      py::arg("latitude"), py::arg("settings") = boost::none,
+      py::arg("num_threads") = 0,
       R"__doc(
 Ocean tide calculation
 
@@ -180,7 +162,6 @@ Args:
   constituents: A map of tidal constituents with their amplitude and phase
     (degrees) properties.
   date: Date of the tide calculation
-  leap_seconds: Leap seconds at the date of the tide calculation
   longitude: Longitude in degrees for the position at which the tide is
     calculated
   latitude: Latitude in degrees for the position at which the tide is
@@ -198,13 +179,12 @@ Returns:
 )__doc");
 
   m.def("evaluate_equilibrium_long_period", &evaluate_equilibrium_long_period,
-        py::arg("dates"), py::arg("leap_seconds"), py::arg("latitudes"),
+        py::arg("dates"), py::arg("latitudes"),
         py::arg("settings") = boost::none, py::arg("num_threads") = 0,
         R"__doc(Compute the long-period equilibrium ocean tides.
 
 Args:
   dates: Dates of the tide calculation
-  leap_seconds: Leap seconds at the date of the tide calculation
   latitudes: Latitude in degrees for the position at which the long-period
     tide is calculated
   settings: Settings for the tide computation.

@@ -12,7 +12,6 @@ import time
 import netCDF4
 import numpy
 from pyfes import core
-from pyfes.leap_seconds import get_leap_seconds
 import pytest
 
 from . import is_free_threaded
@@ -56,7 +55,7 @@ def test_constructor() -> None:
 
 def test_wave() -> None:
     aa = core.AstronomicAngle()
-    aa.update(datetime.datetime(2000, 1, 1), 32)
+    aa.update(datetime.datetime(2000, 1, 1))
     wt = core.WaveTable(['M2'])
     wave = wt.find('M2')
     assert wave.freq * 24 == pytest.approx(12.140833182614747, 1e-6)
@@ -139,10 +138,9 @@ def test_harmonic_analysis() -> None:
             'Sa',
         ],
     )
-    leap_seconds = get_leap_seconds(time)
-    f, vu = wt.compute_nodal_modulations(time, leap_seconds)
+    f, vu = wt.compute_nodal_modulations(time)
     w = wt.harmonic_analysis(h, f, vu)
-    delta = h - wt.tide_from_tide_series(time, leap_seconds, w)
+    delta = h - wt.tide_from_tide_series(time, w)
 
     assert delta.mean(), pytest.approx(0, rel=1e-16)
     assert delta.std(), pytest.approx(0, rel=1e-12)
@@ -156,31 +154,22 @@ def test_harmonic_analysis_with_empty_table() -> None:
         dtype='datetime64[s]',
     )
     h = numpy.random.default_rng().random(time.shape[0])
-    leap_seconds = get_leap_seconds(time)
 
     wt = core.WaveTable(['M2', 'S2', 'N2', 'K1', 'O1', 'Q1'])
-    w = wt.harmonic_analysis(
-        h, *wt.compute_nodal_modulations(time, leap_seconds)
-    )
-    assert numpy.all(
-        ~numpy.isnan(wt.tide_from_tide_series(time, leap_seconds, w))
-    )
+    w = wt.harmonic_analysis(h, *wt.compute_nodal_modulations(time))
+    assert numpy.all(~numpy.isnan(wt.tide_from_tide_series(time, w)))
 
     wt = core.WaveTable()
-    w = wt.harmonic_analysis(
-        h, *wt.compute_nodal_modulations(time, leap_seconds)
-    )
-    assert numpy.all(
-        ~numpy.isnan(wt.tide_from_tide_series(time, leap_seconds, w))
-    )
+    w = wt.harmonic_analysis(h, *wt.compute_nodal_modulations(time))
+    assert numpy.all(~numpy.isnan(wt.tide_from_tide_series(time, w)))
 
 
 def benchmark_wave_table_operations():
     """Benchmark operations that should be GIL-free."""
 
-    def compute_nodal_modulations(dates, leap_seconds):
+    def compute_nodal_modulations(dates):
         wave_table = core.WaveTable()
-        return wave_table.compute_nodal_modulations(dates, leap_seconds)
+        return wave_table.compute_nodal_modulations(dates)
 
     # Setup test data
     n_dates = 1000
@@ -190,20 +179,16 @@ def benchmark_wave_table_operations():
             for i in range(n_dates)
         ]
     )
-    leap_seconds = numpy.full((n_dates, 1), 37, dtype=numpy.uint16)
-
     # Single-threaded benchmark
     start = time.time()
-    _ = compute_nodal_modulations(dates, leap_seconds)
+    _ = compute_nodal_modulations(dates)
     single_time = time.time() - start
 
     # Multi-threaded benchmark
     start = time.time()
     with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
         futures = [
-            executor.submit(
-                compute_nodal_modulations, dates[i::4], leap_seconds[i::4]
-            )
+            executor.submit(compute_nodal_modulations, dates[i::4])
             for i in range(4)
         ]
         _ = [f.result() for f in futures]
@@ -256,10 +241,7 @@ def test_concurrent_wave_table_access() -> None:
                     dates = rng.integers(0, int(1e6), 10).astype(
                         'datetime64[us]'
                     )
-                    leap_seconds = numpy.empty((10,), dtype=numpy.uint16)
-                    f, vu = wave_table.compute_nodal_modulations(
-                        dates, leap_seconds
-                    )
+                    f, vu = wave_table.compute_nodal_modulations(dates)
                     h = rng.random((10,))
                     result = wave_table.harmonic_analysis(h, f, vu)
                     assert result.shape == (5,)

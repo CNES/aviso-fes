@@ -10,7 +10,6 @@ import datetime
 
 from . import core
 from .core import Formulae
-from .leap_seconds import get_leap_seconds
 
 
 class AstronomicAngle(core.AstronomicAngle):
@@ -53,8 +52,7 @@ class AstronomicAngle(core.AstronomicAngle):
         """
         if date is None:
             date = datetime.datetime.utcnow()
-        leap_seconds = get_leap_seconds(date)
-        super().update(date, leap_seconds[0])
+        super().update(date)
         self.date = date
 
     def __repr__(self) -> str:

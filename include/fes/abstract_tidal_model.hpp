@@ -103,14 +103,12 @@ class Accelerator {
   /// constituents at the given UTC time.
   ///
   /// @param[in] epoch Desired UTC time in seconds since 1970-01-01T00:00:00Z.
-  /// @param[in] leap_seconds The number of leap seconds since
-  /// 1970-01-01T00:00:00Z.
   /// @return The astronomic angle corresponding to the given UTC time.
-  auto calculate_angle(const double epoch, const uint16_t leap_seconds) noexcept
+  auto calculate_angle(const double epoch) noexcept
       -> const angle::Astronomic& {
     if (std::abs(epoch - angle_.first) > time_tolerance_) {
       angle_.first = epoch;
-      angle_.second.update(epoch, leap_seconds);
+      angle_.second.update(epoch);
     }
     return angle_.second;
   }

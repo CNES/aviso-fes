@@ -106,16 +106,17 @@ static inline auto build_wave_table_from_constituents(
 /// @param[inout] lpe Long period equilibrium handler
 /// @param[inout] acc Accelerator for angle calculation
 /// @param[in] epoch Time in seconds since 1970-01-01T00:00:00Z
-/// @param[in] leap_seconds Leap seconds at this epoch
 /// @param[in] latitude Latitude in degrees for long period calculation
 /// @param[in] compute_lpe Whether to compute long period equilibrium
 /// @return Tuple of (short_period_tide, long_period_tide)
-static inline auto compute_tide_from_waves(
-    wave::Table& wave_table, wave::LongPeriodEquilibrium& lpe, Accelerator& acc,
-    const double epoch, const uint16_t leap_seconds, const double latitude,
-    const bool compute_lpe = true) -> std::tuple<double, double> {
+static inline auto compute_tide_from_waves(wave::Table& wave_table,
+                                           wave::LongPeriodEquilibrium& lpe,
+                                           Accelerator& acc, const double epoch,
+                                           const double latitude,
+                                           const bool compute_lpe = true)
+    -> std::tuple<double, double> {
   // Update the astronomic angle used to evaluate the tidal constituents.
-  const auto& angles = acc.calculate_angle(epoch, leap_seconds);
+  const auto& angles = acc.calculate_angle(epoch);
 
   // Adjusts nodal corrections to the tidal estimate date.
   wave_table.compute_nodal_corrections(angles);
@@ -146,8 +147,6 @@ static inline auto compute_tide_from_waves(
 /// @tparam T The type of tidal constituents modelled.
 /// @param[in] tidal_model The tidal model.
 /// @param[in] epoch The number of seconds since 1970-01-01T00:00:00Z.
-/// @param[in] leap_seconds The number of leap seconds since
-/// 1970-01-01T00:00:00Z.
 /// @param[in] longitude The longitude of the point.
 /// @param[in] latitude The latitude of the point.
 /// @param[in] wave_table The list of tidal constituents used for the tidal
@@ -163,9 +162,8 @@ static inline auto compute_tide_from_waves(
 /// - The quality of the interpolation (see Quality)
 template <typename T>
 inline auto evaluate_tide(const AbstractTidalModel<T>* const tidal_model,
-                          const double epoch, const uint16_t leap_seconds,
-                          const double longitude, const double latitude,
-                          wave::Table& wave_table,
+                          const double epoch, const double longitude,
+                          const double latitude, wave::Table& wave_table,
                           wave::LongPeriodEquilibrium& long_period,
                           Accelerator* acc)
     -> std::tuple<double, double, Quality> {
@@ -178,7 +176,7 @@ inline auto evaluate_tide(const AbstractTidalModel<T>* const tidal_model,
   // period equilibrium (it doesn't depend on the model) but set tide to NaN.
   if (quality == kUndefined) {
     // We need to compute angles and long period for undefined points
-    const auto& angles = acc->calculate_angle(epoch, leap_seconds);
+    const auto& angles = acc->calculate_angle(epoch);
     wave_table.compute_nodal_corrections(angles);
     auto h_long_period = tidal_model->tide_type() == fes::kTide
                              ? long_period.lpe_minus_n_waves(angles, latitude)
@@ -189,7 +187,7 @@ inline auto evaluate_tide(const AbstractTidalModel<T>* const tidal_model,
   // Compute the tide using the common helper function
   const auto compute_lpe = tidal_model->tide_type() == fes::kTide;
   auto tides = compute_tide_from_waves(wave_table, long_period, *acc, epoch,
-                                       leap_seconds, latitude, compute_lpe);
+                                       latitude, compute_lpe);
 
   return {std::get<0>(tides), std::get<1>(tides), quality};
 }
@@ -201,8 +199,6 @@ inline auto evaluate_tide(const AbstractTidalModel<T>* const tidal_model,
 /// @param[in] tidal_model Tidal model used to interpolate the modelized waves
 /// @param[in] epoch Date of the tide calculation expressed in number of seconds
 /// elapsed since 1970-01-01T00:00:00Z
-/// @param[in] leap_seconds Number of leap seconds elapsed since
-/// 1970-01-01T00:00:00Z
 /// @param[in] longitude Longitude in degrees for the position at which the tide
 /// is calculated
 /// @param[in] latitude Latitude in degrees for the position at which the tide
@@ -234,15 +230,14 @@ inline auto evaluate_tide(const AbstractTidalModel<T>* const tidal_model,
 template <typename T>
 auto evaluate_tide(const AbstractTidalModel<T>* const tidal_model,
                    const Eigen::Ref<const Eigen::VectorXd>& epoch,
-                   const Eigen::Ref<const fes::Vector<uint16_t>>& leap_seconds,
                    const Eigen::Ref<const Eigen::VectorXd>& longitude,
                    const Eigen::Ref<const Eigen::VectorXd>& latitude,
                    const Settings& settings = Settings(),
                    const size_t num_threads = 0)
     -> std::tuple<Eigen::VectorXd, Eigen::VectorXd, Vector<Quality>> {
   // Checks the input parameters
-  detail::check_eigen_shape("epoch", epoch, "leap_seconds", leap_seconds,
-                            "longitude", longitude, "latitude", latitude);
+  detail::check_eigen_shape("epoch", epoch, "longitude", longitude, "latitude",
+                            latitude);
 
   // Allocates the result vectors
   auto tide = Eigen::VectorXd(epoch.size());
@@ -258,9 +253,9 @@ auto evaluate_tide(const AbstractTidalModel<T>* const tidal_model,
     auto lpe = wave::LongPeriodEquilibrium(wave_table);
 
     for (auto ix = start; ix < end; ++ix) {
-      std::tie(tide(ix), long_period(ix), quality(ix)) = detail::evaluate_tide(
-          tidal_model, epoch(ix), leap_seconds(ix), longitude(ix), latitude(ix),
-          wave_table, lpe, acc_ptr);
+      std::tie(tide(ix), long_period(ix), quality(ix)) =
+          detail::evaluate_tide(tidal_model, epoch(ix), longitude(ix),
+                                latitude(ix), wave_table, lpe, acc_ptr);
     }
   };
 
@@ -281,8 +276,6 @@ auto evaluate_tide(const AbstractTidalModel<T>* const tidal_model,
 /// complex-valued (amplitude and phase) properties.
 /// @param[in] epoch Date of the tide calculation expressed in number of seconds
 /// elapsed since 1970-01-01T00:00:00Z (can be a vector of multiple times).
-/// @param[in] leap_seconds Number of leap seconds elapsed since
-/// 1970-01-01T00:00:00Z (corresponding to each epoch value).
 /// @param[in] longitude Longitude in degrees for the position.
 /// @param[in] latitude Latitude in degrees for the position.
 /// @param[in] settings Settings for the tide computation.
@@ -297,10 +290,9 @@ auto evaluate_tide(const AbstractTidalModel<T>* const tidal_model,
 /// constituents.
 auto evaluate_tide_from_constituents(
     const std::map<Constituent, std::complex<double>>& constituents,
-    const Eigen::Ref<const Eigen::VectorXd>& epoch,
-    const Eigen::Ref<const fes::Vector<uint16_t>>& leap_seconds,
-    const double longitude, const double latitude,
-    const Settings& settings = Settings(), const size_t num_threads = 0)
+    const Eigen::Ref<const Eigen::VectorXd>& epoch, const double longitude,
+    const double latitude, const Settings& settings = Settings(),
+    const size_t num_threads = 0)
     -> std::tuple<Eigen::VectorXd, Eigen::VectorXd>;
 
 /// @brief Compute the long period equilibrium ocean tides.
@@ -319,8 +311,6 @@ auto evaluate_tide_from_constituents(
 ///   - Cartwright & Edden, Geophys. J. R.A.S., 33, 253, 1973.
 ///   - Tamura Y., Bull. d'information des marees terrestres, Vol. 99, 1987.
 /// @param[in] epoch The number of seconds since 1970-01-01T00:00:00Z.
-/// @param[in] leap_seconds The number of leap seconds since
-/// 1970-01-01T00:00:00Z.
 /// @param[in] latitude Latitude in degrees (positive north) for the position at
 /// which tide is computed.
 /// @param[in] settings Settings for the tide computation.
@@ -328,7 +318,6 @@ auto evaluate_tide_from_constituents(
 /// the number of threads is automatically determined.
 auto evaluate_equilibrium_long_period(
     const Eigen::Ref<const Eigen::VectorXd>& epoch,
-    const Eigen::Ref<const fes::Vector<uint16_t>>& leap_seconds,
     const Eigen::Ref<const Eigen::VectorXd>& latitude,
     const Settings& settings = Settings(), const size_t num_threads = 0)
     -> Eigen::VectorXd;

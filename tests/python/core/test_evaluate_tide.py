@@ -10,7 +10,6 @@ import time
 import netCDF4
 import numpy
 from pyfes import core
-from pyfes.leap_seconds import get_leap_seconds
 import pytest
 
 #: Path to the directory containing the test datasets.
@@ -176,12 +175,9 @@ def test_tide() -> None:
         dates[hour] = numpy.datetime64(f'1983-01-01T{hour:02d}:00:00')
         lons[hour] = -7.688
         lats[hour] = 59.195
-    leap_seconds = get_leap_seconds(dates)
-    tide = core.evaluate_tide(
-        tidal_model, dates, leap_seconds, lons, lats, num_threads=1
-    )
+    tide = core.evaluate_tide(tidal_model, dates, lons, lats, num_threads=1)
     radial_waves = core.evaluate_tide(
-        radial_model, dates, leap_seconds, lons, lats, num_threads=1
+        radial_model, dates, lons, lats, num_threads=1
     )
     check_tide(tide, radial_waves)
 
@@ -189,7 +185,6 @@ def test_tide() -> None:
 def cpu_intensive_task(
     tidal_model: core.tidal_model.CartesianComplex64,
     dates: numpy.ndarray,
-    leap_seconds: numpy.ndarray,
     lon: numpy.ndarray,
     lat: numpy.ndarray,
     thread_id: int,
@@ -202,7 +197,6 @@ def cpu_intensive_task(
         result = core.evaluate_tide(
             tidal_model,
             dates,
-            leap_seconds,
             lon,
             lat,
             num_threads=1,  # Force single thread per call for this test
@@ -225,7 +219,6 @@ def test_parallel_tide_evaluation() -> None:
     lon = numpy.linspace(0, 10, 100)
     lat = numpy.linspace(45, 55, 100)
     dates = numpy.full(lon.shape, numpy.datetime64('2024-01-01T00:00:00'))
-    leap_seconds = numpy.full(lon.shape, 37, dtype=numpy.uint16)
 
     # Create a simple tidal model (you'll need to adapt this to your actual
     # model)
@@ -236,7 +229,7 @@ def test_parallel_tide_evaluation() -> None:
     # Sequential execution
     start_sequential = time.time()
     for i in range(num_threads):
-        _ = cpu_intensive_task(tidal_model, dates, leap_seconds, lon, lat, i)
+        _ = cpu_intensive_task(tidal_model, dates, lon, lat, i)
     sequential_time = time.time() - start_sequential
 
     # Parallel execution
@@ -249,7 +242,6 @@ def test_parallel_tide_evaluation() -> None:
                 cpu_intensive_task,
                 tidal_model,
                 dates,
-                leap_seconds,
                 lon,
                 lat,
                 i,
@@ -280,7 +272,6 @@ def test_evaluate_tide_from_constituents() -> None:
     tide, long_period = core.evaluate_tide_from_constituents(
         constituents,
         dates,
-        numpy.full(dates.shape, 37, dtype=numpy.uint16),
         BREST_LOCATION[0],
         BREST_LOCATION[1],
         None,

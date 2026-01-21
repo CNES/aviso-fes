@@ -11,12 +11,9 @@ namespace fes {
 
 auto evaluate_tide_from_constituents(
     const std::map<Constituent, std::complex<double>>& constituents,
-    const Eigen::Ref<const Eigen::VectorXd>& epoch,
-    const Eigen::Ref<const fes::Vector<uint16_t>>& leap_seconds,
-    const double longitude, const double latitude, const Settings& settings,
-    const size_t num_threads) -> std::tuple<Eigen::VectorXd, Eigen::VectorXd> {
-  // Checks the input parameters
-  detail::check_eigen_shape("epoch", epoch, "leap_seconds", leap_seconds);
+    const Eigen::Ref<const Eigen::VectorXd>& epoch, const double longitude,
+    const double latitude, const Settings& settings, const size_t num_threads)
+    -> std::tuple<Eigen::VectorXd, Eigen::VectorXd> {
   // Allocates the result vectors
   auto tide = Eigen::VectorXd(epoch.size());
   auto long_period = Eigen::VectorXd(epoch.size());
@@ -29,7 +26,7 @@ auto evaluate_tide_from_constituents(
 
     for (auto ix = start; ix < end; ++ix) {
       std::tie(tide(ix), long_period(ix)) = detail::compute_tide_from_waves(
-          wave_table, lpe, acc, epoch[ix], leap_seconds[ix], latitude);
+          wave_table, lpe, acc, epoch[ix], latitude);
     }
   };
 
@@ -39,18 +36,16 @@ auto evaluate_tide_from_constituents(
 
 auto evaluate_equilibrium_long_period(
     const Eigen::Ref<const Eigen::VectorXd>& epoch,
-    const Eigen::Ref<const fes::Vector<uint16_t>>& leap_seconds,
     const Eigen::Ref<const Eigen::VectorXd>& latitude, const Settings& settings,
     const size_t num_threads) -> Eigen::VectorXd {
   // Checks the input parameters
-  detail::check_eigen_shape("epoch", epoch, "leap_seconds", leap_seconds,
-                            "latitude", latitude);
+  detail::check_eigen_shape("epoch", epoch, "latitude", latitude);
   auto result = Eigen::VectorXd(epoch.size());
   auto worker = [&](const int64_t start, const int64_t end) {
     auto angles = angle::Astronomic(settings.astronomic_formulae());
     auto model = wave::LongPeriodEquilibrium(fes::wave::Table());
     for (auto ix = start; ix < end; ++ix) {
-      angles.update(epoch(ix), leap_seconds(ix));
+      angles.update(epoch(ix));
       result(ix) = model.lpe_minus_n_waves(angles, latitude(ix));
     }
   };

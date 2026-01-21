@@ -67,16 +67,15 @@ Returns:
       .def(
           "tide_from_tide_series",
           [](const fes::wave::Table& self, py::array& dates,
-             const Eigen::Ref<const fes::Vector<uint16_t>>& leap_seconds,
              const Eigen::Ref<const Eigen::VectorXcd>& wave,
              const fes::angle::Formulae& formulae) -> Eigen::VectorXd {
             auto epoch = fes::python::npdatetime64_to_epoch(dates);
             {
               py::gil_scoped_release gil;
-              return self.tide_from_tide_series(epoch, leap_seconds, wave);
+              return self.tide_from_tide_series(epoch, wave);
             }
           },
-          py::arg("dates"), py::arg("leap_seconds"), py::arg("wave"),
+          py::arg("dates"), py::arg("wave"),
           py::arg("formulae") = fes::angle::Formulae::kSchuremanOrder3,
           R"__doc__(
 Calculates the tide of a given time series.
@@ -84,7 +83,6 @@ Calculates the tide of a given time series.
 Args:
   dates: UTC dates. The array must be one-dimensional and of type
     :py:class:`numpy.datetime64`.
-  leap_seconds: Leap seconds at the date of the tide calculation.
   wave: Tidal wave properties computed by
     :py:meth:`pyfes.WaveTable.harmonic_analysis
     <pyfes.core.WaveTable.harmonic_analysis>`.
@@ -98,18 +96,16 @@ Return:
       .def(
           "tide_from_mapping",
           [](const fes::wave::Table& self, const py::handle& date,
-             const uint16_t leap_seconds,
              const fes::DynamicRef<const Eigen::MatrixXcd>& wave,
              const fes::angle::Formulae& formulae,
              const size_t num_threads) -> Eigen::MatrixXd {
             auto epoch = fes::python::datemanip::as_float64(date);
             {
               py::gil_scoped_release gil;
-              return self.tide_from_mapping(epoch, leap_seconds, wave, formulae,
-                                            num_threads);
+              return self.tide_from_mapping(epoch, wave, formulae, num_threads);
             }
           },
-          py::arg("date"), py::arg("leap_seconds"), py::arg("mapping"),
+          py::arg("date"), py::arg("mapping"),
           py::arg("formulae") = fes::angle::Formulae::kSchuremanOrder3,
           py::arg("num_threads") = 0,
           R"__doc__(
@@ -118,7 +114,6 @@ over an area of interest.
 
 Args:
   date: UTC date.
-  leap_seconds: Leap seconds at the date of the tide calculation.
   mapping: Mapping of the wave properties over an area of interest.
   formulae: Astronomic formulae used to calculate the astronomic angles.
     Defaults to :py:attr:`pyfes.Formulae.kSchuremanOrder3
@@ -131,17 +126,15 @@ Returns:
       .def(
           "compute_nodal_modulations",
           [](const fes::wave::Table& self, py::array& dates,
-             const Eigen::Ref<const fes::Vector<uint16_t>>& leap_seconds,
              const fes::angle::Formulae& formulae)
               -> std::tuple<Eigen::MatrixXd, Eigen::MatrixXd> {
             auto epoch = fes::python::npdatetime64_to_epoch(dates);
             {
               py::gil_scoped_release gil;
-              return self.compute_nodal_modulations(epoch, leap_seconds,
-                                                    formulae);
+              return self.compute_nodal_modulations(epoch, formulae);
             }
           },
-          py::arg("dates"), py::arg("leap_seconds"),
+          py::arg("dates"),
           py::arg("formulae") = fes::angle::Formulae::kSchuremanOrder3,
           R"__doc__(
 Compute nodal modulations for amplitude and phase.
@@ -149,7 +142,6 @@ Compute nodal modulations for amplitude and phase.
 Args:
     dates: Desired UTC time. The array must be one-dimensional
         and of type :py:class:`numpy.datetime64`.
-    leap_seconds: Leap seconds at the date of the tide calculation.
     formulae: Astronomic formulae used to calculate the astronomic angles.
         Defaults to :py:attr:`pyfes.Formulae.kSchuremanOrder3
         <pyfes.core.Formulae.kSchuremanOrder3>`.

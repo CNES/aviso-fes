@@ -121,13 +121,6 @@ Constituents Analysis
    :undoc-members:
    :show-inheritance:
 
-Leap Seconds
-------------
-
-.. currentmodule:: pyfes
-
-.. autofunction:: pyfes.get_leap_seconds
-
 Type hints
 ----------
 

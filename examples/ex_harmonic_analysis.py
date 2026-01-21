@@ -130,15 +130,9 @@ wt = pyfes.WaveTable(
 print(wt.keys())
 
 # %%
-# In order to compute the astronomical angular argument, the leap seconds must
-# be known. The leap seconds can be obtained using the
-# :py:func:`pyfes.get_leap_seconds` function.
-leap_seconds = pyfes.get_leap_seconds(time)
-
-# %%
 # The different nodal corrections are then calculated from the time series to
 # be analyzed:
-f, vu = wt.compute_nodal_modulations(time, leap_seconds)
+f, vu = wt.compute_nodal_modulations(time)
 
 # %%
 # These coefficients are used by :meth:`harmonic analysis
@@ -149,7 +143,7 @@ w = wt.harmonic_analysis(h, f, vu)
 # %%
 # This result can then be used to determine a tidal height for the analyzed time
 # series:
-h_tide = wt.tide_from_tide_series(time, leap_seconds, w)
+h_tide = wt.tide_from_tide_series(time, w)
 
 # %%
 # Finally, we can visualize the original signal's height adjusted by the tidal
