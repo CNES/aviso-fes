@@ -147,26 +147,6 @@ class Astronomic {
   /// @returns Term in argument of lunisolar constituent @f$K_2@f$ (radians).
   constexpr auto nusec() const noexcept -> double { return nusec_; }
 
-  /// @brief @f$L@f$
-  ///
-  /// @returns The mean anomaly of the Moon (degrees).
-  auto constexpr l() const noexcept -> double { return s_ - p_; }
-
-  /// @brief @f$L'@f$
-  ///
-  /// @returns The mean anomaly of the Sun (degrees).
-  auto constexpr lp() const noexcept -> double { return h_ - p1_; }
-
-  /// @brief @f$f = L - OM@f$
-  ///
-  /// @returns The mean longitude of the Moon (degrees).
-  auto constexpr f() const noexcept -> double { return s_ - n_; }
-
-  /// @brief @f$D@f$
-  ///
-  /// @returns The mean elongation of the Moon from the Sun (degrees).
-  auto constexpr d() const noexcept -> double { return s_ - h_; }
-
   /// @brief Gets the node factor of @f$O_1@f$.
   ///
   /// @return @f$sin(I) \times cos^{2}(\frac{I}{2})/0.3800@f$

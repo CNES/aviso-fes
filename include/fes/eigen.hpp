@@ -37,4 +37,13 @@ using DynamicStride = Eigen::Stride<Eigen::Dynamic, Eigen::Dynamic>;
 template <typename T>
 using DynamicRef = Eigen::Ref<T, 0, DynamicStride>;
 
+/// @brief Alias for a boolean vector of size 7.
+using Vector7b = Eigen::Vector<int8_t, 7>;
+
+/// @brief Alias for a double vector of size 6.
+using Vector6d = Eigen::Vector<double, 6>;
+
+/// @brief Alias for a double vector of size 7.
+using Vector7d = Eigen::Vector<double, 7>;
+
 }  // namespace fes
