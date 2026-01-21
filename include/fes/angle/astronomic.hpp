@@ -94,7 +94,7 @@ class Astronomic {
 
   /// @brief @f$N@f$
   ///
-  /// @returns Longitude of moon's node (radians).
+  /// @returns  Mean longitude of the ascending node of the Moon (radians).
   constexpr auto n() const noexcept -> double { return n_; }
 
   /// @brief @f$h@f$
@@ -152,6 +152,26 @@ class Astronomic {
   ///
   /// @returns Term in argument of lunisolar constituent @f$K_2@f$ (radians).
   constexpr auto nusec() const noexcept -> double { return nusec_; }
+
+  /// @brief @f$L@f$
+  ///
+  /// @returns The mean anomaly of the Moon (degrees).
+  auto constexpr l() const noexcept -> double { return s_ - p_; }
+
+  /// @brief @f$L'@f$
+  ///
+  /// @returns The mean anomaly of the Sun (degrees).
+  auto constexpr lp() const noexcept -> double { return h_ - p1_; }
+
+  /// @brief @f$f = L - OM@f$
+  ///
+  /// @returns The mean longitude of the Moon (degrees).
+  auto constexpr f() const noexcept -> double { return s_ - n_; }
+
+  /// @brief @f$D@f$
+  ///
+  /// @returns The mean elongation of the Moon from the Sun (degrees).
+  auto constexpr d() const noexcept -> double { return s_ - h_; }
 
   /// @brief Gets the node factor of @f$O_1@f$.
   ///
@@ -624,31 +644,31 @@ auto FES_MATH_CONSTEXPR Astronomic::iers(const double epoch,
   constexpr auto arcseconds_in_circle = 1296000.0;
 
   // Mean anomaly of the moon (L)
-  auto l = detail::math::arcseconds(
+  auto l = detail::math::arcseconds2radians(
       std::remainder(detail::math::horner(jc, 485868.249036, 1717915923.2178,
                                           31.8792, 0.051635, 0.00024470),
                      arcseconds_in_circle));
 
   // Mean anomaly of the sun (LP)
-  auto lp = detail::math::arcseconds(
+  auto lp = detail::math::arcseconds2radians(
       std::remainder(detail::math::horner(jc, 1287104.79305, 129596581.0481,
                                           -0.5532, 0.000136, -0.00001149),
                      arcseconds_in_circle));
 
   // L - OM (Mean longitude of the ascending node of the moon)
-  auto f = detail::math::arcseconds(
+  auto f = detail::math::arcseconds2radians(
       std::remainder(detail::math::horner(jc, 335779.526232, 1739527262.8478,
                                           -12.7512, -0.001037, 0.00000417),
                      arcseconds_in_circle));
 
   // Mean elongation of the moon from the sun (D)
-  auto d = detail::math::arcseconds(
+  auto d = detail::math::arcseconds2radians(
       std::remainder(detail::math::horner(jc, 1072260.70369, 1602961601.2090,
                                           -6.3706, 0.006593, -0.00003169),
                      arcseconds_in_circle));
 
   // Mean longitude of the ascending node of the moon (OM)
-  auto omega = detail::math::arcseconds(
+  auto omega = detail::math::arcseconds2radians(
       std::remainder(detail::math::horner(jc, 450160.398036, -6962890.5431,
                                           7.4722, 0.007702, -0.00005939),
                      arcseconds_in_circle));
