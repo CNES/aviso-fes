@@ -43,9 +43,9 @@ TEST(Math, Radians) {
   EXPECT_DOUBLE_EQ(math::radians(180.0), M_PI);
 }
 
-TEST(Math, Arcseconds) {
+TEST(Math, Arcseconds2Radians) {
   // arcseconds(3600) == π / 180
-  EXPECT_DOUBLE_EQ(math::arcseconds(3600.0), M_PI / 180.0);
+  EXPECT_DOUBLE_EQ(math::arcseconds2radians(3600.0), M_PI / 180.0);
 }
 
 TEST(Math, Degrees) {
