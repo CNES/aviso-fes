@@ -14,7 +14,6 @@
 #include "fes/angle/astronomic.hpp"
 #include "fes/eigen.hpp"
 #include "fes/geometry/point.hpp"
-#include "fes/wave.hpp"
 #include "fes/wave/table.hpp"
 
 namespace fes {
