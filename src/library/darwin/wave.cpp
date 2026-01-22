@@ -4,13 +4,13 @@
 //
 // All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
-#include "fes/wave.hpp"
+#include "fes/darwin/wave.hpp"
 
-#include <stdexcept>
-
-#include "fes/detail/wave/name.hpp"
+#include <array>
+#include <string>
 
 namespace fes {
+namespace darwin {
 
 constexpr auto darwin_to_doodson(const std::array<int8_t, 11>& darwin)
     -> std::array<int8_t, 7> {
@@ -593,4 +593,5 @@ _2MP5::_2MP5()
            &angle::Astronomic::f_m22) {}
 
 }  // namespace wave
+}  // namespace darwin
 }  // namespace fes

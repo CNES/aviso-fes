@@ -7,9 +7,9 @@
 #include <pybind11/stl.h>
 
 #include "fes/abstract_tidal_model.hpp"
-#include "fes/constituent.hpp"
+#include "fes/darwin/constituent.hpp"
+#include "fes/darwin/table.hpp"
 #include "fes/detail/thread.hpp"
-#include "fes/wave/table.hpp"
 
 namespace py = pybind11;
 
@@ -36,7 +36,7 @@ class PyAbstractTidalModel : public fes::AbstractTidalModel<T, ConstituentId> {
                            interpolate, point, quality, acc);
   }
 
-  void add_constituent(const fes::Constituent ident,
+  void add_constituent(const fes::darwin::Constituent ident,
                        fes::Vector<std::complex<T>> wave) override {
     PYBIND11_OVERLOAD_PURE(void, cname, add_constituent, ident, wave);
   }
@@ -56,13 +56,13 @@ static auto interpolate(const fes::AbstractTidalModel<T, ConstituentId>& self,
                         const Eigen::Ref<const Eigen::VectorXd>& lon,
                         const Eigen::Ref<const Eigen::VectorXd>& lat,
                         const size_t num_threads = 0)
-    -> std::tuple<std::map<fes::Constituent, Eigen::VectorXcd>,
+    -> std::tuple<std::map<fes::darwin::Constituent, Eigen::VectorXcd>,
                   Eigen::Matrix<int8_t, -1, 1>> {
   if (lon.size() != lat.size()) {
     throw std::invalid_argument("lon and lat must have the same size");
   }
   // Allocate result vectors
-  auto values = std::map<fes::Constituent, Eigen::VectorXcd>();
+  auto values = std::map<fes::darwin::Constituent, Eigen::VectorXcd>();
   auto qualities = Eigen::Matrix<int8_t, -1, 1>(lon.size());
 
   for (auto&& ident : self.identifiers()) {
@@ -146,7 +146,7 @@ Returns:
           "interpolate",
           [](const fes::AbstractTidalModel<T, ConstituentId>& self,
              const double lon, const double lat,
-             fes::wave::Table& wt) -> fes::Quality {
+             fes::darwin::wave::Table& wt) -> fes::Quality {
             auto acc = std::unique_ptr<fes::Accelerator<ConstituentId>>(
                 self.accelerator(fes::angle::Formulae::kSchuremanOrder1, 0.0));
             return self.interpolate({lon, lat}, wt, acc.get());
@@ -168,11 +168,11 @@ Returns:
       .def_property(
           "dynamic",
           [](const fes::AbstractTidalModel<T, ConstituentId>& self)
-              -> const std::vector<fes::Constituent>& {
+              -> const std::vector<fes::darwin::Constituent>& {
             return self.dynamic();
           },
           [](fes::AbstractTidalModel<T, ConstituentId>& self,
-             const std::vector<fes::Constituent>& dynamic) -> void {
+             const std::vector<fes::darwin::Constituent>& dynamic) -> void {
             self.dynamic(dynamic);
           },
           R"__doc__(
@@ -205,10 +205,10 @@ void init_abstract_tide_model(py::module& m) {
       .value("kRadial", fes::TideType::kRadial)
       .export_values();
 
-  py::class_<fes::Accelerator<fes::Constituent>>(
+  py::class_<fes::Accelerator<fes::darwin::Constituent>>(
       m, "Accelerator",
       "Accelerator used to speed up the interpolation of tidal models.");
 
-  init_abstract_tide_model<double, fes::Constituent>(m, "Complex128");
-  init_abstract_tide_model<float, fes::Constituent>(m, "Complex64");
+  init_abstract_tide_model<double, fes::darwin::Constituent>(m, "Complex128");
+  init_abstract_tide_model<float, fes::darwin::Constituent>(m, "Complex64");
 }

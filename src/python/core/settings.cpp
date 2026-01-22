@@ -10,7 +10,6 @@
 #include <boost/optional.hpp>
 
 #include "fes/angle/astronomic.hpp"
-#include "fes/constituent.hpp"
 #include "fes/python/optional.hpp"
 
 namespace py = pybind11;

@@ -2,15 +2,15 @@
 //
 // All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
-#include "fes/constituent.hpp"
-
 #include <stdexcept>
 #include <string>
 
+#include "fes/darwin/wave.hpp"
 #include "fes/detail/string.hpp"
 #include "fes/detail/wave/name.hpp"
 
 namespace fes {
+namespace darwin {
 namespace constituents {
 
 namespace wave = fes::detail::wave;
@@ -535,4 +535,5 @@ auto parse(const std::string& name) -> Constituent {
 }
 
 }  // namespace constituents
+}  // namespace darwin
 }  // namespace fes

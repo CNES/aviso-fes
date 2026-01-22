@@ -11,6 +11,7 @@
 #include <vector>
 
 namespace fes {
+namespace darwin {
 
 /// Tidal constituents known by the library.
 enum Constituent : uint8_t {
@@ -151,4 +152,5 @@ auto name(Constituent constituent) -> const char*;
 auto known() -> std::vector<std::string>;
 
 }  // namespace constituents
+}  // namespace darwin
 }  // namespace fes

@@ -12,7 +12,7 @@
 #include <vector>
 
 #include "fes/angle/astronomic.hpp"
-#include "fes/constituent.hpp"
+#include "fes/darwin/constituent.hpp"
 #include "fes/eigen.hpp"
 #include "fes/geometry/point.hpp"
 #include "fes/perth/constituent.hpp"
@@ -38,9 +38,9 @@ struct ConstituentTraits<fes::perth::Constituent> {
 
 /// @brief Specialization of ConstituentTraits for fes::Constituent.
 template <>
-struct ConstituentTraits<fes::Constituent> {
-  static fes::Constituent parse(const std::string& name) {
-    return fes::constituents::parse(name);
+struct ConstituentTraits<darwin::Constituent> {
+  static darwin::Constituent parse(const std::string& name) {
+    return darwin::constituents::parse(name);
   }
 };
 

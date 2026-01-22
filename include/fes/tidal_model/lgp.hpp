@@ -764,7 +764,8 @@ auto LGP<T, N, ConstituentId>::setstate_instance(const string_view& data) {
   this->max_distance_ = detail::serialize::read_data<double>(ss);
   this->codes_ = detail::serialize::read_matrix<int, Eigen::Dynamic, N * 3>(ss);
   this->data_ =
-      detail::serialize::read_constituent_map<Constituent, std::complex<T>>(ss);
+      detail::serialize::read_constituent_map<ConstituentId, std::complex<T>>(
+          ss);
   this->selected_indices_ =
       detail::serialize::read_unordered_map<int64_t, int64_t>(ss);
 }

@@ -39,15 +39,16 @@
 #include <tuple>
 
 #include "fes/abstract_tidal_model.hpp"
+#include "fes/darwin/long_period_equilibrium.hpp"
+#include "fes/darwin/table.hpp"
+#include "fes/darwin/wave.hpp"
 #include "fes/detail/broadcast.hpp"
 #include "fes/detail/thread.hpp"
 #include "fes/eigen.hpp"
 #include "fes/settings.hpp"
-#include "fes/wave.hpp"
-#include "fes/wave/long_period_equilibrium.hpp"
-#include "fes/wave/table.hpp"
 
 namespace fes {
+namespace darwin {
 
 // template <typename T>
 // using Accelerator = Accelerator<perth::Constituent>;
@@ -114,7 +115,7 @@ static inline auto build_wave_table_from_constituents(
 /// @param[in] compute_lpe Whether to compute long period equilibrium
 /// @return Tuple of (short_period_tide, long_period_tide)
 static inline auto compute_tide_from_waves(
-    wave::Table& wave_table, wave::LongPeriodEquilibrium& lpe,
+    wave::Table& wave_table, LongPeriodEquilibrium& lpe,
     Accelerator<Constituent>& acc, const double epoch, const double latitude,
     const bool compute_lpe = true) -> std::tuple<double, double> {
   // Update the astronomic angle used to evaluate the tidal constituents.
@@ -166,7 +167,7 @@ template <typename T>
 inline auto evaluate_tide(
     const AbstractTidalModel<T, Constituent>* const tidal_model,
     const double epoch, const double longitude, const double latitude,
-    wave::Table& wave_table, wave::LongPeriodEquilibrium& long_period,
+    wave::Table& wave_table, LongPeriodEquilibrium& long_period,
     Accelerator<Constituent>* acc) -> std::tuple<double, double, Quality> {
   // Interpolation, at the requested position, of the waves provided by the
   // model used.
@@ -237,8 +238,8 @@ auto evaluate_tide(const AbstractTidalModel<T, Constituent>* const tidal_model,
                    const size_t num_threads = 0)
     -> std::tuple<Eigen::VectorXd, Eigen::VectorXd, Vector<Quality>> {
   // Checks the input parameters
-  detail::check_eigen_shape("epoch", epoch, "longitude", longitude, "latitude",
-                            latitude);
+  fes::detail::check_eigen_shape("epoch", epoch, "longitude", longitude,
+                                 "latitude", latitude);
 
   // Allocates the result vectors
   auto tide = Eigen::VectorXd(epoch.size());
@@ -252,7 +253,7 @@ auto evaluate_tide(const AbstractTidalModel<T, Constituent>* const tidal_model,
             settings.astronomic_formulae(), settings.time_tolerance()));
     auto* acc_ptr = acc.get();
     auto wave_table = detail::build_wave_table(tidal_model);
-    auto lpe = wave::LongPeriodEquilibrium(wave_table);
+    auto lpe = LongPeriodEquilibrium(wave_table);
 
     for (auto ix = start; ix < end; ++ix) {
       std::tie(tide(ix), long_period(ix), quality(ix)) =
@@ -261,7 +262,7 @@ auto evaluate_tide(const AbstractTidalModel<T, Constituent>* const tidal_model,
     }
   };
 
-  detail::parallel_for(worker, epoch.size(), num_threads);
+  fes::detail::parallel_for(worker, epoch.size(), num_threads);
   return {tide, long_period, quality};
 }
 
@@ -324,4 +325,5 @@ auto evaluate_equilibrium_long_period(
     const Settings& settings = Settings(), const size_t num_threads = 0)
     -> Eigen::VectorXd;
 
+}  // namespace darwin
 }  // namespace fes

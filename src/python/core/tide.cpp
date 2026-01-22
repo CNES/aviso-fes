@@ -2,7 +2,7 @@
 //
 // All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
-#include "fes/tide.hpp"
+#include "fes/darwin/tide.hpp"
 
 #include <pybind11/eigen.h>
 #include <pybind11/numpy.h>
@@ -26,7 +26,7 @@ auto evaluate_equilibrium_long_period(
   auto epoch = fes::python::npdatetime64_to_epoch(dates);
   {
     py::gil_scoped_release gil;
-    return fes::evaluate_equilibrium_long_period(
+    return fes::darwin::evaluate_equilibrium_long_period(
         epoch, latitudes, settings.value_or(fes::Settings()), num_threads);
   }
 }
@@ -47,13 +47,15 @@ auto evaluate_tide(
   auto epoch = fes::python::npdatetime64_to_epoch(dates);
   {
     py::gil_scoped_release gil;
-    return fes::evaluate_tide(tidal_model, epoch, longitudes, latitudes,
-                              settings.value_or(fes::Settings()), num_threads);
+    return fes::darwin::evaluate_tide(tidal_model, epoch, longitudes, latitudes,
+                                      settings.value_or(fes::Settings()),
+                                      num_threads);
   }
 }
 
 inline auto evaluate_tide_from_constituents(
-    const std::map<fes::Constituent, std::pair<double, double>>& constituents,
+    const std::map<fes::darwin::Constituent, std::pair<double, double>>&
+        constituents,
     py::array& dates, const double longitudes, const double latitudes,
     const boost::optional<fes::Settings>& settings,
     const size_t num_threads = 0)
@@ -63,13 +65,13 @@ inline auto evaluate_tide_from_constituents(
     py::gil_scoped_release gil;
     // Convert amplitude/phase constituents to complex constituents
     auto complex_constituents =
-        std::map<fes::Constituent, std::complex<double>>();
+        std::map<fes::darwin::Constituent, std::complex<double>>();
     for (const auto& item : constituents) {
       complex_constituents[item.first] = std::polar(
           item.second.first, fes::detail::math::radians(item.second.second));
     }
 
-    return fes::evaluate_tide_from_constituents(
+    return fes::darwin::evaluate_tide_from_constituents(
         complex_constituents, epoch, longitudes, latitudes,
         settings.value_or(fes::Settings()), num_threads);
   }
@@ -132,12 +134,12 @@ Returns:
 }
 
 void init_tide(py::module& m) {
-  init_tide<double, fes::Constituent>(m);
-  init_tide<float, fes::Constituent>(m);
+  init_tide<double, fes::darwin::Constituent>(m);
+  init_tide<float, fes::darwin::Constituent>(m);
 
   m.def(
       "evaluate_tide_from_constituents",
-      [](const std::map<fes::Constituent, std::pair<double, double>>&
+      [](const std::map<fes::darwin::Constituent, std::pair<double, double>>&
              constituents,
          py::array& date, const double longitude, const double latitude,
          const boost::optional<fes::Settings>& settings,

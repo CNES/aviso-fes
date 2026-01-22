@@ -2,19 +2,19 @@
 //
 // All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
-#include "fes/wave/long_period_equilibrium.hpp"
+#include "fes/darwin/long_period_equilibrium.hpp"
 
 #include <pybind11/pybind11.h>
 
 namespace py = pybind11;
 
 void init_wave_order2(py::module& m) {
-  py::class_<fes::wave::LongPeriodEquilibrium>(m, "LongPeriodEquilibrium",
-                                               R"__doc__(
+  py::class_<fes::darwin::LongPeriodEquilibrium>(m, "LongPeriodEquilibrium",
+                                                 R"__doc__(
 Constituent to compute the long period equilibrium ocean tide.)__doc__")
       .def(py::init<>())
       .def("disable_dynamic_wave",
-           &fes::wave::LongPeriodEquilibrium::disable_dynamic_wave,
+           &fes::darwin::LongPeriodEquilibrium::disable_dynamic_wave,
            py::arg("wave_table"),
            R"__doc__(
 Disable the dynamic wave used for the calculation of the long-period
@@ -24,7 +24,7 @@ Args:
   Waves to disable
 )__doc__")
       .def("lpe_minus_n_waves",
-           &fes::wave::LongPeriodEquilibrium::lpe_minus_n_waves,
+           &fes::darwin::LongPeriodEquilibrium::lpe_minus_n_waves,
            py::arg("angles"), py::arg("lat"),
            R"__doc__(
 Computes the long-period equilibrium ocean tides.

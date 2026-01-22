@@ -2,7 +2,7 @@
 //
 // All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
-#include "fes/wave/table.hpp"
+#include "fes/darwin/table.hpp"
 
 #include <Eigen/Dense>
 #include <array>
@@ -13,9 +13,9 @@
 
 #include "fes/detail/broadcast.hpp"
 #include "fes/detail/thread.hpp"
-#include "fes/detail/wave/name.hpp"
 
 namespace fes {
+namespace darwin {
 namespace wave {
 
 auto Table::wave_factory(const Constituent ident) -> std::shared_ptr<Wave> {
@@ -247,7 +247,7 @@ inline auto create_sparse_table(
 }
 
 Table::Table(const std::vector<std::string>& waves) {
-  const auto known_constituents = fes::constituents::known();
+  const auto known_constituents = constituents::known();
   waves_.reserve(known_constituents.size());
   waves.empty() ? create_table(known_constituents, waves_)
                 : create_sparse_table(known_constituents, waves, waves_);
@@ -523,4 +523,5 @@ auto Table::select_waves_for_analysis(const double duration, const double f)
 }
 
 }  // namespace wave
+}  // namespace darwin
 }  // namespace fes

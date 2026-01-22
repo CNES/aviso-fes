@@ -14,11 +14,12 @@
 #include <vector>
 
 #include "fes/angle/astronomic.hpp"
+#include "fes/darwin/wave.hpp"
 #include "fes/eigen.hpp"
 #include "fes/tidal_constituents.hpp"
-#include "fes/wave.hpp"
 
 namespace fes {
+namespace darwin {
 namespace wave {
 
 /// @brief Iterator on the waves of a table.
@@ -359,4 +360,5 @@ class Table : public TidalConstituents<Constituent> {
 };
 
 }  // namespace wave
+}  // namespace darwin
 }  // namespace fes

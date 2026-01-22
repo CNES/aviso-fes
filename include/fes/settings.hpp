@@ -7,11 +7,7 @@
 /// @brief Settings for the tide computation.
 #pragma once
 
-#include <utility>
-#include <vector>
-
 #include "fes/angle/astronomic.hpp"
-#include "fes/constituent.hpp"
 
 namespace fes {
 

@@ -2,7 +2,7 @@
 //
 // All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
-/// @file include/fes/wave.hpp
+/// @file include/fes/darwin/component.hpp
 /// @brief Tidal constituent properties
 #pragma once
 #include <array>
@@ -13,11 +13,12 @@
 #include <string>
 
 #include "fes/angle/astronomic.hpp"
-#include "fes/constituent.hpp"
 #include "fes/darwin.hpp"
+#include "fes/darwin/constituent.hpp"
 #include "fes/detail/angle/astronomic/frequency.hpp"
 
 namespace fes {
+namespace darwin {
 
 /// @brief Tide constituent parameters.
 class Wave : public std::enable_shared_from_this<Wave> {
@@ -1600,4 +1601,5 @@ class _2MP5 : public Wave {
 };
 
 }  // namespace wave
+}  // namespace darwin
 }  // namespace fes

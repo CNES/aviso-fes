@@ -8,6 +8,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
+#include "fes/darwin/constituent.hpp"
 #include "fes/python/optional.hpp"
 
 namespace py = pybind11;
@@ -139,8 +140,8 @@ Returns:
 }
 
 void init_lgp_model(py::module& m) {
-  init_lgp1_model<double, fes::Constituent>(m, "Complex128");
-  init_lgp1_model<float, fes::Constituent>(m, "Complex64");
-  init_lgp2_model<double, fes::Constituent>(m, "Complex128");
-  init_lgp2_model<float, fes::Constituent>(m, "Complex64");
+  init_lgp1_model<double, fes::darwin::Constituent>(m, "Complex128");
+  init_lgp1_model<float, fes::darwin::Constituent>(m, "Complex64");
+  init_lgp2_model<double, fes::darwin::Constituent>(m, "Complex128");
+  init_lgp2_model<float, fes::darwin::Constituent>(m, "Complex64");
 }

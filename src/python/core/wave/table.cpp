@@ -2,23 +2,24 @@
 //
 // All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
-#include "fes/wave/table.hpp"
+#include "fes/darwin/table.hpp"
 
 #include <pybind11/eigen.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
+#include "fes/darwin/constituent.hpp"
 #include "fes/python/datemanip.hpp"
 #include "fes/python/datetime64.hpp"
 
 namespace py = pybind11;
 
 void init_wave_table(py::module& m) {
-  py::class_<fes::wave::Table>(m, "WaveTable",
-                               "Properties of tide waves computed")
+  py::class_<fes::darwin::wave::Table>(m, "WaveTable",
+                                       "Properties of tide waves computed")
       .def(py::init<std::vector<std::string>>(),
            py::arg("waves") = std::vector<std::string>{})
-      .def("find", &fes::wave::Table::find, py::arg("ident"), R"__doc__(
+      .def("find", &fes::darwin::wave::Table::find, py::arg("ident"), R"__doc__(
 Find a wave in the table by its name.
 
 Args:
@@ -29,7 +30,8 @@ Returns:
     The wave if found, None otherwise.
 )__doc__")
       .def("compute_nodal_corrections",
-           &fes::wave::Table::compute_nodal_corrections, py::arg("angles"),
+           &fes::darwin::wave::Table::compute_nodal_corrections,
+           py::arg("angles"),
            R"__doc__(
 Compute nodal corrections.
 
@@ -37,7 +39,7 @@ Args:
     angles: Astronomic angle, indicating the date on which the tide is to be
         calculated.
 )__doc__")
-      .def("admittance", &fes::wave::Table::admittance, R"__doc__(
+      .def("admittance", &fes::darwin::wave::Table::admittance, R"__doc__(
 Compute waves by admittance from these 7 major ones : O1, Q1, K1, 2n2, N2, M2,
 K2.
 )__doc__")
@@ -48,7 +50,7 @@ K2.
              const fes::DynamicRef<const Eigen::MatrixXd>& vu)
               -> Eigen::VectorXcd {
             py::gil_scoped_release release;
-            return fes::wave::Table::harmonic_analysis(h, f, vu);
+            return fes::darwin::wave::Table::harmonic_analysis(h, f, vu);
           },
           py::arg("h"), py::arg("f"), py::arg("vu"),
           R"__doc__(
@@ -66,7 +68,7 @@ Returns:
 )__doc__")
       .def(
           "tide_from_tide_series",
-          [](const fes::wave::Table& self, py::array& dates,
+          [](const fes::darwin::wave::Table& self, py::array& dates,
              const Eigen::Ref<const Eigen::VectorXcd>& wave,
              const fes::angle::Formulae& formulae) -> Eigen::VectorXd {
             auto epoch = fes::python::npdatetime64_to_epoch(dates);
@@ -95,7 +97,7 @@ Return:
 )__doc__")
       .def(
           "tide_from_mapping",
-          [](const fes::wave::Table& self, const py::handle& date,
+          [](const fes::darwin::wave::Table& self, const py::handle& date,
              const fes::DynamicRef<const Eigen::MatrixXcd>& wave,
              const fes::angle::Formulae& formulae,
              const size_t num_threads) -> Eigen::MatrixXd {
@@ -125,7 +127,7 @@ Returns:
 )__doc__")
       .def(
           "compute_nodal_modulations",
-          [](const fes::wave::Table& self, py::array& dates,
+          [](const fes::darwin::wave::Table& self, py::array& dates,
              const fes::angle::Formulae& formulae)
               -> std::tuple<Eigen::MatrixXd, Eigen::MatrixXd> {
             auto epoch = fes::python::npdatetime64_to_epoch(dates);
@@ -151,7 +153,7 @@ Returns:
     (nodal correction for phase)
 )__doc__")
       .def_static("select_waves_for_analysis",
-                  &fes::wave::Table::select_waves_for_analysis,
+                  &fes::darwin::wave::Table::select_waves_for_analysis,
                   py::arg("duration"), py::arg("f") = 2.0,
                   R"__doc__(
 Return the list of tidal waves such that their period is more than twice the
@@ -164,7 +166,7 @@ Args:
 Returns:
   List of selected tidal waves.
 )__doc__")
-      .def("keys", &fes::wave::Table::constituents, R"__doc__(
+      .def("keys", &fes::darwin::wave::Table::constituents, R"__doc__(
 Return the list of tidal constituents handled by this instance.
 
 Returns:
@@ -172,9 +174,9 @@ Returns:
 )__doc__")
       .def(
           "values",
-          [](const fes::wave::Table& self)
-              -> std::vector<std::shared_ptr<fes::Wave>> {
-            auto result = std::vector<std::shared_ptr<fes::Wave>>{};
+          [](const fes::darwin::wave::Table& self)
+              -> std::vector<std::shared_ptr<fes::darwin::Wave>> {
+            auto result = std::vector<std::shared_ptr<fes::darwin::Wave>>{};
             for (const auto& wave : self) {
               result.emplace_back(wave);
             }
@@ -186,15 +188,17 @@ Return the list of tidal waves handled by this instance.
 Returns:
   List of tidal waves.
 )__doc__")
-      .def("__len__", [](const fes::wave::Table& self) { return self.size(); })
+      .def("__len__",
+           [](const fes::darwin::wave::Table& self) { return self.size(); })
       .def(
           "__getitem__",
-          [](const fes::wave::Table& self, fes::Constituent ident)
-              -> std::shared_ptr<fes::Wave> { return self[ident]; },
+          [](const fes::darwin::wave::Table& self,
+             fes::darwin::Constituent ident)
+              -> std::shared_ptr<fes::darwin::Wave> { return self[ident]; },
           py::arg("index"))
       .def(
           "__iter__",
-          [](const fes::wave::Table& self) {
+          [](const fes::darwin::wave::Table& self) {
             return py::make_iterator(self.begin(), self.end());
           },
           py::keep_alive<0, 1>());

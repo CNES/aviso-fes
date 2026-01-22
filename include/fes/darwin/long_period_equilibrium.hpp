@@ -7,10 +7,10 @@
 #pragma once
 #include <Eigen/Core>
 
-#include "fes/wave/table.hpp"
+#include "fes/darwin/table.hpp"
 
 namespace fes {
-namespace wave {
+namespace darwin {
 
 /// @brief Compute the long-period equilibrium ocean tides.
 ///
@@ -23,7 +23,8 @@ class LongPeriodEquilibrium {
 
   /// Constructs the default object and disable the dynamic wave used for the
   /// calculation of the long-period equilibrium ocean tides.
-  explicit LongPeriodEquilibrium(const Table& table) : LongPeriodEquilibrium() {
+  explicit LongPeriodEquilibrium(const wave::Table& table)
+      : LongPeriodEquilibrium() {
     disable_dynamic_wave(table);
   }
 
@@ -31,7 +32,7 @@ class LongPeriodEquilibrium {
   /// equilibrium ocean tides.
   ///
   /// @param[in] table Waves to disable
-  auto disable_dynamic_wave(const Table& table) -> void;
+  auto disable_dynamic_wave(const wave::Table& table) -> void;
 
   /// @brief Computes the long-period equilibrium ocean tides.
   ///
@@ -63,5 +64,5 @@ class LongPeriodEquilibrium {
   Eigen::Matrix<double, 17, 6> order3_;   // NOLINT (magic number, physics)
 };
 
-}  // namespace wave
+}  // namespace darwin
 }  // namespace fes
