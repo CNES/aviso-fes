@@ -7,31 +7,33 @@
 #include <pybind11/stl.h>
 
 #include "fes/abstract_tidal_model.hpp"
+#include "fes/constituent.hpp"
 #include "fes/detail/thread.hpp"
+#include "fes/wave/table.hpp"
 
 namespace py = pybind11;
 
 // Trampoline class for AbstractTidalModel
-template <typename T>
-class PyAbstractTidalModel : public fes::AbstractTidalModel<T> {
+template <typename T, typename ConstituentId>
+class PyAbstractTidalModel : public fes::AbstractTidalModel<T, ConstituentId> {
  private:
-  using cname = fes::AbstractTidalModel<T>;
+  using cname = fes::AbstractTidalModel<T, ConstituentId>;
 
  public:
-  using fes::AbstractTidalModel<T>::AbstractTidalModel;
+  using fes::AbstractTidalModel<T, ConstituentId>::AbstractTidalModel;
 
   auto accelerator(const fes::angle::Formulae& formulae,
                    const double time_tolerance) const
-      -> fes::Accelerator* override {
-    PYBIND11_OVERLOAD_PURE(fes::Accelerator*, cname, accelerator, formulae,
-                           time_tolerance);
+      -> fes::Accelerator<ConstituentId>* override {
+    PYBIND11_OVERLOAD_PURE(fes::Accelerator<ConstituentId>*, cname, accelerator,
+                           formulae, time_tolerance);
   }
 
   auto interpolate(const fes::geometry::Point& point, fes::Quality& quality,
-                   fes::Accelerator* acc) const
-      -> const fes::ConstituentValues& override {
-    PYBIND11_OVERLOAD_PURE(const fes::ConstituentValues&, cname, interpolate,
-                           point, quality, acc);
+                   fes::Accelerator<ConstituentId>* acc) const
+      -> const fes::ConstituentValues<ConstituentId>& override {
+    PYBIND11_OVERLOAD_PURE(const fes::ConstituentValues<ConstituentId>&, cname,
+                           interpolate, point, quality, acc);
   }
 
   void add_constituent(const fes::Constituent ident,
@@ -49,8 +51,8 @@ class PyAbstractTidalModel : public fes::AbstractTidalModel<T> {
 /// @return A tuple containing the interpolated wave models stored in a
 /// dictionary and a flag indicating if the point was extrapolated,
 /// interpolated or if the model is undefined.
-template <typename T>
-static auto interpolate(const fes::AbstractTidalModel<T>& self,
+template <typename T, typename ConstituentId>
+static auto interpolate(const fes::AbstractTidalModel<T, ConstituentId>& self,
                         const Eigen::Ref<const Eigen::VectorXd>& lon,
                         const Eigen::Ref<const Eigen::VectorXd>& lat,
                         const size_t num_threads = 0)
@@ -69,7 +71,7 @@ static auto interpolate(const fes::AbstractTidalModel<T>& self,
 
   // Interpolate in parallel
   auto thread = [&](const int64_t start, const int64_t end) -> void {
-    auto acc = std::unique_ptr<fes::Accelerator>(
+    auto acc = std::unique_ptr<fes::Accelerator<ConstituentId>>(
         self.accelerator(fes::angle::Formulae::kSchuremanOrder1, 0.0));
     auto* acc_ptr = acc.get();
     for (auto ix = start; ix < end; ++ix) {
@@ -89,15 +91,17 @@ static auto interpolate(const fes::AbstractTidalModel<T>& self,
   return std::make_tuple(values, qualities);
 }
 
-template <typename T>
+template <typename T, typename ConstituentId>
 void init_abstract_tide_model(py::module& m, const std::string& postfix) {
-  py::class_<fes::AbstractTidalModel<T>, PyAbstractTidalModel<T>,
-             std::shared_ptr<fes::AbstractTidalModel<T>>>(
+  py::class_<fes::AbstractTidalModel<T, ConstituentId>,
+             PyAbstractTidalModel<T, ConstituentId>,
+             std::shared_ptr<fes::AbstractTidalModel<T, ConstituentId>>>(
       m, ("AbstractTidalModel" + postfix).c_str(),
       "Abstract class for a tidal model.")
       .def(
           "add_constituent",
-          [](fes::AbstractTidalModel<T>& self, const std::string& name,
+          [](fes::AbstractTidalModel<T, ConstituentId>& self,
+             const std::string& name,
              fes::Vector<std::complex<T>> wave) -> void {
             self.add_constituent(name, std::move(wave));
           },
@@ -110,7 +114,8 @@ Args:
     ``Msqm``, ``MSQM`` and ``msqm`` are equivalent.
   wave: The wave model.
 )__doc__")
-      .def("accelerator", &fes::AbstractTidalModel<T>::accelerator,
+      .def("accelerator",
+           &fes::AbstractTidalModel<T, ConstituentId>::accelerator,
            py::arg("formulae") = fes::angle::Formulae::kSchuremanOrder1,
            py::arg("time_tolerance") = 0.0,
            py::call_guard<py::gil_scoped_release>(),
@@ -120,8 +125,9 @@ Get the accelerator used to speed up the interpolation of the tidal model.
 Returns:
   The accelerator.
 )__doc__")
-      .def("interpolate", &interpolate<T>, py::arg("lon"), py::arg("lat"),
-           py::arg("num_threads") = 0, py::call_guard<py::gil_scoped_release>(),
+      .def("interpolate", &interpolate<T, ConstituentId>, py::arg("lon"),
+           py::arg("lat"), py::arg("num_threads") = 0,
+           py::call_guard<py::gil_scoped_release>(),
            R"__doc__(
 Interpolate the wave models loaded at the given coordinates.
 
@@ -138,9 +144,10 @@ Returns:
       )__doc__")
       .def(
           "interpolate",
-          [](const fes::AbstractTidalModel<T>& self, const double lon,
-             const double lat, fes::wave::Table& wt) -> fes::Quality {
-            auto acc = std::unique_ptr<fes::Accelerator>(
+          [](const fes::AbstractTidalModel<T, ConstituentId>& self,
+             const double lon, const double lat,
+             fes::wave::Table& wt) -> fes::Quality {
+            auto acc = std::unique_ptr<fes::Accelerator<ConstituentId>>(
                 self.accelerator(fes::angle::Formulae::kSchuremanOrder1, 0.0));
             return self.interpolate({lon, lat}, wt, acc.get());
           },
@@ -160,11 +167,11 @@ Returns:
 )__doc__")
       .def_property(
           "dynamic",
-          [](const fes::AbstractTidalModel<T>& self)
+          [](const fes::AbstractTidalModel<T, ConstituentId>& self)
               -> const std::vector<fes::Constituent>& {
             return self.dynamic();
           },
-          [](fes::AbstractTidalModel<T>& self,
+          [](fes::AbstractTidalModel<T, ConstituentId>& self,
              const std::vector<fes::Constituent>& dynamic) -> void {
             self.dynamic(dynamic);
           },
@@ -174,18 +181,19 @@ constituents declared here will be considered as part of the model components
 and will not be calculated by admittance and excluded from the long-period
 equilibrium wave calculation routine (`lpe_minus_n_waves`).
 )__doc__")
-      .def("clear", &fes::AbstractTidalModel<T>::clear,
+      .def("clear", &fes::AbstractTidalModel<T, ConstituentId>::clear,
            "Clear the loaded wave models from memory.")
-      .def_property_readonly("tide_type",
-                             &fes::AbstractTidalModel<T>::tide_type,
-                             "Return the type of tide.")
-      .def("identifiers", &fes::AbstractTidalModel<T>::identifiers,
+      .def_property_readonly(
+          "tide_type", &fes::AbstractTidalModel<T, ConstituentId>::tide_type,
+          "Return the type of tide.")
+      .def("identifiers",
+           &fes::AbstractTidalModel<T, ConstituentId>::identifiers,
            "Return the identifiers of the loaded wave models.")
-      .def("__len__", &fes::AbstractTidalModel<T>::size,
+      .def("__len__", &fes::AbstractTidalModel<T, ConstituentId>::size,
            "Return the number of loaded wave models.")
       .def(
           "__bool__",
-          [](const fes::AbstractTidalModel<T>& self) -> bool {
+          [](const fes::AbstractTidalModel<T, ConstituentId>& self) -> bool {
             return !self.empty();
           },
           "Return true if no wave models are loaded.");
@@ -197,10 +205,10 @@ void init_abstract_tide_model(py::module& m) {
       .value("kRadial", fes::TideType::kRadial)
       .export_values();
 
-  py::class_<fes::Accelerator>(
+  py::class_<fes::Accelerator<fes::Constituent>>(
       m, "Accelerator",
       "Accelerator used to speed up the interpolation of tidal models.");
 
-  init_abstract_tide_model<double>(m, "Complex128");
-  init_abstract_tide_model<float>(m, "Complex64");
+  init_abstract_tide_model<double, fes::Constituent>(m, "Complex128");
+  init_abstract_tide_model<float, fes::Constituent>(m, "Complex64");
 }

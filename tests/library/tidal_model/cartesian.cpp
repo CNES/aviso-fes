@@ -6,12 +6,16 @@
 
 #include <gtest/gtest.h>
 
+#include "fes/constituent.hpp"
+
+using Cartesian = fes::tidal_model::Cartesian<double, fes::Constituent>;
+
 TEST(TidalModelCartesian, Constructor) {
   auto points = Eigen::VectorXd(5);
   points << 0, 1, 2, 3, 4;
   auto matrix = Eigen::VectorXcd::Zero(25);
   auto axis = fes::Axis(points);
-  auto model = fes::tidal_model::Cartesian<double>(axis, axis, fes::kTide);
+  auto model = Cartesian(axis, axis, fes::kTide);
   model.add_constituent(fes::kM2, matrix);
   model.add_constituent(fes::kK2, matrix);
 
@@ -20,11 +24,10 @@ TEST(TidalModelCartesian, Constructor) {
   EXPECT_EQ(model.tide_type(), fes::kTide);
 
   auto state = model.getstate();
-  auto other = fes::tidal_model::Cartesian<double>::setstate(
-      fes::string_view(state.data(), state.size()));
+  auto other =
+      Cartesian::setstate(fes::string_view(state.data(), state.size()));
 
-  EXPECT_THROW(fes::tidal_model::Cartesian<double>::setstate("invalid"),
-               std::invalid_argument);
+  EXPECT_THROW(Cartesian::setstate("invalid"), std::invalid_argument);
 }
 
 TEST(TidalModelCartesian, GetSetState) {
@@ -32,13 +35,13 @@ TEST(TidalModelCartesian, GetSetState) {
   points << 0, 1, 2, 3, 4;
   auto matrix = Eigen::VectorXcd::Zero(25);
   auto axis = fes::Axis(points);
-  auto model = fes::tidal_model::Cartesian<double>(axis, axis, fes::kTide);
+  auto model = Cartesian(axis, axis, fes::kTide);
   model.add_constituent(fes::kM2, matrix);
   model.add_constituent(fes::kK2, matrix);
 
   auto state = model.getstate();
-  auto other = fes::tidal_model::Cartesian<double>::setstate(
-      fes::string_view(state.data(), state.size()));
+  auto other =
+      Cartesian::setstate(fes::string_view(state.data(), state.size()));
 
   EXPECT_EQ(model.lon().size(), other.lon().size());
   EXPECT_EQ(model.lat().size(), other.lat().size());

@@ -15,6 +15,7 @@
 
 #include "fes/angle/astronomic.hpp"
 #include "fes/eigen.hpp"
+#include "fes/tidal_constituents.hpp"
 #include "fes/wave.hpp"
 
 namespace fes {
@@ -102,7 +103,7 @@ class TableIterator : public std::iterator_traits<RangeType> {
 };
 
 /// Properties of tide waves computed
-class Table {
+class Table : public TidalConstituents<Constituent> {
  public:
   /// Alias to a mutable iterator on the waves
   using iterator_t =
@@ -124,6 +125,13 @@ class Table {
   /// @param[in] ident Wave identifier
   /// @return Wave properties
   static auto wave_factory(const Constituent ident) -> std::shared_ptr<Wave>;
+
+  /// Set the tide of a constituent
+  /// @param[in] ident The constituent identifier
+  /// @param[in] value The tide value
+  void set_tide(Constituent ident, const std::complex<double>& value) override {
+    (*this)[ident]->tide(value);
+  }
 
   /// Compute nodal corrections.
   ///

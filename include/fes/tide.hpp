@@ -37,7 +37,6 @@
 #include <Eigen/Core>
 #include <limits>
 #include <tuple>
-#include <vector>
 
 #include "fes/abstract_tidal_model.hpp"
 #include "fes/detail/broadcast.hpp"
@@ -49,6 +48,10 @@
 #include "fes/wave/table.hpp"
 
 namespace fes {
+
+// template <typename T>
+// using Accelerator = Accelerator<perth::Constituent>;
+
 namespace detail {
 
 /// Build the wave table used for the tidal prediction.
@@ -57,7 +60,8 @@ namespace detail {
 /// @param[in] tidal_model The tidal model.
 /// @return The wave table.
 template <typename T>
-static auto build_wave_table(const AbstractTidalModel<T>* const tidal_model)
+static auto build_wave_table(
+    const AbstractTidalModel<T, Constituent>* const tidal_model)
     -> wave::Table {
   auto result = wave::Table();
 
@@ -109,12 +113,10 @@ static inline auto build_wave_table_from_constituents(
 /// @param[in] latitude Latitude in degrees for long period calculation
 /// @param[in] compute_lpe Whether to compute long period equilibrium
 /// @return Tuple of (short_period_tide, long_period_tide)
-static inline auto compute_tide_from_waves(wave::Table& wave_table,
-                                           wave::LongPeriodEquilibrium& lpe,
-                                           Accelerator& acc, const double epoch,
-                                           const double latitude,
-                                           const bool compute_lpe = true)
-    -> std::tuple<double, double> {
+static inline auto compute_tide_from_waves(
+    wave::Table& wave_table, wave::LongPeriodEquilibrium& lpe,
+    Accelerator<Constituent>& acc, const double epoch, const double latitude,
+    const bool compute_lpe = true) -> std::tuple<double, double> {
   // Update the astronomic angle used to evaluate the tidal constituents.
   const auto& angles = acc.calculate_angle(epoch);
 
@@ -161,12 +163,11 @@ static inline auto compute_tide_from_waves(wave::Table& wave_table,
 ///   spectrum (same units as the constituents).
 /// - The quality of the interpolation (see Quality)
 template <typename T>
-inline auto evaluate_tide(const AbstractTidalModel<T>* const tidal_model,
-                          const double epoch, const double longitude,
-                          const double latitude, wave::Table& wave_table,
-                          wave::LongPeriodEquilibrium& long_period,
-                          Accelerator* acc)
-    -> std::tuple<double, double, Quality> {
+inline auto evaluate_tide(
+    const AbstractTidalModel<T, Constituent>* const tidal_model,
+    const double epoch, const double longitude, const double latitude,
+    wave::Table& wave_table, wave::LongPeriodEquilibrium& long_period,
+    Accelerator<Constituent>* acc) -> std::tuple<double, double, Quality> {
   // Interpolation, at the requested position, of the waves provided by the
   // model used.
   auto quality =
@@ -227,8 +228,8 @@ inline auto evaluate_tide(const AbstractTidalModel<T>* const tidal_model,
 /// to nan if no data is available at the given position. the long period wave
 /// constituents is always computed because this value does not depend on
 /// model data.
-template <typename T>
-auto evaluate_tide(const AbstractTidalModel<T>* const tidal_model,
+template <typename T, typename Constituent>
+auto evaluate_tide(const AbstractTidalModel<T, Constituent>* const tidal_model,
                    const Eigen::Ref<const Eigen::VectorXd>& epoch,
                    const Eigen::Ref<const Eigen::VectorXd>& longitude,
                    const Eigen::Ref<const Eigen::VectorXd>& latitude,
@@ -246,8 +247,9 @@ auto evaluate_tide(const AbstractTidalModel<T>* const tidal_model,
 
   // Worker responsible for the calculation of the tide at a given position
   auto worker = [&](const int64_t start, const int64_t end) {
-    auto acc = std::unique_ptr<Accelerator>(tidal_model->accelerator(
-        settings.astronomic_formulae(), settings.time_tolerance()));
+    auto acc =
+        std::unique_ptr<Accelerator<Constituent>>(tidal_model->accelerator(
+            settings.astronomic_formulae(), settings.time_tolerance()));
     auto* acc_ptr = acc.get();
     auto wave_table = detail::build_wave_table(tidal_model);
     auto lpe = wave::LongPeriodEquilibrium(wave_table);

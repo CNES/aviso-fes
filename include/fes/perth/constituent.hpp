@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "fes/eigen.hpp"
+#include "fes/tidal_constituents.hpp"
 
 namespace fes {
 namespace perth {
@@ -119,11 +120,16 @@ struct TideComponent {
 constexpr std::size_t kNumConstituentItems =
     static_cast<std::size_t>(kNumConstituents);
 
+/// @brief Parse a constituent name string to its enum value.
+/// @param[in] name The name of the constituent.
+/// @return The corresponding Constituent enum value.
+auto name_to_constituent(const std::string &name) -> Constituent;
+
 /// @brief Class representing a set of tidal constituents and their associated
 /// tide components.
 /// @tparam T The type of the tide component.
 template <typename T>
-class ConstituentSet {
+class ConstituentSet : public TidalConstituents<Constituent> {
  public:
   using value_type = T;
   using Key = std::array<Constituent, kNumConstituentItems>;
@@ -193,6 +199,13 @@ class ConstituentSet {
       throw std::out_of_range("Index out of range");
     }
     return {keys_[index], items_[index]};
+  }
+
+  /// @brief Set the tide of a constituent
+  /// @param[in] ident The constituent identifier
+  /// @param[in] value The tide value
+  void set_tide(Constituent ident, const std::complex<double> &value) override {
+    (*this)[ident].tide = value;
   }
 
  private:

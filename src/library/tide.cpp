@@ -19,8 +19,8 @@ auto evaluate_tide_from_constituents(
   auto long_period = Eigen::VectorXd(epoch.size());
   // Worker responsible for the calculation of the tide at a given position
   auto worker = [&](const int64_t start, const int64_t end) {
-    auto acc = Accelerator(settings.astronomic_formulae(),
-                           settings.time_tolerance(), 0);
+    auto acc = Accelerator<Constituent>(settings.astronomic_formulae(),
+                                        settings.time_tolerance(), 0);
     auto wave_table = detail::build_wave_table_from_constituents(constituents);
     auto lpe = wave::LongPeriodEquilibrium(wave_table);
 

@@ -73,16 +73,16 @@ TEST(InterpolatorLGP1, Constructor) {
 
   auto index = std::make_shared<fes::mesh::Index>(lon, lat, triangles);
 
-  fes::tidal_model::LGP1<double> lgp1(std::move(index), std::move(codes),
-                                      fes::kTide);
+  fes::tidal_model::LGP1<double, fes::Constituent> lgp1(
+      std::move(index), std::move(codes), fes::kTide);
   lgp1.add_constituent(fes::kS2, values);
-  auto acc = std::unique_ptr<fes::Accelerator>(
+  auto acc = std::unique_ptr<fes::Accelerator<fes::Constituent>>(
       lgp1.accelerator(fes::angle::Formulae::kMeeus, 0.0));
   fes::Quality quality;
   auto x = lgp1.interpolate({0.0, 0.0}, quality, acc.get());
 
   auto state = lgp1.getstate();
-  auto other = fes::tidal_model::LGP1<double>::setstate(
+  auto other = fes::tidal_model::LGP1<double, fes::Constituent>::setstate(
       fes::string_view(state.data(), state.size()));
   auto y = other.interpolate({0.0, 0.0}, quality, acc.get());
   EXPECT_EQ(x, y);

@@ -31,13 +31,13 @@ auto evaluate_equilibrium_long_period(
   }
 }
 
-template <typename T>
-auto evaluate_tide(const fes::AbstractTidalModel<T>* const tidal_model,
-                   py::array& dates,
-                   const Eigen::Ref<const Eigen::VectorXd>& longitudes,
-                   const Eigen::Ref<const Eigen::VectorXd>& latitudes,
-                   const boost::optional<fes::Settings>& settings,
-                   const size_t num_threads = 0)
+template <typename T, typename ConstituentId>
+auto evaluate_tide(
+    const fes::AbstractTidalModel<T, ConstituentId>* const tidal_model,
+    py::array& dates, const Eigen::Ref<const Eigen::VectorXd>& longitudes,
+    const Eigen::Ref<const Eigen::VectorXd>& latitudes,
+    const boost::optional<fes::Settings>& settings,
+    const size_t num_threads = 0)
     -> std::tuple<Eigen::VectorXd, Eigen::VectorXd, fes::Vector<fes::Quality>> {
   if (dates.size() != longitudes.size() || dates.size() != latitudes.size()) {
     throw std::invalid_argument(
@@ -75,17 +75,17 @@ inline auto evaluate_tide_from_constituents(
   }
 }
 
-template <typename T>
+template <typename T, typename ConstituentId>
 void init_tide(py::module& m) {
   m.def(
       "evaluate_tide",
-      [](const fes::AbstractTidalModel<T>* const tidal_model, py::array& date,
-         const Eigen::Ref<const Eigen::VectorXd>& longitude,
+      [](const fes::AbstractTidalModel<T, ConstituentId>* const tidal_model,
+         py::array& date, const Eigen::Ref<const Eigen::VectorXd>& longitude,
          const Eigen::Ref<const Eigen::VectorXd>& latitude,
          const boost::optional<fes::Settings>& settings,
          const size_t num_threads) {
-        return evaluate_tide<T>(tidal_model, date, longitude, latitude,
-                                settings, num_threads);
+        return evaluate_tide<T, ConstituentId>(tidal_model, date, longitude,
+                                               latitude, settings, num_threads);
       },
       py::arg("tidal_model"), py::arg("date"), py::arg("longitude"),
       py::arg("latitude"), py::arg("settings") = boost::none,
@@ -132,8 +132,8 @@ Returns:
 }
 
 void init_tide(py::module& m) {
-  init_tide<double>(m);
-  init_tide<float>(m);
+  init_tide<double, fes::Constituent>(m);
+  init_tide<float, fes::Constituent>(m);
 
   m.def(
       "evaluate_tide_from_constituents",

@@ -12,10 +12,11 @@
 
 namespace py = pybind11;
 
-template <typename T>
+template <typename T, typename ConstituentId>
 void init_lgp1_model(py::module& m, const std::string& suffix) {
-  py::class_<fes::tidal_model::LGP1<T>, fes::AbstractTidalModel<T>,
-             std::shared_ptr<fes::tidal_model::LGP1<T>>>(
+  py::class_<fes::tidal_model::LGP1<T, ConstituentId>,
+             fes::AbstractTidalModel<T, ConstituentId>,
+             std::shared_ptr<fes::tidal_model::LGP1<T, ConstituentId>>>(
       m, ("LGP1" + suffix).c_str(),
       R"__doc__(
 Handle the wave models loaded from finite elements using LGP1
@@ -23,8 +24,8 @@ discretization.
 )__doc__")
       .def(py::init<
                std::shared_ptr<fes::mesh::Index>,
-               typename fes::tidal_model::LGP1<T>::codes_t, fes::TideType,
-               double,
+               typename fes::tidal_model::LGP1<T, ConstituentId>::codes_t,
+               fes::TideType, double,
                boost::optional<std::tuple<double, double, double, double>>>(),
            py::arg("index"), py::arg("codes"),
            py::arg("tide_type") = fes::TideType::kTide,
@@ -44,13 +45,14 @@ Args:
         minimum latitude, the maximum longitude, and the maximum latitude. If
         the bounding box is not provided, all LGP codes will be considered.
 )__doc__")
-      .def("index", &fes::tidal_model::LGP1<T>::index, R"__doc__(
+      .def("index", &fes::tidal_model::LGP1<T, ConstituentId>::index, R"__doc__(
 Get the index of the finite elements.
 
 Returns:
     The index of the finite elements.
 )__doc__")
-      .def("selected_indices", &fes::tidal_model::LGP1<T>::selected_indices,
+      .def("selected_indices",
+           &fes::tidal_model::LGP1<T, ConstituentId>::selected_indices,
            R"__doc__(Retrieve the indices for wave model values that intersect
 the specified bounding box.
 
@@ -59,7 +61,7 @@ Returns:
   vector is returned.
 )__doc__")
       .def(py::pickle(
-          [](const fes::tidal_model::LGP1<T>& self) {
+          [](const fes::tidal_model::LGP1<T, ConstituentId>& self) {
             return py::bytes(self.getstate());
           },
           [](const py::bytes& state) {
@@ -68,15 +70,16 @@ Returns:
             if (PyBytes_AsStringAndSize(state.ptr(), &buffer, &length) != 0) {
               throw py::error_already_set();
             }
-            return fes::tidal_model::LGP1<T>::setstate(
+            return fes::tidal_model::LGP1<T, ConstituentId>::setstate(
                 fes::string_view(buffer, length));
           }));
 }
 
-template <typename T>
+template <typename T, typename ConstituentId>
 void init_lgp2_model(py::module& m, const std::string& suffix) {
-  py::class_<fes::tidal_model::LGP2<T>, fes::AbstractTidalModel<T>,
-             std::shared_ptr<fes::tidal_model::LGP2<T>>>(
+  py::class_<fes::tidal_model::LGP2<T, ConstituentId>,
+             fes::AbstractTidalModel<T, ConstituentId>,
+             std::shared_ptr<fes::tidal_model::LGP2<T, ConstituentId>>>(
       m, ("LGP2" + suffix).c_str(),
       R"__doc__(
 Handle the wave models loaded from finite elements using LGP2
@@ -84,8 +87,8 @@ discretization.
 )__doc__")
       .def(py::init<
                std::shared_ptr<fes::mesh::Index>,
-               typename fes::tidal_model::LGP2<T>::codes_t, fes::TideType,
-               double,
+               typename fes::tidal_model::LGP2<T, ConstituentId>::codes_t,
+               fes::TideType, double,
                boost::optional<std::tuple<double, double, double, double>>>(),
            py::arg("index"), py::arg("codes"),
            py::arg("tide_type") = fes::TideType::kTide,
@@ -105,13 +108,14 @@ Args:
         minimum latitude, the maximum longitude, and the maximum latitude. If
         the bounding box is not provided, all LGP codes will be considered.
 )__doc__")
-      .def("index", &fes::tidal_model::LGP2<T>::index, R"__doc__(
+      .def("index", &fes::tidal_model::LGP2<T, ConstituentId>::index, R"__doc__(
 Get the index of the finite elements.
 
 Returns:
     The index of the finite elements.
 )__doc__")
-      .def("selected_indices", &fes::tidal_model::LGP2<T>::selected_indices,
+      .def("selected_indices",
+           &fes::tidal_model::LGP2<T, ConstituentId>::selected_indices,
            R"__doc__(Retrieve the indices for wave model values that intersect
 the specified bounding box.
 
@@ -120,7 +124,7 @@ Returns:
   vector is returned.
 )__doc__")
       .def(py::pickle(
-          [](const fes::tidal_model::LGP2<T>& self) {
+          [](const fes::tidal_model::LGP2<T, ConstituentId>& self) {
             return py::bytes(self.getstate());
           },
           [](const py::bytes& state) {
@@ -129,14 +133,14 @@ Returns:
             if (PyBytes_AsStringAndSize(state.ptr(), &buffer, &length) != 0) {
               throw py::error_already_set();
             }
-            return fes::tidal_model::LGP2<T>::setstate(
+            return fes::tidal_model::LGP2<T, ConstituentId>::setstate(
                 fes::string_view(buffer, length));
           }));
 }
 
 void init_lgp_model(py::module& m) {
-  init_lgp1_model<double>(m, "Complex128");
-  init_lgp1_model<float>(m, "Complex64");
-  init_lgp2_model<double>(m, "Complex128");
-  init_lgp2_model<float>(m, "Complex64");
+  init_lgp1_model<double, fes::Constituent>(m, "Complex128");
+  init_lgp1_model<float, fes::Constituent>(m, "Complex64");
+  init_lgp2_model<double, fes::Constituent>(m, "Complex128");
+  init_lgp2_model<float, fes::Constituent>(m, "Complex64");
 }

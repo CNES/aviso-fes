@@ -12,11 +12,37 @@
 #include <vector>
 
 #include "fes/angle/astronomic.hpp"
+#include "fes/constituent.hpp"
 #include "fes/eigen.hpp"
 #include "fes/geometry/point.hpp"
-#include "fes/wave/table.hpp"
+#include "fes/perth/constituent.hpp"
+#include "fes/tidal_constituents.hpp"
 
 namespace fes {
+
+/// @brief Traits to parse constituent names to enum values.
+/// @tparam EnumType The type of the constituent enum.
+template <typename EnumType>
+struct ConstituentTraits {
+  /// @brief Parse a constituent name to its enum value.
+  static EnumType parse(const std::string& name);
+};
+
+/// @brief Specialization of ConstituentTraits for fes::perth::Constituent.
+template <>
+struct ConstituentTraits<fes::perth::Constituent> {
+  static fes::perth::Constituent parse(const std::string& name) {
+    return fes::perth::name_to_constituent(name);
+  }
+};
+
+/// @brief Specialization of ConstituentTraits for fes::Constituent.
+template <>
+struct ConstituentTraits<fes::Constituent> {
+  static fes::Constituent parse(const std::string& name) {
+    return fes::constituents::parse(name);
+  }
+};
 
 /// @brief The quality flag for tidal model interpolation.
 ///
@@ -39,14 +65,17 @@ enum TideType : uint8_t {
 };
 
 /// @brief Constituent values type
+/// @tparam ConstituentId The type of the constituent identifier.
+template <typename ConstituentId>
 using ConstituentValues =
-    std::vector<std::pair<Constituent, std::complex<double>>>;
+    std::vector<std::pair<ConstituentId, std::complex<double>>>;
 
 /// @brief Base class for accelerating the interpolation of tidal models.
 ///
 /// Accelerators are used to speed up the interpolation of tidal models by
 /// caching the results of the last interpolation done. This class serves as a
 /// base class for all tidal model accelerators.
+template <typename ConstituentId>
 class Accelerator {
  public:
   /// Default constructor
@@ -84,7 +113,8 @@ class Accelerator {
   /// @brief Returns the tidal constituent values interpolated at the given
   /// point.
   /// @return the tidal constituent values interpolated at the given point.
-  constexpr auto values() const noexcept -> const ConstituentValues& {
+  constexpr auto values() const noexcept
+      -> const ConstituentValues<ConstituentId>& {
     return values_;
   }
 
@@ -93,7 +123,7 @@ class Accelerator {
 
   /// @brief Appends a tidal constituent value to the cached interpolated
   /// values.
-  auto emplace_back(const Constituent& constituent,
+  auto emplace_back(const ConstituentId& constituent,
                     const std::complex<double>& value) noexcept -> void {
     values_.emplace_back(constituent, value);
   }
@@ -121,15 +151,16 @@ class Accelerator {
   std::pair<double, angle::Astronomic> angle_;
 
   /// @brief The tidal constituent values interpolated at the last point.
-  ConstituentValues values_;
+  ConstituentValues<ConstituentId> values_;
 };
 
 /// @brief Abstract class for a model of tidal constituents.
 ///
 /// @tparam T The type of tidal constituents modelled.
-template <typename T>
-class AbstractTidalModel
-    : public std::enable_shared_from_this<AbstractTidalModel<T>> {
+/// @tparam ConstituentId The type of the constituent identifier.
+template <typename T, typename ConstituentId>
+class AbstractTidalModel : public std::enable_shared_from_this<
+                               AbstractTidalModel<T, ConstituentId>> {
  public:
   /// Default constructor
   AbstractTidalModel() = default;
@@ -153,13 +184,13 @@ class AbstractTidalModel
   /// tidal models.
   virtual auto accelerator(const angle::Formulae& formulae,
                            const double time_tolerance) const
-      -> Accelerator* = 0;
+      -> Accelerator<ConstituentId>* = 0;
 
   /// Add a tidal constituent to the model.
   ///
   /// @param[in] ident The tidal constituent identifier.
   /// @param[in] wave The tidal constituent modelled.
-  virtual auto add_constituent(const Constituent ident,
+  virtual auto add_constituent(const ConstituentId ident,
                                Vector<std::complex<T>> wave) -> void = 0;
 
   /// Add a tidal constituent to the model.
@@ -169,18 +200,19 @@ class AbstractTidalModel
   /// @param[in] wave The tidal constituent modelled.
   inline auto add_constituent(const std::string& name,
                               Vector<std::complex<T>> wave) -> void {
-    add_constituent(constituents::parse(name), std::move(wave));
+    add_constituent(ConstituentTraits<ConstituentId>::parse(name),
+                    std::move(wave));
   }
 
   /// Set the dynamic tidal constituents not interpolated by the model.
   ///
   /// @param[in] dynamic The dynamic tidal constituents.
-  inline auto dynamic(std::vector<Constituent> dynamic) -> void {
+  inline auto dynamic(std::vector<ConstituentId> dynamic) -> void {
     dynamic_ = std::move(dynamic);
   }
 
   /// Get the dynamic tidal constituents not interpolated by the model.
-  constexpr auto dynamic() const -> const std::vector<Constituent>& {
+  constexpr auto dynamic() const -> const std::vector<ConstituentId>& {
     return dynamic_;
   }
 
@@ -192,28 +224,29 @@ class AbstractTidalModel
   /// @param[inout] acc The accelerator to use.
   /// @return A list of interpolated tidal constituents.
   virtual auto interpolate(const geometry::Point& point, Quality& quality,
-                           Accelerator* acc) const
-      -> const ConstituentValues& = 0;
+                           Accelerator<ConstituentId>* acc) const
+      -> const ConstituentValues<ConstituentId>& = 0;
 
   /// Interpolate the tidal constituent at a given point.
   ///
   /// @param[in] point The point to interpolate at.
-  /// @param[inout] wave_table The wave table to fill.
+  /// @param[inout] constituents The constituent set to fill.
   /// @param[inout] acc The accelerator to use.
   /// @return A flag indicating if the point was extrapolated, interpolated or
   /// if the model is undefined.
-  inline auto interpolate(const geometry::Point& point, wave::Table& wave_table,
-                          Accelerator* acc) const -> Quality {
+  inline auto interpolate(const geometry::Point& point,
+                          TidalConstituents<ConstituentId>& constituents,
+                          Accelerator<ConstituentId>* acc) const -> Quality {
     Quality quality;
     for (const auto& item : this->interpolate(point, quality, acc)) {
-      wave_table[std::get<0>(item)]->tide(std::get<1>(item));
+      constituents.set_tide(std::get<0>(item), std::get<1>(item));
     }
     return quality;
   }
 
   /// Get the tidal constituents handled by the model.
   constexpr auto data() const
-      -> const std::map<Constituent, Vector<std::complex<T>>>& {
+      -> const std::map<ConstituentId, Vector<std::complex<T>>>& {
     return data_;
   }
 
@@ -230,8 +263,8 @@ class AbstractTidalModel
   constexpr auto size() const -> size_t { return data_.size(); }
 
   /// Get the tidal constituent identifiers handled by the model.
-  inline auto identifiers() const -> std::vector<Constituent> {
-    auto result = std::vector<Constituent>();
+  inline auto identifiers() const -> std::vector<ConstituentId> {
+    auto result = std::vector<ConstituentId>();
     result.reserve(data_.size());
     for (const auto& item : data_) {
       result.push_back(std::get<0>(item));
@@ -244,10 +277,10 @@ class AbstractTidalModel
 
  protected:
   /// Tidal constituents handled by the model.
-  std::map<Constituent, Vector<std::complex<T>>> data_{};
+  std::map<ConstituentId, Vector<std::complex<T>>> data_{};
 
   /// List of tidal constituents handled by the model but not interpolated.
-  std::vector<Constituent> dynamic_{};
+  std::vector<ConstituentId> dynamic_{};
 
   /// Tide type
   TideType tide_type_{TideType::kTide};

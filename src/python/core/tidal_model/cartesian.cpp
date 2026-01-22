@@ -9,12 +9,15 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
+#include "fes/constituent.hpp"
+
 namespace py = pybind11;
 
 template <typename T>
 void init_cartesian_model(py::module& m, const std::string& suffix) {
-  py::class_<fes::tidal_model::Cartesian<T>, fes::AbstractTidalModel<T>,
-             std::shared_ptr<fes::tidal_model::Cartesian<T>>>(
+  py::class_<fes::tidal_model::Cartesian<T, fes::Constituent>,
+             fes::AbstractTidalModel<T, fes::Constituent>,
+             std::shared_ptr<fes::tidal_model::Cartesian<T, fes::Constituent>>>(
       m, ("Cartesian" + suffix).c_str(),
       "A tidal model that uses a Cartesian grid to store the wave models.")
       .def(py::init<fes::Axis, fes::Axis, fes::TideType, bool>(),
@@ -30,20 +33,22 @@ Args:
      tide_type: The type of tide.
      longitude_major: If true, the longitude axis is the major axis.
 )__doc__")
-      .def("lon", &fes::tidal_model::Cartesian<T>::lon, R"__doc__(
+      .def("lon", &fes::tidal_model::Cartesian<T, fes::Constituent>::lon,
+           R"__doc__(
 Get the longitude axis.
 
 Returns:
      The longitude axis.
 )__doc__")
-      .def("lat", &fes::tidal_model::Cartesian<T>::lat, R"__doc__(
+      .def("lat", &fes::tidal_model::Cartesian<T, fes::Constituent>::lat,
+           R"__doc__(
 Get the latitude axis.
 
 Returns:
      The latitude axis.
 )__doc__")
       .def(py::pickle(
-          [](const fes::tidal_model::Cartesian<T>& self) {
+          [](const fes::tidal_model::Cartesian<T, fes::Constituent>& self) {
             return py::bytes(self.getstate());
           },
           [](const py::bytes& state) {
@@ -52,7 +57,7 @@ Returns:
             if (PyBytes_AsStringAndSize(state.ptr(), &buffer, &length) != 0) {
               throw py::error_already_set();
             }
-            return fes::tidal_model::Cartesian<T>::setstate(
+            return fes::tidal_model::Cartesian<T, fes::Constituent>::setstate(
                 fes::string_view(buffer, length));
           }));
 }

@@ -81,10 +81,10 @@ std::unordered_map<Constituent, double>
 /// @param[in] y3 Complex admittance for the third component.
 /// @param[in] x Frequency at which to evaluate the interpolation.
 /// @return The interpolated complex admittance at frequency `x`.
-constexpr auto linear_interpolation(double x1, const std::complex<double>& y1,
-                                    double x2, const std::complex<double>& y2,
-                                    double x3, const std::complex<double>& y3,
-                                    double x) -> std::complex<double> {
+inline auto linear_interpolation(double x1, const std::complex<double>& y1,
+                                 double x2, const std::complex<double>& y2,
+                                 double x3, const std::complex<double>& y3,
+                                 double x) -> std::complex<double> {
   if (x <= x2) {
     auto slp = (y2 - y1) / (x2 - x1);
     return y1 + slp * (x - x1);
