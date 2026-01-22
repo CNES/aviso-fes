@@ -154,13 +154,35 @@ class Accelerator {
   ConstituentValues<ConstituentId> values_;
 };
 
+/// @brief Universal abstract base class for tidal models.
+///
+/// This class provides a constituent-agnostic interface to the tidal model.
+template <typename T>
+class TidalModel : public std::enable_shared_from_this<TidalModel<T>> {
+ public:
+  /// @brief Default constructor
+  TidalModel() = default;
+
+  /// @brief Constructor with tide type.
+  /// @param[in] tide_type The tide type handled by the model.
+  explicit TidalModel(TideType tide_type) : tide_type_(tide_type) {}
+
+  /// @brief Destructor
+  virtual ~TidalModel() = default;
+
+  /// @brief Get the tide type handled by the model.
+  constexpr auto tide_type() const -> TideType { return tide_type_; }
+
+ protected:
+  TideType tide_type_{TideType::kTide};
+};
+
 /// @brief Abstract class for a model of tidal constituents.
 ///
 /// @tparam T The type of tidal constituents modelled.
 /// @tparam ConstituentId The type of the constituent identifier.
 template <typename T, typename ConstituentId>
-class AbstractTidalModel : public std::enable_shared_from_this<
-                               AbstractTidalModel<T, ConstituentId>> {
+class AbstractTidalModel : public TidalModel<T> {
  public:
   /// Default constructor
   AbstractTidalModel() = default;
@@ -168,7 +190,7 @@ class AbstractTidalModel : public std::enable_shared_from_this<
   /// Build a tidal model with a given tide type.
   ///
   /// @param[in] tide_type The tide type handled by the model.
-  explicit AbstractTidalModel(TideType tide_type) : tide_type_(tide_type) {}
+  explicit AbstractTidalModel(TideType tide_type) : TidalModel<T>(tide_type) {}
 
   /// Destructor
   virtual ~AbstractTidalModel() = default;
@@ -272,18 +294,12 @@ class AbstractTidalModel : public std::enable_shared_from_this<
     return result;
   }
 
-  /// Get the tide type handled by the model.
-  constexpr auto tide_type() const -> TideType { return tide_type_; }
-
  protected:
   /// Tidal constituents handled by the model.
   std::map<ConstituentId, Vector<std::complex<T>>> data_{};
 
   /// List of tidal constituents handled by the model but not interpolated.
   std::vector<ConstituentId> dynamic_{};
-
-  /// Tide type
-  TideType tide_type_{TideType::kTide};
 };
 
 }  // namespace fes

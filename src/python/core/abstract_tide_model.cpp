@@ -91,9 +91,17 @@ static auto interpolate(const fes::AbstractTidalModel<T, ConstituentId>& self,
   return std::make_tuple(values, qualities);
 }
 
+template <typename T>
+void init_tidal_model(py::module& m, const std::string& postfix) {
+  py::class_<fes::TidalModel<T>, std::shared_ptr<fes::TidalModel<T>>>(
+      m, ("TidalModel" + postfix).c_str(), "Class for a tidal model.")
+      .def_property_readonly("tide_type", &fes::TidalModel<T>::tide_type,
+                             "Return the type of tide.");
+}
+
 template <typename T, typename ConstituentId>
 void init_abstract_tide_model(py::module& m, const std::string& postfix) {
-  py::class_<fes::AbstractTidalModel<T, ConstituentId>,
+  py::class_<fes::AbstractTidalModel<T, ConstituentId>, fes::TidalModel<T>,
              PyAbstractTidalModel<T, ConstituentId>,
              std::shared_ptr<fes::AbstractTidalModel<T, ConstituentId>>>(
       m, ("AbstractTidalModel" + postfix).c_str(),
@@ -183,9 +191,6 @@ equilibrium wave calculation routine (`lpe_minus_n_waves`).
 )__doc__")
       .def("clear", &fes::AbstractTidalModel<T, ConstituentId>::clear,
            "Clear the loaded wave models from memory.")
-      .def_property_readonly(
-          "tide_type", &fes::AbstractTidalModel<T, ConstituentId>::tide_type,
-          "Return the type of tide.")
       .def("identifiers",
            &fes::AbstractTidalModel<T, ConstituentId>::identifiers,
            "Return the identifiers of the loaded wave models.")
@@ -208,7 +213,8 @@ void init_abstract_tide_model(py::module& m) {
   py::class_<fes::Accelerator<fes::darwin::Constituent>>(
       m, "Accelerator",
       "Accelerator used to speed up the interpolation of tidal models.");
-
+  init_tidal_model<double>(m, "Complex128");
+  init_tidal_model<float>(m, "Complex64");
   init_abstract_tide_model<double, fes::darwin::Constituent>(m, "Complex128");
   init_abstract_tide_model<float, fes::darwin::Constituent>(m, "Complex64");
 }
