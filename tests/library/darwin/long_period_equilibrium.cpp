@@ -2,7 +2,7 @@
 //
 // All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
-#include "fes/wave/long_period_equilibrium.hpp"
+#include "fes/darwin/long_period_equilibrium.hpp"
 
 #include <gtest/gtest.h>
 
@@ -32,62 +32,62 @@ class AstronomicAngle : public fes::angle::Astronomic {
 };
 
 TEST(WaveOrder2, LpeMinus5WavesNonRegression) {
-  auto table = fes::wave::Table();
-  auto lpe = fes::wave::LongPeriodEquilibrium(table);
+  auto table = fes::darwin::wave::Table();
+  auto lpe = fes::darwin::LongPeriodEquilibrium(table);
   EXPECT_NEAR(lpe.lpe_minus_n_waves(AstronomicAngle(), 1), 0.41377275320048151,
               1e-6);
 
-  table[fes::kMm]->dynamic(true);
-  table[fes::kMf]->dynamic(true);
-  table[fes::kMtm]->dynamic(true);
-  table[fes::kMSqm]->dynamic(true);
-  table[fes::kSsa]->dynamic(true);
+  table[fes::darwin::kMm]->dynamic(true);
+  table[fes::darwin::kMf]->dynamic(true);
+  table[fes::darwin::kMtm]->dynamic(true);
+  table[fes::darwin::kMSqm]->dynamic(true);
+  table[fes::darwin::kSsa]->dynamic(true);
 
-  lpe = fes::wave::LongPeriodEquilibrium(table);
+  lpe = fes::darwin::LongPeriodEquilibrium(table);
   EXPECT_NEAR(lpe.lpe_minus_n_waves(AstronomicAngle(), 1), -0.58598307964904195,
               1e-6);
 
-  table[fes::kSa1]->dynamic(true);
-  table[fes::kSta]->dynamic(true);
-  table[fes::kMm1]->dynamic(true);
-  table[fes::kMf1]->dynamic(true);
-  table[fes::kA5]->dynamic(true);
+  table[fes::darwin::kSa1]->dynamic(true);
+  table[fes::darwin::kSta]->dynamic(true);
+  table[fes::darwin::kMm1]->dynamic(true);
+  table[fes::darwin::kMf1]->dynamic(true);
+  table[fes::darwin::kA5]->dynamic(true);
 
-  lpe = fes::wave::LongPeriodEquilibrium(table);
+  lpe = fes::darwin::LongPeriodEquilibrium(table);
   EXPECT_NEAR(lpe.lpe_minus_n_waves(AstronomicAngle(), 1), -0.53097185112613943,
               1e-6);
 
-  table[fes::kMm2]->dynamic(true);
-  table[fes::kMf2]->dynamic(true);
+  table[fes::darwin::kMm2]->dynamic(true);
+  table[fes::darwin::kMf2]->dynamic(true);
 
-  lpe = fes::wave::LongPeriodEquilibrium(table);
+  lpe = fes::darwin::LongPeriodEquilibrium(table);
   EXPECT_NEAR(lpe.lpe_minus_n_waves(AstronomicAngle(), 1), -0.52879623974557166,
               1e-6);
 }
 
 TEST(WaveOrder2, LpeMinus5WavesAvisoFES) {
-  auto table = fes::wave::Table();
-  auto lpe = fes::wave::LongPeriodEquilibrium(table);
+  auto table = fes::darwin::wave::Table();
+  auto lpe = fes::darwin::LongPeriodEquilibrium(table);
   EXPECT_NEAR(lpe.lpe_minus_n_waves(AstronomicAngle(true), 1),
               -3.2392765310488252, 1e-6);
 
-  table[fes::kMm]->dynamic(true);
-  table[fes::kMf]->dynamic(true);
-  table[fes::kMtm]->dynamic(true);
-  table[fes::kMSqm]->dynamic(true);
-  lpe = fes::wave::LongPeriodEquilibrium(table);
+  table[fes::darwin::kMm]->dynamic(true);
+  table[fes::darwin::kMf]->dynamic(true);
+  table[fes::darwin::kMtm]->dynamic(true);
+  table[fes::darwin::kMSqm]->dynamic(true);
+  lpe = fes::darwin::LongPeriodEquilibrium(table);
   EXPECT_NEAR(lpe.lpe_minus_n_waves(AstronomicAngle(true), 1),
               -1.1941264878178992, 1e-6);
 
-  table[fes::kSsa]->dynamic(true);
-  table[fes::kSa1]->dynamic(true);
-  table[fes::kSta]->dynamic(true);
-  table[fes::kMm1]->dynamic(true);
-  table[fes::kMf1]->dynamic(true);
-  table[fes::kA5]->dynamic(true);
-  table[fes::kMm2]->dynamic(true);
-  table[fes::kMf2]->dynamic(true);
-  lpe = fes::wave::LongPeriodEquilibrium(table);
+  table[fes::darwin::kSsa]->dynamic(true);
+  table[fes::darwin::kSa1]->dynamic(true);
+  table[fes::darwin::kSta]->dynamic(true);
+  table[fes::darwin::kMm1]->dynamic(true);
+  table[fes::darwin::kMf1]->dynamic(true);
+  table[fes::darwin::kA5]->dynamic(true);
+  table[fes::darwin::kMm2]->dynamic(true);
+  table[fes::darwin::kMf2]->dynamic(true);
+  lpe = fes::darwin::LongPeriodEquilibrium(table);
   EXPECT_NEAR(lpe.lpe_minus_n_waves(AstronomicAngle(true), 1),
               -0.70850451575143991, 1e-6);
 }

@@ -30,9 +30,9 @@ struct ConstituentTraits {
 
 /// @brief Specialization of ConstituentTraits for fes::perth::Constituent.
 template <>
-struct ConstituentTraits<fes::perth::Constituent> {
-  static fes::perth::Constituent parse(const std::string& name) {
-    return fes::perth::name_to_constituent(name);
+struct ConstituentTraits<perth::Constituent> {
+  static perth::Constituent parse(const std::string& name) {
+    return perth::constituents::parse(name);
   }
 };
 

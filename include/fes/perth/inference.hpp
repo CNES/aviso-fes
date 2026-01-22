@@ -31,7 +31,7 @@ class Inference {
   /// @param[in] components The constituent table to use for frequency
   ///   calculation.
   /// @param[in] inference_type The type of interpolation to use.
-  Inference(const ConstituentTable& components,
+  Inference(const WaveTable& components,
             const InterpolationType interpolation_type =
                 InterpolationType::kLinearAdmittance);
 
@@ -39,8 +39,8 @@ class Inference {
   ///
   /// @param[in,out] constituent_table The constituent table to update.
   /// @param[in] lat Latitude in degrees (used for node tide calculation).
-  auto operator()(ConstituentTable& constituent_table,
-                  const double lat = 0) const -> void;
+  auto operator()(WaveTable& constituent_table, const double lat = 0) const
+      -> void;
 
  private:
   /// @brief Type for interpolation functions.
@@ -108,7 +108,7 @@ class Inference {
   /// missing.
   /// @param[in,out] node The TideComponent for the node constituent.
   /// @param[in] lat The latitude for the computation.
-  auto evaluate_node_tide(TideComponent& node, const double lat) const
+  auto evaluate_node_tide(Wave& node, const double lat) const
       -> const std::complex<double>& {
     if (node.is_inferred) {
       constexpr auto gamma2 = 0.682;

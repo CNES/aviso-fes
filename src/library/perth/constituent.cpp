@@ -14,13 +14,13 @@ namespace fes {
 namespace perth {
 
 /// @brief Properties of a tidal wave.
-struct Wave {
+struct WaveProperties {
   Vector7b doodson_number;  //!< Doodson number of the constituent
   ConstituentType type;     //!< Type of tidal wave
 };
 
 // Known constituents
-static const std::array<std::pair<Constituent, Wave>,
+static const std::array<std::pair<Constituent, WaveProperties>,
                         Constituent::kNumConstituents>
     kConstituents{{
         {Constituent::k2MK3, {{3, -1, 0, 0, 0, 0, 3}, kShortPeriod}},
@@ -113,7 +113,9 @@ constexpr auto constituent_to_index(Constituent constituent) -> std::size_t {
   return result;
 }
 
-auto constituent_to_name(Constituent constituent) -> std::string {
+namespace constituents {
+
+auto name(Constituent constituent) -> std::string {
   switch (constituent) {
     case Constituent::k2MK3:
       return "2MK3";
@@ -280,10 +282,20 @@ auto constituent_to_name(Constituent constituent) -> std::string {
   }
 }
 
-auto assemble_constituent_table(const std::vector<Constituent>& constituents)
-    -> ConstituentTable {
-  ConstituentTable::Item items;
-  ConstituentTable::Key keys;
+auto parse(const std::string& constituent_name) -> Constituent {
+  for (const auto& kv : kConstituents) {
+    if (detail::iequals(name(kv.first), constituent_name)) {
+      return kv.first;
+    }
+  }
+  throw std::invalid_argument("Invalid constituent name: " + constituent_name);
+}
+
+}  // namespace constituents
+
+auto build_table(const std::vector<Constituent>& constituents) -> WaveTable {
+  WaveTable::Item items;
+  WaveTable::Key keys;
   for (const auto& kv : kConstituents) {
     const auto& key = kv.first;
     const auto& wave = kv.second;
@@ -296,16 +308,7 @@ auto assemble_constituent_table(const std::vector<Constituent>& constituents)
                     inferred == constituents.end()};
     keys[index] = key;
   }
-  return ConstituentTable(std::move(keys), std::move(items));
-}
-
-auto name_to_constituent(const std::string& name) -> Constituent {
-  for (const auto& kv : kConstituents) {
-    if (detail::iequals(constituent_to_name(kv.first), name)) {
-      return kv.first;
-    }
-  }
-  throw std::invalid_argument("Invalid constituent name: " + name);
+  return WaveTable(std::move(keys), std::move(items));
 }
 
 }  // namespace perth

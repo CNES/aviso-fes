@@ -4,6 +4,7 @@
 // BSD-style license that can be found in the LICENSE file.
 #include <gtest/gtest.h>
 
+#include "fes/darwin/constituent.hpp"
 #include "fes/tidal_model/lgp.hpp"
 
 TEST(InterpolatorLGP2, Constructor) {
@@ -74,11 +75,11 @@ TEST(InterpolatorLGP2, Constructor) {
 
   auto index = std::make_shared<fes::mesh::Index>(lon, lat, triangles);
 
-  fes::tidal_model::LGP2<double, fes::Constituent> lgp2(
+  fes::tidal_model::LGP2<double, fes::darwin::Constituent> lgp2(
       std::move(index), std::move(codes), fes::kTide);
-  lgp2.add_constituent(fes::kS2, values);
+  lgp2.add_constituent(fes::darwin::kS2, values);
   fes::Quality quality;
-  auto acc = std::unique_ptr<fes::Accelerator<fes::Constituent>>(
+  auto acc = std::unique_ptr<fes::Accelerator<fes::darwin::Constituent>>(
       lgp2.accelerator(fes::angle::Formulae::kMeeus, 0.0));
   lgp2.interpolate({0.0, 0.0}, quality, acc.get());
   lgp2.interpolate({0.0, 0.0}, quality, acc.get());

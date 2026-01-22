@@ -107,7 +107,7 @@ enum Constituent : uint8_t {
 };
 
 /// @brief Data structure that holds the tide of a constituent.
-struct TideComponent {
+struct Wave {
   Vector7b doodson_number;    //!< Doodson number of the constituent
   std::complex<double> tide;  //!< Tide of the constituent
   double tidal_argument;      //!< Doodson argument
@@ -120,28 +120,23 @@ struct TideComponent {
 constexpr std::size_t kNumConstituentItems =
     static_cast<std::size_t>(kNumConstituents);
 
-/// @brief Parse a constituent name string to its enum value.
-/// @param[in] name The name of the constituent.
-/// @return The corresponding Constituent enum value.
-auto name_to_constituent(const std::string &name) -> Constituent;
-
 /// @brief Class representing a set of tidal constituents and their associated
 /// tide components.
 /// @tparam T The type of the tide component.
 template <typename T>
-class ConstituentSet : public TidalConstituents<Constituent> {
+class WaveSet : public TidalConstituents<Constituent> {
  public:
   using value_type = T;
   using Key = std::array<Constituent, kNumConstituentItems>;
   using Item = std::array<T, kNumConstituentItems>;
 
   /// @brief Default constructor
-  constexpr ConstituentSet() noexcept = default;
+  constexpr WaveSet() noexcept = default;
 
   /// @brief Constructor with keys and items
   /// @param[in] keys The keys of the constituent set
   /// @param[in] items The items of the constituent set
-  constexpr ConstituentSet(Key &&keys, Item &&items) noexcept
+  constexpr WaveSet(Key &&keys, Item &&items) noexcept
       : keys_(std::move(keys)),
         items_(std::move(items)),
         keys_vector_(keys_.begin(), keys_.end()) {}
@@ -215,24 +210,28 @@ class ConstituentSet : public TidalConstituents<Constituent> {
 };
 
 /// @brief Alias for a constituent table.
-using ConstituentTable = ConstituentSet<TideComponent>;
+using WaveTable = WaveSet<Wave>;
 
 /// @brief Assemble a constituent table from a list of constituents.
 /// @param[in] constituents The list of constituents to include in the table.
 /// If empty, all constituents are included.
 /// @return The assembled constituent table.
-auto assemble_constituent_table(
-    const std::vector<Constituent> &constituents = {}) -> ConstituentTable;
+auto build_table(const std::vector<Constituent> &constituents = {})
+    -> WaveTable;
+
+namespace constituents {
 
 /// @brief Convert a constituent enum to its string name.
 /// @param[in] constituent The constituent to convert.
 /// @return The string name of the constituent.
-auto constituent_to_name(Constituent constituent) -> std::string;
+auto name(Constituent constituent) -> std::string;
 
 /// @brief Parse a constituent name string to its enum value.
 /// @param[in] name The name of the constituent.
 /// @return The corresponding Constituent enum value.
-auto name_to_constituent(const std::string &name) -> Constituent;
+auto parse(const std::string &name) -> Constituent;
+
+}  // namespace constituents
 
 }  // namespace perth
 }  // namespace fes

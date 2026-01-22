@@ -141,7 +141,7 @@ auto populate_and_sort_inferred(
         mutable_inferred,
     std::vector<Constituent>& keys,
     const std::unordered_map<Constituent, double>& inferred,
-    const ConstituentTable& components) -> void {
+    const WaveTable& components) -> void {
   for (const auto& item : inferred) {
     const auto ident = item.first;
     const auto ampl = item.second;
@@ -161,7 +161,7 @@ auto populate_and_sort_inferred(
             });
 }
 
-Inference::Inference(const ConstituentTable& components,
+Inference::Inference(const WaveTable& components,
                      const InterpolationType interpolation_type) {
   populate_and_sort_inferred(inferred_diurnal_, diurnal_keys_,
                              kInferredDiurnalConstituents_, components);
@@ -219,8 +219,8 @@ Inference::Inference(const ConstituentTable& components,
   }
 }
 
-auto Inference::operator()(ConstituentTable& constituent_table,
-                           const double lat) const -> void {
+auto Inference::operator()(WaveTable& constituent_table, const double lat) const
+    -> void {
   auto y1 = constituent_table[Constituent::kQ1].tide / amp1_;
   auto y2 = constituent_table[Constituent::kO1].tide / amp2_;
   auto y3 = constituent_table[Constituent::kK1].tide / amp3_;
