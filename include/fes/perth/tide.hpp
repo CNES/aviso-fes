@@ -6,6 +6,7 @@
 #include "fes/abstract_tidal_model.hpp"
 #include "fes/detail/broadcast.hpp"
 #include "fes/detail/thread.hpp"
+#include "fes/geometry/point.hpp"
 #include "fes/perth/constituent.hpp"
 #include "fes/perth/inference.hpp"
 #include "fes/perth/settings.hpp"
@@ -19,12 +20,13 @@ template <typename T>
 auto evaluate_tide(const double lon, const double lat, const double time,
                    const bool group_modulations, WaveTable& wave_table,
                    Inference* inference,
-                   AbstractTidalModel<T, Constituent>* tidal_model,
+                   const AbstractTidalModel<T, Constituent>* tidal_model,
                    Accelerator<Constituent>* acc)
     -> std::tuple<double, double, Quality> {
   // Interpolation, at the requested position, of the waves provided by the
   // model used.
-  auto quality = tidal_model->interpolate({lon, lat}, wave_table, inference);
+  auto quality =
+      tidal_model->interpolate(geometry::Point{lon, lat}, wave_table, acc);
   if (quality == kUndefined) {
     // If the interpolation failed, return undefined values.
     return {std::numeric_limits<double>::quiet_NaN(),
@@ -75,13 +77,14 @@ auto evaluate_tide(const AbstractTidalModel<T, Constituent>* const tidal_model,
   auto quality = Vector<Quality>(epoch.size());
 
   auto worker = [&](const int64_t start, const int64_t end) {
-    auto wave_table = WaveTable(tidal_model->identifiers());
+    auto wave_table = build_table(tidal_model->identifiers());
     auto inference = std::unique_ptr<Inference>(
         settings.inference().has_value()
             ? new Inference(wave_table, settings.inference().value())
             : nullptr);
     auto* inference_ptr = inference.get();
-    auto* acc = tidal_model->accelerator();
+    auto* acc = tidal_model->accelerator(settings.astronomic_formulae(),
+                                         settings.time_tolerance());
     for (auto ix = start; ix < end; ++ix) {
       std::tie(tide(ix), long_period(ix), quality(ix)) = detail::evaluate_tide(
           longitude[ix], latitude[ix], epoch[ix], settings.group_modulations(),

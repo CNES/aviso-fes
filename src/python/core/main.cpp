@@ -16,6 +16,7 @@ extern void init_datemanip(py::module& m);
 extern void init_lgp_model(py::module& m, py::module& perth);
 extern void init_mesh_index(py::module& m);
 extern void init_tide(py::module& m);
+extern void init_perth_tide(py::module& m);
 extern void init_wave_order2(py::module& m);
 extern void init_wave_table(py::module& m);
 extern void init_wave(py::module& m);
@@ -59,4 +60,7 @@ PYBIND11_MODULE(core, m) {
 
   // Define the tide estimator.
   init_tide(m);
+
+  // Define perth tide estimator.
+  init_perth_tide(perth);
 }
