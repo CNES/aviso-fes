@@ -7,7 +7,7 @@
 #include <vector>
 
 #include "fes/detail/math.hpp"
-#include "fes/perth/constituent.hpp"
+#include "fes/perth/table.hpp"
 
 namespace fes {
 namespace perth {

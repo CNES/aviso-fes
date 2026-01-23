@@ -19,10 +19,11 @@ macro(ADD_TESTCASE testname)
 endmacro()
 
 add_subdirectory(angle)
+add_subdirectory(darwin)
 add_subdirectory(detail)
 add_subdirectory(geometry)
 add_subdirectory(mesh)
+add_subdirectory(perth)
 add_subdirectory(tidal_model)
-add_subdirectory(darwin)
 
 add_testcase(axis fes)

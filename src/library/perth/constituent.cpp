@@ -1,6 +1,5 @@
 #include "fes/perth/constituent.hpp"
 
-#include <algorithm>
 #include <array>
 #include <cstddef>
 #include <stdexcept>
@@ -9,6 +8,7 @@
 
 #include "fes/detail/string.hpp"
 #include "fes/eigen.hpp"
+#include "fes/perth/table.hpp"
 
 namespace fes {
 namespace perth {
@@ -111,6 +111,24 @@ constexpr auto constituent_to_index(Constituent constituent) -> std::size_t {
     throw std::out_of_range("Invalid constituent index");
   }
   return result;
+}
+
+auto build_table(const std::vector<Constituent>& constituents) -> WaveTable {
+  WaveTable::Item items;
+  WaveTable::Key keys;
+  for (const auto& kv : kConstituents) {
+    const auto& key = kv.first;
+    const auto& wave = kv.second;
+    auto index = constituent_to_index(key);
+    auto inferred = std::find(constituents.begin(), constituents.end(), key);
+    items[index] = {wave.doodson_number,
+                    {0, 0},
+                    0,
+                    wave.type,
+                    inferred == constituents.end()};
+    keys[index] = key;
+  }
+  return WaveTable(std::move(keys), std::move(items));
 }
 
 namespace constituents {
@@ -292,24 +310,6 @@ auto parse(const std::string& constituent_name) -> Constituent {
 }
 
 }  // namespace constituents
-
-auto build_table(const std::vector<Constituent>& constituents) -> WaveTable {
-  WaveTable::Item items;
-  WaveTable::Key keys;
-  for (const auto& kv : kConstituents) {
-    const auto& key = kv.first;
-    const auto& wave = kv.second;
-    auto index = constituent_to_index(key);
-    auto inferred = std::find(constituents.begin(), constituents.end(), key);
-    items[index] = {wave.doodson_number,
-                    {0, 0},
-                    0,
-                    wave.type,
-                    inferred == constituents.end()};
-    keys[index] = key;
-  }
-  return WaveTable(std::move(keys), std::move(items));
-}
 
 }  // namespace perth
 }  // namespace fes
