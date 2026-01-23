@@ -44,7 +44,7 @@ auto evaluate_equilibrium_long_period(
   auto result = Eigen::VectorXd(epoch.size());
   auto worker = [&](const int64_t start, const int64_t end) {
     auto angles = angle::Astronomic(settings.astronomic_formulae());
-    auto model = LongPeriodEquilibrium(wave::Table());
+    auto model = LongPeriodEquilibrium(WaveTable());
     for (auto ix = start; ix < end; ++ix) {
       angles.update(epoch(ix));
       result(ix) = model.lpe_minus_n_waves(angles, latitude(ix));

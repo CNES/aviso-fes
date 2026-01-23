@@ -51,7 +51,7 @@ class AstronomicAngleForNodalA : public fes::angle::Astronomic {
 
 // NOLINTBEGIN(readability-function-cognitive-complexity)
 // Used to test all wave components in a single function
-inline auto check_nodal_g(const fes::darwin::wave::Table& table,
+inline auto check_nodal_g(const fes::darwin::WaveTable& table,
                           const fes::angle::Astronomic& angle) -> void {
   for (auto&& item : table) {
     item->nodal_g(angle);
@@ -359,7 +359,7 @@ inline auto check_nodal_g(const fes::darwin::wave::Table& table,
   }
 }
 
-inline auto check_nodal_a(const fes::darwin::wave::Table& table,
+inline auto check_nodal_a(const fes::darwin::WaveTable& table,
                           const fes::angle::Astronomic& angle) {
   for (auto&& item : table) {
     item->nodal_a(angle);
@@ -534,11 +534,11 @@ inline auto check_nodal_a(const fes::darwin::wave::Table& table,
 // NOLINTEND(readability-function-cognitive-complexity)
 
 TEST(Wave, NodalG) {
-  check_nodal_g(fes::darwin::wave::Table(), AstronomicAngleForNodalG());
+  check_nodal_g(fes::darwin::WaveTable(), AstronomicAngleForNodalG());
 }
 
 TEST(Wave, NodalA) {
-  check_nodal_a(fes::darwin::wave::Table(), AstronomicAngleForNodalA());
+  check_nodal_a(fes::darwin::WaveTable(), AstronomicAngleForNodalA());
 }
 
 TEST(Wave, DoodsonNumber) {

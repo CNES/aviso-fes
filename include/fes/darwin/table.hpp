@@ -20,7 +20,6 @@
 
 namespace fes {
 namespace darwin {
-namespace wave {
 
 /// @brief Iterator on the waves of a table.
 ///
@@ -30,7 +29,7 @@ namespace wave {
 /// @tparam Range Range of waves
 /// @tparam RangeType Type of the range
 template <typename Range, typename RangeType>
-class TableIterator : public std::iterator_traits<RangeType> {
+class WaveTableIterator : public std::iterator_traits<RangeType> {
  public:
   /// Type of value returned by the iterator.
   using value_t = typename std::iterator_traits<RangeType>::value_type;
@@ -42,7 +41,7 @@ class TableIterator : public std::iterator_traits<RangeType> {
   constexpr auto operator*() noexcept -> value_t { return *it_; }
 
   /// Advances the iterator
-  constexpr auto operator++() noexcept -> TableIterator& {
+  constexpr auto operator++() noexcept -> WaveTableIterator& {
     ++it_;
     normalize();
     return *this;
@@ -51,14 +50,16 @@ class TableIterator : public std::iterator_traits<RangeType> {
   /// Tests if the iterators are equal
   /// @param[in] rhs iterator to compare
   /// @returns true if the two iterators are equal
-  constexpr auto operator==(const TableIterator& rhs) const noexcept -> bool {
+  constexpr auto operator==(const WaveTableIterator& rhs) const noexcept
+      -> bool {
     return it_ == rhs.it_;
   }
 
   /// Tests if the iterators are different
   /// @param[in] rhs iterator to compare
   /// @returns true if the two iterators are different
-  constexpr auto operator!=(const TableIterator& rhs) const noexcept -> bool {
+  constexpr auto operator!=(const WaveTableIterator& rhs) const noexcept
+      -> bool {
     return !(*this == rhs);
   }
 
@@ -67,7 +68,7 @@ class TableIterator : public std::iterator_traits<RangeType> {
   /// @returns true if the two iterators are equal
   template <typename OtherRange, typename OtherRangeType>
   constexpr auto operator==(
-      const TableIterator<OtherRange, OtherRangeType>& rhs) const noexcept
+      const WaveTableIterator<OtherRange, OtherRangeType>& rhs) const noexcept
       -> bool {
     return it_ == rhs.base();
   }
@@ -77,7 +78,7 @@ class TableIterator : public std::iterator_traits<RangeType> {
   /// @returns true if the two iterators are different
   template <typename OtherRange, typename OtherRangeType>
   constexpr auto operator!=(
-      const TableIterator<OtherRange, OtherRangeType>& rhs) const noexcept
+      const WaveTableIterator<OtherRange, OtherRangeType>& rhs) const noexcept
       -> bool {
     return !(*this == rhs);
   }
@@ -85,7 +86,7 @@ class TableIterator : public std::iterator_traits<RangeType> {
   /// Constructor
   /// @param[in] it Iterator on the beginning of the range
   /// @param[in] end Iterator on the end of the range
-  constexpr TableIterator(RangeType it, RangeType end) noexcept
+  constexpr WaveTableIterator(RangeType it, RangeType end) noexcept
       : it_{std::move(it)}, end_{std::move(end)} {
     normalize();
   }
@@ -104,23 +105,23 @@ class TableIterator : public std::iterator_traits<RangeType> {
 };
 
 /// Properties of tide waves computed
-class Table : public TidalConstituents<Constituent> {
+class WaveTable : public TidalConstituents<Constituent> {
  public:
   /// Alias to a mutable iterator on the waves
   using iterator_t =
-      TableIterator<std::vector<std::shared_ptr<Wave>>,
-                    std::vector<std::shared_ptr<Wave>>::iterator>;
+      WaveTableIterator<std::vector<std::shared_ptr<Wave>>,
+                        std::vector<std::shared_ptr<Wave>>::iterator>;
 
   /// Alias to a constant iterator on the waves
   using const_iterator_t =
-      TableIterator<std::vector<std::shared_ptr<Wave>>,
-                    std::vector<std::shared_ptr<Wave>>::const_iterator>;
+      WaveTableIterator<std::vector<std::shared_ptr<Wave>>,
+                        std::vector<std::shared_ptr<Wave>>::const_iterator>;
 
   /// Build a table from a list of constituent names
-  explicit Table(const std::vector<std::string>& waves = {});
+  explicit WaveTable(const std::vector<std::string>& waves = {});
 
   /// Build a table from a list of constituent identifiers
-  explicit Table(const std::vector<Constituent>& waves);
+  explicit WaveTable(const std::vector<Constituent>& waves);
 
   /// Create a wave properties from its identifier
   /// @param[in] ident Wave identifier
@@ -321,7 +322,7 @@ class Table : public TidalConstituents<Constituent> {
  private:
   /// Typename to a function pointer to get a wave from the table
   using Getter =
-      const std::shared_ptr<Wave>& (Table::*)(const Constituent) const;
+      const std::shared_ptr<Wave>& (WaveTable::*)(const Constituent) const;
 
   /// Get a wave from the table
   Getter getter_{nullptr};
@@ -351,7 +352,7 @@ class Table : public TidalConstituents<Constituent> {
       -> const std::shared_ptr<Wave>& {
     const auto& result = waves_[static_cast<size_t>(ident)];
     if (result == nullptr) {
-      auto msg = std::string("Wave ") + Table::wave_factory(ident)->name() +
+      auto msg = std::string("Wave ") + WaveTable::wave_factory(ident)->name() +
                  " is not available";
       throw std::out_of_range(msg);
     }
@@ -359,6 +360,5 @@ class Table : public TidalConstituents<Constituent> {
   }
 };
 
-}  // namespace wave
 }  // namespace darwin
 }  // namespace fes

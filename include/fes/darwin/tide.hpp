@@ -62,9 +62,8 @@ namespace detail {
 /// @return The wave table.
 template <typename T>
 static auto build_wave_table(
-    const AbstractTidalModel<T, Constituent>* const tidal_model)
-    -> wave::Table {
-  auto result = wave::Table();
+    const AbstractTidalModel<T, Constituent>* const tidal_model) -> WaveTable {
+  auto result = WaveTable();
 
   // Add the constituents provided by the model.
   for (const auto& item : tidal_model->data()) {
@@ -91,8 +90,8 @@ static auto build_wave_table(
 /// @return The wave table.
 static inline auto build_wave_table_from_constituents(
     const std::map<Constituent, std::complex<double>>& constituents)
-    -> wave::Table {
-  auto wave_table = wave::Table();
+    -> WaveTable {
+  auto wave_table = WaveTable();
   for (const auto& item : constituents) {
     auto& wave = wave_table[item.first];
     wave->dynamic(true);
@@ -115,7 +114,7 @@ static inline auto build_wave_table_from_constituents(
 /// @param[in] compute_lpe Whether to compute long period equilibrium
 /// @return Tuple of (short_period_tide, long_period_tide)
 static inline auto compute_tide_from_waves(
-    wave::Table& wave_table, LongPeriodEquilibrium& lpe,
+    WaveTable& wave_table, LongPeriodEquilibrium& lpe,
     Accelerator<Constituent>& acc, const double epoch, const double latitude,
     const bool compute_lpe = true) -> std::tuple<double, double> {
   // Update the astronomic angle used to evaluate the tidal constituents.
@@ -167,7 +166,7 @@ template <typename T>
 inline auto evaluate_tide(
     const AbstractTidalModel<T, Constituent>* const tidal_model,
     const double epoch, const double longitude, const double latitude,
-    wave::Table& wave_table, LongPeriodEquilibrium& long_period,
+    WaveTable& wave_table, LongPeriodEquilibrium& long_period,
     Accelerator<Constituent>* acc) -> std::tuple<double, double, Quality> {
   // Interpolation, at the requested position, of the waves provided by the
   // model used.

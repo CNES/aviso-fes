@@ -8,14 +8,14 @@
 
 #include "fes/darwin/table.hpp"
 
-inline auto check_parse(const fes::darwin::wave::Table& table) -> void {
+inline auto check_parse(const fes::darwin::WaveTable& table) -> void {
   for (auto&& item : table) {
     ASSERT_EQ(fes::darwin::constituents::parse(item->name()), item->ident());
   }
 }
 
 TEST(Constituents, Parse) {
-  check_parse(fes::darwin::wave::Table());
+  check_parse(fes::darwin::WaveTable());
   EXPECT_THROW(fes::darwin::constituents::parse("__x__"),
                std::invalid_argument);
   EXPECT_EQ(fes::darwin::constituents::parse("msqm"), fes::darwin::kMSqm);

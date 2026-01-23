@@ -10,7 +10,7 @@ namespace detail = fes::detail;
 
 // NOLINTBEGIN(readability-function-cognitive-complexity,*-function-size)
 // Used to test all wave components in a single function
-inline auto check_wave_table_constructor(const fes::darwin::wave::Table& table)
+inline auto check_wave_table_constructor(const fes::darwin::WaveTable& table)
     -> void {
   for (auto&& item : table) {
     switch (item->ident()) {
@@ -517,11 +517,11 @@ inline auto check_wave_table_constructor(const fes::darwin::wave::Table& table)
 // NOLINTEND(readability-function-cognitive-complexity,*-function-size)
 
 TEST(WaveTable, Constructor) {
-  check_wave_table_constructor(fes::darwin::wave::Table());
+  check_wave_table_constructor(fes::darwin::WaveTable());
 }
 
 static void admittance(const double r, const fes::darwin::Constituent ident,
-                       fes::darwin::wave::Table& table) {
+                       fes::darwin::WaveTable& table) {
   table.admittance();
   EXPECT_NEAR(table[ident]->tide().real(), r, 1e-6);
   EXPECT_NEAR(table[ident]->tide().imag(), r, 1e-6);
@@ -536,7 +536,7 @@ static void admittance(const double r, const fes::darwin::Constituent ident,
 }
 
 TEST(WaveTable, Admittance) {
-  auto table = fes::darwin::wave::Table();
+  auto table = fes::darwin::WaveTable();
   for (auto&& item : table) {
     item->tide({1, 1});
   }
@@ -567,7 +567,7 @@ TEST(WaveTable, Admittance) {
 }
 
 TEST(WaveTable, IdentName) {
-  for (auto&& item : fes::darwin::wave::Table()) {
+  for (auto&& item : fes::darwin::WaveTable()) {
     const auto* name = item->name();
     auto ident = fes::darwin::constituents::parse(name);
     EXPECT_EQ(item->ident(), ident);
@@ -575,7 +575,7 @@ TEST(WaveTable, IdentName) {
 }
 
 TEST(WaveTable, Sparse) {
-  auto table = fes::darwin::wave::Table(
+  auto table = fes::darwin::WaveTable(
       {"O1", "K1", "M2", "S2", "N2", "K2", "M4", "M6", "Mf2"});
   EXPECT_EQ(table.size(), 9);
   EXPECT_EQ(table[fes::darwin::kO1]->ident(), fes::darwin::kO1);

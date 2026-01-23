@@ -23,7 +23,7 @@ class LongPeriodEquilibrium {
 
   /// Constructs the default object and disable the dynamic wave used for the
   /// calculation of the long-period equilibrium ocean tides.
-  explicit LongPeriodEquilibrium(const wave::Table& table)
+  explicit LongPeriodEquilibrium(const WaveTable& table)
       : LongPeriodEquilibrium() {
     disable_dynamic_wave(table);
   }
@@ -32,7 +32,7 @@ class LongPeriodEquilibrium {
   /// equilibrium ocean tides.
   ///
   /// @param[in] table Waves to disable
-  auto disable_dynamic_wave(const wave::Table& table) -> void;
+  auto disable_dynamic_wave(const WaveTable& table) -> void;
 
   /// @brief Computes the long-period equilibrium ocean tides.
   ///

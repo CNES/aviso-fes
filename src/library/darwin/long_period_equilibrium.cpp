@@ -144,7 +144,7 @@ LongPeriodEquilibrium::LongPeriodEquilibrium()
                ).finished()) {}
 // clang-format on
 
-auto LongPeriodEquilibrium::disable_dynamic_wave(const wave::Table& table)
+auto LongPeriodEquilibrium::disable_dynamic_wave(const WaveTable& table)
     -> void {
   // Indexes are the same as those defined starting from l.389
   if (table[kMm]->dynamic()) {

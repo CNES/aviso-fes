@@ -16,9 +16,8 @@
 
 namespace fes {
 namespace darwin {
-namespace wave {
 
-auto Table::wave_factory(const Constituent ident) -> std::shared_ptr<Wave> {
+auto WaveTable::wave_factory(const Constituent ident) -> std::shared_ptr<Wave> {
   switch (ident) {
     case kO1:
       return std::shared_ptr<Wave>(new wave::O1());
@@ -228,7 +227,8 @@ auto Table::wave_factory(const Constituent ident) -> std::shared_ptr<Wave> {
 inline auto create_table(const std::vector<std::string>& known_constituents,
                          std::vector<std::shared_ptr<Wave>>& table) -> void {
   for (const auto& constituent : known_constituents) {
-    table.emplace_back(Table::wave_factory(constituents::parse(constituent)));
+    table.emplace_back(
+        WaveTable::wave_factory(constituents::parse(constituent)));
   }
 }
 
@@ -241,18 +241,18 @@ inline auto create_sparse_table(
     auto selected =
         std::find(waves.begin(), waves.end(), constituent) != waves.end();
     table.emplace_back(
-        selected ? Table::wave_factory(constituents::parse(constituent))
+        selected ? WaveTable::wave_factory(constituents::parse(constituent))
                  : nullptr);
   }
 }
 
-Table::Table(const std::vector<std::string>& waves) {
+WaveTable::WaveTable(const std::vector<std::string>& waves) {
   const auto known_constituents = constituents::known();
   waves_.reserve(known_constituents.size());
   waves.empty() ? create_table(known_constituents, waves_)
                 : create_sparse_table(known_constituents, waves, waves_);
-  getter_ =
-      size() == waves_.size() ? &Table::direct_access : &Table::sparse_access;
+  getter_ = size() == waves_.size() ? &WaveTable::direct_access
+                                    : &WaveTable::sparse_access;
 
   // Fill the index between to have a direct access to the wave
   wave_index_.reserve(waves_.size());
@@ -265,16 +265,16 @@ Table::Table(const std::vector<std::string>& waves) {
   }
 }
 
-Table::Table(const std::vector<Constituent>& waves) {
+WaveTable::WaveTable(const std::vector<Constituent>& waves) {
   auto wave_names = std::vector<std::string>{};
   wave_names.reserve(wave_names.size());
   for (const auto& constituent : waves) {
     wave_names.emplace_back(constituents::name(constituent));
   }
-  *this = Table(wave_names);
+  *this = WaveTable(wave_names);
 }
 
-void Table::admittance() {
+void WaveTable::admittance() {
   // Arrays who contains the spline coefficients needed to compute MU2, NU2,
   // L2, T2 and Lambda2 by admittance.
   constexpr auto mu2 =
@@ -386,9 +386,9 @@ void Table::admittance() {
            t2[0] * z->tide() + t2[1] * x->tide() + t2[2] * y->tide());
 }
 
-auto Table::harmonic_analysis(const Eigen::Ref<const Eigen::VectorXd>& h,
-                              const DynamicRef<const Eigen::MatrixXd>& f,
-                              const DynamicRef<const Eigen::MatrixXd>& vu)
+auto WaveTable::harmonic_analysis(const Eigen::Ref<const Eigen::VectorXd>& h,
+                                  const DynamicRef<const Eigen::MatrixXd>& f,
+                                  const DynamicRef<const Eigen::MatrixXd>& vu)
     -> Eigen::VectorXcd {
   detail::check_eigen_shape("f", f, "vu", vu);
   if (h.rows() != f.cols() || h.rows() != vu.cols()) {
@@ -418,7 +418,7 @@ auto Table::harmonic_analysis(const Eigen::Ref<const Eigen::VectorXd>& h,
   return result;
 }
 
-auto Table::tide_from_tide_series(
+auto WaveTable::tide_from_tide_series(
     const Eigen::Ref<const Eigen::VectorXd>& epoch,
     const Eigen::Ref<const Eigen::VectorXcd>& wave,
     const angle::Formulae& formulae) const -> Eigen::VectorXd {
@@ -434,7 +434,7 @@ auto Table::tide_from_tide_series(
 
   // The wave properties of the object must be immutable for the provided
   // instance.
-  auto wt = Table(*this);
+  auto wt = WaveTable(*this);
 
   for (auto ix = 0; ix < epoch.rows(); ++ix) {
     double tide = 0;
@@ -453,10 +453,9 @@ auto Table::tide_from_tide_series(
   return result;
 }
 
-auto Table::tide_from_mapping(const double epoch,
-                              const DynamicRef<const Eigen::MatrixXcd>& wave,
-                              const angle::Formulae& formulae,
-                              const size_t num_threads) const
+auto WaveTable::tide_from_mapping(
+    const double epoch, const DynamicRef<const Eigen::MatrixXcd>& wave,
+    const angle::Formulae& formulae, const size_t num_threads) const
     -> Eigen::MatrixXd {
   if (static_cast<size_t>(wave.rows()) != size()) {
     throw std::invalid_argument(
@@ -467,7 +466,7 @@ auto Table::tide_from_mapping(const double epoch,
   auto worker = [&](const int64_t start, const int64_t end) {
     // The wave properties of the object must be immutable for the provided
     // instance.
-    auto wt = Table(*this);
+    auto wt = WaveTable(*this);
     wt.compute_nodal_corrections(angle::Astronomic(formulae, epoch));
 
     for (auto ix = start; ix < end; ++ix) {
@@ -484,7 +483,7 @@ auto Table::tide_from_mapping(const double epoch,
   return result;
 }
 
-auto Table::compute_nodal_modulations(
+auto WaveTable::compute_nodal_modulations(
     const Eigen::Ref<const Eigen::VectorXd>& epoch,
     const angle::Formulae& formulae) const
     -> std::tuple<Eigen::MatrixXd, Eigen::MatrixXd> {
@@ -496,7 +495,7 @@ auto Table::compute_nodal_modulations(
 
   // The wave properties of the object must be immutable for the provided
   // instance.
-  auto wt = Table(*this);
+  auto wt = WaveTable(*this);
 
   for (auto ix = 0; ix < epoch.size(); ++ix) {
     angles.update(epoch(ix));
@@ -511,10 +510,10 @@ auto Table::compute_nodal_modulations(
   return std::make_tuple(f, vu);
 }
 
-auto Table::select_waves_for_analysis(const double duration, const double f)
+auto WaveTable::select_waves_for_analysis(const double duration, const double f)
     -> std::vector<std::string> {
   auto result = std::vector<std::string>();
-  for (auto&& wave : Table()) {
+  for (auto&& wave : WaveTable()) {
     if (wave->period() < f * (duration / 3600.0)) {
       result.emplace_back(wave->name());
     }
@@ -522,6 +521,5 @@ auto Table::select_waves_for_analysis(const double duration, const double f)
   return result;
 }
 
-}  // namespace wave
 }  // namespace darwin
 }  // namespace fes

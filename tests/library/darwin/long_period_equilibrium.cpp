@@ -32,7 +32,7 @@ class AstronomicAngle : public fes::angle::Astronomic {
 };
 
 TEST(WaveOrder2, LpeMinus5WavesNonRegression) {
-  auto table = fes::darwin::wave::Table();
+  auto table = fes::darwin::WaveTable();
   auto lpe = fes::darwin::LongPeriodEquilibrium(table);
   EXPECT_NEAR(lpe.lpe_minus_n_waves(AstronomicAngle(), 1), 0.41377275320048151,
               1e-6);
@@ -66,7 +66,7 @@ TEST(WaveOrder2, LpeMinus5WavesNonRegression) {
 }
 
 TEST(WaveOrder2, LpeMinus5WavesAvisoFES) {
-  auto table = fes::darwin::wave::Table();
+  auto table = fes::darwin::WaveTable();
   auto lpe = fes::darwin::LongPeriodEquilibrium(table);
   EXPECT_NEAR(lpe.lpe_minus_n_waves(AstronomicAngle(true), 1),
               -3.2392765310488252, 1e-6);

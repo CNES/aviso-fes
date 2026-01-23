@@ -154,7 +154,7 @@ Returns:
           "interpolate",
           [](const fes::AbstractTidalModel<T, ConstituentId>& self,
              const double lon, const double lat,
-             fes::darwin::wave::Table& wt) -> fes::Quality {
+             fes::darwin::WaveTable& wt) -> fes::Quality {
             auto acc = std::unique_ptr<fes::Accelerator<ConstituentId>>(
                 self.accelerator(fes::angle::Formulae::kSchuremanOrder1, 0.0));
             return self.interpolate({lon, lat}, wt, acc.get());
