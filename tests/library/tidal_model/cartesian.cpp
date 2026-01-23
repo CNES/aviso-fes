@@ -8,24 +8,25 @@
 
 #include "fes/darwin/constituent.hpp"
 
-using Cartesian = fes::tidal_model::Cartesian<double, fes::darwin::Constituent>;
+namespace fes {
+
+using Cartesian = tidal_model::Cartesian<double, darwin::Constituent>;
 
 TEST(TidalModelCartesian, Constructor) {
   auto points = Eigen::VectorXd(5);
   points << 0, 1, 2, 3, 4;
   auto matrix = Eigen::VectorXcd::Zero(25);
-  auto axis = fes::Axis(points);
-  auto model = Cartesian(axis, axis, fes::kTide);
-  model.add_constituent(fes::darwin::kM2, matrix);
-  model.add_constituent(fes::darwin::kK2, matrix);
+  auto axis = Axis(points);
+  auto model = Cartesian(axis, axis, kTide);
+  model.add_constituent(darwin::kM2, matrix);
+  model.add_constituent(darwin::kK2, matrix);
 
   EXPECT_EQ(model.lon().size(), 5);
   EXPECT_EQ(model.lat().size(), 5);
-  EXPECT_EQ(model.tide_type(), fes::kTide);
+  EXPECT_EQ(model.tide_type(), kTide);
 
   auto state = model.getstate();
-  auto other =
-      Cartesian::setstate(fes::string_view(state.data(), state.size()));
+  auto other = Cartesian::setstate(string_view(state.data(), state.size()));
 
   EXPECT_THROW(Cartesian::setstate("invalid"), std::invalid_argument);
 }
@@ -34,14 +35,13 @@ TEST(TidalModelCartesian, GetSetState) {
   auto points = Eigen::VectorXd(5);
   points << 0, 1, 2, 3, 4;
   auto matrix = Eigen::VectorXcd::Zero(25);
-  auto axis = fes::Axis(points);
-  auto model = Cartesian(axis, axis, fes::kTide);
-  model.add_constituent(fes::darwin::kM2, matrix);
-  model.add_constituent(fes::darwin::kK2, matrix);
+  auto axis = Axis(points);
+  auto model = Cartesian(axis, axis, kTide);
+  model.add_constituent(darwin::kM2, matrix);
+  model.add_constituent(darwin::kK2, matrix);
 
   auto state = model.getstate();
-  auto other =
-      Cartesian::setstate(fes::string_view(state.data(), state.size()));
+  auto other = Cartesian::setstate(string_view(state.data(), state.size()));
 
   EXPECT_EQ(model.lon().size(), other.lon().size());
   EXPECT_EQ(model.lat().size(), other.lat().size());
@@ -49,28 +49,20 @@ TEST(TidalModelCartesian, GetSetState) {
   const auto& model_data = model.data();
   const auto& other_data = other.data();
   EXPECT_EQ(model_data.size(), other_data.size());
-  EXPECT_EQ(model_data.at(fes::darwin::kM2).size(),
-            other_data.at(fes::darwin::kM2).size());
-  EXPECT_EQ(model_data.at(fes::darwin::kK2).size(),
-            other_data.at(fes::darwin::kK2).size());
-  EXPECT_EQ(model_data.at(fes::darwin::kM2)(0),
-            other_data.at(fes::darwin::kM2)(0));
-  EXPECT_EQ(model_data.at(fes::darwin::kK2)(0),
-            other_data.at(fes::darwin::kK2)(0));
-  EXPECT_EQ(model_data.at(fes::darwin::kM2)(1),
-            other_data.at(fes::darwin::kM2)(1));
-  EXPECT_EQ(model_data.at(fes::darwin::kK2)(1),
-            other_data.at(fes::darwin::kK2)(1));
-  EXPECT_EQ(model_data.at(fes::darwin::kM2)(2),
-            other_data.at(fes::darwin::kM2)(2));
-  EXPECT_EQ(model_data.at(fes::darwin::kK2)(2),
-            other_data.at(fes::darwin::kK2)(2));
-  EXPECT_EQ(model_data.at(fes::darwin::kM2)(3),
-            other_data.at(fes::darwin::kM2)(3));
-  EXPECT_EQ(model_data.at(fes::darwin::kK2)(3),
-            other_data.at(fes::darwin::kK2)(3));
-  EXPECT_EQ(model_data.at(fes::darwin::kM2)(4),
-            other_data.at(fes::darwin::kM2)(4));
-  EXPECT_EQ(model_data.at(fes::darwin::kK2)(4),
-            other_data.at(fes::darwin::kK2)(4));
+  EXPECT_EQ(model_data.at(darwin::kM2).size(),
+            other_data.at(darwin::kM2).size());
+  EXPECT_EQ(model_data.at(darwin::kK2).size(),
+            other_data.at(darwin::kK2).size());
+  EXPECT_EQ(model_data.at(darwin::kM2)(0), other_data.at(darwin::kM2)(0));
+  EXPECT_EQ(model_data.at(darwin::kK2)(0), other_data.at(darwin::kK2)(0));
+  EXPECT_EQ(model_data.at(darwin::kM2)(1), other_data.at(darwin::kM2)(1));
+  EXPECT_EQ(model_data.at(darwin::kK2)(1), other_data.at(darwin::kK2)(1));
+  EXPECT_EQ(model_data.at(darwin::kM2)(2), other_data.at(darwin::kM2)(2));
+  EXPECT_EQ(model_data.at(darwin::kK2)(2), other_data.at(darwin::kK2)(2));
+  EXPECT_EQ(model_data.at(darwin::kM2)(3), other_data.at(darwin::kM2)(3));
+  EXPECT_EQ(model_data.at(darwin::kK2)(3), other_data.at(darwin::kK2)(3));
+  EXPECT_EQ(model_data.at(darwin::kM2)(4), other_data.at(darwin::kM2)(4));
+  EXPECT_EQ(model_data.at(darwin::kK2)(4), other_data.at(darwin::kK2)(4));
 }
+
+}  // namespace fes

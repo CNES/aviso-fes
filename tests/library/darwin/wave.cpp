@@ -7,13 +7,15 @@
 #include <gtest/gtest.h>
 
 #include "fes/darwin/table.hpp"
-namespace detail = fes::detail;
 
-class AstronomicAngleForNodalG : public fes::angle::Astronomic {
+namespace fes {
+namespace darwin {
+
+class AstronomicAngleForNodalG : public angle::Astronomic {
  public:
   // -2208988800 = 1900-01-01 00:00:00 UTC
   AstronomicAngleForNodalG()
-      : fes::angle::Astronomic(fes::angle::Formulae::kMeeus, -2208988800.0) {
+      : angle::Astronomic(angle::Formulae::kMeeus, -2208988800.0) {
     t_ = detail::math::radians(1.0);
     h_ = detail::math::radians(1.0);
     s_ = detail::math::radians(1.0);
@@ -51,306 +53,306 @@ class AstronomicAngleForNodalA : public fes::angle::Astronomic {
 
 // NOLINTBEGIN(readability-function-cognitive-complexity)
 // Used to test all wave components in a single function
-inline auto check_nodal_g(const fes::darwin::WaveTable& table,
+inline auto check_nodal_g(const WaveTable& table,
                           const fes::angle::Astronomic& angle) -> void {
   for (auto&& item : table) {
     item->nodal_g(angle);
     switch (item->ident()) {
-      case fes::darwin::kO1:
+      case kO1:
         EXPECT_NEAR(detail::math::degrees(item->vu()), +91.0, 1e-8);
         break;
-      case fes::darwin::kP1:
+      case kP1:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 90.0, 1e-8);
         break;
-      case fes::darwin::kK1:
+      case kK1:
         EXPECT_NEAR(detail::math::degrees(item->vu()), -89.0, 1e-8);
         break;
-      case fes::darwin::k2N2:
+      case k2N2:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 2.0, 1e-8);
         break;
-      case fes::darwin::kMu2:
+      case kMu2:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 2.0, 1e-8);
         break;
-      case fes::darwin::kN2:
+      case kN2:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 2.0, 1e-8);
         break;
-      case fes::darwin::kNu2:
+      case kNu2:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 2.0, 1e-8);
         break;
-      case fes::darwin::kM2:
+      case kM2:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 2.0, 1e-8);
         break;
-      case fes::darwin::kL2:
+      case kL2:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 181.0, 1e-8);
         break;
-      case fes::darwin::kT2:
+      case kT2:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 2.0, 1e-8);
         break;
-      case fes::darwin::kS2:
+      case kS2:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 2.0, 1e-8);
         break;
-      case fes::darwin::kK2:
+      case kK2:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 2.0, 1e-8);
         break;
-      case fes::darwin::kM4:
+      case kM4:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 4.0, 1e-8);
         break;
-      case fes::darwin::kS1:
+      case kS1:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 1.0, 1e-8);
         break;
-      case fes::darwin::kQ1:
+      case kQ1:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 91.0, 1e-8);
         break;
-      case fes::darwin::kMm:
+      case kMm:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 0.0, 1e-8);
         break;
-      case fes::darwin::kMf:
+      case kMf:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 0.0, 1e-8);
         break;
-      case fes::darwin::kMtm:
+      case kMtm:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 0.0, 1e-12);
         break;
-      case fes::darwin::kMSqm:
+      case kMSqm:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 0.0, 1e-8);
         break;
-      case fes::darwin::kEps2:
+      case kEps2:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 2.0, 1e-8);
         break;
-      case fes::darwin::kLambda2:
+      case kLambda2:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 182.0, 1e-8);
         break;
-      case fes::darwin::kEta2:
+      case kEta2:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 2.0, 1e-8);
         break;
-      case fes::darwin::k2Q1:
+      case k2Q1:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 91.0, 1e-8);
         break;
-      case fes::darwin::kSigma1:
+      case kSigma1:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 91.0, 1e-8);
         break;
-      case fes::darwin::kRho1:
+      case kRho1:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 91.0, 1e-8);
         break;
-      case fes::darwin::kM1:
+      case kM1:
         EXPECT_NEAR(detail::math::degrees(item->vu()), -89.51674239, 1e-8);
         break;
-      case fes::darwin::kM11:
+      case kM11:
         EXPECT_NEAR(detail::math::degrees(item->vu()), -89.0, 1e-8);
         break;
-      case fes::darwin::kM12:
+      case kM12:
         EXPECT_NEAR(detail::math::degrees(item->vu()), -89.0, 1e-8);
         break;
-      case fes::darwin::kM13:
+      case kM13:
         // EXPECT_NEAR(detail::math::degrees(item->vu()), -89.0, 1e-8);
         break;
-      case fes::darwin::kChi1:
+      case kChi1:
         EXPECT_NEAR(detail::math::degrees(item->vu()), -89.0, 1e-8);
         break;
-      case fes::darwin::kPi1:
+      case kPi1:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 90.0, 1e-8);
         break;
-      case fes::darwin::kPhi1:
+      case kPhi1:
         EXPECT_NEAR(detail::math::degrees(item->vu()), -86.0, 1e-8);
         break;
-      case fes::darwin::kTheta1:
+      case kTheta1:
         EXPECT_NEAR(detail::math::degrees(item->vu()), -89.0, 1e-8);
         break;
-      case fes::darwin::kJ1:
+      case kJ1:
         EXPECT_NEAR(detail::math::degrees(item->vu()), -89.0, 1e-8);
         break;
-      case fes::darwin::kOO1:
+      case kOO1:
         EXPECT_NEAR(detail::math::degrees(item->vu()), -89.0, 1e-8);
         break;
-      case fes::darwin::kM3:
+      case kM3:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 3.0, 1e-8);
         break;
-      case fes::darwin::kM6:
+      case kM6:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 6.0, 1e-8);
         break;
-      case fes::darwin::kMN4:
+      case kMN4:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 4.0, 1e-8);
         break;
-      case fes::darwin::kMS4:
+      case kMS4:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 4.0, 1e-8);
         break;
-      case fes::darwin::kN4:
+      case kN4:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 4.0, 1e-8);
         break;
-      case fes::darwin::kR2:
+      case kR2:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 182.0, 1e-8);
         break;
-      case fes::darwin::kR4:
+      case kR4:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 4.0, 1e-8);
         break;
-      case fes::darwin::kS4:
+      case kS4:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 4.0, 1e-8);
         break;
-      case fes::darwin::kMNS2:
+      case kMNS2:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 2.0, 1e-8);
         break;
-      case fes::darwin::kMK4:
+      case kMK4:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 4.0, 1e-8);
         break;
-      case fes::darwin::kSN4:
+      case kSN4:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 4.0, 1e-8);
         break;
-      case fes::darwin::kSK4:
+      case kSK4:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 4.0, 1e-8);
         break;
-      case fes::darwin::k2MN6:
+      case k2MN6:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 6.0, 1e-8);
         break;
-      case fes::darwin::k2MS6:
+      case k2MS6:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 6.0, 1e-8);
         break;
-      case fes::darwin::k2MK6:
+      case k2MK6:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 6.0, 1e-8);
         break;
-      case fes::darwin::kMSN6:
+      case kMSN6:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 6.0, 1e-8);
         break;
-      case fes::darwin::k2SM6:
+      case k2SM6:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 6.0, 1e-8);
         break;
-      case fes::darwin::kMSK6:
+      case kMSK6:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 6.0, 1e-8);
         break;
-      case fes::darwin::kMP1:
+      case kMP1:
         EXPECT_NEAR(detail::math::degrees(item->vu()), -89.0, 1e-8);
         break;
-      case fes::darwin::k2SM2:
+      case k2SM2:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 2.0, 1e-8);
         break;
-      case fes::darwin::kPsi1:
+      case kPsi1:
         EXPECT_NEAR(detail::math::degrees(item->vu()), -88.0, 1e-8);
         break;
-      case fes::darwin::k2MS2:
+      case k2MS2:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 2.0, 1e-8);
         break;
-      case fes::darwin::kMKS2:
+      case kMKS2:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 2.0, 1e-8);
         break;
-      case fes::darwin::k2MN2:
+      case k2MN2:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 182.0, 1e-8);
         break;
-      case fes::darwin::kMSN2:
+      case kMSN2:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 2.0, 1e-8);
         break;
-      case fes::darwin::kMO3:
+      case kMO3:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 93.0, 1e-8);
         break;
-      case fes::darwin::k2MK3:
+      case k2MK3:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 93.0, 1e-8);
         break;
-      case fes::darwin::kMK3:
+      case kMK3:
         EXPECT_NEAR(detail::math::degrees(item->vu()), -87.0, 1e-8);
         break;
-      case fes::darwin::kS6:
+      case kS6:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 6.0, 1e-8);
         break;
-      case fes::darwin::kM8:
+      case kM8:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 8.0, 1e-8);
         break;
-      case fes::darwin::kMSf:
+      case kMSf:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 0.0, 1e-8);
         break;
-      case fes::darwin::kSsa:
+      case kSsa:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 2.0, 1e-8);
         break;
-      case fes::darwin::kSa:
+      case kSa:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 1.0, 1e-8);
         break;
-      case fes::darwin::kA5:
+      case kA5:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 0.0, 1e-8);
         break;
-      case fes::darwin::kSa1:
+      case kSa1:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 0.0, 1e-8);
         break;
-      case fes::darwin::kSta:
+      case kSta:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 2.0, 1e-8);
         break;
-      case fes::darwin::kMm1:
+      case kMm1:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 180.0, 1e-8);
         break;
-      case fes::darwin::kMm2:
+      case kMm2:
         EXPECT_NEAR(detail::math::degrees(item->vu()), -90.0, 1e-8);
         break;
-      case fes::darwin::kMf1:
+      case kMf1:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 0.0, 1e-8);
         break;
-      case fes::darwin::kMf2:
+      case kMf2:
         EXPECT_NEAR(detail::math::degrees(item->vu()), -90.0, 1e-8);
         break;
-      case fes::darwin::kM0:
+      case kM0:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 0.0, 1e-8);
         break;
-      case fes::darwin::kL2P:
+      case kL2P:
         EXPECT_NEAR(detail::math::degrees(item->vu()), -88, 1e-8);
         break;
-      case fes::darwin::kN2P:
+      case kN2P:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 92, 1e-8);
         break;
-      case fes::darwin::kMSK2:
+      case kMSK2:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 2, 1e-8);
         break;
-      case fes::darwin::kSKM2:
+      case kSKM2:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 2, 1e-8);
         break;
-      case fes::darwin::kOQ2:
+      case kOQ2:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 180, 1e-8);
         break;
-      case fes::darwin::k3MS4:
+      case k3MS4:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 4, 1e-8);
         break;
-      case fes::darwin::kMNu4:
+      case kMNu4:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 4, 1e-8);
         break;
-      case fes::darwin::k2MSN4:
+      case k2MSN4:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 4, 1e-8);
         break;
-      case fes::darwin::k2NS2:
+      case k2NS2:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 2, 1e-8);
         break;
-      case fes::darwin::kMNuS2:
+      case kMNuS2:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 2, 1e-8);
         break;
-      case fes::darwin::k2MK2:
+      case k2MK2:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 2, 1e-8);
         break;
-      case fes::darwin::kNKM2:
+      case kNKM2:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 2, 1e-8);
         break;
-      case fes::darwin::kML4:
+      case kML4:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 4, 1e-8);
         break;
-      case fes::darwin::kSO1:
+      case kSO1:
         EXPECT_NEAR(detail::math::degrees(item->vu()), -89, 1e-8);
         break;
-      case fes::darwin::kSO3:
+      case kSO3:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 93, 1e-8);
         break;
-      case fes::darwin::kNK4:
+      case kNK4:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 4, 1e-8);
         break;
-      case fes::darwin::kMNK6:
+      case kMNK6:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 6, 1e-8);
         break;
-      case fes::darwin::k2NM6:
+      case k2NM6:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 6, 1e-8);
         break;
-      case fes::darwin::k3MS8:
+      case k3MS8:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 8, 1e-8);
         break;
-      case fes::darwin::kSK3:
+      case kSK3:
         EXPECT_NEAR(detail::math::degrees(item->vu()), -87, 1e-8);
         break;
-      case fes::darwin::k2MNS4:
+      case k2MNS4:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 4, 1e-8);
         break;
-      case fes::darwin::k2SMu2:
+      case k2SMu2:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 2, 1e-8);
         break;
-      case fes::darwin::k2MP5:
+      case k2MP5:
         EXPECT_NEAR(detail::math::degrees(item->vu()), 94, 1e-8);
         break;
       default:
@@ -359,168 +361,168 @@ inline auto check_nodal_g(const fes::darwin::WaveTable& table,
   }
 }
 
-inline auto check_nodal_a(const fes::darwin::WaveTable& table,
+inline auto check_nodal_a(const WaveTable& table,
                           const fes::angle::Astronomic& angle) {
   for (auto&& item : table) {
     item->nodal_a(angle);
     switch (item->ident()) {
-      case fes::darwin::kO1:
-      case fes::darwin::kQ1:
-      case fes::darwin::k2Q1:
-      case fes::darwin::kSigma1:
-      case fes::darwin::kRho1:
-      case fes::darwin::kM11:
-      case fes::darwin::kSO1:
-      case fes::darwin::kSO3:
+      case kO1:
+      case kQ1:
+      case k2Q1:
+      case kSigma1:
+      case kRho1:
+      case kM11:
+      case kSO1:
+      case kSO3:
         EXPECT_NEAR(item->f(), 1.705420655553602, 1e-8);
         break;
-      case fes::darwin::kP1:
-      case fes::darwin::kT2:
-      case fes::darwin::kS2:
-      case fes::darwin::kS1:
-      case fes::darwin::kPi1:
-      case fes::darwin::kPhi1:
-      case fes::darwin::kR2:
-      case fes::darwin::kR4:
-      case fes::darwin::kS4:
-      case fes::darwin::kPsi1:
-      case fes::darwin::kS6:
-      case fes::darwin::kSsa:
-      case fes::darwin::kSa:
-      case fes::darwin::kSa1:
-      case fes::darwin::kSta:
+      case kP1:
+      case kT2:
+      case kS2:
+      case kS1:
+      case kPi1:
+      case kPhi1:
+      case kR2:
+      case kR4:
+      case kS4:
+      case kPsi1:
+      case kS6:
+      case kSsa:
+      case kSa:
+      case kSa1:
+      case kSta:
         EXPECT_NEAR(item->f(), 1.0, 1e-8);
         break;
-      case fes::darwin::kK1:
-      case fes::darwin::kSK3:
+      case kK1:
+      case kSK3:
         EXPECT_NEAR(item->f(), 1.0661482919660317, 1e-8);
         break;
-      case fes::darwin::k2N2:
-      case fes::darwin::kMu2:
-      case fes::darwin::kN2:
-      case fes::darwin::kNu2:
-      case fes::darwin::kEps2:
-      case fes::darwin::kM2:
-      case fes::darwin::kSN4:
-      case fes::darwin::kMS4:
-      case fes::darwin::kLambda2:
-      case fes::darwin::k2SM6:
-      case fes::darwin::k2SM2:
-      case fes::darwin::kMSf:
-      case fes::darwin::k2SMu2:
+      case k2N2:
+      case kMu2:
+      case kN2:
+      case kNu2:
+      case kEps2:
+      case kM2:
+      case kSN4:
+      case kMS4:
+      case kLambda2:
+      case k2SM6:
+      case k2SM2:
+      case kMSf:
+      case k2SMu2:
         EXPECT_NEAR(item->f(), 0.64794930999090794, 1e-8);
         break;
-      case fes::darwin::kL2:
+      case kL2:
         EXPECT_NEAR(item->f(), 0.64794930999090794, 1e-8);
         break;
-      case fes::darwin::kK2:
-      case fes::darwin::kSK4:
+      case kK2:
+      case kSK4:
         EXPECT_NEAR(item->f(), 2.9715447147317122, 1e-8);
         break;
-      case fes::darwin::kEta2:
+      case kEta2:
         EXPECT_NEAR(item->f(), 4.5244307876905507, 1e-8);
         break;
-      case fes::darwin::kM12:
-      case fes::darwin::kChi1:
-      case fes::darwin::kTheta1:
-      case fes::darwin::kJ1:
-      case fes::darwin::kMP1:
+      case kM12:
+      case kChi1:
+      case kTheta1:
+      case kJ1:
+      case kMP1:
         EXPECT_NEAR(item->f(), 1.2604621941026914, 1e-8);
         break;
-      case fes::darwin::kOO1:
+      case kOO1:
         EXPECT_NEAR(item->f(), 11.793361932776087, 1e-8);
         break;
-      case fes::darwin::kM4:
-      case fes::darwin::kMN4:
-      case fes::darwin::kMNS2:
-      case fes::darwin::kN4:
-      case fes::darwin::k2MS6:
-      case fes::darwin::kMSN6:
-      case fes::darwin::k2MS2:
-      case fes::darwin::kMSN2:
-      case fes::darwin::kMNu4:
-      case fes::darwin::kMNuS2:
-      case fes::darwin::k2MP5:
-      case fes::darwin::k2NS2:
+      case kM4:
+      case kMN4:
+      case kMNS2:
+      case kN4:
+      case k2MS6:
+      case kMSN6:
+      case k2MS2:
+      case kMSN2:
+      case kMNu4:
+      case kMNuS2:
+      case k2MP5:
+      case k2NS2:
         EXPECT_NEAR(item->f(), 0.4198383083176937, 1e-8);
         break;
-      case fes::darwin::kMf:
-      case fes::darwin::kMtm:
-      case fes::darwin::kMSqm:
-      case fes::darwin::kMm1:
+      case kMf:
+      case kMtm:
+      case kMSqm:
+      case kMm1:
         EXPECT_NEAR(item->f(), 4.4871572767653438, 1e-8);
         break;
-      case fes::darwin::kA5:
-      case fes::darwin::kM0:
-      case fes::darwin::kMf1:
-      case fes::darwin::kMm:
+      case kA5:
+      case kM0:
+      case kMf1:
+      case kMm:
         EXPECT_NEAR(item->f(), -0.08246714122068223, 1e-8);
         break;
-      case fes::darwin::kM3:
+      case kM3:
         EXPECT_NEAR(item->f(), 0.5215824486233587, 1e-8);
         break;
-      case fes::darwin::kM6:
-      case fes::darwin::k2MN6:
-      case fes::darwin::k2MN2:
-      case fes::darwin::k3MS4:
-      case fes::darwin::k2MSN4:
-      case fes::darwin::k3MS8:
-      case fes::darwin::k2MNS4:
+      case kM6:
+      case k2MN6:
+      case k2MN2:
+      case k3MS4:
+      case k2MSN4:
+      case k3MS8:
+      case k2MNS4:
         EXPECT_NEAR(item->f(), 0.2720339421821998, 1e-8);
         break;
-      case fes::darwin::kM1:
+      case kM1:
         EXPECT_NEAR(item->f(), 3.300330475634, 1e-8);
         break;
-      case fes::darwin::kMK4:
-      case fes::darwin::kMSK6:
-      case fes::darwin::kMSK2:
-      case fes::darwin::kSKM2:
-      case fes::darwin::kNK4:
-      case fes::darwin::kMKS2:
+      case kMK4:
+      case kMSK6:
+      case kMSK2:
+      case kSKM2:
+      case kNK4:
+      case kMKS2:
         EXPECT_NEAR(item->f(), 0.64794930999090794 * 2.9715447147317122, 1e-8);
         break;
-      case fes::darwin::k2MK6:
+      case k2MK6:
         EXPECT_NEAR(item->f(), 0.2720339421821998 * 2.9715447147317122, 1e-8);
         break;
-      case fes::darwin::kMO3:
+      case kMO3:
         EXPECT_NEAR(item->f(), 0.64794930999090794 * 1.705420655553602, 1e-8);
         break;
-      case fes::darwin::k2MK3:
+      case k2MK3:
         EXPECT_NEAR(item->f(), 0.4198383083176937 * 1.0661482919660317, 1e-8);
         break;
-      case fes::darwin::kMK3:
+      case kMK3:
         EXPECT_NEAR(item->f(), 0.64794930999090794 * 1.0661482919660317, 1e-8);
         break;
-      case fes::darwin::kM8:
+      case kM8:
         EXPECT_NEAR(item->f(), detail::math::pow<4>(0.64794930999090794), 1e-8);
         break;
-      case fes::darwin::kMm2:
-      case fes::darwin::kMf2:
+      case kMm2:
+      case kMf2:
         EXPECT_NEAR(item->f(), 0.302919608612788327, 1e-8);
         break;
-      case fes::darwin::kM13:
+      case kM13:
         break;
-      case fes::darwin::kL2P:
+      case kL2P:
         EXPECT_NEAR(item->f(), 5.4040577532657145809, 1e-8);
         break;
-      case fes::darwin::kN2P:
+      case kN2P:
         EXPECT_NEAR(item->f(), 1.3644178238453521512, 1e-8);
         break;
-      case fes::darwin::kOQ2:
+      case kOQ2:
         EXPECT_NEAR(item->f(), detail::math::pow<2>(1.705420655553602), 1e-8);
         break;
-      case fes::darwin::k2MK2:
-      case fes::darwin::kNKM2:
-      case fes::darwin::kMNK6:
+      case k2MK2:
+      case kNKM2:
+      case kMNK6:
         EXPECT_NEAR(
             item->f(),
             detail::math::pow<2>(0.64794930999090794) * 2.9715447147317122,
             1e-8);
         break;
-      case fes::darwin::kML4:
+      case kML4:
         EXPECT_NEAR(item->f(), 0.64794930999090794 * 0.64794930999090794, 1e-8);
         break;
-      case fes::darwin::k2NM6:
+      case k2NM6:
         EXPECT_NEAR(
             item->f(),
             detail::math::pow<4>(0.64794930999090794) * 0.64794930999090794,
@@ -533,17 +535,16 @@ inline auto check_nodal_a(const fes::darwin::WaveTable& table,
 }
 // NOLINTEND(readability-function-cognitive-complexity)
 
-TEST(Wave, NodalG) {
-  check_nodal_g(fes::darwin::WaveTable(), AstronomicAngleForNodalG());
-}
+TEST(Wave, NodalG) { check_nodal_g(WaveTable(), AstronomicAngleForNodalG()); }
 
-TEST(Wave, NodalA) {
-  check_nodal_a(fes::darwin::WaveTable(), AstronomicAngleForNodalA());
-}
+TEST(Wave, NodalA) { check_nodal_a(WaveTable(), AstronomicAngleForNodalA()); }
 
 TEST(Wave, DoodsonNumber) {
-  ASSERT_EQ(fes::darwin::wave::_2SM2().xdo_numerical(), "2915555");
-  ASSERT_EQ(fes::darwin::wave::_2SM2().xdo_alphabetical(), "BDVZZZZ");
-  ASSERT_EQ(fes::darwin::wave::O1().xdo_numerical(), "1455554");
-  ASSERT_EQ(fes::darwin::wave::O1().xdo_alphabetical(), "AYZZZZY");
+  ASSERT_EQ(wave::_2SM2().xdo_numerical(), "2915555");
+  ASSERT_EQ(wave::_2SM2().xdo_alphabetical(), "BDVZZZZ");
+  ASSERT_EQ(wave::O1().xdo_numerical(), "1455554");
+  ASSERT_EQ(wave::O1().xdo_alphabetical(), "AYZZZZY");
 }
+
+}  // namespace darwin
+}  // namespace fes

@@ -8,23 +8,28 @@
 
 #include "fes/darwin/table.hpp"
 
-inline auto check_parse(const fes::darwin::WaveTable& table) -> void {
+namespace fes {
+namespace darwin {
+
+inline auto check_parse(const WaveTable& table) -> void {
   for (auto&& item : table) {
-    ASSERT_EQ(fes::darwin::constituents::parse(item->name()), item->ident());
+    ASSERT_EQ(constituents::parse(item->name()), item->ident());
   }
 }
 
 TEST(Constituents, Parse) {
-  check_parse(fes::darwin::WaveTable());
-  EXPECT_THROW(fes::darwin::constituents::parse("__x__"),
-               std::invalid_argument);
-  EXPECT_EQ(fes::darwin::constituents::parse("msqm"), fes::darwin::kMSqm);
+  check_parse(WaveTable());
+  EXPECT_THROW(constituents::parse("__x__"), std::invalid_argument);
+  EXPECT_EQ(constituents::parse("msqm"), kMSqm);
 }
 
 TEST(Constituents, ListParseAndGetName) {
-  auto list = fes::darwin::constituents::known();
+  auto list = constituents::known();
   for (auto&& item : list) {
-    auto ident = fes::darwin::constituents::parse(item);
-    EXPECT_EQ(fes::darwin::constituents::name(ident), item);
+    auto ident = constituents::parse(item);
+    EXPECT_EQ(constituents::name(ident), item);
   }
 }
+
+}  // namespace darwin
+}  // namespace fes

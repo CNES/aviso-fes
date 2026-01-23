@@ -6,508 +6,508 @@
 
 #include <gtest/gtest.h>
 
-namespace detail = fes::detail;
+namespace fes {
+namespace darwin {
 
 // NOLINTBEGIN(readability-function-cognitive-complexity,*-function-size)
 // Used to test all wave components in a single function
-inline auto check_wave_table_constructor(const fes::darwin::WaveTable& table)
-    -> void {
+inline auto check_wave_table_constructor(const WaveTable& table) -> void {
   for (auto&& item : table) {
     switch (item->ident()) {
-      case fes::darwin::kO1:
-        EXPECT_EQ(item->ident(), fes::darwin::kO1);
+      case kO1:
+        EXPECT_EQ(item->ident(), kO1);
         EXPECT_NEAR(item->freq(), detail::math::radians(13.9430356), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kP1:
-        EXPECT_EQ(item->ident(), fes::darwin::kP1);
+      case kP1:
+        EXPECT_EQ(item->ident(), kP1);
         EXPECT_NEAR(item->freq(), detail::math::radians(14.9589314), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kK1:
-        EXPECT_EQ(item->ident(), fes::darwin::kK1);
+      case kK1:
+        EXPECT_EQ(item->ident(), kK1);
         EXPECT_NEAR(item->freq(), detail::math::radians(15.0410686), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::k2N2:
-        EXPECT_EQ(item->ident(), fes::darwin::k2N2);
+      case k2N2:
+        EXPECT_EQ(item->ident(), k2N2);
         EXPECT_NEAR(item->freq(), detail::math::radians(27.8953548), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kMu2:
-        EXPECT_EQ(item->ident(), fes::darwin::kMu2);
+      case kMu2:
+        EXPECT_EQ(item->ident(), kMu2);
         EXPECT_NEAR(item->freq(), detail::math::radians(27.9682084), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kN2:
-        EXPECT_EQ(item->ident(), fes::darwin::kN2);
+      case kN2:
+        EXPECT_EQ(item->ident(), kN2);
         EXPECT_NEAR(item->freq(), detail::math::radians(28.4397295), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kNu2:
-        EXPECT_EQ(item->ident(), fes::darwin::kNu2);
+      case kNu2:
+        EXPECT_EQ(item->ident(), kNu2);
         EXPECT_NEAR(item->freq(), detail::math::radians(28.5125831), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kM2:
-        EXPECT_EQ(item->ident(), fes::darwin::kM2);
+      case kM2:
+        EXPECT_EQ(item->ident(), kM2);
         EXPECT_NEAR(item->freq(), detail::math::radians(28.9841042), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kL2:
-        EXPECT_EQ(item->ident(), fes::darwin::kL2);
+      case kL2:
+        EXPECT_EQ(item->ident(), kL2);
         EXPECT_NEAR(item->freq(), detail::math::radians(29.5284789), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kT2:
-        EXPECT_EQ(item->ident(), fes::darwin::kT2);
+      case kT2:
+        EXPECT_EQ(item->ident(), kT2);
         EXPECT_NEAR(item->freq(), detail::math::radians(29.9589333), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kS2:
-        EXPECT_EQ(item->ident(), fes::darwin::kS2);
+      case kS2:
+        EXPECT_EQ(item->ident(), kS2);
         EXPECT_NEAR(item->freq(), detail::math::radians(30.0), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kK2:
-        EXPECT_EQ(item->ident(), fes::darwin::kK2);
+      case kK2:
+        EXPECT_EQ(item->ident(), kK2);
         EXPECT_NEAR(item->freq(), detail::math::radians(30.0821373), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kM4:
-        EXPECT_EQ(item->ident(), fes::darwin::kM4);
+      case kM4:
+        EXPECT_EQ(item->ident(), kM4);
         EXPECT_NEAR(item->freq(), detail::math::radians(57.9682084), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kS1:
-        EXPECT_EQ(item->ident(), fes::darwin::kS1);
+      case kS1:
+        EXPECT_EQ(item->ident(), kS1);
         EXPECT_NEAR(item->freq(), detail::math::radians(15.0), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kQ1:
-        EXPECT_EQ(item->ident(), fes::darwin::kQ1);
+      case kQ1:
+        EXPECT_EQ(item->ident(), kQ1);
         EXPECT_NEAR(item->freq(), detail::math::radians(13.3986609), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kMm:
-        EXPECT_EQ(item->ident(), fes::darwin::kMm);
+      case kMm:
+        EXPECT_EQ(item->ident(), kMm);
         EXPECT_NEAR(item->freq(), detail::math::radians(0.5443747), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kLongPeriod);
+        EXPECT_EQ(item->type(), Wave::kLongPeriod);
         break;
-      case fes::darwin::kMf:
-        EXPECT_EQ(item->ident(), fes::darwin::kMf);
+      case kMf:
+        EXPECT_EQ(item->ident(), kMf);
         EXPECT_NEAR(item->freq(), detail::math::radians(1.0980331), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kLongPeriod);
+        EXPECT_EQ(item->type(), Wave::kLongPeriod);
         break;
-      case fes::darwin::kMtm:
-        EXPECT_EQ(item->ident(), fes::darwin::kMtm);
+      case kMtm:
+        EXPECT_EQ(item->ident(), kMtm);
         EXPECT_NEAR(item->freq(), detail::math::radians(1.642407762), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kLongPeriod);
+        EXPECT_EQ(item->type(), Wave::kLongPeriod);
         break;
-      case fes::darwin::kMSqm:
-        EXPECT_EQ(item->ident(), fes::darwin::kMSqm);
+      case kMSqm:
+        EXPECT_EQ(item->ident(), kMSqm);
         EXPECT_NEAR(item->freq(), detail::math::radians(2.113928850), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kLongPeriod);
+        EXPECT_EQ(item->type(), Wave::kLongPeriod);
         break;
-      case fes::darwin::kEps2:
-        EXPECT_EQ(item->ident(), fes::darwin::kEps2);
+      case kEps2:
+        EXPECT_EQ(item->ident(), kEps2);
         EXPECT_NEAR(item->freq(), detail::math::radians(27.423833730), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kLambda2:
-        EXPECT_EQ(item->ident(), fes::darwin::kLambda2);
+      case kLambda2:
+        EXPECT_EQ(item->ident(), kLambda2);
         EXPECT_NEAR(item->freq(), detail::math::radians(29.4556253), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kEta2:
-        EXPECT_EQ(item->ident(), fes::darwin::kEta2);
+      case kEta2:
+        EXPECT_EQ(item->ident(), kEta2);
         EXPECT_NEAR(item->freq(), detail::math::radians(30.6265120), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::k2Q1:
-        EXPECT_EQ(item->ident(), fes::darwin::k2Q1);
+      case k2Q1:
+        EXPECT_EQ(item->ident(), k2Q1);
         EXPECT_NEAR(item->freq(), detail::math::radians(12.8542862), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kSigma1:
-        EXPECT_EQ(item->ident(), fes::darwin::kSigma1);
+      case kSigma1:
+        EXPECT_EQ(item->ident(), kSigma1);
         EXPECT_NEAR(item->freq(), detail::math::radians(12.9271398), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kRho1:
-        EXPECT_EQ(item->ident(), fes::darwin::kRho1);
+      case kRho1:
+        EXPECT_EQ(item->ident(), kRho1);
         EXPECT_NEAR(item->freq(), detail::math::radians(13.4715145), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kM1:
-        EXPECT_EQ(item->ident(), fes::darwin::kM1);
+      case kM1:
+        EXPECT_EQ(item->ident(), kM1);
         EXPECT_NEAR(item->freq(), detail::math::radians(14.49669394), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kM11:
-        EXPECT_EQ(item->ident(), fes::darwin::kM11);
+      case kM11:
+        EXPECT_EQ(item->ident(), kM11);
         EXPECT_NEAR(item->freq(), detail::math::radians(14.48741027), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kM12:
-        EXPECT_EQ(item->ident(), fes::darwin::kM12);
+      case kM12:
+        EXPECT_EQ(item->ident(), kM12);
         EXPECT_NEAR(item->freq(), detail::math::radians(14.4966939), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kM13:
-        EXPECT_EQ(item->ident(), fes::darwin::kM13);
+      case kM13:
+        EXPECT_EQ(item->ident(), kM13);
         EXPECT_NEAR(item->freq(), detail::math::radians(14.49205210), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kChi1:
-        EXPECT_EQ(item->ident(), fes::darwin::kChi1);
+      case kChi1:
+        EXPECT_EQ(item->ident(), kChi1);
         EXPECT_NEAR(item->freq(), detail::math::radians(14.5695476), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kPi1:
-        EXPECT_EQ(item->ident(), fes::darwin::kPi1);
+      case kPi1:
+        EXPECT_EQ(item->ident(), kPi1);
         EXPECT_NEAR(item->freq(), detail::math::radians(14.9178647), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kPhi1:
-        EXPECT_EQ(item->ident(), fes::darwin::kPhi1);
+      case kPhi1:
+        EXPECT_EQ(item->ident(), kPhi1);
         EXPECT_NEAR(item->freq(), detail::math::radians(15.1232059), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kTheta1:
-        EXPECT_EQ(item->ident(), fes::darwin::kTheta1);
+      case kTheta1:
+        EXPECT_EQ(item->ident(), kTheta1);
         EXPECT_NEAR(item->freq(), detail::math::radians(15.5125897), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kJ1:
-        EXPECT_EQ(item->ident(), fes::darwin::kJ1);
+      case kJ1:
+        EXPECT_EQ(item->ident(), kJ1);
         EXPECT_NEAR(item->freq(), detail::math::radians(15.5854433), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kOO1:
-        EXPECT_EQ(item->ident(), fes::darwin::kOO1);
+      case kOO1:
+        EXPECT_EQ(item->ident(), kOO1);
         EXPECT_NEAR(item->freq(), detail::math::radians(16.1391017), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kM3:
-        EXPECT_EQ(item->ident(), fes::darwin::kM3);
+      case kM3:
+        EXPECT_EQ(item->ident(), kM3);
         EXPECT_NEAR(item->freq(), detail::math::radians(43.4761563), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kM6:
-        EXPECT_EQ(item->ident(), fes::darwin::kM6);
+      case kM6:
+        EXPECT_EQ(item->ident(), kM6);
         EXPECT_NEAR(item->freq(), detail::math::radians(86.9523126), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kMN4:
-        EXPECT_EQ(item->ident(), fes::darwin::kMN4);
+      case kMN4:
+        EXPECT_EQ(item->ident(), kMN4);
         EXPECT_NEAR(item->freq(), detail::math::radians(57.4238337), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kMS4:
-        EXPECT_EQ(item->ident(), fes::darwin::kMS4);
+      case kMS4:
+        EXPECT_EQ(item->ident(), kMS4);
         EXPECT_NEAR(item->freq(), detail::math::radians(58.9841042), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kN4:
-        EXPECT_EQ(item->ident(), fes::darwin::kN4);
+      case kN4:
+        EXPECT_EQ(item->ident(), kN4);
         EXPECT_NEAR(item->freq(), detail::math::radians(56.8794590), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kR2:
-        EXPECT_EQ(item->ident(), fes::darwin::kR2);
+      case kR2:
+        EXPECT_EQ(item->ident(), kR2);
         EXPECT_NEAR(item->freq(), detail::math::radians(30.0410667), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kR4:
-        EXPECT_EQ(item->ident(), fes::darwin::kR4);
+      case kR4:
+        EXPECT_EQ(item->ident(), kR4);
         EXPECT_NEAR(item->freq(), detail::math::radians(30.0410667 * 2), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kS4:
-        EXPECT_EQ(item->ident(), fes::darwin::kS4);
+      case kS4:
+        EXPECT_EQ(item->ident(), kS4);
         EXPECT_NEAR(item->freq(), detail::math::radians(60.0), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kMNS2:
-        EXPECT_EQ(item->ident(), fes::darwin::kMNS2);
+      case kMNS2:
+        EXPECT_EQ(item->ident(), kMNS2);
         EXPECT_NEAR(item->freq(), detail::math::radians(27.4238337), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kMK4:
-        EXPECT_EQ(item->ident(), fes::darwin::kMK4);
+      case kMK4:
+        EXPECT_EQ(item->ident(), kMK4);
         EXPECT_NEAR(item->freq(), detail::math::radians(59.0662415), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kSN4:
-        EXPECT_EQ(item->ident(), fes::darwin::kSN4);
+      case kSN4:
+        EXPECT_EQ(item->ident(), kSN4);
         EXPECT_NEAR(item->freq(), detail::math::radians(58.4397295), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kSK4:
-        EXPECT_EQ(item->ident(), fes::darwin::kSK4);
+      case kSK4:
+        EXPECT_EQ(item->ident(), kSK4);
         EXPECT_NEAR(item->freq(), detail::math::radians(60.0821373), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::k2MN6:
-        EXPECT_EQ(item->ident(), fes::darwin::k2MN6);
+      case k2MN6:
+        EXPECT_EQ(item->ident(), k2MN6);
         EXPECT_NEAR(item->freq(), detail::math::radians(86.4079380), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::k2MS6:
-        EXPECT_EQ(item->ident(), fes::darwin::k2MS6);
+      case k2MS6:
+        EXPECT_EQ(item->ident(), k2MS6);
         EXPECT_NEAR(item->freq(), detail::math::radians(87.9682084), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::k2MK6:
-        EXPECT_EQ(item->ident(), fes::darwin::k2MK6);
+      case k2MK6:
+        EXPECT_EQ(item->ident(), k2MK6);
         EXPECT_NEAR(item->freq(), detail::math::radians(88.0503457), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kMSN6:
-        EXPECT_EQ(item->ident(), fes::darwin::kMSN6);
+      case kMSN6:
+        EXPECT_EQ(item->ident(), kMSN6);
         EXPECT_NEAR(item->freq(), detail::math::radians(87.4238337), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::k2SM6:
-        EXPECT_EQ(item->ident(), fes::darwin::k2SM6);
+      case k2SM6:
+        EXPECT_EQ(item->ident(), k2SM6);
         EXPECT_NEAR(item->freq(), detail::math::radians(88.9841042), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kMSK6:
-        EXPECT_EQ(item->ident(), fes::darwin::kMSK6);
+      case kMSK6:
+        EXPECT_EQ(item->ident(), kMSK6);
         EXPECT_NEAR(item->freq(), detail::math::radians(89.0662415), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kMP1:
-        EXPECT_EQ(item->ident(), fes::darwin::kMP1);
+      case kMP1:
+        EXPECT_EQ(item->ident(), kMP1);
         EXPECT_NEAR(item->freq(), detail::math::radians(14.0251729), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::k2SM2:
-        EXPECT_EQ(item->ident(), fes::darwin::k2SM2);
+      case k2SM2:
+        EXPECT_EQ(item->ident(), k2SM2);
         EXPECT_NEAR(item->freq(), detail::math::radians(31.0158958), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kPsi1:
-        EXPECT_EQ(item->ident(), fes::darwin::kPsi1);
+      case kPsi1:
+        EXPECT_EQ(item->ident(), kPsi1);
         EXPECT_NEAR(item->freq(), detail::math::radians(15.0821353), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::k2MS2:
-        EXPECT_EQ(item->ident(), fes::darwin::k2MS2);
+      case k2MS2:
+        EXPECT_EQ(item->ident(), k2MS2);
         EXPECT_NEAR(item->freq(), detail::math::radians(27.9682084), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kMKS2:
-        EXPECT_EQ(item->ident(), fes::darwin::kMKS2);
+      case kMKS2:
+        EXPECT_EQ(item->ident(), kMKS2);
         EXPECT_NEAR(item->freq(), detail::math::radians(29.0662415), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::k2MN2:
-        EXPECT_EQ(item->ident(), fes::darwin::k2MN2);
+      case k2MN2:
+        EXPECT_EQ(item->ident(), k2MN2);
         EXPECT_NEAR(item->freq(), detail::math::radians(29.5284789), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kMSN2:
-        EXPECT_EQ(item->ident(), fes::darwin::kMSN2);
+      case kMSN2:
+        EXPECT_EQ(item->ident(), kMSN2);
         EXPECT_NEAR(item->freq(), detail::math::radians(30.5443747), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kMO3:
-        EXPECT_EQ(item->ident(), fes::darwin::kMO3);
+      case kMO3:
+        EXPECT_EQ(item->ident(), kMO3);
         EXPECT_NEAR(item->freq(), detail::math::radians(42.9271398), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::k2MK3:
-        EXPECT_EQ(item->ident(), fes::darwin::k2MK3);
+      case k2MK3:
+        EXPECT_EQ(item->ident(), k2MK3);
         EXPECT_NEAR(item->freq(), detail::math::radians(42.9271398), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kMK3:
-        EXPECT_EQ(item->ident(), fes::darwin::kMK3);
+      case kMK3:
+        EXPECT_EQ(item->ident(), kMK3);
         EXPECT_NEAR(item->freq(), detail::math::radians(44.0251729), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kS6:
-        EXPECT_EQ(item->ident(), fes::darwin::kS6);
+      case kS6:
+        EXPECT_EQ(item->ident(), kS6);
         EXPECT_NEAR(item->freq(), detail::math::radians(90.0), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kM8:
-        EXPECT_EQ(item->ident(), fes::darwin::kM8);
+      case kM8:
+        EXPECT_EQ(item->ident(), kM8);
         EXPECT_NEAR(item->freq(), detail::math::radians(115.9364169), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kMSf:
-        EXPECT_EQ(item->ident(), fes::darwin::kMSf);
+      case kMSf:
+        EXPECT_EQ(item->ident(), kMSf);
         EXPECT_NEAR(item->freq(), detail::math::radians(1.01589578), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kLongPeriod);
+        EXPECT_EQ(item->type(), Wave::kLongPeriod);
         break;
-      case fes::darwin::kSsa:
-        EXPECT_EQ(item->ident(), fes::darwin::kSsa);
+      case kSsa:
+        EXPECT_EQ(item->ident(), kSsa);
         EXPECT_NEAR(item->freq(), detail::math::radians(0.08213728), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kLongPeriod);
+        EXPECT_EQ(item->type(), Wave::kLongPeriod);
         break;
-      case fes::darwin::kSa:
-        EXPECT_EQ(item->ident(), fes::darwin::kSa);
+      case kSa:
+        EXPECT_EQ(item->ident(), kSa);
         EXPECT_NEAR(item->freq(), detail::math::radians(0.04106864), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kLongPeriod);
+        EXPECT_EQ(item->type(), Wave::kLongPeriod);
         break;
-      case fes::darwin::kA5:
-        EXPECT_EQ(item->ident(), fes::darwin::kA5);
+      case kA5:
+        EXPECT_EQ(item->ident(), kA5);
         EXPECT_NEAR(item->freq(), detail::math::radians(1.01589579), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kLongPeriod);
+        EXPECT_EQ(item->type(), Wave::kLongPeriod);
         break;
-      case fes::darwin::kSa1:
-        EXPECT_EQ(item->ident(), fes::darwin::kSa1);
+      case kSa1:
+        EXPECT_EQ(item->ident(), kSa1);
         EXPECT_NEAR(item->freq(), detail::math::radians(0.041066678), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kLongPeriod);
+        EXPECT_EQ(item->type(), Wave::kLongPeriod);
         break;
-      case fes::darwin::kSta:
-        EXPECT_EQ(item->ident(), fes::darwin::kSta);
+      case kSta:
+        EXPECT_EQ(item->ident(), kSta);
         EXPECT_NEAR(item->freq(), detail::math::radians(0.123203956), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kLongPeriod);
+        EXPECT_EQ(item->type(), Wave::kLongPeriod);
         break;
-      case fes::darwin::kMm1:
-        EXPECT_EQ(item->ident(), fes::darwin::kMm1);
+      case kMm1:
+        EXPECT_EQ(item->ident(), kMm1);
         EXPECT_NEAR(item->freq(), detail::math::radians(0.553658366), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kLongPeriod);
+        EXPECT_EQ(item->type(), Wave::kLongPeriod);
         break;
-      case fes::darwin::kMm2:
-        EXPECT_EQ(item->ident(), fes::darwin::kMm2);
+      case kMm2:
+        EXPECT_EQ(item->ident(), kMm2);
         EXPECT_NEAR(item->freq(), detail::math::radians(0.549016532), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kLongPeriod);
+        EXPECT_EQ(item->type(), Wave::kLongPeriod);
         break;
-      case fes::darwin::kMf1:
-        EXPECT_EQ(item->ident(), fes::darwin::kMf1);
+      case kMf1:
+        EXPECT_EQ(item->ident(), kMf1);
         EXPECT_NEAR(item->freq(), detail::math::radians(1.088749395), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kLongPeriod);
+        EXPECT_EQ(item->type(), Wave::kLongPeriod);
         break;
-      case fes::darwin::kMf2:
-        EXPECT_EQ(item->ident(), fes::darwin::kMf2);
+      case kMf2:
+        EXPECT_EQ(item->ident(), kMf2);
         EXPECT_NEAR(item->freq(), detail::math::radians(1.093391230), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kLongPeriod);
+        EXPECT_EQ(item->type(), Wave::kLongPeriod);
         break;
-      case fes::darwin::kM0:
-        EXPECT_EQ(item->ident(), fes::darwin::kM0);
+      case kM0:
+        EXPECT_EQ(item->ident(), kM0);
         EXPECT_NEAR(item->freq(), 0, 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kLongPeriod);
+        EXPECT_EQ(item->type(), Wave::kLongPeriod);
         break;
-      case fes::darwin::kL2P:
-        EXPECT_EQ(item->ident(), fes::darwin::kL2P);
+      case kL2P:
+        EXPECT_EQ(item->ident(), kL2P);
         EXPECT_NEAR(item->freq(), detail::math::radians(29.5331207461), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kN2P:
-        EXPECT_EQ(item->ident(), fes::darwin::kN2P);
+      case kN2P:
+        EXPECT_EQ(item->ident(), kN2P);
         EXPECT_NEAR(item->freq(), detail::math::radians(28.435087682), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kMSK2:
-        EXPECT_EQ(item->ident(), fes::darwin::kMSK2);
+      case kMSK2:
+        EXPECT_EQ(item->ident(), kMSK2);
         EXPECT_NEAR(item->freq(), detail::math::radians(28.9019669359), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kSKM2:
-        EXPECT_EQ(item->ident(), fes::darwin::kSKM2);
+      case kSKM2:
+        EXPECT_EQ(item->ident(), kSKM2);
         EXPECT_NEAR(item->freq(), detail::math::radians(31.0980330641), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kOQ2:
-        EXPECT_EQ(item->ident(), fes::darwin::kOQ2);
+      case kOQ2:
+        EXPECT_EQ(item->ident(), kOQ2);
         EXPECT_NEAR(item->freq(), detail::math::radians(27.3416964522), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::k3MS4:
-        EXPECT_EQ(item->ident(), fes::darwin::k3MS4);
+      case k3MS4:
+        EXPECT_EQ(item->ident(), k3MS4);
         EXPECT_NEAR(item->freq(), detail::math::radians(56.952312642), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kMNu4:
-        EXPECT_EQ(item->ident(), fes::darwin::kMNu4);
+      case kMNu4:
+        EXPECT_EQ(item->ident(), kMNu4);
         EXPECT_NEAR(item->freq(), detail::math::radians(57.4966873397), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::k2MSN4:
-        EXPECT_EQ(item->ident(), fes::darwin::k2MSN4);
+      case k2MSN4:
+        EXPECT_EQ(item->ident(), k2MSN4);
         EXPECT_NEAR(item->freq(), detail::math::radians(59.5284789117), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::k2NS2:
-        EXPECT_EQ(item->ident(), fes::darwin::k2NS2);
+      case k2NS2:
+        EXPECT_EQ(item->ident(), k2NS2);
         EXPECT_NEAR(item->freq(), detail::math::radians(26.8794590326), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kMNuS2:
-        EXPECT_EQ(item->ident(), fes::darwin::kMNuS2);
+      case kMNuS2:
+        EXPECT_EQ(item->ident(), kMNuS2);
         EXPECT_NEAR(item->freq(), detail::math::radians(27.4966873397), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::k2MK2:
-        EXPECT_EQ(item->ident(), fes::darwin::k2MK2);
+      case k2MK2:
+        EXPECT_EQ(item->ident(), k2MK2);
         EXPECT_NEAR(item->freq(), detail::math::radians(27.8860711499), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kNKM2:
-        EXPECT_EQ(item->ident(), fes::darwin::kNKM2);
+      case kNKM2:
+        EXPECT_EQ(item->ident(), kNKM2);
         EXPECT_NEAR(item->freq(), detail::math::radians(29.5377625804), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kML4:
-        EXPECT_EQ(item->ident(), fes::darwin::kML4);
+      case kML4:
+        EXPECT_EQ(item->ident(), kML4);
         EXPECT_NEAR(item->freq(), detail::math::radians(58.5125831257), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kSO1:
-        EXPECT_EQ(item->ident(), fes::darwin::kSO1);
+      case kSO1:
+        EXPECT_EQ(item->ident(), kSO1);
         EXPECT_NEAR(item->freq(), detail::math::radians(16.0569644251), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kSO3:
-        EXPECT_EQ(item->ident(), fes::darwin::kSO3);
+      case kSO3:
+        EXPECT_EQ(item->ident(), kSO3);
         EXPECT_NEAR(item->freq(), detail::math::radians(43.9430355749), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kNK4:
-        EXPECT_EQ(item->ident(), fes::darwin::kNK4);
+      case kNK4:
+        EXPECT_EQ(item->ident(), kNK4);
         EXPECT_NEAR(item->freq(), detail::math::radians(58.5218667944), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kMNK6:
-        EXPECT_EQ(item->ident(), fes::darwin::kMNK6);
+      case kMNK6:
+        EXPECT_EQ(item->ident(), kMNK6);
         EXPECT_NEAR(item->freq(), detail::math::radians(87.5059710084), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::k2NM6:
-        EXPECT_EQ(item->ident(), fes::darwin::k2NM6);
+      case k2NM6:
+        EXPECT_EQ(item->ident(), k2NM6);
         EXPECT_NEAR(item->freq(), detail::math::radians(85.8635632466), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::k3MS8:
-        EXPECT_EQ(item->ident(), fes::darwin::k3MS8);
+      case k3MS8:
+        EXPECT_EQ(item->ident(), k3MS8);
         EXPECT_NEAR(item->freq(), detail::math::radians(116.952312642), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::kSK3:
-        EXPECT_EQ(item->ident(), fes::darwin::kSK3);
+      case kSK3:
+        EXPECT_EQ(item->ident(), kSK3);
         EXPECT_NEAR(item->freq(), detail::math::radians(45.0410686391), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::k2MNS4:
-        EXPECT_EQ(item->ident(), fes::darwin::k2MNS4);
+      case k2MNS4:
+        EXPECT_EQ(item->ident(), k2MNS4);
         EXPECT_NEAR(item->freq(), detail::math::radians(56.4079379443), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::k2SMu2:
-        EXPECT_EQ(item->ident(), fes::darwin::k2SMu2);
+      case k2SMu2:
+        EXPECT_EQ(item->ident(), k2SMu2);
         EXPECT_NEAR(item->freq(), detail::math::radians(32.031791572), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
-      case fes::darwin::k2MP5:
-        EXPECT_EQ(item->ident(), fes::darwin::k2MP5);
+      case k2MP5:
+        EXPECT_EQ(item->ident(), k2MP5);
         EXPECT_NEAR(item->freq(), detail::math::radians(72.927139789), 1e-8);
-        EXPECT_EQ(item->type(), fes::darwin::Wave::kShortPeriod);
+        EXPECT_EQ(item->type(), Wave::kShortPeriod);
         break;
       default:
         throw std::runtime_error(std::to_string(item->ident()));
@@ -516,12 +516,10 @@ inline auto check_wave_table_constructor(const fes::darwin::WaveTable& table)
 }
 // NOLINTEND(readability-function-cognitive-complexity,*-function-size)
 
-TEST(WaveTable, Constructor) {
-  check_wave_table_constructor(fes::darwin::WaveTable());
-}
+TEST(WaveTable, Constructor) { check_wave_table_constructor(WaveTable()); }
 
-static void admittance(const double r, const fes::darwin::Constituent ident,
-                       fes::darwin::WaveTable& table) {
+static void admittance(const double r, const Constituent ident,
+                       WaveTable& table) {
   table.admittance();
   EXPECT_NEAR(table[ident]->tide().real(), r, 1e-6);
   EXPECT_NEAR(table[ident]->tide().imag(), r, 1e-6);
@@ -536,59 +534,59 @@ static void admittance(const double r, const fes::darwin::Constituent ident,
 }
 
 TEST(WaveTable, Admittance) {
-  auto table = fes::darwin::WaveTable();
+  auto table = WaveTable();
   for (auto&& item : table) {
     item->tide({1, 1});
   }
 
-  admittance(0.2378, fes::darwin::k2Q1, table);
-  admittance(0.2706, fes::darwin::kSigma1, table);
-  admittance(0.1688, fes::darwin::kRho1, table);
-  admittance(0.0241, fes::darwin::kM11, table);
-  admittance(0.0671, fes::darwin::kM12, table);
-  admittance(0.0124, fes::darwin::kChi1, table);
-  admittance(0.0201, fes::darwin::kPi1, table);
-  admittance(0.0137, fes::darwin::kPhi1, table);
-  admittance(0.009, fes::darwin::kTheta1, table);
-  admittance(0.0447, fes::darwin::kJ1, table);
-  admittance(0.0182, fes::darwin::kOO1, table);
-  admittance(0.0796782, fes::darwin::kEta2, table);
-  admittance(0.374697218357, fes::darwin::kMu2, table);
-  admittance(0.157529811402, fes::darwin::kNu2, table);
-  admittance(0.010949128375, fes::darwin::kLambda2, table);
-  admittance(0.053354227357, fes::darwin::kL2, table);
-  admittance(0.16871051505, fes::darwin::kT2, table);
-  admittance(0.2387, fes::darwin::k2N2, table);
-  admittance(0.094151295, fes::darwin::kEps2, table);
+  admittance(0.2378, k2Q1, table);
+  admittance(0.2706, kSigma1, table);
+  admittance(0.1688, kRho1, table);
+  admittance(0.0241, kM11, table);
+  admittance(0.0671, kM12, table);
+  admittance(0.0124, kChi1, table);
+  admittance(0.0201, kPi1, table);
+  admittance(0.0137, kPhi1, table);
+  admittance(0.009, kTheta1, table);
+  admittance(0.0447, kJ1, table);
+  admittance(0.0182, kOO1, table);
+  admittance(0.0796782, kEta2, table);
+  admittance(0.374697218357, kMu2, table);
+  admittance(0.157529811402, kNu2, table);
+  admittance(0.010949128375, kLambda2, table);
+  admittance(0.053354227357, kL2, table);
+  admittance(0.16871051505, kT2, table);
+  admittance(0.2387, k2N2, table);
+  admittance(0.094151295, kEps2, table);
   // force 2N2 to be calculated in dynamically
-  table[fes::darwin::k2N2]->admittance(false);
-  table[fes::darwin::k2N2]->tide({1, 1});
-  admittance(0.499810, fes::darwin::kEps2, table);
+  table[k2N2]->admittance(false);
+  table[k2N2]->tide({1, 1});
+  admittance(0.499810, kEps2, table);
 }
 
 TEST(WaveTable, IdentName) {
-  for (auto&& item : fes::darwin::WaveTable()) {
+  for (auto&& item : WaveTable()) {
     const auto* name = item->name();
-    auto ident = fes::darwin::constituents::parse(name);
+    auto ident = constituents::parse(name);
     EXPECT_EQ(item->ident(), ident);
   }
 }
 
 TEST(WaveTable, Sparse) {
-  auto table = fes::darwin::WaveTable(
-      {"O1", "K1", "M2", "S2", "N2", "K2", "M4", "M6", "Mf2"});
+  auto table =
+      WaveTable({"O1", "K1", "M2", "S2", "N2", "K2", "M4", "M6", "Mf2"});
   EXPECT_EQ(table.size(), 9);
-  EXPECT_EQ(table[fes::darwin::kO1]->ident(), fes::darwin::kO1);
-  EXPECT_EQ(table[0]->ident(), fes::darwin::kO1);
-  EXPECT_EQ(table[1]->ident(), fes::darwin::kK1);
-  EXPECT_EQ(table[2]->ident(), fes::darwin::kN2);
-  EXPECT_EQ(table[3]->ident(), fes::darwin::kM2);
-  EXPECT_EQ(table[4]->ident(), fes::darwin::kS2);
-  EXPECT_EQ(table[5]->ident(), fes::darwin::kK2);
-  EXPECT_EQ(table[6]->ident(), fes::darwin::kM4);
-  EXPECT_EQ(table[7]->ident(), fes::darwin::kM6);
-  EXPECT_EQ(table[8]->ident(), fes::darwin::kMf2);
-  EXPECT_THROW(table[fes::darwin::kP1], std::out_of_range);
+  EXPECT_EQ(table[kO1]->ident(), kO1);
+  EXPECT_EQ(table[0]->ident(), kO1);
+  EXPECT_EQ(table[1]->ident(), kK1);
+  EXPECT_EQ(table[2]->ident(), kN2);
+  EXPECT_EQ(table[3]->ident(), kM2);
+  EXPECT_EQ(table[4]->ident(), kS2);
+  EXPECT_EQ(table[5]->ident(), kK2);
+  EXPECT_EQ(table[6]->ident(), kM4);
+  EXPECT_EQ(table[7]->ident(), kM6);
+  EXPECT_EQ(table[8]->ident(), kMf2);
+  EXPECT_THROW(table[kP1], std::out_of_range);
   EXPECT_THROW(table.admittance(), std::out_of_range);
   EXPECT_THROW(
       {
@@ -597,5 +595,8 @@ TEST(WaveTable, Sparse) {
       },
       std::invalid_argument);
   EXPECT_EQ(table.find("Mf"), nullptr);
-  EXPECT_EQ(table.find("O1")->ident(), fes::darwin::kO1);
+  EXPECT_EQ(table.find("O1")->ident(), kO1);
 }
+
+}  // namespace darwin
+}  // namespace fes

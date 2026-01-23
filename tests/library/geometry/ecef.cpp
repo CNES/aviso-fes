@@ -6,10 +6,11 @@
 
 #include <gtest/gtest.h>
 
-namespace geometry = fes::geometry;
+namespace fes {
+namespace geometry {
 
 TEST(EarthCenteredEarthFixed, Interface) {
-  auto p = geometry::EarthCenteredEarthFixed(1, 2, 3);
+  auto p = EarthCenteredEarthFixed(1, 2, 3);
   EXPECT_EQ(1, p.x());
   EXPECT_EQ(2, p.y());
   EXPECT_EQ(3, p.z());
@@ -30,3 +31,6 @@ TEST(EarthCenteredEarthFixed, Interface) {
   EXPECT_EQ("ECEF(4 5 6)", std::string(q));
   EXPECT_FALSE(p == q);
 }
+
+}  // namespace geometry
+}  // namespace fes

@@ -6,6 +6,9 @@
 
 #include "fes/detail/thread.hpp"
 
+namespace fes {
+namespace detail {
+
 TEST(Thread, ParallelFor) {
   auto data = std::vector<size_t>(100);
   auto callable = [&data](const size_t start, const size_t end) {
@@ -13,7 +16,7 @@ TEST(Thread, ParallelFor) {
       data[i] = i;
     }
   };
-  fes::detail::parallel_for(callable, 100, 15);
+  parallel_for(callable, 100, 15);
   for (auto i = 0; i < 100; ++i) {
     EXPECT_EQ(data[i], i);
   }
@@ -27,7 +30,9 @@ TEST(Thread, ParallelForCatchException) {
     }
     throw std::runtime_error("An error occurred");
   };
-  EXPECT_THROW(fes::detail::parallel_for(callable, 100, 15),
-               std::runtime_error);
-  EXPECT_THROW(fes::detail::parallel_for(callable, 100, 1), std::runtime_error);
+  EXPECT_THROW(parallel_for(callable, 100, 15), std::runtime_error);
+  EXPECT_THROW(parallel_for(callable, 100, 1), std::runtime_error);
 }
+
+}  // namespace detail
+}  // namespace fes

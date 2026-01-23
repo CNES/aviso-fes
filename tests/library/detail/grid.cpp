@@ -6,11 +6,14 @@
 
 #include <gtest/gtest.h>
 
+namespace fes {
+namespace detail {
+
 TEST(Grid, Interface) {
   auto points = Eigen::VectorXd(8);
   points << 0, 1, 2, 3, 10, 11, 12, 13;
 
-  auto grid = fes::detail::Grid<double>(points.data(), 2, 4);
+  auto grid = Grid<double>(points.data(), 2, 4);
   EXPECT_EQ(grid.nx(), 2);
   EXPECT_EQ(grid.ny(), 4);
   EXPECT_EQ(grid.size(), 8);
@@ -24,7 +27,7 @@ TEST(Grid, Interface) {
   EXPECT_EQ(grid(1, 3), 13);
 
   points << 0, 10, 1, 11, 2, 12, 3, 13;
-  grid = fes::detail::Grid<double>(points.data(), 2, 4, false);
+  grid = Grid<double>(points.data(), 2, 4, false);
   EXPECT_EQ(grid.nx(), 2);
   EXPECT_EQ(grid.ny(), 4);
   EXPECT_EQ(grid.size(), 8);
@@ -37,3 +40,6 @@ TEST(Grid, Interface) {
   EXPECT_EQ(grid(1, 2), 12);
   EXPECT_EQ(grid(1, 3), 13);
 }
+
+}  // namespace detail
+}  // namespace fes

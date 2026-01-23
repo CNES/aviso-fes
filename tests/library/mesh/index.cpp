@@ -6,7 +6,8 @@
 
 #include <gtest/gtest.h>
 
-namespace mesh = fes::mesh;
+namespace fes {
+namespace mesh {
 
 static auto make_data()
     -> std::tuple<Eigen::VectorXd, Eigen::VectorXd, Eigen::Matrix<int, -1, 3>> {
@@ -54,7 +55,7 @@ static auto make_data()
 //   auto triangles = Eigen::Matrix<int, -1, 3>();
 //   std::tie(lon, lat, triangles) = make_data();
 
-//   auto index = mesh::Index(lon, lat, triangles);
+//   auto index = Index(lon, lat, triangles);
 
 //   auto query =
 //       index.search({-0.16067459068705148, 0.09857747238454806}, 50'000);
@@ -90,13 +91,12 @@ TEST(Index, Serialize) {
   auto triangles = Eigen::Matrix<int, -1, 3>();
   std::tie(lon, lat, triangles) = make_data();
 
-  auto index = mesh::Index(lon, lat, triangles);
+  auto index = Index(lon, lat, triangles);
 
   auto state = index.getstate();
-  auto other =
-      mesh::Index::setstate(fes::string_view(state.data(), state.size()));
+  auto other = Index::setstate(string_view(state.data(), state.size()));
 
-  EXPECT_THROW(mesh::Index::setstate("invalid"), std::invalid_argument);
+  EXPECT_THROW(Index::setstate("invalid"), std::invalid_argument);
 
   auto query =
       index.search({-0.16067459068705148, 0.09857747238454806}, 50'000);
@@ -107,3 +107,6 @@ TEST(Index, Serialize) {
   EXPECT_TRUE(query.is_inside());
   EXPECT_EQ(query.index, 10);
 }
+
+}  // namespace mesh
+}  // namespace fes

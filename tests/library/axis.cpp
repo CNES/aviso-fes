@@ -6,10 +6,12 @@
 
 #include <gtest/gtest.h>
 
+namespace fes {
+
 TEST(Axis, Constructor) {
   auto points =
       static_cast<Eigen::VectorXd>(Eigen::VectorXd::LinSpaced(360, 0.0, 359.0));
-  auto axis = fes::Axis(points);
+  auto axis = Axis(points);
   EXPECT_EQ(axis.size(), 360);
   EXPECT_EQ(axis.start(), 0);
   EXPECT_EQ(axis.end(), 359.0);
@@ -27,7 +29,7 @@ TEST(Axis, Constructor) {
   EXPECT_THROW({ axis(360); }, std::out_of_range);
 
   points = Eigen::VectorXd::LinSpaced(360, 359.0, 0.0);
-  axis = fes::Axis(points);
+  axis = Axis(points);
   EXPECT_EQ(axis.size(), 360);
   EXPECT_EQ(axis.start(), 359.0);
   EXPECT_EQ(axis.end(), 0);
@@ -46,21 +48,21 @@ TEST(Axis, Constructor) {
 
   points = Eigen::VectorXd(10);
   points << 0, 3, 12, 15, 18, 21, 24, 27, 30, 33;
-  EXPECT_THROW({ auto axis = fes::Axis(points); }, std::invalid_argument);
+  EXPECT_THROW({ auto axis = Axis(points); }, std::invalid_argument);
 
   points = Eigen::VectorXd(1);
   points << 0;
-  EXPECT_THROW({ auto axis = fes::Axis(points); }, std::invalid_argument);
+  EXPECT_THROW({ auto axis = Axis(points); }, std::invalid_argument);
 
   points = Eigen::VectorXd();
-  EXPECT_THROW({ auto axis = fes::Axis(points); }, std::invalid_argument);
+  EXPECT_THROW({ auto axis = Axis(points); }, std::invalid_argument);
 }
 
 TEST(Axis, WrapLongitude) {
   auto points =
       static_cast<Eigen::VectorXd>(Eigen::VectorXd::LinSpaced(360, 0.0, 359.0));
-  auto axis = fes::Axis(points, 1e-6, true);
-  EXPECT_EQ(axis, fes::Axis(points, 1e-6, true));
+  auto axis = Axis(points, 1e-6, true);
+  EXPECT_EQ(axis, Axis(points, 1e-6, true));
   EXPECT_TRUE(axis.is_circular());
   EXPECT_EQ(axis.size(), 360);
   EXPECT_EQ(axis.start(), 0);
@@ -86,8 +88,8 @@ TEST(Axis, WrapLongitude) {
   EXPECT_EQ(*indexes, std::make_tuple(350, 351));
 
   points = Eigen::VectorXd::LinSpaced(360, 359.0, 0.0);
-  axis = fes::Axis(points, 1e-6, true);
-  EXPECT_EQ(axis, fes::Axis(points, 1e-6, true));
+  axis = Axis(points, 1e-6, true);
+  EXPECT_EQ(axis, Axis(points, 1e-6, true));
   EXPECT_TRUE(axis.is_circular());
   EXPECT_EQ(axis.size(), 360);
   EXPECT_EQ(axis.start(), 359);
@@ -115,7 +117,7 @@ TEST(Axis, WrapLongitude) {
   EXPECT_EQ(*indexes, std::make_tuple(9, 8));
 
   points = Eigen::VectorXd::LinSpaced(360, -180, 179);
-  axis = fes::Axis(points, 1e-6, true);
+  axis = Axis(points, 1e-6, true);
   EXPECT_TRUE(axis.is_circular());
   EXPECT_EQ(axis.size(), 360);
   EXPECT_EQ(axis.start(), -180);
@@ -130,7 +132,7 @@ TEST(Axis, WrapLongitude) {
   EXPECT_EQ(axis(189), 9);
 
   points = Eigen::VectorXd::LinSpaced(360, 180, -179);
-  axis = fes::Axis(points, 1e-6, true);
+  axis = Axis(points, 1e-6, true);
   EXPECT_TRUE(axis.is_circular());
   EXPECT_EQ(axis.size(), 360);
   EXPECT_EQ(axis.start(), 180);
@@ -144,7 +146,7 @@ TEST(Axis, WrapLongitude) {
 TEST(Axis, FindIndices) {
   auto points =
       static_cast<Eigen::VectorXd>(Eigen::VectorXd::LinSpaced(360, 0.0, 359.0));
-  auto axis = fes::Axis(points, 1e-6, true);
+  auto axis = Axis(points, 1e-6, true);
   auto indexes = axis.find_indices(359.4);
   ASSERT_TRUE(indexes.has_value());
   EXPECT_EQ(*indexes, std::make_tuple(359, 0));
@@ -165,7 +167,7 @@ TEST(Axis, FindIndices) {
   EXPECT_EQ(*indexes, std::make_tuple(358, 359));
 
   points = Eigen::VectorXd::LinSpaced(360, 359.0, 0.0);
-  axis = fes::Axis(points, 1e-6, true);
+  axis = Axis(points, 1e-6, true);
   indexes = axis.find_indices(359.4);
   ASSERT_TRUE(indexes.has_value());
   EXPECT_EQ(*indexes, std::make_tuple(0, 359));
@@ -189,13 +191,13 @@ TEST(Axis, FindIndices) {
 TEST(Axis, Serialization) {
   auto points =
       static_cast<Eigen::VectorXd>(Eigen::VectorXd::LinSpaced(360, 0.0, 359.0));
-  auto axis = fes::Axis(points, 1e-6, true);
+  auto axis = Axis(points, 1e-6, true);
   auto state = axis.getstate();
-  auto other =
-      fes::Axis::setstate(fes::string_view(state.data(), state.size()));
+  auto other = Axis::setstate(string_view(state.data(), state.size()));
   EXPECT_EQ(axis, other);
 
   EXPECT_THROW(
-      { fes::Axis::setstate(fes::string_view("invalid state")); },
-      std::invalid_argument);
+      { Axis::setstate(string_view("invalid state")); }, std::invalid_argument);
 }
+
+}  // namespace fes

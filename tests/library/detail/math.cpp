@@ -12,7 +12,8 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-namespace math = fes::detail::math;
+namespace fes {
+namespace detail {
 
 TEST(Math, Pi) {
   // pi<double> == π
@@ -177,3 +178,6 @@ TEST(Math, DegreesMinutesSecondesToDecialDegrees) {
   // 3600
   EXPECT_DOUBLE_EQ(math::dms_to_degrees<double>(1, 2, 3), 1.0341666666666667);
 }
+
+}  // namespace detail
+}  // namespace fes

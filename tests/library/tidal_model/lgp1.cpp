@@ -7,6 +7,8 @@
 #include "fes/darwin/constituent.hpp"
 #include "fes/tidal_model/lgp.hpp"
 
+namespace fes {
+
 TEST(InterpolatorLGP1, Constructor) {
   auto lon = Eigen::VectorXd(19);
   auto lat = Eigen::VectorXd(19);
@@ -72,20 +74,21 @@ TEST(InterpolatorLGP1, Constructor) {
 
   values.setOnes();
 
-  auto index = std::make_shared<fes::mesh::Index>(lon, lat, triangles);
+  auto index = std::make_shared<mesh::Index>(lon, lat, triangles);
 
-  fes::tidal_model::LGP1<double, fes::darwin::Constituent> lgp1(
-      std::move(index), std::move(codes), fes::kTide);
-  lgp1.add_constituent(fes::darwin::kS2, values);
-  auto acc = std::unique_ptr<fes::Accelerator<fes::darwin::Constituent>>(
-      lgp1.accelerator(fes::angle::Formulae::kMeeus, 0.0));
-  fes::Quality quality;
+  tidal_model::LGP1<double, darwin::Constituent> lgp1(std::move(index),
+                                                      std::move(codes), kTide);
+  lgp1.add_constituent(darwin::kS2, values);
+  auto acc = std::unique_ptr<Accelerator<darwin::Constituent>>(
+      lgp1.accelerator(angle::Formulae::kMeeus, 0.0));
+  Quality quality;
   auto x = lgp1.interpolate({0.0, 0.0}, quality, acc.get());
 
   auto state = lgp1.getstate();
-  auto other =
-      fes::tidal_model::LGP1<double, fes::darwin::Constituent>::setstate(
-          fes::string_view(state.data(), state.size()));
+  auto other = tidal_model::LGP1<double, darwin::Constituent>::setstate(
+      string_view(state.data(), state.size()));
   auto y = other.interpolate({0.0, 0.0}, quality, acc.get());
   EXPECT_EQ(x, y);
 }
+
+}  // namespace fes

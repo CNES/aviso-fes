@@ -7,6 +7,8 @@
 #include "fes/darwin/constituent.hpp"
 #include "fes/tidal_model/lgp.hpp"
 
+namespace fes {
+
 TEST(InterpolatorLGP2, Constructor) {
   auto lon = Eigen::VectorXd(19);
   auto lat = Eigen::VectorXd(19);
@@ -73,14 +75,16 @@ TEST(InterpolatorLGP2, Constructor) {
 
   values.setOnes();
 
-  auto index = std::make_shared<fes::mesh::Index>(lon, lat, triangles);
+  auto index = std::make_shared<mesh::Index>(lon, lat, triangles);
 
-  fes::tidal_model::LGP2<double, fes::darwin::Constituent> lgp2(
-      std::move(index), std::move(codes), fes::kTide);
-  lgp2.add_constituent(fes::darwin::kS2, values);
-  fes::Quality quality;
-  auto acc = std::unique_ptr<fes::Accelerator<fes::darwin::Constituent>>(
-      lgp2.accelerator(fes::angle::Formulae::kMeeus, 0.0));
+  tidal_model::LGP2<double, darwin::Constituent> lgp2(std::move(index),
+                                                      std::move(codes), kTide);
+  lgp2.add_constituent(darwin::kS2, values);
+  Quality quality;
+  auto acc = std::unique_ptr<Accelerator<darwin::Constituent>>(
+      lgp2.accelerator(angle::Formulae::kMeeus, 0.0));
   lgp2.interpolate({0.0, 0.0}, quality, acc.get());
   lgp2.interpolate({0.0, 0.0}, quality, acc.get());
 }
+
+}  // namespace fes

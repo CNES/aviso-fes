@@ -6,9 +6,12 @@
 
 #include <gtest/gtest.h>
 
+namespace fes {
+namespace angle {
+
 TEST(Angle, Meeus) {
   // 946684800 is 2000-01-01T00:00:00Z
-  auto a = fes::angle::Astronomic(fes::angle::Formulae::kMeeus, 946684800.0);
+  auto a = Astronomic(Formulae::kMeeus, 946684800.0);
   EXPECT_NEAR(a.h(), 4.886470984554807, 1e-6);
   EXPECT_NEAR(a.n(), 2.1829004947295840, 1e-6);
   EXPECT_NEAR(a.nu(), 0.20721813091600161, 1e-6);
@@ -23,7 +26,7 @@ TEST(Angle, Meeus) {
   EXPECT_NEAR(a.xi(), 0.19203231321420278, 1e-6);
 
   // -2208988800 is 1900-01-01T00:00:00Z
-  a = fes::angle::Astronomic(fes::angle::Formulae::kMeeus, -2208988800.0);
+  a = Astronomic(Formulae::kMeeus, -2208988800.0);
   EXPECT_NEAR(a.h(), 4.8902295880491042, 1e-6);
   EXPECT_NEAR(a.n(), 4.5231326946195560, 1e-6);
   EXPECT_NEAR(a.nu(), -0.22723534369606191, 1e-6);
@@ -40,8 +43,7 @@ TEST(Angle, Meeus) {
 
 TEST(Angle, SchuremanOrder1) {
   // 946684800 is 2000-01-01T00:00:00Z
-  auto a = fes::angle::Astronomic(fes::angle::Formulae::kSchuremanOrder1,
-                                  946684800.0);
+  auto a = Astronomic(Formulae::kSchuremanOrder1, 946684800.0);
   EXPECT_NEAR(a.h(), 4.886446725117425, 1e-6);
   EXPECT_NEAR(a.n(), 2.1828241817408123, 1e-6);
   EXPECT_NEAR(a.p(), 1.4539382076250487, 1e-6);
@@ -50,8 +52,7 @@ TEST(Angle, SchuremanOrder1) {
   EXPECT_NEAR(a.t(), 3.141592653589793, 1e-6);
 
   // -2208988800 is 1900-01-01T00:00:00Z
-  a = fes::angle::Astronomic(fes::angle::Formulae::kSchuremanOrder1,
-                             -2208988800.0);
+  a = Astronomic(Formulae::kSchuremanOrder1, -2208988800.0);
   EXPECT_NEAR(a.h(), 4.890229330696591, 1e-6);
   EXPECT_NEAR(a.n(), 4.523126458918793, 1e-6);
   EXPECT_NEAR(a.p(), 5.836096903501423, 1e-6);
@@ -62,8 +63,7 @@ TEST(Angle, SchuremanOrder1) {
 
 TEST(Angle, SchuremanOrder3) {
   // 946684800 is 2000-01-01T00:00:00Z
-  auto a = fes::angle::Astronomic(fes::angle::Formulae::kSchuremanOrder3,
-                                  946684800.0);
+  auto a = Astronomic(Formulae::kSchuremanOrder3, 946684800.0);
   EXPECT_NEAR(a.h(), 4.886452090906138, 1e-6);
   EXPECT_NEAR(a.n(), 2.1828609691751804, 1e-6);
   EXPECT_NEAR(a.p(), 1.4537574500601673, 1e-6);
@@ -72,8 +72,7 @@ TEST(Angle, SchuremanOrder3) {
   EXPECT_NEAR(a.t(), 3.141592653589793, 1e-6);
 
   // -2208988800 is 1900-01-01T00:00:00Z
-  a = fes::angle::Astronomic(fes::angle::Formulae::kSchuremanOrder3,
-                             -2208988800.0);
+  a = Astronomic(Formulae::kSchuremanOrder3, -2208988800.0);
   EXPECT_NEAR(a.h(), 4.8902293297448836, 1e-6);
   EXPECT_NEAR(a.n(), 4.5231264600866012, 1e-6);
   EXPECT_NEAR(a.p(), 5.8360969045412325, 1e-6);
@@ -84,7 +83,7 @@ TEST(Angle, SchuremanOrder3) {
 
 TEST(Angle, IERS) {
   // 946684800 is 2000-01-01T00:00:00Z
-  auto a = fes::angle::Astronomic(fes::angle::Formulae::kIERS, 946684800.0);
+  auto a = Astronomic(Formulae::kIERS, 946684800.0);
   EXPECT_NEAR(a.h(), 4.8864743802966597, 1e-6);
   EXPECT_NEAR(a.n(), 2.1829004947295840, 1e-6);
   EXPECT_NEAR(a.nu(), 0.20721813091600161, 1e-6);
@@ -98,3 +97,6 @@ TEST(Angle, IERS) {
   EXPECT_NEAR(a.x1ra(), 1.1723204500596927, 1e-6);
   EXPECT_NEAR(a.xi(), 0.19203231321420278, 1e-6);
 }
+
+}  // namespace angle
+}  // namespace fes

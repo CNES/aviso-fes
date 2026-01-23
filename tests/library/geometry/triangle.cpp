@@ -9,13 +9,14 @@
 
 #include <cmath>
 
-namespace geometry = fes::geometry;
+namespace fes {
+namespace geometry {
 
 TEST(Triangle, Interface) {
-  auto v1 = geometry::Point(2, 0);
-  auto v2 = geometry::Point(1, 1);
-  auto v3 = geometry::Point(0, 0);
-  auto triangle = geometry::Triangle(v1, v2, v3);
+  auto v1 = Point(2, 0);
+  auto v2 = Point(1, 1);
+  auto v3 = Point(0, 0);
+  auto triangle = Triangle(v1, v2, v3);
   EXPECT_TRUE(triangle.is_valid());
   EXPECT_EQ(v1, triangle.v1());
   EXPECT_EQ(v2, triangle.v2());
@@ -25,33 +26,33 @@ TEST(Triangle, Interface) {
   EXPECT_TRUE(triangle.covered_by(v1));
   EXPECT_TRUE(triangle.covered_by(v2));
   EXPECT_TRUE(triangle.covered_by(v3));
-  EXPECT_TRUE(triangle.covered_by(geometry::Point(0.5, 0.5)));
-  EXPECT_FALSE(triangle.covered_by(geometry::Point(0, 1)));
+  EXPECT_TRUE(triangle.covered_by(Point(0.5, 0.5)));
+  EXPECT_FALSE(triangle.covered_by(Point(0, 1)));
 }
 
 TEST(Triangle, ReferenceRightAngled) {
   double x = NAN;
   double y = NAN;
-  auto v1 = geometry::Point(2, 0);
-  auto v2 = geometry::Point(1, 1);
-  auto v3 = geometry::Point(0, 0);
-  auto triangle = geometry::Triangle(v1, v2, v3);
+  auto v1 = Point(2, 0);
+  auto v2 = Point(1, 1);
+  auto v3 = Point(0, 0);
+  auto triangle = Triangle(v1, v2, v3);
   std::tie(x, y) = triangle.reference_right_angled({0.5, 0.5});
   EXPECT_DOUBLE_EQ(0.5, x);
   EXPECT_DOUBLE_EQ(0.5, y);
 
-  v1 = geometry::Point(0, 0);
-  v2 = geometry::Point(1, 0);
-  v3 = geometry::Point(0, 1);
-  triangle = geometry::Triangle(v1, v2, v3);
+  v1 = Point(0, 0);
+  v2 = Point(1, 0);
+  v3 = Point(0, 1);
+  triangle = Triangle(v1, v2, v3);
   std::tie(x, y) = triangle.reference_right_angled({0.5, 0.5});
   EXPECT_DOUBLE_EQ(0.5, x);
   EXPECT_DOUBLE_EQ(0.5, y);
 
-  v1 = geometry::Point(0.004, 0.004);
-  v2 = geometry::Point(-0.273, 0.004);
-  v3 = geometry::Point(-0.11, -0.192);
-  triangle = geometry::Triangle(v1, v2, v3);
+  v1 = Point(0.004, 0.004);
+  v2 = Point(-0.273, 0.004);
+  v3 = Point(-0.11, -0.192);
+  triangle = Triangle(v1, v2, v3);
   std::tie(x, y) = triangle.reference_right_angled({0.001, 0.001});
   EXPECT_NEAR(0.00453105, x, 1e-6);
   EXPECT_NEAR(0.0153061, y, 1e-6);
@@ -72,15 +73,15 @@ TEST(Triangle, ReferenceRightAngled) {
 TEST(Triangle, ReferenceRightAngledDegradedCase) {
   double x = NAN;
   double y = NAN;
-  auto v1 =
-      geometry::Point(-122.3500060000000075888238, 38.00500499999999703959475);
-  auto v2 =
-      geometry::Point(-122.4700000000000272848411, 38.11000400000000354339136);
-  auto v3 =
-      geometry::Point(-122.4700000000000272848411, 37.97500200000000347699824);
-  auto triangle = geometry::Triangle(v1, v2, v3);
+  auto v1 = Point(-122.3500060000000075888238, 38.00500499999999703959475);
+  auto v2 = Point(-122.4700000000000272848411, 38.11000400000000354339136);
+  auto v3 = Point(-122.4700000000000272848411, 37.97500200000000347699824);
+  auto triangle = Triangle(v1, v2, v3);
   auto pt = triangle.project({-122.5, 38.0});
   std::tie(x, y) = triangle.reference_right_angled(pt);
   EXPECT_NEAR(x, 0.18519769401644656, 1e-6);
   EXPECT_NEAR(y, 0.81480230598367187, 1e-6);
 }
+
+}  // namespace geometry
+}  // namespace fes
