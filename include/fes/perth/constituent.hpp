@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <string>
+#include <vector>
 
 #include "fes/eigen.hpp"
 
@@ -126,6 +127,10 @@ auto name(Constituent constituent) -> std::string;
 /// @param[in] name The name of the constituent.
 /// @return The corresponding Constituent enum value.
 auto parse(const std::string &name) -> Constituent;
+
+/// @brief Return the list of known constituents by this library.
+/// @return List of constituent names.
+auto known() -> std::vector<std::string>;
 
 }  // namespace constituents
 

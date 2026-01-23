@@ -62,7 +62,10 @@ Returns:
           }));
 }
 
-void init_cartesian_model(py::module& m) {
+void init_cartesian_model(py::module& m, py::module& perth) {
   init_cartesian_model<double, fes::darwin::Constituent>(m, "Complex128");
   init_cartesian_model<float, fes::darwin::Constituent>(m, "Complex64");
+
+  init_cartesian_model<double, fes::perth::Constituent>(perth, "Complex128");
+  init_cartesian_model<float, fes::perth::Constituent>(perth, "Complex64");
 }

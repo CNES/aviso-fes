@@ -309,6 +309,15 @@ auto parse(const std::string& constituent_name) -> Constituent {
   throw std::invalid_argument("Invalid constituent name: " + constituent_name);
 }
 
+auto known() -> std::vector<std::string> {
+  std::vector<std::string> result;
+  result.reserve(Constituent::kNumConstituents);
+  for (const auto& kv : kConstituents) {
+    result.push_back(name(kv.first));
+  }
+  return result;
+}
+
 }  // namespace constituents
 
 }  // namespace perth

@@ -139,9 +139,14 @@ Returns:
           }));
 }
 
-void init_lgp_model(py::module& m) {
+void init_lgp_model(py::module& m, py::module& perth) {
   init_lgp1_model<double, fes::darwin::Constituent>(m, "Complex128");
   init_lgp1_model<float, fes::darwin::Constituent>(m, "Complex64");
   init_lgp2_model<double, fes::darwin::Constituent>(m, "Complex128");
   init_lgp2_model<float, fes::darwin::Constituent>(m, "Complex64");
+
+  init_lgp1_model<double, fes::perth::Constituent>(perth, "Complex128");
+  init_lgp1_model<float, fes::perth::Constituent>(perth, "Complex64");
+  init_lgp2_model<double, fes::perth::Constituent>(perth, "Complex128");
+  init_lgp2_model<float, fes::perth::Constituent>(perth, "Complex64");
 }

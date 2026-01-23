@@ -10,8 +10,26 @@
 #include "fes/darwin/constituent.hpp"
 #include "fes/darwin/table.hpp"
 #include "fes/detail/thread.hpp"
+#include "fes/perth/table.hpp"
 
 namespace py = pybind11;
+
+// Type trait to map ConstituentId to WaveTable type
+template <typename ConstituentId>
+struct WaveTableType;
+
+template <>
+struct WaveTableType<fes::darwin::Constituent> {
+  using type = fes::darwin::WaveTable;
+};
+
+template <>
+struct WaveTableType<fes::perth::Constituent> {
+  using type = fes::perth::WaveTable;
+};
+
+template <typename ConstituentId>
+using WaveTableType_t = typename WaveTableType<ConstituentId>::type;
 
 // Trampoline class for AbstractTidalModel
 template <typename T, typename ConstituentId>
@@ -36,7 +54,7 @@ class PyAbstractTidalModel : public fes::AbstractTidalModel<T, ConstituentId> {
                            interpolate, point, quality, acc);
   }
 
-  void add_constituent(const fes::darwin::Constituent ident,
+  void add_constituent(const ConstituentId ident,
                        fes::Vector<std::complex<T>> wave) override {
     PYBIND11_OVERLOAD_PURE(void, cname, add_constituent, ident, wave);
   }
@@ -56,13 +74,13 @@ static auto interpolate(const fes::AbstractTidalModel<T, ConstituentId>& self,
                         const Eigen::Ref<const Eigen::VectorXd>& lon,
                         const Eigen::Ref<const Eigen::VectorXd>& lat,
                         const size_t num_threads = 0)
-    -> std::tuple<std::map<fes::darwin::Constituent, Eigen::VectorXcd>,
+    -> std::tuple<std::map<ConstituentId, Eigen::VectorXcd>,
                   Eigen::Matrix<int8_t, -1, 1>> {
   if (lon.size() != lat.size()) {
     throw std::invalid_argument("lon and lat must have the same size");
   }
   // Allocate result vectors
-  auto values = std::map<fes::darwin::Constituent, Eigen::VectorXcd>();
+  auto values = std::map<ConstituentId, Eigen::VectorXcd>();
   auto qualities = Eigen::Matrix<int8_t, -1, 1>(lon.size());
 
   for (auto&& ident : self.identifiers()) {
@@ -154,7 +172,7 @@ Returns:
           "interpolate",
           [](const fes::AbstractTidalModel<T, ConstituentId>& self,
              const double lon, const double lat,
-             fes::darwin::WaveTable& wt) -> fes::Quality {
+             WaveTableType_t<ConstituentId>& wt) -> fes::Quality {
             auto acc = std::unique_ptr<fes::Accelerator<ConstituentId>>(
                 self.accelerator(fes::angle::Formulae::kSchuremanOrder1, 0.0));
             return self.interpolate({lon, lat}, wt, acc.get());
@@ -176,11 +194,9 @@ Returns:
       .def_property(
           "dynamic",
           [](const fes::AbstractTidalModel<T, ConstituentId>& self)
-              -> const std::vector<fes::darwin::Constituent>& {
-            return self.dynamic();
-          },
+              -> const std::vector<ConstituentId>& { return self.dynamic(); },
           [](fes::AbstractTidalModel<T, ConstituentId>& self,
-             const std::vector<fes::darwin::Constituent>& dynamic) -> void {
+             const std::vector<ConstituentId>& dynamic) -> void {
             self.dynamic(dynamic);
           },
           R"__doc__(
@@ -204,7 +220,7 @@ equilibrium wave calculation routine (`lpe_minus_n_waves`).
           "Return true if no wave models are loaded.");
 }
 
-void init_abstract_tide_model(py::module& m) {
+void init_abstract_tide_model(py::module& m, py::module& perth) {
   py::enum_<fes::TideType>(m, "TideType")
       .value("kTide", fes::TideType::kTide)
       .value("kRadial", fes::TideType::kRadial)
@@ -217,4 +233,7 @@ void init_abstract_tide_model(py::module& m) {
   init_tidal_model<float>(m, "Complex64");
   init_abstract_tide_model<double, fes::darwin::Constituent>(m, "Complex128");
   init_abstract_tide_model<float, fes::darwin::Constituent>(m, "Complex64");
+  init_abstract_tide_model<double, fes::perth::Constituent>(perth,
+                                                            "Complex128");
+  init_abstract_tide_model<float, fes::perth::Constituent>(perth, "Complex64");
 }
