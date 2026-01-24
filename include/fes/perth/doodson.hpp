@@ -17,7 +17,7 @@ namespace perth {
 inline auto calculate_celestial_vector(const angle::Astronomic& angle) noexcept
     -> Vector6d {
   // Doodson's tau variable
-  auto tau = (-angle.t() + detail::math::pi<double>()) - angle.s() + angle.h();
+  auto tau = (angle.t() - angle.s() + angle.h()) - detail::math::pi<double>();
 
   Vector6d vector;
   vector << tau, angle.s(), angle.h(), angle.p(), -angle.n(), angle.p1();
