@@ -120,19 +120,6 @@ class EnumMapper {
     return result;
   }
 
-  /// @brief Cast the enum values to a different user-defined type.
-  /// @tparam UserType The user-defined type to cast to.
-  /// @return A vector of the casted enum values.
-  template <typename UserType>
-  auto cast() const -> std::vector<UserType> {
-    std::vector<UserType> result;
-    result.reserve(data_.size());
-    for (const auto& entry : data_) {
-      result.push_back(static_cast<UserType>(entry.value));
-    }
-    return result;
-  }
-
  private:
   std::vector<EnumEntry<T>> data_{};
 };
