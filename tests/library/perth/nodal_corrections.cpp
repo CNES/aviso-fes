@@ -11,11 +11,11 @@ TEST(NodalCorrectionsTest, ComputeNodalCorrections) {
 
   // Create vector with all constituents
   std::vector<Constituent> constituents{
-      k2Q1,  kSigma1, kQ1,    kRho1, kO1,    kTau1,   kBeta1,   kM1,
-      kChi1, kPi1,    kP1,    kS1,   kK1,    kPsi1,   kPhi1,    kTheta1,
-      kJ1,   kSO1,    kOO1,   kUps1, kEps2,  k2N2,    kMu2,     kN2,
-      kNu2,  kGamma2, kAlpa2, kM2,   kBeta2, kDelta2, kLambda2, kL2,
-      kT2,   kS2,     kR2,    kK2,   kEta2,  kM4,     kMS4,
+      k2Q1,  kSigma1, kQ1,     kRho1, kO1,    kTau1,   kBeta1,   kM1,
+      kChi1, kPi1,    kP1,     kS1,   kK1,    kPsi1,   kPhi1,    kTheta1,
+      kJ1,   kSO1,    kOO1,    kUps1, kEps2,  k2N2,    kMu2,     kN2,
+      kNu2,  kGamma2, kAlpha2, kM2,   kBeta2, kDelta2, kLambda2, kL2,
+      kT2,   kS2,     kR2,     kK2,   kEta2,  kM4,     kMS4,
   };
 
   // Compute nodal corrections

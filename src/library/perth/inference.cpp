@@ -41,7 +41,7 @@ std::unordered_map<Constituent, double>
         {Constituent::kN2, 0.121006},
         {Constituent::kNu2, 0.022983},
         {Constituent::kGamma2, 0.001902},
-        {Constituent::kAlpa2, 0.002178},
+        {Constituent::kAlpha2, 0.002178},
         {Constituent::kM2, 0.631931},
         {Constituent::kBeta2, 0.001921},
         {Constituent::kDelta2, 0.000714},
