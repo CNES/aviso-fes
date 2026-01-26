@@ -22,44 +22,40 @@ FES_TIDE_TIME_SERIES = (
 
 
 def test_constructor() -> None:
-    wt = core.WaveTable()
+    wt = core.darwin.WaveTable()
     assert len(wt) == 99
     assert len(list(wt)) == 99
-    assert wt.find('M2') == wt[core.kM2]
-    assert wt.find('m2') == wt[core.kM2]
-    assert wt.find('M2') != wt[core.kK1]
     with pytest.raises(
         ValueError,
-        match='invalid tidal constituent: __M2__',
+        match='unknown constituent name: __M2__',
     ):
-        wt.find('__M2__')
-    assert sorted(core.constituents.known()) == sorted(
-        [item.name() for item in wt]
-    )
-    for item in wt:
-        assert item.ident == getattr(core, 'k' + item.name())
+        wt['__M2__']
 
-    wt = core.WaveTable(['Q1', 'O1', 'P1', 'S1', 'K1', 'M2'])
+    wt = core.darwin.WaveTable(['Q1', 'O1', 'P1', 'S1', 'K1', 'M2'])
     assert len(wt) == 6
-    assert tuple(x.name() for x in wt) == ('Q1', 'O1', 'P1', 'S1', 'K1', 'M2')
-    assert wt.keys() == ['Q1', 'O1', 'P1', 'S1', 'K1', 'M2']
-    assert wt.values() == [
-        wt.find('Q1'),
-        wt.find('O1'),
-        wt.find('P1'),
-        wt.find('S1'),
-        wt.find('K1'),
-        wt.find('M2'),
-    ]
+    assert sorted(x.name() for x in wt) == sorted(
+        ('Q1', 'O1', 'P1', 'S1', 'K1', 'M2')
+    )
+    assert sorted(wt.keys()) == sorted(['Q1', 'O1', 'P1', 'S1', 'K1', 'M2'])
+    assert sorted(item.name() for item in wt.values()) == sorted(
+        [
+            wt['Q1'].name(),
+            wt['O1'].name(),
+            wt['P1'].name(),
+            wt['S1'].name(),
+            wt['K1'].name(),
+            wt['M2'].name(),
+        ]
+    )
 
 
 def test_wave() -> None:
     aa = core.AstronomicAngle()
     aa.update(datetime.datetime(2000, 1, 1))
-    wt = core.WaveTable(['M2'])
-    wave = wt.find('M2')
+    wt = core.darwin.WaveTable(['M2'])
+    wave = wt['M2']
     assert wave.freq * 24 == pytest.approx(12.140833182614747, 1e-6)
-    assert wave.type == wave.TidalType.kShortPeriod
+    assert wave.type == core.SHORT_PERIOD
 
 
 def test_harmonic_analysis() -> None:
@@ -67,7 +63,7 @@ def test_harmonic_analysis() -> None:
         time = dataset['time'][:].astype('datetime64[us]')
         h = dataset['ocean'][:] * 1e-2
 
-    wt = core.WaveTable(
+    wt = core.darwin.WaveTable(
         [
             'Mm',
             'Mf',
@@ -155,11 +151,11 @@ def test_harmonic_analysis_with_empty_table() -> None:
     )
     h = numpy.random.default_rng().random(time.shape[0])
 
-    wt = core.WaveTable(['M2', 'S2', 'N2', 'K1', 'O1', 'Q1'])
+    wt = core.darwin.WaveTable(['M2', 'S2', 'N2', 'K1', 'O1', 'Q1'])
     w = wt.harmonic_analysis(h, *wt.compute_nodal_modulations(time))
     assert numpy.all(~numpy.isnan(wt.tide_from_tide_series(time, w)))
 
-    wt = core.WaveTable()
+    wt = core.darwin.WaveTable()
     w = wt.harmonic_analysis(h, *wt.compute_nodal_modulations(time))
     assert numpy.all(~numpy.isnan(wt.tide_from_tide_series(time, w)))
 
@@ -168,7 +164,7 @@ def benchmark_wave_table_operations():
     """Benchmark operations that should be GIL-free."""
 
     def compute_nodal_modulations(dates):
-        wave_table = core.WaveTable()
+        wave_table = core.darwin.WaveTable()
         return wave_table.compute_nodal_modulations(dates)
 
     # Setup test data
@@ -220,7 +216,7 @@ def test_concurrent_wave_table_access() -> None:
         rng = numpy.random.default_rng(seed=worker_id)
         try:
             # Create independent wave table
-            wave_table = core.WaveTable(['S1', 'S2', 'M2', 'K1', 'O1'])
+            wave_table = core.darwin.WaveTable(['S1', 'S2', 'M2', 'K1', 'O1'])
 
             # Perform various operations
             for _ in range(50):

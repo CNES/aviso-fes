@@ -11,8 +11,9 @@ by the numerical model.
 
 from __future__ import annotations
 
+from typing import cast
 from functools import cached_property
-from typing import TYPE_CHECKING, Any, NamedTuple, Union
+from typing import TYPE_CHECKING, Any, Literal, NamedTuple, Union
 import dataclasses
 import enum
 import os
@@ -345,9 +346,9 @@ class Common:
             raise ValueError('latitude cannot be empty.')
         if self.engine not in tuple(item.value for item in Engine):
             raise ValueError(f'Unknown engine: {self.engine!r}.')
-        known_constituents = self.constituent_map.keys()
+        known_constituents = tuple(map(str.upper, self.constituent_map.keys()))
         for item in self.dynamic:
-            if item not in known_constituents:
+            if item.upper() not in known_constituents:
                 raise ValueError(f'Unknown wave: {item!r}.')
 
     @cached_property
@@ -367,10 +368,13 @@ class Common:
             ValueError: If one of the constituents is unknown.
 
         """
-        known_constituents = self.constituent_map.keys()
-        unknown = [
-            item for item in names if item.upper() not in known_constituents
-        ]
+        constituent_map = self.constituent_map
+        unknown: list[str] = []
+        for item in names:
+            try:
+                constituent_map[item]
+            except KeyError:
+                unknown.append(item)
         if unknown:
             raise ValueError(f'Unknown constituents: {", ".join(unknown)!r}.')
 
@@ -600,8 +604,9 @@ class LGP(Common):
             instance: TidalModel | None = None
             selected_indices: Vector | None = None
 
-            known_constituents = self.constituent_map.keys()
-            for item in self.constituents or known_constituents:
+            for item in self.constituents:
+                if item not in self.constituent_map:
+                    raise ValueError(f'Unknown constituent: {item!r}.')
                 amp_name: str = self.amplitude.format(constituent=item)
                 if amp_name not in ds.variables:
                     raise ValueError(f'Variable not found: {amp_name!r}.')
@@ -727,7 +732,7 @@ class Configuration(NamedTuple):
     """
 
     #: Dictionary mapping tidal type ('tide', 'radial') to tidal model.
-    models: dict[str, TidalModel]
+    models: dict[Literal['tide', 'radial'], TidalModel]
     #: Runtime settings for the tidal prediction engine.
     settings: Settings
 
@@ -777,20 +782,21 @@ def load(
         ... )
 
     """
-    models: dict[str, TidalModel] = {}
+    models: dict[Literal['tide', 'radial'], TidalModel] = {}
     user_settings: dict[str, Any] = parse(path)
     engine: Engine | None = None
 
     if user_settings is None or len(user_settings) == 0:
         raise ValueError(f'Configuration file {path!r} is empty.')
 
-    key: str
     for key, settings in user_settings.items():
         if key not in ['tide', 'radial']:
             raise ValueError(
                 f'Configuration file {path!r} is invalid. '
                 f'Expected "tide" or "radial" section.'
             )
+        key = cast("Literal['tide', 'radial']", key)
+
         try:
             model, model_engine = _load_model(
                 settings, tidal_type=key, bbox=bbox

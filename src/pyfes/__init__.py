@@ -21,6 +21,7 @@ from .core import (
     AstronomicAngle as AstronomicAngle,
     FesRuntimeSettings,
     PerthRuntimeSettings,
+    Settings as Settings,
     TidalType as TidalType,
     InterpolationType as InterpolationType,
 )
@@ -31,6 +32,7 @@ from .type_hints import (
     VectorInt8,
 )
 from .core import darwin, perth
+from . import config as config
 
 __all__ = [
     'AstronomicAngle',
@@ -39,6 +41,7 @@ __all__ = [
     'InterpolationType',
     'PerthRuntimeSettings',
     'TidalType',
+    'config',
     'darwin',
     'evaluate_equilibrium_long_period',
     'evaluate_tide',
@@ -53,7 +56,7 @@ def evaluate_tide(
     longitude: VectorFloat64,
     latitude: VectorFloat64,
     *,
-    settings: FesRuntimeSettings | PerthRuntimeSettings | None = None,
+    settings: Settings | None = None,
 ) -> tuple[VectorFloat64, VectorFloat64, VectorInt8]:
     """Compute the tide at the given location and time.
 
@@ -108,7 +111,7 @@ def evaluate_tide_from_constituents(
     date: VectorDateTime64,
     latitude: float,
     *,
-    settings: FesRuntimeSettings | PerthRuntimeSettings | None = None,
+    settings: Settings | None = None,
 ) -> tuple[VectorFloat64, VectorFloat64]:
     """Compute the tide from known tidal constituents.
 

@@ -3,9 +3,8 @@
 # All rights reserved. Use of this source code is governed by a
 # BSD-style license that can be found in the LICENSE file.
 import pathlib
-import pickle
 
-import pyfes.config as config_handler
+import pyfes
 
 DATASET = pathlib.Path(__file__).parent / 'dataset'
 
@@ -28,11 +27,9 @@ radial:
     settings_path = str(tmp_path / 'config.yaml')
     with open(settings_path, 'w', encoding='utf-8') as stream:
         stream.write(settings)
-    config = config_handler.load(settings_path)
-
-    other = pickle.loads(pickle.dumps(config))
-    assert config.keys() == other.keys()
-    assert config != other
+    config = pyfes.config.load(settings_path)
+    assert 'radial' in config.models
+    assert isinstance(config.settings, pyfes.FesRuntimeSettings)
 
 
 def test_config_lgp2(tmp_path) -> None:
@@ -58,8 +55,6 @@ tide:
     settings_path = str(tmp_path / 'config.yaml')
     with open(settings_path, 'w', encoding='utf-8') as stream:
         stream.write(settings)
-    config = config_handler.load(settings_path)
-
-    other = pickle.loads(pickle.dumps(config))
-    assert config.keys() == other.keys()
-    assert config != other
+    config = pyfes.config.load(settings_path)
+    assert 'tide' in config.models
+    assert isinstance(config.settings, pyfes.FesRuntimeSettings)

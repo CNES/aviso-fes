@@ -34,14 +34,14 @@ def test_interpolate() -> None:
     wave = amp * numpy.cos(pha) + 1j * amp * numpy.sin(pha)
 
     model = core.tidal_model.CartesianComplex128(
-        x_axis, y_axis, longitude_major=False
+        x_axis, y_axis, core.darwin.constituents(), longitude_major=False
     )
     assert len(model) == 0
     assert bool(model) is False
     model.add_constituent('S2', wave.ravel())
     assert len(model) == 1
     assert bool(model) is True
-    assert model.identifiers() == [core.kS2]
+    assert model.identifiers() == ['S2']
 
     x = numpy.arange(-180, 180, 1.0, dtype=numpy.float64)
     y = numpy.arange(-89.5, 90, 1.0, dtype=numpy.float64)
@@ -50,7 +50,7 @@ def test_interpolate() -> None:
 
     result, quality = model.interpolate(mx.ravel(), my.ravel())
 
-    interpolated = result[core.kS2]
+    interpolated = result['S2']
     interpolated[quality[quality <= 0]] = numpy.nan
     interpolated = interpolated.reshape(mx.shape).T
     interpolated = numpy.roll(interpolated, 180, axis=1)

@@ -11,7 +11,7 @@ import pytest
 
 def test_astronomic_angle() -> None:
     """Test the computation of astronomical angles."""
-    aa = core.AstronomicAngle(core.kMeeus)
+    aa = core.AstronomicAngle(core.MEEUS)
     aa.update(datetime.datetime(2000, 1, 1))
     assert isinstance(aa, core.AstronomicAngle)
     assert aa.h == pytest.approx(4.886470984554807, rel=1e-6)
@@ -27,7 +27,7 @@ def test_astronomic_angle() -> None:
     assert aa.x1ra == pytest.approx(1.1723204500596927, rel=1e-6)
     assert aa.xi == pytest.approx(0.19203231321420278, rel=1e-6)
 
-    aa = core.AstronomicAngle(core.kSchuremanOrder3)
+    aa = core.AstronomicAngle(core.SCHUREMAN_ORDER_3)
     aa.update(datetime.datetime(2000, 1, 1))
     assert aa.h == pytest.approx(4.886452090906138, rel=1e-6)
     assert aa.n == pytest.approx(2.1828609691751804, rel=1e-6)
@@ -36,7 +36,7 @@ def test_astronomic_angle() -> None:
     assert aa.s == pytest.approx(3.6956256194908494, rel=1e-6)
     assert aa.t == pytest.approx(3.141592653589793, rel=1e-6)
 
-    aa = core.AstronomicAngle(core.kIERS)
+    aa = core.AstronomicAngle(core.IERS)
     aa.update(datetime.datetime(2000, 1, 1))
     assert aa.h == pytest.approx(4.8864743802966597, 1e-6)
     assert aa.n == pytest.approx(2.1829004947295840, 1e-6)

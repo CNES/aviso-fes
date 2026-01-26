@@ -47,6 +47,10 @@ tide:
         lons[hour] = -7.688
         lats[hour] = 59.195
     tide, _, _ = evaluate_tide(
-        handler['tide'], dates, lons, lats, num_threads=1
+        handler.models['tide'],
+        dates,
+        lons,
+        lats,
+        settings=handler.settings,
     )
     assert tide.shape == (24,)

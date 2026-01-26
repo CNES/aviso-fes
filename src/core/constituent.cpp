@@ -42,17 +42,11 @@ static void init_enum_mapper(py::module& m) {
       .def("items", &EnumMapper<uint8_t>::items,
            "Return list of (value, name) pairs in the mapper.")
       .def(
-          "get",
-          [](const EnumMapper<uint8_t>& self, const std::string& name,
-             py::object default_value) {
-            try {
-              return py::cast(self.from_string(name));
-            } catch (const std::invalid_argument&) {
-              return default_value;
-            }
+          "get_name",
+          [](const EnumMapper<uint8_t>& self, const uint8_t value) {
+            return self.to_string(value);
           },
-          py::arg("name"), py::arg("default") = py::none(),
-          "Get enum value by name, returning default if not found.");
+          py::arg("value"), "Get the string name for a given enum value.");
 }
 
 namespace darwin {

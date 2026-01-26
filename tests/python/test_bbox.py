@@ -6,15 +6,14 @@ import pathlib
 
 import numpy
 import pyfes
-import pyfes.config as config_handler
 import pytest
 
 DATASET = pathlib.Path(__file__).parent / 'dataset'
 
 
 def generate_coordinates():
-    lons = numpy.arange(-180, 180, 1)
-    lats = numpy.arange(-90, 90, 1)
+    lons = numpy.arange(-180, 180, 1, dtype=numpy.float64)
+    lats = numpy.arange(-90, 90, 1, dtype=numpy.float64)
     lons, lats = numpy.meshgrid(lons, lats)
     shape = lons.shape
     dates = numpy.full(shape, 'now', dtype='datetime64[us]')
@@ -49,17 +48,25 @@ tide:
     settings_path = str(tmp_path / 'config.yaml')
     with open(settings_path, 'w', encoding='utf-8') as stream:
         stream.write(settings)
-    config = config_handler.load(settings_path)
+    config = pyfes.config.load(settings_path)
     tide1, lp1, m1 = pyfes.evaluate_tide(
-        config['tide'], dates.ravel(), lons.ravel(), lats.ravel(), num_threads=1
+        config.models['tide'],
+        dates.ravel(),
+        lons.ravel(),
+        lats.ravel(),
+        settings=config.settings,
     )
     tide1 = tide1.reshape(shape)
     lp1 = lp1.reshape(shape)
     m1 = (m1 > 0).reshape(shape)
 
-    config = config_handler.load(settings_path, bbox)
+    config = pyfes.config.load(settings_path, bbox)
     tide2, lp2, m2 = pyfes.evaluate_tide(
-        config['tide'], dates.ravel(), lons.ravel(), lats.ravel(), num_threads=1
+        config.models['tide'],
+        dates.ravel(),
+        lons.ravel(),
+        lats.ravel(),
+        settings=config.settings,
     )
     tide2 = tide2.reshape(shape)
     lp2 = lp2.reshape(shape)
@@ -98,15 +105,23 @@ tide:
     with open(settings_path, 'w', encoding='utf-8') as stream:
         stream.write(settings)
 
-    config = config_handler.load(settings_path)
+    config = pyfes.config.load(settings_path)
     tide1, lp1, _ = pyfes.evaluate_tide(
-        config['tide'], dates.ravel(), lon.ravel(), lat.ravel(), num_threads=0
+        config.models['tide'],
+        dates.ravel(),
+        lon.ravel(),
+        lat.ravel(),
+        settings=config.settings,
     )
     tide1 = tide1.reshape(shape)
     lp1 = lp1.reshape(shape)
-    config = config_handler.load(settings_path, bbox)
+    config = pyfes.config.load(settings_path, bbox)
     tide2, lp2, _ = pyfes.evaluate_tide(
-        config['tide'], dates.ravel(), lon.ravel(), lat.ravel(), num_threads=0
+        config.models['tide'],
+        dates.ravel(),
+        lon.ravel(),
+        lat.ravel(),
+        settings=config.settings,
     )
     tide2 = tide2.reshape(shape)
     lp2 = lp2.reshape(shape)

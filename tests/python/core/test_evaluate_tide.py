@@ -82,10 +82,11 @@ BREST_LOCATION = (-4.495, 48.383)
 
 def load_model(
     configuration: dict[str, pathlib.Path],
-    tide_type: core.TideType,
+    tide_type: core.tidal_model.TideType,
 ) -> core.tidal_model.CartesianComplex64:
     """Load a tidal model from netCDF files."""
     model = None
+    constituent_map = core.darwin.constituents()
     for key, value in configuration.items():
         with netCDF4.Dataset(value) as ds:
             if model is None:
@@ -94,7 +95,11 @@ def load_model(
                 x_axis = core.Axis(lon, is_circular=True)
                 y_axis = core.Axis(lat)
                 model = core.tidal_model.CartesianComplex64(
-                    x_axis, y_axis, tide_type=tide_type, longitude_major=False
+                    x_axis,
+                    y_axis,
+                    constituent_map=constituent_map,
+                    tide_type=tide_type,
+                    longitude_major=False,
                 )
             amp = numpy.ma.filled(
                 ds.variables['amplitude'][:],
@@ -165,8 +170,8 @@ def test_tide() -> None:
         'Q1': DATASET / 'Q1_radial.nc',
         'S2': DATASET / 'S2_radial.nc',
     }
-    radial_model = load_model(wave_files, core.kRadial)
-    tidal_model = load_model(TIDAL_WAVES, core.kTide)
+    radial_model = load_model(wave_files, core.tidal_model.RADIAL)
+    tidal_model = load_model(TIDAL_WAVES, core.tidal_model.TIDE)
     dates = numpy.empty((24,), dtype='M8[ms]')
     lons = numpy.empty((24,), dtype=numpy.float64)
     lats = numpy.empty((24,), dtype=numpy.float64)
@@ -175,9 +180,19 @@ def test_tide() -> None:
         dates[hour] = numpy.datetime64(f'1983-01-01T{hour:02d}:00:00')
         lons[hour] = -7.688
         lats[hour] = 59.195
-    tide = core.evaluate_tide(tidal_model, dates, lons, lats, num_threads=1)
+    tide = core.evaluate_tide(
+        tidal_model,
+        dates,
+        lons,
+        lats,
+        core.FesRuntimeSettings().with_num_threads(1),
+    )
     radial_waves = core.evaluate_tide(
-        radial_model, dates, lons, lats, num_threads=1
+        radial_model,
+        dates,
+        lons,
+        lats,
+        core.FesRuntimeSettings().with_num_threads(1),
     )
     check_tide(tide, radial_waves)
 
@@ -199,7 +214,9 @@ def cpu_intensive_task(
             dates,
             lon,
             lat,
-            num_threads=1,  # Force single thread per call for this test
+            core.FesRuntimeSettings().with_num_threads(
+                1
+            ),  # Force single thread per call for this test
         )
 
     end_time = time.time()
@@ -222,7 +239,7 @@ def test_parallel_tide_evaluation() -> None:
 
     # Create a simple tidal model (you'll need to adapt this to your actual
     # model)
-    tidal_model = load_model(TIDAL_WAVES, core.kTide)
+    tidal_model = load_model(TIDAL_WAVES, core.tidal_model.TideType.TIDE)
 
     num_threads = 4
 
@@ -264,18 +281,13 @@ def test_evaluate_tide_from_constituents() -> None:
     end_date = numpy.datetime64('2024-01-02T00:00:00')
     dates = numpy.arange(start_date, end_date, numpy.timedelta64(1, 'h'))
 
-    constituents = {
-        core.constituents.parse(key): value
-        for key, value in BREST_TICON3_DATA.items()
-    }
+    constituents = dict(BREST_TICON3_DATA.items())
 
     tide, long_period = core.evaluate_tide_from_constituents(
         constituents,
         dates,
-        BREST_LOCATION[0],
         BREST_LOCATION[1],
-        None,
-        1,
+        core.FesRuntimeSettings().with_num_threads(1),
     )
     assert len(tide) == len(dates)
     assert len(long_period) == len(dates)
