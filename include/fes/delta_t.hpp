@@ -1,3 +1,9 @@
+// Copyright (c) 2025 CNES
+//
+// All rights reserved. Use of this source code is governed by a
+// BSD-style license that can be found in the LICENSE file.
+/// @file include/fes/delta_t.hpp
+/// @brief Delta T computation.
 #pragma once
 #include <array>
 
@@ -32,9 +38,9 @@ constexpr std::array<DeltaTEntry, 55> IERS_TABLE = {{
 
 /// @brief Binary search to find the lower bound by year.
 /// @tparam Iterator The iterator type.
-/// @param first The beginning of the range.
-/// @param last The end of the range.
-/// @param value The year value to search for.
+/// @param[in] first The beginning of the range.
+/// @param[in] last The end of the range.
+/// @param[in] value The year value to search for.
 /// @return An iterator to the lower bound.
 template <typename Iterator>
 constexpr auto lower_bound_by_year(Iterator first, Iterator last, double value)
