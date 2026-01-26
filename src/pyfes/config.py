@@ -278,7 +278,7 @@ def load_cartesian_model(
         if nc_pha.units.lower() in ['degree', 'degrees', 'deg']:
             pha = numpy.radians(pha)
 
-    wave: Matrix = amp * numpy.cos(pha) + 1j * amp * numpy.sin(pha)
+    wave: Matrix = amp * numpy.exp(1j * pha)
 
     return lon, lat, wave, longitude_major
 
@@ -640,7 +640,7 @@ class LGP(Common):
                 if ds.variables[pha_name].units in ['degree', 'degrees']:
                     pha = numpy.radians(pha)
 
-                wave: Vector = amp * numpy.cos(pha) + 1j * amp * numpy.sin(pha)
+                wave: Vector = amp * numpy.exp(1j * pha)
                 del amp, pha
 
                 instance.add_constituent(item, wave)

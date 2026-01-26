@@ -12,18 +12,18 @@ namespace perth {
 
 constexpr auto kConstituentNames =
     std::array<const char* const, kNumConstituentItems>{
-        "2MK3",   "2MK6",   "2MN2",    "2MN6",   "2MS2",  "2MS6",  "2N2",
-        "2Q1",    "2SM2",   "2SM6",    "Alpa2",  "Beta1", "Beta2", "Chi1",
-        "Delta2", "Eps2",   "Eta2",    "Gamma2", "J1",    "K1",    "K2",
-        "L2",     "L2P",    "Lambda2", "M1",     "M13",   "M2",    "M3",
-        "M4",     "M6",     "M8",      "Mf",     "MK3",   "MK4",   "MKS2",
-        "Mm",     "MN4",    "MO3",     "Mqm",    "MS4",   "MSf",   "MSK6",
-        "MSm",    "MSN2",   "MSN6",    "MSqm",   "MStm",  "Mtm",   "Mu2",
-        "N2",     "N2P",    "N4",      "Node",   "Nu2",   "O1",    "OO1",
-        "P1",     "Phi1",   "Pi1",     "Psi1",   "Q1",    "R2",    "R4",
-        "Rho1",   "S1",     "S2",      "S4",     "S6",    "Sa",    "Sa1",
-        "Sigma1", "SK4",    "SN4",     "SO1",    "Ssa",   "Sta",   "T2",
-        "Tau1",   "Theta1", "Ups1",
+        "Node",   "Sa1",    "Sa",    "Ssa",    "Sta",  "MSm",     "Mm",
+        "MSf",    "Mf",     "MStm",  "Mtm",    "MSqm", "Mqm",     "2Q1",
+        "Sigma1", "Q1",     "Rho1",  "O1",     "Tau1", "Beta1",   "M13",
+        "M1",     "Chi1",   "Pi1",   "P1",     "S1",   "K1",      "Psi1",
+        "Phi1",   "Theta1", "J1",    "SO1",    "OO1",  "Ups1",    "Eps2",
+        "2N2",    "2MS2",   "Mu2",   "N2",     "N2P",  "Nu2",     "Gamma2",
+        "Alpa2",  "M2",     "Beta2", "Delta2", "MKS2", "Lambda2", "2MN2",
+        "L2",     "L2P",    "T2",    "S2",     "R2",   "K2",      "MSN2",
+        "Eta2",   "2SM2",   "2MK3",  "MO3",    "M3",   "MK3",     "N4",
+        "MN4",    "M4",     "SN4",   "MS4",    "MK4",  "S4",      "R4",
+        "SK4",    "2MN6",   "M6",    "MSN6",   "2MS6", "2MK6",    "2SM6",
+        "MSK6",   "S6",     "M8",
     };
 
 namespace constituents {

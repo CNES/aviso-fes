@@ -93,8 +93,12 @@ auto evaluate_tide(const AbstractTidalModel<T>* const tidal_model,
   auto quality = Vector<Quality>(epoch.size());
 
   auto worker = [&](const int64_t start, const int64_t end) {
-    auto wave_table = WaveTable(
-        tidal_model->enum_mapper().template cast<perth::Constituent>());
+    auto ids = std::vector<Constituent>{};
+    ids.reserve(tidal_model->size());
+    for (const auto& id : tidal_model->identifiers()) {
+      ids.push_back(static_cast<Constituent>(id));
+    }
+    auto wave_table = WaveTable(ids);
     auto inference = std::unique_ptr<Inference>(
         settings.inference_type() == InterpolationType::kZeroAdmittance
             ? nullptr

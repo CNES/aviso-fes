@@ -104,7 +104,7 @@ class Settings {
   /// @return Number of threads.
   constexpr size_t num_threads() const noexcept { return num_threads_; }
 
- private:
+ protected:
   /// Egine type to use for the tide computation
   EngineType engine_type_;
   /// @brief Astronomic formulae used to calculate the astronomic angles.
@@ -131,7 +131,13 @@ class FesRuntimeSettings : public Settings {
 class PerthRuntimeSettings : public Settings {
  public:
   /// @brief Constructor.
-  constexpr PerthRuntimeSettings() : Settings(EngineType::kPERTH5) {}
+  constexpr PerthRuntimeSettings() : Settings(EngineType::kPERTH5) {
+    // Initialize default settings for PERTH5 engine: use IERS astronomic
+    // formulae and linear admittance interpolation. Group modulations remain
+    // disabled by default, preserving the original PERTH5 behavior.
+    astronomic_formulae_ = angle::Formulae::kIERS;
+    inference_type_ = InterpolationType::kLinearAdmittance;
+  }
 };
 
 }  // namespace fes
