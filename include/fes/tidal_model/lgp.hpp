@@ -12,18 +12,14 @@
 #include <limits>
 #include <memory>
 #include <set>
-#include <sstream>
 #include <unordered_map>
 #include <utility>
 #include <vector>
 
 #include "fes/abstract_tidal_model.hpp"
-#include "fes/detail/isviewstream.hpp"
-#include "fes/detail/serialize.hpp"
-#include "fes/eigen.hpp"
 #include "fes/geometry/box.hpp"
 #include "fes/mesh/index.hpp"
-#include "fes/string_view.hpp"
+#include "fes/types.hpp"
 
 namespace fes {
 namespace tidal_model {
@@ -32,9 +28,7 @@ namespace tidal_model {
 ///
 /// This class is used to accelerate the interpolation of LGP tidal models by
 /// caching the selected triangle for a given point.
-/// @tparam ConstituentId The type of the constituent identifier.
-template <typename ConstituentId>
-class LGPAccelerator : public Accelerator<ConstituentId> {
+class LGPAccelerator : public Accelerator {
  public:
   /// Default constructor.
   /// @param[in] formulae The formulae used to calculate the astronomic angle.
@@ -45,7 +39,7 @@ class LGPAccelerator : public Accelerator<ConstituentId> {
   /// tidal model.
   LGPAccelerator(const angle::Formulae& formulae, const double time_tolerance,
                  const size_t n_constituents)
-      : Accelerator<ConstituentId>(formulae, time_tolerance, n_constituents) {}
+      : Accelerator(formulae, time_tolerance, n_constituents) {}
 
   /// Default destructor.
   virtual ~LGPAccelerator() = default;
@@ -89,8 +83,8 @@ class LGPAccelerator : public Accelerator<ConstituentId> {
 ///
 /// @tparam T The type of the wave model loaded.
 /// @tparam N The degree of the %LGP discretization.
-template <typename T, int N, typename ConstituentId>
-class LGP : public fes::AbstractTidalModel<T, ConstituentId> {
+template <typename T, int N>
+class LGP : public fes::AbstractTidalModel<T> {
  public:
   /// %LGP codes.
   using codes_t = Eigen::Matrix<int, Eigen::Dynamic, N * 3>;
@@ -107,7 +101,8 @@ class LGP : public fes::AbstractTidalModel<T, ConstituentId> {
   /// It is represented by a tuple of four values: the minimum longitude, the
   /// minimum latitude, the maximum longitude, and the maximum latitude. If the
   /// bounding box is not provided, all LGP codes will be considered.
-  LGP(std::shared_ptr<mesh::Index> index, codes_t codes, TideType tide_type,
+  LGP(std::shared_ptr<mesh::Index> index, codes_t codes,
+      EnumMapper<uint8_t> enum_mapper, TideType tide_type,
       double max_distance = 0,
       const boost::optional<std::tuple<double, double, double, double>>& bbox =
           {});
@@ -119,8 +114,8 @@ class LGP : public fes::AbstractTidalModel<T, ConstituentId> {
   ///
   /// @param[in] ident The wave model identifier.
   /// @param[in] wave The wave model.
-  inline auto add_constituent(const ConstituentId ident,
-                              Vector<std::complex<T>> wave) -> void override {
+  inline auto add_constituent(const uint8_t ident, Vector<std::complex<T>> wave)
+      -> void override {
     // wave is a vector of values for each LGP codes. The number of values must
     // match the number of LGP codes handled by this instance.
     if (expected_data_size_ != wave.size()) {
@@ -146,10 +141,8 @@ class LGP : public fes::AbstractTidalModel<T, ConstituentId> {
   /// that astronomical angles do not remain constant with time.
   /// @return A pointer  to the newly created LGPAccelerator instance.
   auto accelerator(const angle::Formulae& formulae,
-                   const double time_tolerance) const
-      -> Accelerator<ConstituentId>* override {
-    return new LGPAccelerator<ConstituentId>(formulae, time_tolerance,
-                                             this->data_.size());
+                   const double time_tolerance) const -> Accelerator* override {
+    return new LGPAccelerator(formulae, time_tolerance, this->data_.size());
   }
 
   /// Interpolate the wave models loaded at the given point.
@@ -159,8 +152,7 @@ class LGP : public fes::AbstractTidalModel<T, ConstituentId> {
   /// @param[inout] acc An accelerator to speed up the calculation.
   /// @return A list of interpolated wave models.
   auto interpolate(const geometry::Point& point, Quality& quality,
-                   Accelerator<ConstituentId>* acc) const
-      -> const ConstituentValues<ConstituentId>& override;
+                   Accelerator* acc) const -> const ConstituentValues& override;
 
   /// Get the mesh index.
   ///
@@ -168,11 +160,6 @@ class LGP : public fes::AbstractTidalModel<T, ConstituentId> {
   inline auto index() const -> std::shared_ptr<mesh::Index> const& {
     return index_;
   }
-
-  /// Get a string representation of the state of the tidal model.
-  ///
-  /// @return A string representation of the state of the tidal model.
-  auto getstate() const -> std::string;
 
   /// Retrieve the indices for wave model values that intersect the specified
   /// bounding box.
@@ -196,22 +183,12 @@ class LGP : public fes::AbstractTidalModel<T, ConstituentId> {
   }
 
  protected:
-  /// @brief Default constructor
-  LGP() = default;
-
   /// @brief Calculate the coefficients of the Lagrange polynomials
   /// @param[in] x The x coordinate of the point to interpolate at.
   /// @param[in] y The y coordinate of the point to interpolate at.
   /// @return The coefficients of the Lagrange polynomials.
   virtual auto calculate_beta(const double x, const double y) const
       -> Eigen::Matrix<double, N * 3, 1> = 0;
-
-  /// @brief Set the state of the tidal model.
-  ///
-  /// @param[in] data The serialized tidal model.
-  /// @note As this class is abstract, this method must be overloaded by the
-  /// derived classes to define the state of the tidal model.
-  auto setstate_instance(const string_view& data);
 
  private:
   /// @brief Initialize selected indices based on bounding box.
@@ -247,7 +224,7 @@ class LGP : public fes::AbstractTidalModel<T, ConstituentId> {
       const Eigen::Matrix<double, 1, 3>& query_point,
       const Eigen::Matrix<double, -1, 3>& known_points,
       const std::vector<int64_t>& selected_indices, int64_t valid_count,
-      LGPAccelerator<ConstituentId>* acc) const -> void;
+      LGPAccelerator* acc) const -> void;
 
   /// @brief Handle vertex interpolation when point is exactly on a vertex.
   ///
@@ -257,8 +234,7 @@ class LGP : public fes::AbstractTidalModel<T, ConstituentId> {
   /// @return True if interpolation was successful, false otherwise.
   auto handle_vertex_interpolation(int vertex_id,
                                    const typename codes_t::ConstRowXpr& codes,
-                                   LGPAccelerator<ConstituentId>* acc) const
-      -> bool;
+                                   LGPAccelerator* acc) const -> bool;
 
   /// @brief Perform LGP interpolation within a triangle.
   ///
@@ -268,8 +244,8 @@ class LGP : public fes::AbstractTidalModel<T, ConstituentId> {
   /// @param[inout] quality Quality indicator.
   auto perform_lgp_interpolation(const Eigen::Matrix<double, N * 3, 1>& beta,
                                  const typename codes_t::ConstRowXpr& codes,
-                                 LGPAccelerator<ConstituentId>* acc,
-                                 Quality& quality) const -> void;
+                                 LGPAccelerator* acc, Quality& quality) const
+      -> void;
 
  private:
   /// Expected data size for each data set
@@ -292,7 +268,7 @@ class LGP : public fes::AbstractTidalModel<T, ConstituentId> {
   /// from the mesh index.
   auto extrapolate(const geometry::Point& point, Quality& quality,
                    const std::vector<mesh::VertexAttribute>& nearest_vertices,
-                   LGPAccelerator<ConstituentId>* acc) const -> void;
+                   LGPAccelerator* acc) const -> void;
 };
 
 /// @brief %LGP1 tidal model.
@@ -301,20 +277,11 @@ class LGP : public fes::AbstractTidalModel<T, ConstituentId> {
 /// the %LGP1 discretization.
 ///
 /// @tparam T The type of the wave model loaded.
-template <typename T, typename ConstituentId>
-class LGP1 : public LGP<T, 1, ConstituentId> {
+template <typename T>
+class LGP1 : public LGP<T, 1> {
  public:
   /// Default constructor
-  using LGP<T, 1, ConstituentId>::LGP;
-  /// @brief Deserialize the tidal model.
-  ///
-  /// @param[in] data The serialized tidal model.
-  /// @return The tidal model.
-  static auto setstate(const string_view& data) -> LGP1<T, ConstituentId> {
-    auto model = LGP1<T, ConstituentId>();
-    model.setstate_instance(data);
-    return model;
-  }
+  using LGP<T, 1>::LGP;
 
  private:
   /// @brief Compute the beta coefficients for the %LGP1 discretization.
@@ -326,19 +293,6 @@ class LGP1 : public LGP<T, 1, ConstituentId> {
       -> Eigen::Matrix<double, 3, 1> override {
     return (Eigen::Matrix<double, 3, 1>() << 1 - x - y, x, y).finished();
   }
-
-  /// @brief Set the state of the tidal model.
-  ///
-  /// @param[in] data The serialized tidal model.
-  /// @note As the `setstate_instance` method is protected, this method must be
-  /// overloaded by the derived classes to define the state of the tidal model.
-  auto setstate_instance(const string_view& data) -> void {
-    try {
-      LGP<T, 1, ConstituentId>::setstate_instance(data);
-    } catch (const std::exception& e) {
-      throw std::runtime_error("invalid LGP1 tidal model state");
-    }
-  }
 };
 
 /// @brief %LGP2 tidal model.
@@ -347,20 +301,11 @@ class LGP1 : public LGP<T, 1, ConstituentId> {
 /// the %LGP2 discretization.
 ///
 /// @tparam T The type of the wave model loaded.
-template <typename T, typename ConstituentId>
-class LGP2 : public LGP<T, 2, ConstituentId> {
+template <typename T>
+class LGP2 : public LGP<T, 2> {
  public:
   /// Default constructor
-  using LGP<T, 2, ConstituentId>::LGP;
-  /// @brief Deserialize the tidal model.
-  ///
-  /// @param[in] data The serialized tidal model.
-  /// @return The tidal model.
-  static auto setstate(const string_view& data) -> LGP2<T, ConstituentId> {
-    auto model = LGP2<T, ConstituentId>();
-    model.setstate_instance(data);
-    return model;
-  }
+  using LGP<T, 2>::LGP;
 
  private:
   /// @brief Compute the beta coefficients for the %LGP2 discretization.
@@ -385,24 +330,11 @@ class LGP2 : public LGP<T, 2, ConstituentId> {
             -4 * y * (x + y - 1))
         .finished();
   }
-
-  /// @brief Set the state of the tidal model.
-  ///
-  /// @param[in] data The serialized tidal model.
-  /// @note As the `setstate_instance` method is protected, this method must be
-  /// overloaded by the derived classes to define the state of the tidal model.
-  auto setstate_instance(const string_view& data) -> void {
-    try {
-      LGP<T, 2, ConstituentId>::setstate_instance(data);
-    } catch (const std::exception& e) {
-      throw std::runtime_error("invalid LGP2 tidal model state");
-    }
-  }
 };
 
 // /////////////////////////////////////////////////////////////////////////////
-template <typename T, int N, typename ConstituentId>
-auto LGP<T, N, ConstituentId>::initialize_selected_indices(
+template <typename T, int N>
+auto LGP<T, N>::initialize_selected_indices(
     const std::tuple<double, double, double, double>& bbox) -> void {
   // Get the selected triangles that intersect the bounding box
   const auto selected_triangles = index_->selected_triangles(
@@ -428,8 +360,8 @@ auto LGP<T, N, ConstituentId>::initialize_selected_indices(
 }
 
 // /////////////////////////////////////////////////////////////////////////////
-template <typename T, int N, typename ConstituentId>
-auto LGP<T, N, ConstituentId>::calculate_expected_data_size() -> void {
+template <typename T, int N>
+auto LGP<T, N>::calculate_expected_data_size() -> void {
   // Determine the first and last LGP codes for each triangle
   auto min_index = std::numeric_limits<int>::max();
   auto max_index = std::numeric_limits<int>::min();
@@ -450,12 +382,13 @@ auto LGP<T, N, ConstituentId>::calculate_expected_data_size() -> void {
 }
 
 // /////////////////////////////////////////////////////////////////////////////
-template <typename T, int N, typename ConstituentId>
-LGP<T, N, ConstituentId>::LGP(
-    std::shared_ptr<mesh::Index> index, LGP::codes_t codes, TideType tide_type,
+template <typename T, int N>
+LGP<T, N>::LGP(
+    std::shared_ptr<mesh::Index> index, LGP::codes_t codes,
+    EnumMapper<uint8_t> enum_mapper, TideType tide_type,
     const double max_distance,
     const boost::optional<std::tuple<double, double, double, double>>& bbox)
-    : AbstractTidalModel<T, ConstituentId>(tide_type),
+    : AbstractTidalModel<T>(std::move(enum_mapper), tide_type),
       index_(std::move(index)),
       max_distance_(max_distance),
       codes_(std::move(codes)) {
@@ -488,8 +421,8 @@ inline auto transform_to_ecef(const geometry::Point& point)
 }
 
 // /////////////////////////////////////////////////////////////////////////////
-template <typename T, int N, typename ConstituentId>
-auto LGP<T, N, ConstituentId>::process_vertex_for_extrapolation(
+template <typename T, int N>
+auto LGP<T, N>::process_vertex_for_extrapolation(
     const mesh::VertexAttribute& vertex,
     Eigen::Matrix<double, -1, 3>& known_points,
     std::vector<int64_t>& selected_indices, int64_t& valid_count) const
@@ -521,22 +454,21 @@ auto LGP<T, N, ConstituentId>::process_vertex_for_extrapolation(
 }
 
 // /////////////////////////////////////////////////////////////////////////////
-template <typename T, int N, typename ConstituentId>
-auto LGP<T, N, ConstituentId>::inverse_distance_weighting(
+template <typename T, int N>
+auto LGP<T, N>::inverse_distance_weighting(
     const Eigen::Matrix<double, 1, 3>& query_point,
     const Eigen::Matrix<double, -1, 3>& known_points,
     const std::vector<int64_t>& selected_indices, int64_t valid_count,
-    LGPAccelerator<ConstituentId>* acc) const -> void {
+    LGPAccelerator* acc) const -> void {
   for (const auto& item : this->data_) {
     const auto& wave = item.second;
-    std::complex<double> sum_of_weights(0, 0);
-    std::complex<double> sum_of_weighted_values(0, 0);
+    Complex sum_of_weights(0, 0);
+    Complex sum_of_weighted_values(0, 0);
 
     for (auto i = 0; i < valid_count; ++i) {
       auto distance = (known_points.row(i) - query_point).norm();
-      auto value = static_cast<std::complex<double>>(wave(selected_indices[i]));
-      auto weight =
-          std::complex<double>(1 / detail::math::pow<2, double>(distance), 0);
+      auto value = static_cast<Complex>(wave(selected_indices[i]));
+      auto weight = Complex(1 / detail::math::pow<2, double>(distance), 0);
 
       sum_of_weights += weight;
       sum_of_weighted_values += weight * value;
@@ -546,11 +478,11 @@ auto LGP<T, N, ConstituentId>::inverse_distance_weighting(
 }
 
 // /////////////////////////////////////////////////////////////////////////////
-template <typename T, int N, typename ConstituentId>
-auto LGP<T, N, ConstituentId>::extrapolate(
+template <typename T, int N>
+auto LGP<T, N>::extrapolate(
     const geometry::Point& point, Quality& quality,
     const std::vector<mesh::VertexAttribute>& nearest_vertices,
-    LGPAccelerator<ConstituentId>* acc) const -> void {
+    LGPAccelerator* acc) const -> void {
   const auto n = nearest_vertices.size();
   assert(n > 0);
 
@@ -587,10 +519,10 @@ auto LGP<T, N, ConstituentId>::extrapolate(
 }
 
 // /////////////////////////////////////////////////////////////////////////////
-template <typename T, int N, typename ConstituentId>
-auto LGP<T, N, ConstituentId>::handle_vertex_interpolation(
+template <typename T, int N>
+auto LGP<T, N>::handle_vertex_interpolation(
     int vertex_id, const typename codes_t::ConstRowXpr& codes,
-    LGPAccelerator<ConstituentId>* acc) const -> bool {
+    LGPAccelerator* acc) const -> bool {
   const auto ix = codes(vertex_id * N);
   if (selected_indices_.empty()) {
     // First case: no bounding box is provided, we directly use the LGP codes
@@ -616,20 +548,20 @@ auto LGP<T, N, ConstituentId>::handle_vertex_interpolation(
 }
 
 // /////////////////////////////////////////////////////////////////////////////
-template <typename T, int N, typename ConstituentId>
-auto LGP<T, N, ConstituentId>::perform_lgp_interpolation(
+template <typename T, int N>
+auto LGP<T, N>::perform_lgp_interpolation(
     const Eigen::Matrix<double, N * 3, 1>& beta,
-    const typename codes_t::ConstRowXpr& codes,
-    LGPAccelerator<ConstituentId>* acc, Quality& quality) const -> void {
+    const typename codes_t::ConstRowXpr& codes, LGPAccelerator* acc,
+    Quality& quality) const -> void {
   if (selected_indices_.empty()) {
     // First case: no bounding box is provided, we interpolate all the LGP codes
     for (const auto& item : this->data_) {
       const auto& wave = item.second;
-      auto dot = std::complex<double>(0, 0);
+      auto dot = Complex(0, 0);
 
       // Read the values for each LGP code
       for (auto ix = 0; ix < N * 3; ++ix) {
-        dot += beta(ix) * static_cast<std::complex<double>>(wave(codes(ix)));
+        dot += beta(ix) * static_cast<Complex>(wave(codes(ix)));
       }
       acc->emplace_back(item.first, dot);
     }
@@ -638,7 +570,7 @@ auto LGP<T, N, ConstituentId>::perform_lgp_interpolation(
     // codes
     for (const auto& item : this->data_) {
       const auto& wave = item.second;
-      auto dot = std::complex<double>(0, 0);
+      auto dot = Complex(0, 0);
 
       for (auto ix = 0; ix < N * 3; ++ix) {
         const auto it = selected_indices_.find(codes(ix));
@@ -649,7 +581,7 @@ auto LGP<T, N, ConstituentId>::perform_lgp_interpolation(
           quality = kUndefined;
           return;
         }
-        dot += beta(ix) * static_cast<std::complex<double>>(wave(it->second));
+        dot += beta(ix) * static_cast<Complex>(wave(it->second));
       }
       acc->emplace_back(item.first, dot);
     }
@@ -658,20 +590,18 @@ auto LGP<T, N, ConstituentId>::perform_lgp_interpolation(
 }
 
 // /////////////////////////////////////////////////////////////////////////////
-template <typename T, int N, typename ConstituentId>
-auto LGP<T, N, ConstituentId>::interpolate(
-    const geometry::Point& point, Quality& quality,
-    Accelerator<ConstituentId>* acc) const
-    -> const ConstituentValues<ConstituentId>& {
-  auto* lgp_acc = reinterpret_cast<LGPAccelerator<ConstituentId>*>(acc);
+template <typename T, int N>
+auto LGP<T, N>::interpolate(const geometry::Point& point, Quality& quality,
+                            Accelerator* acc) const
+    -> const ConstituentValues& {
+  auto* lgp_acc = reinterpret_cast<LGPAccelerator*>(acc);
   /// Lambda that sets the interpolation result to NaN if the point:
   /// - Is not located within or near the mesh, or
   /// - Lies outside the designated geographical area.
-  auto reset_values_to_undefined =
-      [&]() -> const ConstituentValues<ConstituentId>& {
+  auto reset_values_to_undefined = [&]() -> const ConstituentValues& {
     constexpr auto undefined_value =
-        std::complex<double>(std::numeric_limits<double>::quiet_NaN(),
-                             std::numeric_limits<double>::quiet_NaN());
+        Complex(std::numeric_limits<double>::quiet_NaN(),
+                std::numeric_limits<double>::quiet_NaN());
 
     for (const auto& item : this->data_) {
       lgp_acc->emplace_back(item.first, undefined_value);
@@ -739,35 +669,6 @@ auto LGP<T, N, ConstituentId>::interpolate(
   }
 
   return lgp_acc->values();
-}
-
-template <typename T, int N, typename ConstituentId>
-auto LGP<T, N, ConstituentId>::getstate() const -> std::string {
-  auto ss = std::stringstream();
-  ss.exceptions(std::stringstream::failbit);
-  detail::serialize::write_data(ss, this->tide_type_);
-  detail::serialize::write_string(ss, index_->getstate());
-  detail::serialize::write_data(ss, max_distance_);
-  detail::serialize::write_matrix<int, Eigen::Dynamic, N * 3>(ss, codes_);
-  detail::serialize::write_constituent_map(ss, this->data_);
-  detail::serialize::write_unordered_map(ss, this->selected_indices_);
-  return ss.str();
-}
-
-template <typename T, int N, typename ConstituentId>
-auto LGP<T, N, ConstituentId>::setstate_instance(const string_view& data) {
-  detail::isviewstream ss(data);
-  ss.exceptions(std::stringstream::failbit);
-  this->tide_type_ = detail::serialize::read_data<TideType>(ss);
-  this->index_ = std::make_shared<mesh::Index>(
-      mesh::Index::setstate(detail::serialize::read_string(ss)));
-  this->max_distance_ = detail::serialize::read_data<double>(ss);
-  this->codes_ = detail::serialize::read_matrix<int, Eigen::Dynamic, N * 3>(ss);
-  this->data_ =
-      detail::serialize::read_constituent_map<ConstituentId, std::complex<T>>(
-          ss);
-  this->selected_indices_ =
-      detail::serialize::read_unordered_map<int64_t, int64_t>(ss);
 }
 
 }  // namespace tidal_model

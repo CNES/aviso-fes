@@ -6,7 +6,6 @@
 /// @brief Tidal constituent properties
 #pragma once
 #include <array>
-#include <complex>
 #include <cstdint>
 #include <limits>
 #include <memory>
@@ -16,6 +15,7 @@
 #include "fes/darwin.hpp"
 #include "fes/darwin/constituent.hpp"
 #include "fes/detail/angle/astronomic/frequency.hpp"
+#include "fes/types.hpp"
 
 namespace fes {
 namespace darwin {
@@ -25,12 +25,6 @@ class Wave : public std::enable_shared_from_this<Wave> {
  public:
   /// Typename to a function pointer for calculate the nodal factor
   using nodal_factor_t = double (angle::Astronomic::*)() const;
-
-  /// @brief Possible type of tidal wave.
-  enum TidalType {
-    kLongPeriod = 0,  //!< Long period tidal waves
-    kShortPeriod      //!< Short period tidal waves
-  };
 
   /// Initializes the properties of the wave (frequency, doodson's coefficients,
   /// etc.).
@@ -69,11 +63,12 @@ class Wave : public std::enable_shared_from_this<Wave> {
 
   /// @brief  Initializes the properties of the wave (frequency, doodson's
   /// coefficients, etc.).
-  /// @param ident Tidal constituent identifier.
-  /// @param type Type of tidal wave
-  /// @param admittance True if wave is computed by admittance
-  /// @param darwin Darwin parameters for the wave
-  /// @param calculate_node_factor Function used to calculate the nodal factor
+  /// @param[in] ident Tidal constituent identifier.
+  /// @param[in] type Type of tidal wave
+  /// @param[in] admittance True if wave is computed by admittance
+  /// @param[in] darwin Darwin parameters for the wave
+  /// @param[in] calculate_node_factor Function used to calculate the nodal
+  /// factor
   constexpr Wave(const Constituent ident, TidalType type, const bool admittance,
                  const Darwin& darwin,
                  nodal_factor_t calculate_node_factor) noexcept
@@ -115,12 +110,10 @@ class Wave : public std::enable_shared_from_this<Wave> {
   }
 
   /// Returns the tide value
-  constexpr auto tide() const noexcept -> const std::complex<double>& {
-    return c_;
-  }
+  constexpr auto tide() const noexcept -> const Complex& { return c_; }
 
   /// Sets the tide value
-  auto tide(const std::complex<double>& tide) noexcept -> void { c_ = tide; }
+  auto tide(const Complex& tide) noexcept -> void { c_ = tide; }
 
   /// Gets the wave ident
   constexpr auto ident() const noexcept -> Constituent { return ident_; }
@@ -208,7 +201,7 @@ class Wave : public std::enable_shared_from_this<Wave> {
   double f_{std::numeric_limits<double>::quiet_NaN()};
 
   /// Tide value.
-  std::complex<double> c_;
+  Complex c_;
 
   /// Harmonic constituents
   /// \f$(T, s, h, p, N', p_1, shift, \xi, \nu, \nu', \nu'')\f$

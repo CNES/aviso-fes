@@ -1,8 +1,8 @@
 #pragma once
 
 #include "fes/angle/astronomic.hpp"
-#include "fes/eigen.hpp"
 #include "fes/perth/doodson.hpp"
+#include "fes/types.hpp"
 
 namespace fes {
 namespace perth {

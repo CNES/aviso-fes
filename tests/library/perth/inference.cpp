@@ -17,7 +17,7 @@ class InferenceTest : public ::testing::Test {
  protected:
   void SetUp() override {
     // Create a test tide table with known values
-    wave_table_ = build_table();
+    wave_table_ = WaveTable();
 
     // Set up some test values for the primary constituents
     // These are the constituents used for interpolation
@@ -133,7 +133,7 @@ TEST_F(InferenceTest, ReasonableMagnitudes) {
 // Test with zero input values
 TEST_F(InferenceTest, ZeroInputValues) {
   // Set all values to zero
-  WaveTable zero_table = build_table();
+  WaveTable zero_table = WaveTable();
 
   Inference inference(wave_table_, InterpolationType::kLinearAdmittance);
 
@@ -208,7 +208,7 @@ TEST_F(InferenceTest, DifferentInputScales) {
   Inference inference(wave_table_, InterpolationType::kLinearAdmittance);
 
   // Test with very small values
-  WaveTable small_table = build_table();
+  WaveTable small_table = WaveTable();
   small_table[Constituent::kO1].tide = Complex(1e-6, 1e-7);
   small_table[Constituent::kK1].tide = Complex(2e-6, 1e-7);
   small_table[Constituent::kQ1].tide = Complex(0.5e-6, 1e-7);
@@ -219,7 +219,7 @@ TEST_F(InferenceTest, DifferentInputScales) {
   EXPECT_NO_THROW(inference(small_table));
 
   // Test with large values
-  WaveTable large_table = build_table();
+  WaveTable large_table = WaveTable();
   large_table[Constituent::kO1].tide = Complex(1000.0, 500.0);
   large_table[Constituent::kK1].tide = Complex(2000.0, 800.0);
   large_table[Constituent::kQ1].tide = Complex(500.0, 200.0);
@@ -261,8 +261,8 @@ TEST_F(InferenceTest, FrequencyRangeConsistency) {
 
 TEST(InferenceOceanTide, RealCase) {
   // Create a test tide table with known values
-  auto tide_table = build_table({kQ1, kO1, kP1, kS1, kK1, kN2, kM2, kS2, kK2,
-                                 kM4, kMS4, k2N2, kMu2, kJ1, kSigma1, kOO1});
+  auto tide_table = WaveTable({kQ1, kO1, kP1, kS1, kK1, kN2, kM2, kS2, kK2, kM4,
+                               kMS4, k2N2, kMu2, kJ1, kSigma1, kOO1});
 
   auto inference = Inference(tide_table, InterpolationType::kLinearAdmittance);
 

@@ -17,7 +17,6 @@
 #include "fes/geometry/ecef.hpp"
 #include "fes/geometry/point.hpp"
 #include "fes/geometry/triangle.hpp"
-#include "fes/string_view.hpp"
 
 namespace fes {
 namespace mesh {
@@ -128,17 +127,6 @@ class Index : public std::enable_shared_from_this<Index> {
   auto selected_triangles(const geometry::Box& bbox) const
       -> std::vector<int64_t>;
 
-  /// @brief Get a string representation of the index state.
-  ///
-  /// @return The string representation of the index state.
-  auto getstate() const -> std::string;
-
-  /// @brief Build an index from serialized state.
-  ///
-  /// @param[in] data The serialized state.
-  /// @return The index.
-  static auto setstate(const string_view& data) -> Index;
-
  private:
   /// Values stored in the R*Tree : Vertex of the triangle in ECEF coordinates,
   /// index of vertex (0, 1 or 2) and index of triangle.
@@ -148,6 +136,9 @@ class Index : public std::enable_shared_from_this<Index> {
   /// R*Tree type
   using rtree_t =
       boost::geometry::index::rtree<value_t, boost::geometry::index::rstar<16>>;
+
+  /// @brief Magic number for validation
+  static constexpr uint32_t kMagicNumber = 0x46455349;  // "FESI"
 
   /// The latitude coordinates of the mesh vertices.
   Eigen::VectorXd lon_;
@@ -164,21 +155,7 @@ class Index : public std::enable_shared_from_this<Index> {
   /// Search the nearest triangles to a point in ECEF coordinates.
   inline auto nearest(const geometry::EarthCenteredEarthFixed& cartesian_point,
                       const size_t max_neighbors) const
-      -> std::pair<std::set<int32_t>, double> {
-    auto triangle_indices = std::set<int>();
-    auto min_distance = std::numeric_limits<double>::max();
-    std::for_each(rtree_.qbegin(boost::geometry::index::nearest(cartesian_point,
-                                                                max_neighbors)),
-                  rtree_.qend(),
-                  [&cartesian_point, &min_distance,
-                   &triangle_indices](const auto& item) -> void {
-                    triangle_indices.emplace(item.second.second);
-                    min_distance = std::min(
-                        min_distance,
-                        boost::geometry::distance(cartesian_point, item.first));
-                  });
-    return std::make_pair(std::move(triangle_indices), min_distance);
-  }
+      -> std::pair<std::set<int32_t>, double>;
 
   /// Build the selected triangle.
   inline auto build_triangle(const int triangle_index) const
@@ -198,19 +175,42 @@ class Index : public std::enable_shared_from_this<Index> {
   inline auto filter_nearby_vertices(
       const geometry::EarthCenteredEarthFixed& point, const int triangle_index,
       const double max_distance,
-      std::vector<VertexAttribute>& nearest_vertices) const -> void {
-    const Eigen::Vector3i& vertex_indices = triangles_.row(triangle_index);
-    for (uint8_t vertex_id = 0; vertex_id < 3; ++vertex_id) {
-      const auto vertex_index = vertex_indices(vertex_id);
-      const auto vertex = geometry::EarthCenteredEarthFixed(
-          geometry::Point(lon_(vertex_index), lat_(vertex_index)));
-      const auto distance = detail::geometry::distance(point, vertex);
-      if (distance <= max_distance) {
-        nearest_vertices.push_back({vertex_id, triangle_index});
-      }
+      std::vector<VertexAttribute>& nearest_vertices) const -> void;
+};
+
+auto Index::nearest(const geometry::EarthCenteredEarthFixed& cartesian_point,
+                    const size_t max_neighbors) const
+    -> std::pair<std::set<int32_t>, double> {
+  auto triangle_indices = std::set<int>();
+  auto min_distance = std::numeric_limits<double>::max();
+  std::for_each(rtree_.qbegin(boost::geometry::index::nearest(cartesian_point,
+                                                              max_neighbors)),
+                rtree_.qend(),
+                [&cartesian_point, &min_distance,
+                 &triangle_indices](const auto& item) -> void {
+                  triangle_indices.emplace(item.second.second);
+                  min_distance = std::min(
+                      min_distance,
+                      boost::geometry::distance(cartesian_point, item.first));
+                });
+  return std::make_pair(std::move(triangle_indices), min_distance);
+}
+
+auto Index::filter_nearby_vertices(
+    const geometry::EarthCenteredEarthFixed& point, const int triangle_index,
+    const double max_distance,
+    std::vector<VertexAttribute>& nearest_vertices) const -> void {
+  const Eigen::Vector3i& vertex_indices = triangles_.row(triangle_index);
+  for (uint8_t vertex_id = 0; vertex_id < 3; ++vertex_id) {
+    const auto vertex_index = vertex_indices(vertex_id);
+    const auto vertex = geometry::EarthCenteredEarthFixed(
+        geometry::Point(lon_(vertex_index), lat_(vertex_index)));
+    const auto distance = detail::geometry::distance(point, vertex);
+    if (distance <= max_distance) {
+      nearest_vertices.push_back({vertex_id, triangle_index});
     }
   }
-};
+}
 
 }  // namespace mesh
 }  // namespace fes

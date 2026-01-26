@@ -5,10 +5,8 @@
 /// @file include/fes/detail/math.hpp
 /// @brief Mathematical functions
 #pragma once
-#include <array>
 #include <cmath>
 #include <complex>
-#include <iostream>
 #include <limits>
 #include <tuple>
 #include <type_traits>

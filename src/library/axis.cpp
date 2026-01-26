@@ -4,9 +4,7 @@
 // BSD-style license that can be found in the LICENSE file.
 #include "fes/axis.hpp"
 
-#include "fes/detail/isviewstream.hpp"
 #include "fes/detail/math.hpp"
-#include "fes/detail/serialize.hpp"
 
 namespace fes {
 
@@ -136,35 +134,6 @@ auto Axis::find_indices(double coordinate) const
     return std::make_tuple(i0, i1);
   }
   return boost::optional<std::tuple<int64_t, int64_t>>{};
-}
-
-auto Axis::getstate() const -> std::string {
-  auto ss = std::stringstream();
-  ss.exceptions(std::stringstream::failbit);
-  detail::serialize::write_data(ss, is_circular_);
-  detail::serialize::write_data(ss, circle_);
-  detail::serialize::write_data(ss, is_ascending_);
-  detail::serialize::write_data(ss, start_);
-  detail::serialize::write_data(ss, size_);
-  detail::serialize::write_data(ss, step_);
-  return ss.str();
-}
-
-auto Axis::setstate(const string_view& data) -> Axis {
-  detail::isviewstream ss(data);
-  ss.exceptions(std::stringstream::failbit);
-  try {
-    auto result = Axis();
-    result.is_circular_ = detail::serialize::read_data<bool>(ss);
-    result.circle_ = detail::serialize::read_data<double>(ss);
-    result.is_ascending_ = detail::serialize::read_data<bool>(ss);
-    result.start_ = detail::serialize::read_data<double>(ss);
-    result.size_ = detail::serialize::read_data<int64_t>(ss);
-    result.step_ = detail::serialize::read_data<double>(ss);
-    return result;
-  } catch (const std::ios_base::failure&) {
-    throw std::invalid_argument("invalid axis state");
-  }
 }
 
 }  // namespace fes

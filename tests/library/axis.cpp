@@ -48,14 +48,14 @@ TEST(Axis, Constructor) {
 
   points = Eigen::VectorXd(10);
   points << 0, 3, 12, 15, 18, 21, 24, 27, 30, 33;
-  EXPECT_THROW({ auto axis = Axis(points); }, std::invalid_argument);
+  EXPECT_THROW({ Axis{points}; }, std::invalid_argument);
 
   points = Eigen::VectorXd(1);
   points << 0;
-  EXPECT_THROW({ auto axis = Axis(points); }, std::invalid_argument);
+  EXPECT_THROW({ Axis{points}; }, std::invalid_argument);
 
   points = Eigen::VectorXd();
-  EXPECT_THROW({ auto axis = Axis(points); }, std::invalid_argument);
+  EXPECT_THROW({ Axis{points}; }, std::invalid_argument);
 }
 
 TEST(Axis, WrapLongitude) {
@@ -186,18 +186,6 @@ TEST(Axis, FindIndices) {
   indexes = axis.find_indices(358.9);
   ASSERT_TRUE(indexes.has_value());
   EXPECT_EQ(*indexes, std::make_tuple(1, 0));
-}
-
-TEST(Axis, Serialization) {
-  auto points =
-      static_cast<Eigen::VectorXd>(Eigen::VectorXd::LinSpaced(360, 0.0, 359.0));
-  auto axis = Axis(points, 1e-6, true);
-  auto state = axis.getstate();
-  auto other = Axis::setstate(string_view(state.data(), state.size()));
-  EXPECT_EQ(axis, other);
-
-  EXPECT_THROW(
-      { Axis::setstate(string_view("invalid state")); }, std::invalid_argument);
 }
 
 }  // namespace fes

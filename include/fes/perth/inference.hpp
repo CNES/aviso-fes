@@ -8,15 +8,10 @@
 
 #include "fes/detail/math.hpp"
 #include "fes/perth/table.hpp"
+#include "fes/settings.hpp"
 
 namespace fes {
 namespace perth {
-
-/// @brief Enumeration of inference (admittance) interpolation types.
-enum class InterpolationType : uint8_t {
-  kLinearAdmittance,   ///< Piecewise linear interpolation of admittances.
-  kFourierAdmittance,  ///< Munk-Cartwright Fourier series interpolation.
-};
 
 /// @brief Inference class for computing minor tidal constituents from major
 /// ones.

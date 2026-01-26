@@ -5,9 +5,8 @@
 /// @file include/fes/detail/grid.hpp
 /// @brief Numerical grid handling.
 #pragma once
-#include <Eigen/Core>
-
-#include "fes/eigen.hpp"
+#include <cstddef>
+#include <cstdint>
 
 namespace fes {
 namespace detail {
@@ -34,8 +33,8 @@ class Grid {
   /// @param[in] x The x coordinate.
   /// @param[in] y The y coordinate.
   /// @return The value at the given coordinates.
-  constexpr auto operator()(const Eigen::Index x,
-                            const Eigen::Index y) const noexcept -> T {
+  constexpr auto operator()(const int64_t x, const int64_t y) const noexcept
+      -> T {
     return data_[(this->*get_index_)(x, y)];
   }
 
@@ -61,8 +60,7 @@ class Grid {
 
  private:
   /// Typename to a function pointer for accessing an element of the grid.
-  using GetIndex = Eigen::Index (Grid::*)(const Eigen::Index,
-                                          const Eigen::Index) const;
+  using GetIndex = size_t (Grid::*)(const int64_t, const int64_t) const;
   /// The number of rows in the grid.
   size_t nx_;
   /// The number of columns in the grid.
@@ -74,16 +72,16 @@ class Grid {
 
   /// The index of the element at the given row and column if the grid is
   /// stored in row-major order.
-  constexpr auto index_xy(const Eigen::Index x, const Eigen::Index y) const
-      -> Eigen::Index {
-    return x * ny_ + y;
+  constexpr auto index_xy(const int64_t x, const int64_t y) const noexcept
+      -> size_t {
+    return static_cast<size_t>(x) * ny_ + static_cast<size_t>(y);
   }
 
   /// The index of the element at the given row and column if the grid is
   /// stored in column-major order.
-  constexpr auto index_yx(const Eigen::Index x, const Eigen::Index y) const
-      -> Eigen::Index {
-    return y * nx_ + x;
+  constexpr auto index_yx(const int64_t x, const int64_t y) const noexcept
+      -> size_t {
+    return static_cast<size_t>(y) * nx_ + static_cast<size_t>(x);
   }
 };
 

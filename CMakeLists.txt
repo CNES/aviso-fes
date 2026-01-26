@@ -268,7 +268,7 @@ if(FES_BUILD_PYTHON_BINDINGS)
   include(ProcessorCount)
   ProcessorCount(NUM_CORES)
 
-  file(GLOB_RECURSE PYTHON_SOURCES "src/python/core/*.cpp")
+  file(GLOB_RECURSE PYTHON_SOURCES "src/core/*.cpp")
   pybind11_add_module(core ${PYTHON_SOURCES})
 
   if(FES_ENABLE_COVERAGE)

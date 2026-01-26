@@ -9,16 +9,16 @@
 #include <boost/optional.hpp>
 #include <limits>
 #include <memory>
+#include <sstream>
 #include <tuple>
 
 #include "fes/detail/math.hpp"
-#include "fes/string_view.hpp"
 
 namespace fes {
 
 /// @brief A coordinate axis a variable that specifies one of the coordinates
 /// of a variable's values.
-class Axis : public std::enable_shared_from_this<Axis> {
+class Axis {
  public:
   /// Default constructor.
   Axis() = default;
@@ -143,13 +143,20 @@ class Axis : public std::enable_shared_from_this<Axis> {
   auto find_indices(double coordinate) const
       -> boost::optional<std::tuple<int64_t, int64_t>>;
 
-  /// @brief Serialize the axis.
-  /// @return The serialized axis.
-  auto getstate() const -> std::string;
-
-  /// @brief Deserialize the axis.
-  /// @param[in] data The serialized axis.
-  static auto setstate(const string_view& data) -> Axis;
+  /// @brief Get a string representation of this axis.
+  ///
+  /// @return String representation of this axis
+  operator std::string() const {
+    std::stringstream ss;
+    ss << "Axis(";
+    if (is_circular()) {
+      ss << "circular, period=" << circle_ << ", ";
+    }
+    ss << "range=[" << min_value() << ", " << max_value() << "], ";
+    ss << "step=" << step() << ", ";
+    ss << "size=" << size() << ")";
+    return ss.str();
+  }
 
  private:
   /// True if the axis is circular.

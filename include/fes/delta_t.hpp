@@ -56,12 +56,12 @@ constexpr auto lower_bound_by_year(Iterator first, Iterator last, double value)
 /// @param epoch Number of seconds elapsed since 1970-01-01T00:00:00Z.
 /// @return Delta T in seconds
 constexpr auto fetch_delta_time(double epoch) -> double {
-  // 1. Convert Epoch to Decimal Year
+  // Convert Epoch to Decimal Year
   double jd = (epoch / 86400.0) + 2440587.5;  // Convert to Julian Date
   double t = (jd - 2451545.0) / 36525.0;      // Centuries since J2000
   double year = 2000.0 + (t * 100.0);
 
-  // 2. CHECK LOOKUP TABLE (1973 - Present)
+  // Check lookup table (1973 - Present)
   // This handles the erratic rotation of the modern era accurately.
   if (year >= IERS_TABLE.front().year && year <= IERS_TABLE.back().year) {
     // Find the correct interval
@@ -78,7 +78,7 @@ constexpr auto fetch_delta_time(double epoch) -> double {
     return p1.delta_t + fraction * (p2.delta_t - p1.delta_t);
   }
 
-  // 3. FALLBACK: Long-term Polynomials
+  // Long-term Polynomials
   // Uses Morrison & Stephenson (2004) which is widely preferred over Espenak
   // for historical accuracy, though Espenak is fine for pre-1900.
 

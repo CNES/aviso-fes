@@ -8,7 +8,6 @@
 
 #include <boost/geometry.hpp>
 #include <ostream>
-#include <set>
 #include <sstream>
 #include <string>
 

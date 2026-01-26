@@ -76,19 +76,14 @@ TEST(InterpolatorLGP1, Constructor) {
 
   auto index = std::make_shared<mesh::Index>(lon, lat, triangles);
 
-  tidal_model::LGP1<double, darwin::Constituent> lgp1(std::move(index),
-                                                      std::move(codes), kTide);
+  tidal_model::LGP1<double> lgp1(std::move(index), std::move(codes),
+                                 darwin::constituents::map(), kTide);
   lgp1.add_constituent(darwin::kS2, values);
-  auto acc = std::unique_ptr<Accelerator<darwin::Constituent>>(
+  auto acc = std::unique_ptr<Accelerator>(
       lgp1.accelerator(angle::Formulae::kMeeus, 0.0));
   Quality quality;
   auto x = lgp1.interpolate({0.0, 0.0}, quality, acc.get());
-
-  auto state = lgp1.getstate();
-  auto other = tidal_model::LGP1<double, darwin::Constituent>::setstate(
-      string_view(state.data(), state.size()));
-  auto y = other.interpolate({0.0, 0.0}, quality, acc.get());
-  EXPECT_EQ(x, y);
+  EXPECT_EQ(x.size(), 1);
 }
 
 }  // namespace fes

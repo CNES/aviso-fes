@@ -8,120 +8,124 @@
 #include <array>
 #include <cstdint>
 #include <string>
-#include <vector>
+
+#include "fes/enum_mapper.hpp"
 
 namespace fes {
 namespace darwin {
 
 /// Tidal constituents known by the library.
 enum Constituent : uint8_t {
-  kMm,              //!< @f$Mm@f$
-  kMf,              //!< @f$Mf@f$
-  kMtm,             //!< @f$Mtm@f$
-  kMSqm,            //!< @f$MSqm@f$
+  k2MK2,            //!< @f$2MK_2@f$
+  k2MK3,            //!< @f$2MK_3@f$
+  k2MK6,            //!< @f$2MK_6@f$
+  k2MN2,            //!< @f$2MN_2@f$
+  k2MN6,            //!< @f$2MN_6@f$
+  k2MNS4,           //!< @f$2MNS_4@f$
+  k2MP5,            //!< @f$2MP_5@f$
+  k2MS2,            //!< @f$2MS_2@f$
+  k2MS6,            //!< @f$2MS_6@f$
+  k2MSN4,           //!< @f$2MSN_4@f$
+  k2N2,             //!< @f$2N_2@f$
+  k2NM6,            //!< @f$2NM_6@f$
+  k2NS2,            //!< @f$2NS_2@f$
   k2Q1,             //!< @f$2Q_1@f$
-  kSigma1,          //!< @f$\sigma_1@f$
-  kQ1,              //!< @f$Q_1@f$
-  kRho1,            //!< @f$\rho_1@f$
-  kO1,              //!< @f$O_1@f$
-  kMP1,             //!< @f$MP_1@f$
+  k2SM2,            //!< @f$2SM_2@f$
+  k2SM6,            //!< @f$2SM_6@f$
+  k2SMu2,           //!< @f$2SMu_2@f$
+  k3MS4,            //!< @f$3MS_4@f$
+  k3MS8,            //!< @f$3MS_8@f$
+  kA5,              //!< @f$A_5@f$
+  kChi1,            //!< @f$\chi_1@f$
+  kEps2,            //!< @f$\varepsilon_2@f$
+  kEta2,            //!< @f$\eta_2@f$
+  kJ1,              //!< @f$J_1@f$
+  kK1,              //!< @f$K_1@f$
+  kK2,              //!< @f$K_2@f$
+  kL2,              //!< @f$L_2@f$
+  kL2P,             //!< @f$L2_P@f$
+  kLambda2,         //!< @f$\lambda_2@f$
+  kM0,              //!< @f$M_0@f$
   kM1,              //!< @f$M_1@f$
   kM11,             //!< @f$M_{11}@f$
   kM12,             //!< @f$M_{12}@f$
   kM13,             //!< @f$M_{13}@f$
-  kChi1,            //!< @f$\chi_1@f$
-  kPi1,             //!< @f$\pi_1@f$
-  kP1,              //!< @f$P_1@f$
-  kS1,              //!< @f$S_1@f$
-  kK1,              //!< @f$K_1@f$
-  kPsi1,            //!< @f$\psi_1@f$
-  kPhi1,            //!< @f$\phi_1@f$
-  kTheta1,          //!< @f$\theta_1@f$
-  kJ1,              //!< @f$J_1@f$
-  kOO1,             //!< @f$OO_1@f$
-  kMNS2,            //!< @f$MNS_2@f$
-  kEps2,            //!< @f$\varepsilon_2@f$
-  k2N2,             //!< @f$2N_2@f$
-  kMu2,             //!< @f$\mu_2@f$
-  k2MS2,            //!< @f$2MS_2@f$
-  kN2,              //!< @f$N_2@f$
-  kNu2,             //!< @f$\nu_2@f$
   kM2,              //!< @f$M_2@f$
-  kMKS2,            //!< @f$MKS_2@f$
-  kLambda2,         //!< @f$\lambda_2@f$
-  kL2,              //!< @f$L_2@f$
-  k2MN2,            //!< @f$2MN_2@f$
-  kT2,              //!< @f$T_2@f$
-  kS2,              //!< @f$S_2@f$
-  kR2,              //!< @f$R_2@f$
-  kK2,              //!< @f$K_2@f$
-  kMSN2,            //!< @f$MSN_2@f$
-  kEta2,            //!< @f$\eta_2@f$
-  k2SM2,            //!< @f$2SM_2@f$
-  kMO3,             //!< @f$MO_3@f$
-  k2MK3,            //!< @f$2MK_3@f$
   kM3,              //!< @f$M_3@f$
-  kMK3,             //!< @f$MK_3@f$
-  kN4,              //!< @f$N_4@f$
-  kMN4,             //!< @f$MN_4@f$
   kM4,              //!< @f$M_4@f$
-  kSN4,             //!< @f$SN_4@f$
-  kMS4,             //!< @f$MS_4@f$
-  kMK4,             //!< @f$MK_4@f$
-  kS4,              //!< @f$S_4@f$
-  kSK4,             //!< @f$SK_4@f$
-  kR4,              //!< @f$R_4@f$
-  k2MN6,            //!< @f$2MN_6@f$
   kM6,              //!< @f$M_6@f$
-  kMSN6,            //!< @f$MSN_6@f$
-  k2MS6,            //!< @f$2MS_6@f$
-  k2MK6,            //!< @f$2MK_6@f$
-  k2SM6,            //!< @f$2SM_6@f$
-  kMSK6,            //!< @f$MSK_6@f$
-  kS6,              //!< @f$S_6@f$
   kM8,              //!< @f$M_8@f$
+  kMf,              //!< @f$Mf@f$
+  kMf1,             //!< @f$Mf_1@f$
+  kMf2,             //!< @f$Mf_2@f$
+  kMK3,             //!< @f$MK_3@f$
+  kMK4,             //!< @f$MK_4@f$
+  kMKS2,            //!< @f$MKS_2@f$
+  kML4,             //!< @f$ML_4@f$
+  kMm,              //!< @f$Mm@f$
+  kMm1,             //!< @f$Mm_1@f$
+  kMm2,             //!< @f$Mm_2@f$
+  kMN4,             //!< @f$MN_4@f$
+  kMNK6,            //!< @f$MNK_6@f$
+  kMNS2,            //!< @f$MNS_2@f$
+  kMNu4,            //!< @f$MNu_4@f$
+  kMNuS2,           //!< @f$MNuS_2@f$
+  kMO3,             //!< @f$MO_3@f$
+  kMP1,             //!< @f$MP_1@f$
+  kMS4,             //!< @f$MS_4@f$
   kMSf,             //!< @f$MSf@f$
-  kSsa,             //!< @f$Ssa@f$
+  kMSK2,            //!< @f$MSK_2@f$
+  kMSK6,            //!< @f$MSK_6@f$
+  kMSN2,            //!< @f$MSN_2@f$
+  kMSN6,            //!< @f$MSN_6@f$
+  kMSqm,            //!< @f$MSqm@f$
+  kMtm,             //!< @f$Mtm@f$
+  kMu2,             //!< @f$\mu_2@f$
+  kN2,              //!< @f$N_2@f$
+  kN2P,             //!< @f$N2_P@f$
+  kN4,              //!< @f$N_4@f$
+  kNK4,             //!< @f$NK_4@f$
+  kNKM2,            //!< @f$NKM_2@f$
+  kNu2,             //!< @f$\nu_2@f$
+  kO1,              //!< @f$O_1@f$
+  kOO1,             //!< @f$OO_1@f$
+  kOQ2,             //!< @f$OQ_2@f$
+  kP1,              //!< @f$P_1@f$
+  kPhi1,            //!< @f$\phi_1@f$
+  kPi1,             //!< @f$\pi_1@f$
+  kPsi1,            //!< @f$\psi_1@f$
+  kQ1,              //!< @f$Q_1@f$
+  kR2,              //!< @f$R_2@f$
+  kR4,              //!< @f$R_4@f$
+  kRho1,            //!< @f$\rho_1@f$
+  kS1,              //!< @f$S_1@f$
+  kS2,              //!< @f$S_2@f$
+  kS4,              //!< @f$S_4@f$
+  kS6,              //!< @f$S_6@f$
   kSa,              //!< @f$Sa@f$
   kSa1,             //!< @f$Sa_1@f$
-  kSta,             //!< @f$Sta@f$
-  kMm1,             //!< @f$Mm_1@f$
-  kMf1,             //!< @f$Mf_1@f$
-  kA5,              //!< @f$A_5@f$
-  kM0,              //!< @f$M_0@f$
-  kMm2,             //!< @f$Mm_2@f$
-  kMf2,             //!< @f$Mf_2@f$
-  kL2P,             //!< @f$L2_P@f$
-  kN2P,             //!< @f$N2_P@f$
-  kMSK2,            //!< @f$MSK_2@f$
+  kSigma1,          //!< @f$\sigma_1@f$
+  kSK3,             //!< @f$SK_3@f$
+  kSK4,             //!< @f$SK_4@f$
   kSKM2,            //!< @f$SKM_2@f$
-  kOQ2,             //!< @f$OQ_2@f$
-  k3MS4,            //!< @f$3MS_4@f$
-  kMNu4,            //!< @f$MNu_4@f$
-  k2MSN4,           //!< @f$2MSN_4@f$
-  k2NS2,            //!< @f$2NS_2@f$
-  kMNuS2,           //!< @f$MNuS_2@f$
-  k2MK2,            //!< @f$2MK_2@f$
-  kNKM2,            //!< @f$NKM_2@f$
-  kML4,             //!< @f$ML_4@f$
+  kSN4,             //!< @f$SN_4@f$
   kSO1,             //!< @f$SO_1@f$
   kSO3,             //!< @f$SO_3@f$
-  kNK4,             //!< @f$NK_4@f$
-  kMNK6,            //!< @f$MNK_6@f$
-  k2NM6,            //!< @f$2NM_6@f$
-  k3MS8,            //!< @f$3MS_8@f$
-  kSK3,             //!< @f$SK_3@f$
-  k2MNS4,           //!< @f$2MNS_4@f$
-  k2SMu2,           //!< @f$2SMu_2@f$
-  k2MP5,            //!< @f$2MP_5@f$
+  kSsa,             //!< @f$Ssa@f$
+  kSta,             //!< @f$Sta@f$
+  kT2,              //!< @f$T_2@f$
+  kTheta1,          //!< @f$\theta_1@f$
   kNumConstituents  //!< Number of tidal constituents.
 };
 
+/// @brief Number of items in the Constituent enum.
+constexpr std::size_t kNumConstituentItems =
+    static_cast<std::size_t>(kNumConstituents);
 namespace constituents {
 
 /// @brief Returns all the tidal constituents handled by the library.
 /// @return Tidal constituents.
-constexpr auto all = std::array<Constituent, kNumConstituents>{
+constexpr auto kAll = std::array<Constituent, kNumConstituentItems>{
     kMm,   kMf,   kMtm,   kMSqm,   k2Q1,   kSigma1, kQ1,      kRho1,  kO1,
     kMP1,  kM1,   kM11,   kM12,    kM13,   kChi1,   kPi1,     kP1,    kS1,
     kK1,   kPsi1, kPhi1,  kTheta1, kJ1,    kOO1,    kMNS2,    kEps2,  k2N2,
@@ -145,11 +149,23 @@ auto parse(const std::string& name) -> Constituent;
 ///
 /// @param[in] constituent Tidal constituent.
 /// @return Tidal constituent name.
-auto name(Constituent constituent) -> const char*;
+auto name(Constituent constituent) -> const char* const;
 
 /// @brief Get the tidal constituent names handled by the library.
 /// @return Tidal constituent names.
-auto known() -> std::vector<std::string>;
+auto known() -> std::array<std::string, kNumConstituentItems>;
+
+/// @brief Create and return an EnumMapper for the Constituent enum.
+/// @return EnumMapper for Constituent.
+inline auto map() -> EnumMapper<uint8_t> {
+  EnumMapper<uint8_t> mapper;
+  mapper.reserve(kNumConstituentItems);
+
+  for (auto& id : kAll) {
+    mapper.add_entry(static_cast<uint8_t>(id), name(id));
+  }
+  return mapper;
+}
 
 }  // namespace constituents
 }  // namespace darwin

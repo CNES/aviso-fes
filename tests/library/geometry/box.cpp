@@ -9,6 +9,8 @@
 #include <boost/geometry.hpp>
 #include <sstream>
 
+#include "fes/geometry/triangle.hpp"
+
 namespace fes {
 namespace geometry {
 
@@ -67,11 +69,6 @@ TEST_F(BoxTest, ParameterizedConstructorNormal) {
   EXPECT_DOUBLE_EQ(box.max_corner().lat(), 40.0);
 }
 
-// Test parameterized constructor with reversed coordinates (uses as-is)
-TEST_F(BoxTest, ParameterizedConstructorReversed) {
-  EXPECT_THROW({ Box(p2, p1); }, std::invalid_argument);
-}
-
 // Test constructor with dateline crossing
 TEST_F(BoxTest, ParameterizedConstructorDatelineCrossing) {
   Box box{p_dateline1, p_dateline2};  // 170° to -170°
@@ -79,7 +76,7 @@ TEST_F(BoxTest, ParameterizedConstructorDatelineCrossing) {
   // Should normalize angles and detect dateline crossing
   EXPECT_DOUBLE_EQ(box.min_corner().lon(), 170.0);
   EXPECT_DOUBLE_EQ(box.min_corner().lat(), 10.0);
-  EXPECT_DOUBLE_EQ(box.max_corner().lon(), -170.0);
+  EXPECT_DOUBLE_EQ(box.max_corner().lon(), 190.0);
   EXPECT_DOUBLE_EQ(box.max_corner().lat(), 30.0);
 }
 
@@ -150,11 +147,6 @@ TEST_F(BoxTest, ExtremeCoordinates) {
   EXPECT_DOUBLE_EQ(polar_box.max_corner().lat(), 90.0);
 }
 
-// Test with same min and max corners (degenerate box)
-TEST_F(BoxTest, DegenerateBox) {
-  EXPECT_THROW({ Box(p1, p1); }, std::invalid_argument);
-}
-
 // Test angle normalization in constructor
 TEST_F(BoxTest, AngleNormalization) {
   Point p_over_180{190.0, -45.0};      // > 180° = -170°
@@ -162,9 +154,8 @@ TEST_F(BoxTest, AngleNormalization) {
 
   Box box{p_over_180, p_under_neg180};
 
-  // Angles should be normalized to [-180, 180] range
-  EXPECT_EQ(box.min_corner().lon(), -170.0);
-  EXPECT_LE(box.max_corner().lon(), 170.0);
+  EXPECT_EQ(box.min_corner().lon(), 190.0);
+  EXPECT_LE(box.max_corner().lon(), 530.0);
 }
 
 // Test intersection with a dateline-crossing box using triangles

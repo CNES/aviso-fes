@@ -21,7 +21,7 @@ namespace perth {
 /// tide components.
 /// @tparam T The type of the tide component.
 template <typename T>
-class WaveSet : public TidalConstituents<Constituent> {
+class WaveSet : public TidalConstituents {
  public:
   using value_type = T;
   using Key = std::array<Constituent, kNumConstituentItems>;
@@ -98,16 +98,25 @@ class WaveSet : public TidalConstituents<Constituent> {
     return {keys_[index], items_[index]};
   }
 
-  /// @brief Set the tide of a constituent
+  /// Set the tide of a constituent
+  /// @param[in] ident The constituent identifier
+  void set_tide(uint8_t ident, const Complex &value) override {
+    if (ident >= items_.size()) {
+      throw std::out_of_range("ident out of range");
+    }
+    set_tide(static_cast<Constituent>(ident), value);
+  }
+
+  /// Set the tide of a constituent
   /// @param[in] ident The constituent identifier
   /// @param[in] value The tide value
-  void set_tide(Constituent ident, const std::complex<double> &value) override {
-    (*this)[ident].tide = value;
+  void set_tide(Constituent ident, const Complex &value) {
+    items_[static_cast<std::size_t>(ident)].tide = value;
   }
 
   auto update_nodal_corrections(const double epoch,
-                                const bool group_modulations,
-                                Accelerator<Constituent> &acc) -> void;
+                                const bool group_modulations, Accelerator &acc)
+      -> void;
 
   auto nodal_correction(const Constituent constituent) const
       -> const NodalCorrections & {
@@ -122,21 +131,29 @@ class WaveSet : public TidalConstituents<Constituent> {
   std::vector<NodalCorrections> nodal_corrections_;
 };
 
-/// @brief Alias for a constituent table.
-using WaveTable = WaveSet<Wave>;
+/// @brief Data structure that holds the tide of a constituent.
+struct Wave {
+  Vector7b doodson_number;    //!< Doodson number of the constituent
+  std::complex<double> tide;  //!< Tide of the constituent
+  double tidal_argument;      //!< Doodson argument
+  TidalType type;             //!< Type of tidal wave
+  bool is_inferred = false;   //!< Whether the tide was inferred from the
+                              //!< constituents
+};
 
-/// @brief Assemble a constituent table from a list of constituents.
-/// @param[in] constituents The list of constituents to include in the table.
-/// If empty, all constituents are included.
-/// @return The assembled constituent table.
-auto build_table(const std::vector<Constituent> &constituents = {})
-    -> WaveTable;
+/// @brief Alias for a constituent table.
+class WaveTable : public WaveSet<Wave> {
+ public:
+  /// @brief Create a constituent table from a list of constituent names.
+  /// @param[in] constituents The list of constituent names to include in the
+  /// table. If empty, all constituents are included.
+  explicit WaveTable(const std::vector<Constituent> &constituents = {});
+};
 
 template <typename T>
 auto WaveSet<T>::update_nodal_corrections(const double epoch,
                                           const bool group_modulations,
-                                          Accelerator<Constituent> &acc)
-    -> void {
+                                          Accelerator &acc) -> void {
   auto angle = acc.calculate_angle(epoch);
   auto args = calculate_celestial_vector(angle);
   const auto perigee = args(3);

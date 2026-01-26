@@ -6,15 +6,11 @@
 /// @brief Cartesian tidal model
 #pragma once
 #include <limits>
-#include <sstream>
 #include <utility>
 
 #include "fes/abstract_tidal_model.hpp"
 #include "fes/axis.hpp"
 #include "fes/detail/grid.hpp"
-#include "fes/detail/isviewstream.hpp"
-#include "fes/detail/serialize.hpp"
-#include "fes/string_view.hpp"
 
 namespace fes {
 namespace tidal_model {
@@ -22,9 +18,8 @@ namespace tidal_model {
 /// @brief %Cartesian tidal model.
 ///
 /// @tparam T The type of the tidal model.
-/// @tparam ConstituentId The type of the constituent identifier.
-template <typename T, typename ConstituentId>
-class Cartesian : public AbstractTidalModel<T, ConstituentId> {
+template <typename T>
+class Cartesian : public AbstractTidalModel<T> {
  public:
   /// Build a Cartesian tidal model from its grid properties.
   ///
@@ -32,9 +27,9 @@ class Cartesian : public AbstractTidalModel<T, ConstituentId> {
   /// @param[in] lat The latitude axis.
   /// @param[in] tide_type The tide type handled by the model.
   /// @param[in] row_major Whether the data is stored in longitude-major order.
-  Cartesian(Axis lon, Axis lat, const TideType tide_type,
-            const bool row_major = true)
-      : AbstractTidalModel<T, ConstituentId>(tide_type),
+  Cartesian(Axis lon, Axis lat, EnumMapper<uint8_t> enum_mapper,
+            const TideType tide_type, const bool row_major = true)
+      : AbstractTidalModel<T>(std::move(enum_mapper), tide_type),
         row_major_(row_major),
         lon_(std::move(lon)),
         lat_(std::move(lat)) {}
@@ -43,8 +38,8 @@ class Cartesian : public AbstractTidalModel<T, ConstituentId> {
   ///
   /// @param[in] ident The tidal constituent identifier.
   /// @param[in] wave The tidal constituent modelled.
-  inline auto add_constituent(const ConstituentId ident,
-                              Vector<std::complex<T>> wave) -> void override {
+  inline auto add_constituent(const uint8_t ident, Vector<std::complex<T>> wave)
+      -> void override {
     if (wave.size() != lon_.size() * lat_.size()) {
       throw std::invalid_argument("wave size does not match expected size");
     }
@@ -61,9 +56,8 @@ class Cartesian : public AbstractTidalModel<T, ConstituentId> {
   /// @return A null pointer
   constexpr auto accelerator(const angle::Formulae& formulae,
                              const double time_tolerance) const
-      -> Accelerator<ConstituentId>* override {
-    return new Accelerator<ConstituentId>(formulae, time_tolerance,
-                                          this->data_.size());
+      -> Accelerator* override {
+    return new Accelerator(formulae, time_tolerance, this->data_.size());
   }
 
   /// Interpolate the tidal model at a given point.
@@ -73,8 +67,7 @@ class Cartesian : public AbstractTidalModel<T, ConstituentId> {
   /// @param[inout] acc The accelerator to use.
   /// @return The interpolated tidal model.
   auto interpolate(const geometry::Point& point, Quality& quality,
-                   Accelerator<ConstituentId>* acc) const
-      -> const ConstituentValues<ConstituentId>& override;
+                   Accelerator* acc) const -> const ConstituentValues& override;
 
   /// Get the longitude axis.
   ///
@@ -86,16 +79,6 @@ class Cartesian : public AbstractTidalModel<T, ConstituentId> {
   /// @return The latitude axis.
   constexpr auto lat() const noexcept -> const Axis& { return lat_; }
 
-  /// Serialize the tidal model.
-  ///
-  auto getstate() const -> std::string;
-
-  /// Deserialize the tidal model.
-  ///
-  /// @param[in] data The serialized tidal model.
-  /// @return The tidal model.
-  static auto setstate(const string_view& data) -> Cartesian<T, ConstituentId>;
-
  private:
   /// Whether the data is stored in longitude-major order.
   bool row_major_;
@@ -106,22 +89,20 @@ class Cartesian : public AbstractTidalModel<T, ConstituentId> {
 };
 
 // /////////////////////////////////////////////////////////////////////////////
-template <typename T, typename ConstituentId>
-auto Cartesian<T, ConstituentId>::interpolate(
-    const geometry::Point& point, Quality& quality,
-    Accelerator<ConstituentId>* acc) const
-    -> const ConstituentValues<ConstituentId>& {
+template <typename T>
+auto Cartesian<T>::interpolate(const geometry::Point& point, Quality& quality,
+                               Accelerator* acc) const
+    -> const ConstituentValues& {
   // Remove all previous values interpolated.
   acc->clear();
   // Find the nearest point in the grid
   auto lon_index = lon_.find_indices(point.lon());
   auto lat_index = lat_.find_indices(point.lat());
 
-  auto reset_values_to_undefined =
-      [&]() -> const ConstituentValues<ConstituentId>& {
+  auto reset_values_to_undefined = [&]() -> const ConstituentValues& {
     constexpr auto undefined_value =
-        std::complex<double>(std::numeric_limits<double>::quiet_NaN(),
-                             std::numeric_limits<double>::quiet_NaN());
+        Complex(std::numeric_limits<double>::quiet_NaN(),
+                std::numeric_limits<double>::quiet_NaN());
 
     for (const auto& item : this->data_) {
       acc->emplace_back(item.first, undefined_value);
@@ -155,7 +136,7 @@ auto Cartesian<T, ConstituentId>::interpolate(
       static_cast<size_t>(lat_.size()), row_major_);
   for (const auto& item : this->data_) {
     grid.data(item.second.data());
-    auto value = detail::math::bilinear_interpolation<std::complex<double>>(
+    auto value = detail::math::bilinear_interpolation<Complex>(
         std::get<0>(wxy), std::get<1>(wxy), std::get<2>(wxy), std::get<3>(wxy),
         grid(i1, j1), grid(i1, j2), grid(i2, j1), grid(i2, j2), n);
     // The computed value lies within the grid boundaries, but it is NaN (not a
@@ -169,39 +150,6 @@ auto Cartesian<T, ConstituentId>::interpolate(
   // interpolation (0, 1, 2, or 4).
   quality = static_cast<Quality>(n);
   return acc->values();
-}
-
-template <typename T, typename ConstituentId>
-auto Cartesian<T, ConstituentId>::getstate() const -> std::string {
-  auto ss = std::stringstream();
-  ss.exceptions(std::stringstream::failbit);
-  detail::serialize::write_data(ss, row_major_);
-  detail::serialize::write_string(ss, lon_.getstate());
-  detail::serialize::write_string(ss, lat_.getstate());
-  detail::serialize::write_data(ss, this->tide_type_);
-  detail::serialize::write_constituent_map(ss, this->data_);
-  return ss.str();
-}
-
-template <typename T, typename ConstituentId>
-auto Cartesian<T, ConstituentId>::setstate(const string_view& data)
-    -> Cartesian<T, ConstituentId> {
-  detail::isviewstream ss(data);
-  ss.exceptions(std::stringstream::failbit);
-  try {
-    auto row_major = detail::serialize::read_data<bool>(ss);
-    auto lon = Axis::setstate(detail::serialize::read_string(ss));
-    auto lat = Axis::setstate(detail::serialize::read_string(ss));
-    auto tide_type = detail::serialize::read_data<TideType>(ss);
-    auto model = Cartesian<T, ConstituentId>(std::move(lon), std::move(lat),
-                                             tide_type, row_major);
-    model.data_ =
-        detail::serialize::read_constituent_map<ConstituentId, std::complex<T>>(
-            ss);
-    return model;
-  } catch (const std::exception&) {
-    throw std::invalid_argument("invalid tidal model state");
-  }
 }
 
 }  // namespace tidal_model

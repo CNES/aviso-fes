@@ -7,6 +7,7 @@
 #pragma once
 #include <cmath>
 #include <limits>
+#include <sstream>
 
 #include "fes/delta_t.hpp"
 #include "fes/detail/math.hpp"

@@ -109,7 +109,7 @@ venv.bak/
 .vscode/
 
 # Generated files
-src/python/pyfes/version.py
+src/pyfes/version.py
 include/fes/version.hpp
 docs/source/auto_examples
 docs/source/sg_execution_times.rst

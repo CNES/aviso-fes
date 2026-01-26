@@ -169,18 +169,18 @@ class ConstituentParser:
 
         rst_lines.append('.. currentmodule:: pyfes.core')
         rst_lines.append('')
-        rst_lines.append('.. class:: Constituent')
+        rst_lines.append('.. _core_constituents:')
+        rst_lines.append('')
+        rst_lines.append('Tidal constituents')
+        rst_lines.append('==================')
         rst_lines.append('')
         rst_lines.append(
-            '    This enum class encapsulates the tidal constituents '
-            'known by the library.'
+            'List of tidal constituents handled by the library. '
+            'Use :py:func:`pyfes.core.darwin.constituents` to retrieve the '
+            'runtime mapping from constituent string keys to internal '
+            'values. Keys correspond to the names below (for example, '
+            '``M2``).'
         )
-        rst_lines.append('')
-        rst_lines.append('    .. method:: __init__(self, value)')
-        rst_lines.append('')
-        rst_lines.append('        Constructor.')
-        rst_lines.append('')
-        rst_lines.append('        :param value: The value of the constituent.')
         rst_lines.append('')
 
         for constituent in constituents:
@@ -192,12 +192,17 @@ class ConstituentParser:
         """Generate RST content for a single constituent."""
         lines = []
 
-        # Attribute directive
-        lines.append(f'    .. autoattribute:: {constituent["enum_name"]}')
+        key = constituent['enum_name'][1:]
+        anchor = key.lower()
+        lines.append(f'.. _constituent-{anchor}:')
         lines.append('')
-
-        # Math name
-        lines.append(f'        :math:`{constituent["math_name"]}`')
+        lines.append(f'.. rubric:: :math:`{constituent["math_name"]}`')
+        lines.append('')
+        lines.append(
+            'Identifier returned by '
+            ':py:func:`pyfes.core.darwin.constituents`: '
+            f'``{key}``.'
+        )
         lines.append('')
 
         # Table
@@ -213,27 +218,23 @@ class ConstituentParser:
 
         # Create table separator
         separator = '=' * max_width
-        table_sep = f'        {separator}  {separator}  {separator}'
+        table_sep = f'{separator}  {separator}  {separator}'
 
         lines.append(table_sep)
-        lines.append(
-            f'        {"V":<{max_width}}  {"u":<{max_width}}  {"Factor-f"}'
-        )
+        lines.append(f'{"V":<{max_width}}  {"u":<{max_width}}  {"Factor-f"}')
         lines.append(table_sep)
         v_cell = f':math:`{constituent["v_value"]}`'
         u_cell = f':math:`{constituent["u_value"]}`'
         f_cell = f':math:`{constituent["factor_f"]}`'
-        lines.append(
-            f'        {v_cell:<{max_width}}  {u_cell:<{max_width}}  {f_cell}'
-        )
+        lines.append(f'{v_cell:<{max_width}}  {u_cell:<{max_width}}  {f_cell}')
         lines.append(table_sep)
         lines.append('')
 
         # Note (if present)
         if constituent['note']:
-            lines.append('        .. note::')
+            lines.append('.. note::')
             lines.append('')
-            lines.append(f'            {constituent["note"]}')
+            lines.append(f'    {constituent["note"]}')
             lines.append('')
 
         return lines
@@ -246,8 +247,8 @@ def main() -> None:
         '"C++ header file.',
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    wave_path = ROOT / 'include' / 'fes' / 'wave.hpp'
-    constituent_path = ROOT / 'include' / 'fes' / 'constituent.hpp'
+    wave_path = ROOT / 'include' / 'fes' / 'darwin' / 'wave.hpp'
+    constituent_path = ROOT / 'include' / 'fes' / 'darwin' / 'constituent.hpp'
     output_rst = ROOT / 'docs' / 'source' / 'core' / 'constituent.rst'
     parser.add_argument(
         '--verbose', '-v', action='store_true', help='Enable verbose output'

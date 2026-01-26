@@ -28,6 +28,20 @@ struct Darwin {
                   //!< constituent K2
 
   /// Default constructor
+  /// @param[in] t Mean solar angle relative to Greenwich
+  /// @param[in] s moon's mean longitude
+  /// @param[in] h sun's mean longitude
+  /// @param[in] p longitude of the moon's perigee
+  /// @param[in] n longitude of moon's ascending node
+  /// @param[in] p1 longitude of sun's perigee
+  /// @param[in] shift Shift value
+  /// @param[in] eps Coefficient for the longitude in moon's orbit of lunar
+  ///   intersection
+  /// @param[in] nu Coefficient for the right ascension of lunar intersection
+  /// @param[in] nuprim Coefficient for the term in argument of lunisolar
+  ///   constituent K1
+  /// @param[in] nusec Coefficient for the term in argument of lunisolar
+  ///   constituent K2
   constexpr Darwin(int8_t t, int8_t s, int8_t h, int8_t p, int8_t n, int8_t p1,
                    int8_t shift, int8_t eps, int8_t nu, int8_t nuprim,
                    int8_t nusec) noexcept
@@ -55,7 +69,7 @@ struct Darwin {
     constexpr Builder() = default;
 
     /// @brief Sets the mean solar angle relative to Greenwich.
-    /// @param v The value to set for the mean solar angle.
+    /// @param[in] v The value to set for the mean solar angle.
     /// @return  Reference to the Builder object for method chaining.
     constexpr auto T(int8_t v) noexcept -> Builder& {
       t_ = v;
@@ -63,7 +77,7 @@ struct Darwin {
     }
 
     /// @brief Sets the moon's mean longitude.
-    /// @param v The value to set for the moon's mean longitude.
+    /// @param[in] v The value to set for the moon's mean longitude.
     /// @return Reference to the Builder object for method chaining.
     constexpr auto s(int8_t v) noexcept -> Builder& {
       s_ = v;
@@ -71,7 +85,7 @@ struct Darwin {
     }
 
     /// @brief Sets the sun's mean longitude.
-    /// @param v The value to set for the sun's mean longitude.
+    /// @param[in] v The value to set for the sun's mean longitude.
     /// @return Reference to the Builder object for method chaining.
     constexpr auto h(int8_t v) noexcept -> Builder& {
       h_ = v;
@@ -79,7 +93,7 @@ struct Darwin {
     }
 
     /// @brief Sets the longitude of the moon's perigee.
-    /// @param v The value to set for the longitude of the moon's perigee.
+    /// @param[in] v The value to set for the longitude of the moon's perigee.
     /// @return Reference to the Builder object for method chaining.
     constexpr auto p(int8_t v) noexcept -> Builder& {
       p_ = v;
@@ -87,7 +101,7 @@ struct Darwin {
     }
 
     /// @brief Sets the longitude of the moon's ascending node.
-    /// @param v The value to set for the longitude of the moon's ascending
+    /// @param[in] v The value to set for the longitude of the moon's ascending
     /// node.
     /// @return Reference to the Builder object for method chaining.
     constexpr auto n(int8_t v) noexcept -> Builder& {
@@ -104,7 +118,7 @@ struct Darwin {
     }
 
     /// @brief Sets the shift value.
-    /// @param v The value to set for the shift.
+    /// @param[in] v The value to set for the shift.
     /// @return Reference to the Builder object for method chaining.
     constexpr auto shift(int8_t v) noexcept -> Builder& {
       shift_ = v;
@@ -113,7 +127,7 @@ struct Darwin {
 
     /// @brief Sets the coefficient for the longitude in moon's orbit of lunar
     /// intersection.
-    /// @param v The value to set for the coefficient.
+    /// @param[in] v The value to set for the coefficient.
     /// @return Reference to the Builder object for method chaining.
     constexpr auto xi(int8_t v) noexcept -> Builder& {
       eps_ = v;
@@ -122,7 +136,7 @@ struct Darwin {
 
     /// @brief Sets the coefficient for the right ascension of lunar
     /// intersection.
-    /// @param v The value to set for the coefficient.
+    /// @param[in] v The value to set for the coefficient.
     /// @return Reference to the Builder object for method chaining.
     constexpr auto nu(int8_t v) noexcept -> Builder& {
       nu_ = v;
@@ -131,7 +145,7 @@ struct Darwin {
 
     /// @brief Sets the coefficient for the term in argument of lunisolar
     /// constituent K1.
-    /// @param v The value to set for the coefficient.
+    /// @param[in] v The value to set for the coefficient.
     /// @return Reference to the Builder object for method chaining.
     constexpr auto nuprim(int8_t v) noexcept -> Builder& {
       nuprim_ = v;
@@ -140,7 +154,7 @@ struct Darwin {
 
     /// @brief Sets the coefficient for the term in argument of lunisolar
     /// constituent K2.
-    /// @param v The value to set for the coefficient.
+    /// @param[in] v The value to set for the coefficient.
     /// @return Reference to the Builder object for method chaining.
     constexpr auto nusec(int8_t v) noexcept -> Builder& {
       nusec_ = v;

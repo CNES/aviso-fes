@@ -15,8 +15,8 @@
 
 #include "fes/angle/astronomic.hpp"
 #include "fes/darwin/wave.hpp"
-#include "fes/eigen.hpp"
 #include "fes/tidal_constituents.hpp"
+#include "fes/types.hpp"
 
 namespace fes {
 namespace darwin {
@@ -105,7 +105,7 @@ class WaveTableIterator : public std::iterator_traits<RangeType> {
 };
 
 /// Properties of tide waves computed
-class WaveTable : public TidalConstituents<Constituent> {
+class WaveTable : public TidalConstituents {
  public:
   /// Alias to a mutable iterator on the waves
   using iterator_t =
@@ -130,8 +130,17 @@ class WaveTable : public TidalConstituents<Constituent> {
 
   /// Set the tide of a constituent
   /// @param[in] ident The constituent identifier
+  void set_tide(uint8_t ident, const Complex& value) override {
+    if (ident >= wave_index_.size()) {
+      throw std::out_of_range("ident out of range");
+    }
+    set_tide(static_cast<Constituent>(ident), value);
+  }
+
+  /// Set the tide of a constituent
+  /// @param[in] ident The constituent identifier
   /// @param[in] value The tide value
-  void set_tide(Constituent ident, const std::complex<double>& value) override {
+  void set_tide(Constituent ident, const Complex& value) {
     (*this)[ident]->tide(value);
   }
 
@@ -207,15 +216,7 @@ class WaveTable : public TidalConstituents<Constituent> {
   }
 
   /// Returns the size of the table
-  inline auto size() const -> size_t { return wave_index_.size(); }
-
-  /// Searches the properties of a wave from its name.
-  /// @param[in] name Name of the wave
-  /// @return The properties of the wave
-  inline auto find(const std::string& name) const -> std::shared_ptr<Wave> {
-    const auto& result = waves_[constituents::parse(name)];
-    return result ? result : nullptr;
-  }
+  inline auto size() const noexcept -> size_t { return wave_index_.size(); }
 
   /// Return the list of tidal waves such that their period is more than
   /// twice the duration of the time series analyzed

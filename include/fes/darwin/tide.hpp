@@ -44,14 +44,11 @@
 #include "fes/darwin/wave.hpp"
 #include "fes/detail/broadcast.hpp"
 #include "fes/detail/thread.hpp"
-#include "fes/eigen.hpp"
 #include "fes/settings.hpp"
+#include "fes/types.hpp"
 
 namespace fes {
 namespace darwin {
-
-// template <typename T>
-// using Accelerator = Accelerator<perth::Constituent>;
 
 namespace detail {
 
@@ -61,8 +58,8 @@ namespace detail {
 /// @param[in] tidal_model The tidal model.
 /// @return The wave table.
 template <typename T>
-static auto build_wave_table(
-    const AbstractTidalModel<T, Constituent>* const tidal_model) -> WaveTable {
+static auto build_wave_table(const AbstractTidalModel<T>* const tidal_model)
+    -> WaveTable {
   auto result = WaveTable();
 
   // Add the constituents provided by the model.
@@ -74,7 +71,7 @@ static auto build_wave_table(
 
   // Add the constituents to be be considered as dynamic but not provided by
   // the model.
-  for (const auto& item : tidal_model->dynamic()) {
+  for (const auto& item : tidal_model->dynamic_ids()) {
     auto& wave = result[item];
     wave->dynamic(true);
     wave->admittance(false);
@@ -89,8 +86,7 @@ static auto build_wave_table(
 /// complex-valued (amplitude and phase) properties.
 /// @return The wave table.
 static inline auto build_wave_table_from_constituents(
-    const std::map<Constituent, std::complex<double>>& constituents)
-    -> WaveTable {
+    const std::map<Constituent, Complex>& constituents) -> WaveTable {
   auto wave_table = WaveTable();
   for (const auto& item : constituents) {
     auto& wave = wave_table[item.first];
@@ -113,10 +109,12 @@ static inline auto build_wave_table_from_constituents(
 /// @param[in] latitude Latitude in degrees for long period calculation
 /// @param[in] compute_lpe Whether to compute long period equilibrium
 /// @return Tuple of (short_period_tide, long_period_tide)
-static inline auto compute_tide_from_waves(
-    WaveTable& wave_table, LongPeriodEquilibrium& lpe,
-    Accelerator<Constituent>& acc, const double epoch, const double latitude,
-    const bool compute_lpe = true) -> std::tuple<double, double> {
+static inline auto compute_tide_from_waves(WaveTable& wave_table,
+                                           LongPeriodEquilibrium& lpe,
+                                           Accelerator& acc, const double epoch,
+                                           const double latitude,
+                                           const bool compute_lpe = true)
+    -> std::tuple<double, double> {
   // Update the astronomic angle used to evaluate the tidal constituents.
   const auto& angles = acc.calculate_angle(epoch);
 
@@ -137,7 +135,7 @@ static inline auto compute_tide_from_waves(
     auto tide = wave->f() * (wave->tide().real() * std::cos(phi) +
                              wave->tide().imag() * std::sin(phi));
     if (wave->admittance() || wave->dynamic()) {
-      wave->type() == Wave::kShortPeriod ? h += tide : h_long_period += tide;
+      wave->type() == kShortPeriod ? h += tide : h_long_period += tide;
     }
   }
 
@@ -163,11 +161,11 @@ static inline auto compute_tide_from_waves(
 ///   spectrum (same units as the constituents).
 /// - The quality of the interpolation (see Quality)
 template <typename T>
-inline auto evaluate_tide(
-    const AbstractTidalModel<T, Constituent>* const tidal_model,
-    const double epoch, const double longitude, const double latitude,
-    WaveTable& wave_table, LongPeriodEquilibrium& long_period,
-    Accelerator<Constituent>* acc) -> std::tuple<double, double, Quality> {
+inline auto evaluate_tide(const AbstractTidalModel<T>* const tidal_model,
+                          const double epoch, const double longitude,
+                          const double latitude, WaveTable& wave_table,
+                          LongPeriodEquilibrium& long_period, Accelerator* acc)
+    -> std::tuple<double, double, Quality> {
   // Interpolation, at the requested position, of the waves provided by the
   // model used.
   auto quality =
@@ -205,8 +203,6 @@ inline auto evaluate_tide(
 /// @param[in] latitude Latitude in degrees for the position at which the tide
 /// is calculated
 /// @param[in] settings Settings for the tide computation.
-/// @param[in] num_threads Number of threads to use for the computation. If 0,
-/// the number of threads is automatically determined.
 /// @return A tuple that contains:
 /// - The height of the the diurnal and semi-diurnal constituents of the
 ///   tidal spectrum.
@@ -228,13 +224,12 @@ inline auto evaluate_tide(
 /// to nan if no data is available at the given position. the long period wave
 /// constituents is always computed because this value does not depend on
 /// model data.
-template <typename T, typename Constituent>
-auto evaluate_tide(const AbstractTidalModel<T, Constituent>* const tidal_model,
+template <typename T>
+auto evaluate_tide(const AbstractTidalModel<T>* const tidal_model,
                    const Eigen::Ref<const Eigen::VectorXd>& epoch,
                    const Eigen::Ref<const Eigen::VectorXd>& longitude,
                    const Eigen::Ref<const Eigen::VectorXd>& latitude,
-                   const Settings& settings = Settings(),
-                   const size_t num_threads = 0)
+                   const Settings& settings = FesRuntimeSettings())
     -> std::tuple<Eigen::VectorXd, Eigen::VectorXd, Vector<Quality>> {
   // Checks the input parameters
   fes::detail::check_eigen_shape("epoch", epoch, "longitude", longitude,
@@ -247,9 +242,8 @@ auto evaluate_tide(const AbstractTidalModel<T, Constituent>* const tidal_model,
 
   // Worker responsible for the calculation of the tide at a given position
   auto worker = [&](const int64_t start, const int64_t end) {
-    auto acc =
-        std::unique_ptr<Accelerator<Constituent>>(tidal_model->accelerator(
-            settings.astronomic_formulae(), settings.time_tolerance()));
+    auto acc = std::unique_ptr<Accelerator>(tidal_model->accelerator(
+        settings.astronomic_formulae(), settings.time_tolerance()));
     auto* acc_ptr = acc.get();
     auto wave_table = detail::build_wave_table(tidal_model);
     auto lpe = LongPeriodEquilibrium(wave_table);
@@ -261,7 +255,7 @@ auto evaluate_tide(const AbstractTidalModel<T, Constituent>* const tidal_model,
     }
   };
 
-  fes::detail::parallel_for(worker, epoch.size(), num_threads);
+  fes::detail::parallel_for(worker, epoch.size(), settings.num_threads());
   return {tide, long_period, quality};
 }
 
@@ -278,11 +272,8 @@ auto evaluate_tide(const AbstractTidalModel<T, Constituent>* const tidal_model,
 /// complex-valued (amplitude and phase) properties.
 /// @param[in] epoch Date of the tide calculation expressed in number of seconds
 /// elapsed since 1970-01-01T00:00:00Z (can be a vector of multiple times).
-/// @param[in] longitude Longitude in degrees for the position.
 /// @param[in] latitude Latitude in degrees for the position.
 /// @param[in] settings Settings for the tide computation.
-/// @param[in] num_threads Number of threads to use for the computation. If 0,
-/// the number of threads is automatically determined.
 /// @return A tuple containing:
 /// - The height of the diurnal and semi-diurnal constituents of the tidal
 ///   spectrum for each epoch.
@@ -291,11 +282,9 @@ auto evaluate_tide(const AbstractTidalModel<T, Constituent>* const tidal_model,
 /// @note The units of the returned tide are the same as the units of the input
 /// constituents.
 auto evaluate_tide_from_constituents(
-    const std::map<Constituent, std::complex<double>>& constituents,
-    const Eigen::Ref<const Eigen::VectorXd>& epoch, const double longitude,
-    const double latitude, const Settings& settings = Settings(),
-    const size_t num_threads = 0)
-    -> std::tuple<Eigen::VectorXd, Eigen::VectorXd>;
+    const std::map<Constituent, Complex>& constituents,
+    const Eigen::Ref<const Eigen::VectorXd>& epoch, const double latitude,
+    const Settings& settings) -> std::tuple<Eigen::VectorXd, Eigen::VectorXd>;
 
 /// @brief Compute the long period equilibrium ocean tides.
 ///
@@ -316,13 +305,10 @@ auto evaluate_tide_from_constituents(
 /// @param[in] latitude Latitude in degrees (positive north) for the position at
 /// which tide is computed.
 /// @param[in] settings Settings for the tide computation.
-/// @param[in] num_threads Number of threads to use for the computation. If 0,
-/// the number of threads is automatically determined.
 auto evaluate_equilibrium_long_period(
     const Eigen::Ref<const Eigen::VectorXd>& epoch,
     const Eigen::Ref<const Eigen::VectorXd>& latitude,
-    const Settings& settings = Settings(), const size_t num_threads = 0)
-    -> Eigen::VectorXd;
+    const Settings& settings = FesRuntimeSettings()) -> Eigen::VectorXd;
 
 }  // namespace darwin
 }  // namespace fes

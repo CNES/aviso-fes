@@ -9,6 +9,8 @@
 #include <array>
 #include <string>
 
+#include "fes/xdo.hpp"
+
 namespace fes {
 namespace darwin {
 
@@ -53,28 +55,12 @@ inline auto code(const int number) -> char {
 
 auto Wave::xdo_numerical() const -> std::string {
   const auto doodson = darwin_to_doodson(argument_);
-  std::string result;
-  result.reserve(7);
-
-  // First element uses raw value, others add offset of 5
-  result.push_back(code(doodson[0]));
-  for (size_t i = 1; i < doodson.size(); ++i) {
-    result.push_back(code(doodson[i] + 5));
-  }
-
-  return result;
+  return fes::xdo_numerical(Eigen::Map<const Vector7b>(doodson.data()));
 }
 
 auto Wave::xdo_alphabetical() const -> std::string {
-  constexpr auto xdo = std::array<char, 25>{
-      'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'A', 'B', 'C', 'D',
-      'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P'};
-  auto result = std::string();
-  result.reserve(7);
-  for (const auto& value : darwin_to_doodson(argument_)) {
-    result.push_back(xdo[value + 8]);
-  }
-  return result;
+  const auto doodson = darwin_to_doodson(argument_);
+  return fes::xdo_alphabetical(Eigen::Map<const Vector7b>(doodson.data()));
 }
 
 auto Wave::doodson_numbers() const -> std::array<int8_t, 7> {

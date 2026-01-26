@@ -9,7 +9,7 @@
 #include <stdexcept>
 #include <string>
 
-#include "fes/eigen.hpp"
+#include "fes/types.hpp"
 
 namespace fes {
 namespace detail {

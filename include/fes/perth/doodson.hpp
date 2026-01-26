@@ -4,7 +4,7 @@
 
 #include "fes/angle/astronomic.hpp"
 #include "fes/detail/math.hpp"
-#include "fes/eigen.hpp"
+#include "fes/types.hpp"
 
 namespace fes {
 namespace perth {

@@ -117,7 +117,7 @@ class WaveTableTest : public ::testing::Test {
   static std::vector<Constituent> enabled_;
 
  protected:
-  WaveTable table = build_table(WaveTableTest::enabled_);
+  WaveTable table = WaveTable(WaveTableTest::enabled_);
 
   auto is_enabled(Constituent constituent) const -> bool {
     return std::find(enabled_.begin(), enabled_.end(), constituent) !=

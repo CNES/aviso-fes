@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 
+#include "fes/darwin/constituent.hpp"
 #include "fes/detail/broadcast.hpp"
 #include "fes/detail/thread.hpp"
 
@@ -224,8 +225,9 @@ auto WaveTable::wave_factory(const Constituent ident) -> std::shared_ptr<Wave> {
 }
 
 /// Create a table with all known constituents.
-inline auto create_table(const std::vector<std::string>& known_constituents,
-                         std::vector<std::shared_ptr<Wave>>& table) -> void {
+inline auto create_table(
+    const std::array<std::string, kNumConstituentItems>& known_constituents,
+    std::vector<std::shared_ptr<Wave>>& table) -> void {
   for (const auto& constituent : known_constituents) {
     table.emplace_back(
         WaveTable::wave_factory(constituents::parse(constituent)));
@@ -234,7 +236,7 @@ inline auto create_table(const std::vector<std::string>& known_constituents,
 
 /// Create a table with the selected constituents.
 inline auto create_sparse_table(
-    const std::vector<std::string>& known_constituents,
+    const std::array<std::string, kNumConstituentItems>& known_constituents,
     const std::vector<std::string>& waves,
     std::vector<std::shared_ptr<Wave>>& table) -> void {
   for (const auto& constituent : known_constituents) {

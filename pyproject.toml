@@ -43,10 +43,10 @@ zip-safe = false
 include-package-data = false
 
 [tool.setuptools.packages]
-find = {where = ["src/python"]}
+find = {where = ["src"]}
 
 [tool.setuptools.package-dir]
-"" = "src/python"
+"" = "src"
 
 [tool.setuptools.package-data]
 pyfes = [

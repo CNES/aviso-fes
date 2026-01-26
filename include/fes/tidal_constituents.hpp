@@ -6,13 +6,13 @@
 /// @brief Interface for tidal constituents.
 #pragma once
 
-#include <complex>
+#include <cstdint>
+
+#include "fes/types.hpp"
 
 namespace fes {
 
 /// @brief Interface for tidal constituents.
-/// @tparam ConstituentId The type of the constituent identifier.
-template <typename ConstituentId>
 class TidalConstituents {
  public:
   /// Destructor
@@ -21,8 +21,7 @@ class TidalConstituents {
   /// Set the tide of a constituent
   /// @param[in] ident The constituent identifier
   /// @param[in] value The tide value
-  virtual void set_tide(ConstituentId ident,
-                        const std::complex<double>& value) = 0;
+  virtual void set_tide(const uint8_t ident, const Complex& value) = 0;
 };
 
 }  // namespace fes

@@ -24,7 +24,7 @@ WORKING_DIRECTORY = pathlib.Path(__file__).parent.absolute()
 OSX_DEPLOYMENT_TARGET = '10.14'
 
 # Python version file path
-PY_VERSION = WORKING_DIRECTORY / 'src' / 'python' / 'pyfes' / 'version.py'
+PY_VERSION = WORKING_DIRECTORY / 'src' / 'pyfes' / 'version.py'
 
 # C++ version file path
 CXX_VERSION = WORKING_DIRECTORY / 'include' / 'fes' / 'version.hpp'

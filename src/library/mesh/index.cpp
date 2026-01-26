@@ -5,17 +5,13 @@
 #include "fes/mesh/index.hpp"
 
 #include <algorithm>
-#include <exception>
 #include <limits>
 #include <set>
-#include <sstream>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "fes/detail/isviewstream.hpp"
 #include "fes/detail/math.hpp"
-#include "fes/detail/serialize.hpp"
 
 namespace fes {
 namespace mesh {
@@ -153,29 +149,6 @@ auto Index::selected_triangles(const geometry::Box& bbox) const
   }
 
   return result;
-}
-
-auto Index::getstate() const -> std::string {
-  auto ss = std::stringstream();
-  ss.exceptions(std::stringstream::failbit);
-  detail::serialize::write_matrix(ss, lon_);
-  detail::serialize::write_matrix(ss, lat_);
-  detail::serialize::write_matrix(ss, triangles_);
-  return ss.str();
-}
-
-auto Index::setstate(const string_view& data) -> Index {
-  detail::isviewstream ss(data);
-  ss.exceptions(std::stringstream::failbit);
-  try {
-    auto lon = detail::serialize::read_matrix<double, Eigen::Dynamic, 1>(ss);
-    auto lat = detail::serialize::read_matrix<double, Eigen::Dynamic, 1>(ss);
-    auto triangles =
-        detail::serialize::read_matrix<int32_t, Eigen::Dynamic, 3>(ss);
-    return Index(std::move(lon), std::move(lat), std::move(triangles));
-  } catch (const std::exception&) {
-    throw std::invalid_argument("invalid index state");
-  }
 }
 
 }  // namespace mesh

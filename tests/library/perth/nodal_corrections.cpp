@@ -2,9 +2,6 @@
 
 #include <gtest/gtest.h>
 
-#include <iomanip>
-#include <iostream>
-
 namespace fes {
 namespace perth {
 

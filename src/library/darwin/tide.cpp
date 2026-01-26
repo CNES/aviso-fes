@@ -12,16 +12,15 @@ namespace darwin {
 
 auto evaluate_tide_from_constituents(
     const std::map<Constituent, std::complex<double>>& constituents,
-    const Eigen::Ref<const Eigen::VectorXd>& epoch, const double longitude,
-    const double latitude, const Settings& settings, const size_t num_threads)
-    -> std::tuple<Eigen::VectorXd, Eigen::VectorXd> {
+    const Eigen::Ref<const Eigen::VectorXd>& epoch, const double latitude,
+    const Settings& settings) -> std::tuple<Eigen::VectorXd, Eigen::VectorXd> {
   // Allocates the result vectors
   auto tide = Eigen::VectorXd(epoch.size());
   auto long_period = Eigen::VectorXd(epoch.size());
   // Worker responsible for the calculation of the tide at a given position
   auto worker = [&](const int64_t start, const int64_t end) {
-    auto acc = Accelerator<Constituent>(settings.astronomic_formulae(),
-                                        settings.time_tolerance(), 0);
+    auto acc = Accelerator(settings.astronomic_formulae(),
+                           settings.time_tolerance(), 0);
     auto wave_table = detail::build_wave_table_from_constituents(constituents);
     auto lpe = LongPeriodEquilibrium(wave_table);
 
@@ -31,14 +30,14 @@ auto evaluate_tide_from_constituents(
     }
   };
 
-  fes::detail::parallel_for(worker, epoch.size(), num_threads);
+  fes::detail::parallel_for(worker, epoch.size(), settings.num_threads());
   return {tide, long_period};
 }
 
 auto evaluate_equilibrium_long_period(
     const Eigen::Ref<const Eigen::VectorXd>& epoch,
-    const Eigen::Ref<const Eigen::VectorXd>& latitude, const Settings& settings,
-    const size_t num_threads) -> Eigen::VectorXd {
+    const Eigen::Ref<const Eigen::VectorXd>& latitude, const Settings& settings)
+    -> Eigen::VectorXd {
   // Checks the input parameters
   fes::detail::check_eigen_shape("epoch", epoch, "latitude", latitude);
   auto result = Eigen::VectorXd(epoch.size());
@@ -51,7 +50,7 @@ auto evaluate_equilibrium_long_period(
     }
   };
 
-  fes::detail::parallel_for(worker, epoch.size(), num_threads);
+  fes::detail::parallel_for(worker, epoch.size(), settings.num_threads());
   return result;
 }
 

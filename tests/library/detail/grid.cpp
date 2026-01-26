@@ -6,6 +6,8 @@
 
 #include <gtest/gtest.h>
 
+#include <Eigen/Core>
+
 namespace fes {
 namespace detail {
 

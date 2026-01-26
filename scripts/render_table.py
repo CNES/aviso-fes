@@ -47,28 +47,31 @@ def _pretty_name(name: str) -> tuple[str, str | None]:
     return name, None
 
 
-def url(constituent: pyfes.core.Wave) -> str:
+def url(constituent: str) -> str:
     """Generate a documentation URL for a constituent."""
-    return f'{URL}#pyfes.core.{constituent.ident!s}'
+    return ''
+    # return f'{URL}#pyfes.core.{constituent.ident!s}'
 
 
-def create_constituent_representation() -> str:
+def create_constituent_representation(
+    table: pyfes.core.darwin.WaveTable | pyfes.core.perth.WaveTable,
+    hyperlinks: bool = False,
+) -> str:
     """Generate a Markdown table for the tidal constituents."""
-    table = pyfes.WaveTable()
     lines = [
         '| Name | Speed (deg/h) | XDO |',
         '| --- | --- | --- |',
     ]
     data = {}
-    for constituent in table:
-        component = table[constituent.ident]
+    for constituent in table.keys():
+        component = table[constituent]
         name, greek_notation = _pretty_name(component.name())
-        name = f'[{name}]({url(constituent)})'
+        name = f'[{name}]({url(constituent)})' if hyperlinks else name
         if greek_notation:
             name += f' ({greek_notation})'
         frequency = component.freq
         xdo = component.xdo_alphabetical()
-        data[constituent.name] = {
+        data[constituent] = {
             'speed': numpy.degrees(frequency),
             'name': name,
             'xdo': f'{xdo[:1]} {xdo[1:4]} {xdo[4:]}',
@@ -83,12 +86,13 @@ def create_constituent_representation() -> str:
 
 def main() -> None:
     """Generate the CONSTITUENTS.md file."""
-    with open(ROOT / 'CONSTITUENTS.md', 'w') as stream:
-        stream.write(f"""# Tidal Constituents
+    with open(ROOT / 'FES_CONSTITUENTS.md', 'w') as stream:
+        stream.write(f"""# Tidal Constituents for FES
 
 This document provides a comprehensive reference of tidal constituents supported
-by the AVISO-FES library. Each constituent represents a harmonic component of
-the tidal signal, characterized by its angular speed and Doodson number
+by the FES (Finite Element Solution) prediction engine. Each constituent
+represents a harmonic component of the tidal signal and can be used to compute
+tidal predictions, characterized by its angular speed and Doodson number
 representation.
 
 For cross-validation, the table below is compared with the official list of
@@ -102,7 +106,28 @@ technical information about each constituent, including their physical
 significance and mathematical formulation, please refer to the [constituent
 documentation](https://cnes.github.io/aviso-fes/core/constituent.html).
 
-{create_constituent_representation()}
+{
+            create_constituent_representation(
+                pyfes.core.darwin.WaveTable(),
+                hyperlinks=True,
+            )
+        }
+""")
+
+    with open(ROOT / 'PERTH_CONSTITUENTS.md', 'w') as stream:
+        stream.write(f"""# Tidal Constituents for Perth
+
+This document provides a comprehensive reference of tidal constituents supported
+by the Perth prediction engine. Each constituent represents a harmonic component
+of the tidal signal and can be used to compute tidal predictions, characterized
+by its angular speed and Doodson number representation.
+
+For cross-validation, the table below is compared with the official list of
+tidal constituents available at
+[this URL](
+https://iho.int/mtg_docs/com_wg/IHOTC/IHOTC_Misc/TWCWG_Constituent_list.pdf),
+which contains the same information.
+{create_constituent_representation(pyfes.core.perth.WaveTable())}
 """)
 
 

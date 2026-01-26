@@ -5,44 +5,17 @@
 /// @file include/fes/abstract_tidal_model.hpp
 /// @brief Abstract tidal model.
 #pragma once
+
 #include <complex>
-#include <map>
-#include <string>
-#include <utility>
-#include <vector>
+#include <cstdint>
 
 #include "fes/angle/astronomic.hpp"
-#include "fes/darwin/constituent.hpp"
-#include "fes/eigen.hpp"
+#include "fes/enum_mapper.hpp"
 #include "fes/geometry/point.hpp"
-#include "fes/perth/constituent.hpp"
 #include "fes/tidal_constituents.hpp"
+#include "fes/types.hpp"
 
 namespace fes {
-
-/// @brief Traits to parse constituent names to enum values.
-/// @tparam EnumType The type of the constituent enum.
-template <typename EnumType>
-struct ConstituentTraits {
-  /// @brief Parse a constituent name to its enum value.
-  static EnumType parse(const std::string& name);
-};
-
-/// @brief Specialization of ConstituentTraits for fes::perth::Constituent.
-template <>
-struct ConstituentTraits<perth::Constituent> {
-  static perth::Constituent parse(const std::string& name) {
-    return perth::constituents::parse(name);
-  }
-};
-
-/// @brief Specialization of ConstituentTraits for fes::Constituent.
-template <>
-struct ConstituentTraits<darwin::Constituent> {
-  static darwin::Constituent parse(const std::string& name) {
-    return darwin::constituents::parse(name);
-  }
-};
 
 /// @brief The quality flag for tidal model interpolation.
 ///
@@ -65,17 +38,13 @@ enum TideType : uint8_t {
 };
 
 /// @brief Constituent values type
-/// @tparam ConstituentId The type of the constituent identifier.
-template <typename ConstituentId>
-using ConstituentValues =
-    std::vector<std::pair<ConstituentId, std::complex<double>>>;
+using ConstituentValues = std::vector<std::pair<uint8_t, Complex>>;
 
 /// @brief Base class for accelerating the interpolation of tidal models.
 ///
 /// Accelerators are used to speed up the interpolation of tidal models by
 /// caching the results of the last interpolation done. This class serves as a
 /// base class for all tidal model accelerators.
-template <typename ConstituentId>
 class Accelerator {
  public:
   /// Default constructor
@@ -113,8 +82,7 @@ class Accelerator {
   /// @brief Returns the tidal constituent values interpolated at the given
   /// point.
   /// @return the tidal constituent values interpolated at the given point.
-  constexpr auto values() const noexcept
-      -> const ConstituentValues<ConstituentId>& {
+  constexpr auto values() const noexcept -> const ConstituentValues& {
     return values_;
   }
 
@@ -123,8 +91,8 @@ class Accelerator {
 
   /// @brief Appends a tidal constituent value to the cached interpolated
   /// values.
-  auto emplace_back(const ConstituentId& constituent,
-                    const std::complex<double>& value) noexcept -> void {
+  auto emplace_back(const uint8_t& constituent, const Complex& value) noexcept
+      -> void {
     values_.emplace_back(constituent, value);
   }
 
@@ -151,46 +119,22 @@ class Accelerator {
   std::pair<double, angle::Astronomic> angle_;
 
   /// @brief The tidal constituent values interpolated at the last point.
-  ConstituentValues<ConstituentId> values_;
-};
-
-/// @brief Universal abstract base class for tidal models.
-///
-/// This class provides a constituent-agnostic interface to the tidal model.
-template <typename T>
-class TidalModel : public std::enable_shared_from_this<TidalModel<T>> {
- public:
-  /// @brief Default constructor
-  TidalModel() = default;
-
-  /// @brief Constructor with tide type.
-  /// @param[in] tide_type The tide type handled by the model.
-  explicit TidalModel(TideType tide_type) : tide_type_(tide_type) {}
-
-  /// @brief Destructor
-  virtual ~TidalModel() = default;
-
-  /// @brief Get the tide type handled by the model.
-  constexpr auto tide_type() const -> TideType { return tide_type_; }
-
- protected:
-  TideType tide_type_{TideType::kTide};
+  ConstituentValues values_;
 };
 
 /// @brief Abstract class for a model of tidal constituents.
 ///
 /// @tparam T The type of tidal constituents modelled.
-/// @tparam ConstituentId The type of the constituent identifier.
-template <typename T, typename ConstituentId>
-class AbstractTidalModel : public TidalModel<T> {
+template <typename T>
+class AbstractTidalModel
+    : public std::enable_shared_from_this<AbstractTidalModel<T>> {
  public:
-  /// Default constructor
-  AbstractTidalModel() = default;
-
   /// Build a tidal model with a given tide type.
   ///
   /// @param[in] tide_type The tide type handled by the model.
-  explicit AbstractTidalModel(TideType tide_type) : TidalModel<T>(tide_type) {}
+  explicit AbstractTidalModel(EnumMapper<uint8_t> enum_mapper,
+                              TideType tide_type)
+      : enum_mapper_(std::move(enum_mapper)), tide_type_(tide_type) {}
 
   /// Destructor
   virtual ~AbstractTidalModel() = default;
@@ -206,13 +150,13 @@ class AbstractTidalModel : public TidalModel<T> {
   /// tidal models.
   virtual auto accelerator(const angle::Formulae& formulae,
                            const double time_tolerance) const
-      -> Accelerator<ConstituentId>* = 0;
+      -> Accelerator* = 0;
 
   /// Add a tidal constituent to the model.
   ///
   /// @param[in] ident The tidal constituent identifier.
   /// @param[in] wave The tidal constituent modelled.
-  virtual auto add_constituent(const ConstituentId ident,
+  virtual auto add_constituent(const uint8_t ident,
                                Vector<std::complex<T>> wave) -> void = 0;
 
   /// Add a tidal constituent to the model.
@@ -222,19 +166,36 @@ class AbstractTidalModel : public TidalModel<T> {
   /// @param[in] wave The tidal constituent modelled.
   inline auto add_constituent(const std::string& name,
                               Vector<std::complex<T>> wave) -> void {
-    add_constituent(ConstituentTraits<ConstituentId>::parse(name),
-                    std::move(wave));
+    try {
+      add_constituent(enum_mapper_.from_string(name), std::move(wave));
+    } catch (const std::invalid_argument& e) {
+      throw std::invalid_argument("constituent name not known: " + name);
+    }
   }
 
   /// Set the dynamic tidal constituents not interpolated by the model.
   ///
   /// @param[in] dynamic The dynamic tidal constituents.
-  inline auto dynamic(std::vector<ConstituentId> dynamic) -> void {
-    dynamic_ = std::move(dynamic);
+  inline auto dynamic(const std::vector<std::string>& dynamic) -> void {
+    dynamic_.clear();
+    dynamic_.reserve(dynamic.size());
+    for (auto& item : dynamic) {
+      dynamic_.push_back(enum_mapper_.from_string(item));
+    }
   }
 
   /// Get the dynamic tidal constituents not interpolated by the model.
-  constexpr auto dynamic() const -> const std::vector<ConstituentId>& {
+  inline auto dynamic() const -> std::vector<std::string> {
+    auto result = std::vector<std::string>();
+    result.reserve(dynamic_.size());
+    for (const auto& item : dynamic_) {
+      result.push_back(enum_mapper_.to_string(item));
+    }
+    return result;
+  }
+
+  /// Get the dynamic tidal constituents not interpolated by the model.
+  constexpr auto dynamic_ids() const noexcept -> const std::vector<uint8_t>& {
     return dynamic_;
   }
 
@@ -246,19 +207,19 @@ class AbstractTidalModel : public TidalModel<T> {
   /// @param[inout] acc The accelerator to use.
   /// @return A list of interpolated tidal constituents.
   virtual auto interpolate(const geometry::Point& point, Quality& quality,
-                           Accelerator<ConstituentId>* acc) const
-      -> const ConstituentValues<ConstituentId>& = 0;
+                           Accelerator* acc) const
+      -> const ConstituentValues& = 0;
 
   /// Interpolate the tidal constituent at a given point.
   ///
   /// @param[in] point The point to interpolate at.
-  /// @param[inout] constituents The constituent set to fill.
+  /// @param[inout] constituents The tidal constituents to set.
   /// @param[inout] acc The accelerator to use.
   /// @return A flag indicating if the point was extrapolated, interpolated or
   /// if the model is undefined.
   inline auto interpolate(const geometry::Point& point,
-                          TidalConstituents<ConstituentId>& constituents,
-                          Accelerator<ConstituentId>* acc) const -> Quality {
+                          TidalConstituents& constituents,
+                          Accelerator* acc) const -> Quality {
     Quality quality;
     for (const auto& item : this->interpolate(point, quality, acc)) {
       constituents.set_tide(std::get<0>(item), std::get<1>(item));
@@ -268,7 +229,7 @@ class AbstractTidalModel : public TidalModel<T> {
 
   /// Get the tidal constituents handled by the model.
   constexpr auto data() const
-      -> const std::map<ConstituentId, Vector<std::complex<T>>>& {
+      -> const std::map<uint8_t, Vector<std::complex<T>>>& {
     return data_;
   }
 
@@ -285,8 +246,8 @@ class AbstractTidalModel : public TidalModel<T> {
   constexpr auto size() const -> size_t { return data_.size(); }
 
   /// Get the tidal constituent identifiers handled by the model.
-  inline auto identifiers() const -> std::vector<ConstituentId> {
-    auto result = std::vector<ConstituentId>();
+  inline auto identifiers() const -> std::vector<uint8_t> {
+    auto result = std::vector<uint8_t>();
     result.reserve(data_.size());
     for (const auto& item : data_) {
       result.push_back(std::get<0>(item));
@@ -294,12 +255,26 @@ class AbstractTidalModel : public TidalModel<T> {
     return result;
   }
 
+  /// Get the tide type handled by the model.
+  constexpr auto tide_type() const -> TideType { return tide_type_; }
+
+  /// Get the enum mapper for constituents.
+  constexpr auto enum_mapper() const -> const EnumMapper<uint8_t>& {
+    return enum_mapper_;
+  }
+
  protected:
+  /// Enum mapper for constituents
+  EnumMapper<uint8_t> enum_mapper_;
+
   /// Tidal constituents handled by the model.
-  std::map<ConstituentId, Vector<std::complex<T>>> data_{};
+  std::map<uint8_t, Vector<std::complex<T>>> data_{};
 
   /// List of tidal constituents handled by the model but not interpolated.
-  std::vector<ConstituentId> dynamic_{};
+  std::vector<uint8_t> dynamic_{};
+
+  /// Tide type
+  TideType tide_type_{TideType::kTide};
 };
 
 }  // namespace fes
