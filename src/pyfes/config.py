@@ -25,7 +25,7 @@ import numpy
 import yaml
 
 
-from .core.tidal_model import (
+from .core import (
     AbstractTidalModelComplex64,
     AbstractTidalModelComplex128,
     RADIAL as _RADIAL,

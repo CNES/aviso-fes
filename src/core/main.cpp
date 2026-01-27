@@ -43,14 +43,14 @@ PYBIND11_MODULE(core, m) {
   // Mesh handling
   init_mesh_index(mesh);
 
-  // Tidal model abstractions
-  init_axis(m);
-  init_abstract_tidal_model(tidal_model);
-  init_cartesian_model(tidal_model);
-  init_lgp_model(tidal_model);
-
   // Tidal constituents for FES and Perth5
   init_constituent(m, darwin, perth);
+
+  // Tidal model abstractions
+  init_axis(m);
+  init_abstract_tidal_model(m);
+  init_cartesian_model(tidal_model);
+  init_lgp_model(tidal_model);
 
   // FES Model
   init_darwin_wave(darwin);

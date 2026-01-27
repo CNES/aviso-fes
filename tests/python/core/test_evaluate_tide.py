@@ -82,7 +82,7 @@ BREST_LOCATION = (-4.495, 48.383)
 
 def load_model(
     configuration: dict[str, pathlib.Path],
-    tide_type: core.tidal_model.TideType,
+    tide_type: core.TideType,
 ) -> core.tidal_model.CartesianComplex64:
     """Load a tidal model from netCDF files."""
     model = None
@@ -170,8 +170,8 @@ def test_tide() -> None:
         'Q1': DATASET / 'Q1_radial.nc',
         'S2': DATASET / 'S2_radial.nc',
     }
-    radial_model = load_model(wave_files, core.tidal_model.RADIAL)
-    tidal_model = load_model(TIDAL_WAVES, core.tidal_model.TIDE)
+    radial_model = load_model(wave_files, core.RADIAL)
+    tidal_model = load_model(TIDAL_WAVES, core.TIDE)
     dates = numpy.empty((24,), dtype='M8[ms]')
     lons = numpy.empty((24,), dtype=numpy.float64)
     lats = numpy.empty((24,), dtype=numpy.float64)
@@ -239,7 +239,7 @@ def test_parallel_tide_evaluation() -> None:
 
     # Create a simple tidal model (you'll need to adapt this to your actual
     # model)
-    tidal_model = load_model(TIDAL_WAVES, core.tidal_model.TideType.TIDE)
+    tidal_model = load_model(TIDAL_WAVES, core.TIDE)
 
     num_threads = 4
 

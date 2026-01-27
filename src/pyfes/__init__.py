@@ -12,7 +12,7 @@ sea level.
 """
 
 from collections.abc import Mapping
-from .core.tidal_model import (
+from .core import (
     AbstractTidalModelComplex128,
     AbstractTidalModelComplex64,
     TIDE as TIDE,

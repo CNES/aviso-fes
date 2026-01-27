@@ -14,8 +14,10 @@ namespace fes {
 namespace mesh {
 
 void init_index(py::module& m) {
-  py::class_<Index, std::shared_ptr<Index>>(m, "Index",
-                                            "Index the triangles of a mesh.")
+  py::class_<Index, std::shared_ptr<Index>>(
+      m, "Index",
+      "Provide efficient spatial indexing of mesh triangles for rapid spatial "
+      "queries.")
       .def(py::init<Eigen::VectorXd, Eigen::VectorXd,
                     Eigen::Matrix<int32_t, -1, 3>>(),
            py::arg("lon"), py::arg("lat"), py::arg("triangles"),
@@ -23,25 +25,25 @@ void init_index(py::module& m) {
 Construct an index of a mesh.
 
 Args:
-    lon: The longitude of the vertices.
-    lat: The latitude of the vertices.
-    triangles: The triangles of the mesh.
+    lon: Specify the longitude of the vertices.
+    lat: Specify the latitude of the vertices.
+    triangles: Provide the triangles of the mesh.
 )__doc__",
            py::call_guard<py::gil_scoped_release>())
       .def("lon", &Index::lon, R"__doc__(
-Get the longitude of the vertices.
+Retrieve the longitude of the vertices.
 
 Returns:
     The longitude of the vertices.
 )__doc__")
       .def("lat", &Index::lat, R"__doc__(
-Get the latitude of the vertices.
+Retrieve the latitude of the vertices.
 
 Returns:
     The latitude of the vertices.
 )__doc__")
       .def("triangles", &Index::triangles, R"__doc__(
-Get the triangles of the mesh.
+Retrieve the triangles of the mesh.
 
 Returns:
     The triangles of the mesh.
