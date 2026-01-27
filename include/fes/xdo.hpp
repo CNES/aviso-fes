@@ -32,8 +32,8 @@ inline auto xdo_numerical(const Eigen::Ref<const Vector7b>& doodson)
 
   // First element uses raw value, others add offset of 5
   result.push_back(code(doodson[0]));
-  for (size_t i = 1; i < doodson.size(); ++i) {
-    result.push_back(code(doodson[i] + 5));
+  for (int64_t ix = 1; ix < doodson.size(); ++ix) {
+    result.push_back(code(doodson[ix] + 5));
   }
   return result;
 }
