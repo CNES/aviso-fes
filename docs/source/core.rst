@@ -14,7 +14,6 @@ These classes are used to map the C++ enumerators to Python.
 .. toctree::
    :maxdepth: 1
 
-   core/constituent
    core/formulae
    core/tide_type
 
@@ -27,10 +26,11 @@ astronomic angles.
 .. toctree::
    :maxdepth: 1
 
-
    core/astronomic_angle
    core/wave
    core/wave_table
+   core/darwin/index
+   core/perth/index
 
 Tidal Models
 ------------
@@ -42,6 +42,7 @@ at the requested spatio-temporal coordinates.
    :maxdepth: 2
 
    core/abstract
+   core/index
    core/tidal_model/cartesian
    core/tidal_model/lgp1
    core/tidal_model/lgp2

@@ -11,21 +11,21 @@
 
         :param value: The value of the formula.
 
-    .. autoattribute:: kSchuremanOrder1
+    .. autoattribute:: SCHUREMAN_ORDER_1
 
         Schureman's formula of order 1.
 
-    .. autoattribute:: kSchuremanOrder3
+    .. autoattribute:: SCHUREMAN_ORDER_3
 
         Schureman's formula of order 3.
 
-    .. autoattribute:: kMeeus
+    .. autoattribute:: MEEUS
 
         Meeus' formula.
 
-    .. autoattribute:: kIERS
+    .. autoattribute:: IERS
 
-        `IERS' formula <https://hpiers.obspm.fr/eop-pc/models/nutations/nut_oceanic.html>`_.
+        `IERS's formula <https://hpiers.obspm.fr/eop-pc/models/nutations/nut_oceanic.html>`_.
 
     .. property:: name
 

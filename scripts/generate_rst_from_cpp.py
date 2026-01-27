@@ -169,18 +169,10 @@ class ConstituentParser:
 
         rst_lines.append('.. currentmodule:: pyfes.core')
         rst_lines.append('')
-        rst_lines.append('.. _core_constituents:')
+        rst_lines.append('.. _schureman_reference:')
         rst_lines.append('')
-        rst_lines.append('Tidal constituents')
-        rst_lines.append('==================')
-        rst_lines.append('')
-        rst_lines.append(
-            'List of tidal constituents handled by the library. '
-            'Use :py:func:`pyfes.core.darwin.constituents` to retrieve the '
-            'runtime mapping from constituent string keys to internal '
-            'values. Keys correspond to the names below (for example, '
-            '``M2``).'
-        )
+        rst_lines.append('Constituents Reference')
+        rst_lines.append('======================')
         rst_lines.append('')
 
         for constituent in constituents:
@@ -193,16 +185,14 @@ class ConstituentParser:
         lines = []
 
         key = constituent['enum_name'][1:]
+        title = f'{key}'
         anchor = key.lower()
         lines.append(f'.. _constituent-{anchor}:')
         lines.append('')
-        lines.append(f'.. rubric:: :math:`{constituent["math_name"]}`')
+        lines.append(f'{title}')
+        lines.append('-' * len(title))
         lines.append('')
-        lines.append(
-            'Identifier returned by '
-            ':py:func:`pyfes.core.darwin.constituents`: '
-            f'``{key}``.'
-        )
+        lines.append(f':math:`{constituent["math_name"]}`')
         lines.append('')
 
         # Table
@@ -247,9 +237,11 @@ def main() -> None:
         '"C++ header file.',
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    wave_path = ROOT / 'include' / 'fes' / 'darwin' / 'wave.hpp'
-    constituent_path = ROOT / 'include' / 'fes' / 'darwin' / 'constituent.hpp'
-    output_rst = ROOT / 'docs' / 'source' / 'core' / 'constituent.rst'
+    include = ROOT / 'include' / 'fes'
+    docs = ROOT / 'docs' / 'source'
+    wave_path = include / 'darwin' / 'wave.hpp'
+    constituent_path = include / 'darwin' / 'constituent.hpp'
+    output_rst = docs / 'core' / 'darwin' / 'reference.rst'
     parser.add_argument(
         '--verbose', '-v', action='store_true', help='Enable verbose output'
     )

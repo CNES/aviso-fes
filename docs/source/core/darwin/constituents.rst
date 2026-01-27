@@ -1,0 +1,159 @@
+.. currentmodule:: pyfes.core
+
+FES Constituents
+================
+
+This page documents all tidal constituents supported by the FES
+prediction engine.
+
+Accessing Constituents Programmatically
+---------------------------------------
+
+To retrieve the wave properties of the constituents supported by the
+FES engine, you can use the :func:`pyfes.darwin.WaveTable`
+class, which provides a mapping of constituent names to their corresponding
+properties.
+
+.. code-block:: python
+
+    import pyfes
+
+    # Get the constituent map for the FES engine
+    wt = pyfes.darwin.WaveTable()
+
+    # Access a specific constituent by name
+    m2 = wt['M2']
+    # Print the name and frequency of the M2 constituent
+    print(f"Name: {m2.name()}, Frequency: {m2.freq}")
+
+    # Iterate over all constituents
+    for wave in wt:
+        print(f"Constituent: {wave.name()}, Frequency: {wave.freq}")
+
+.. _fes_constituents:
+
+Available Constituents
+----------------------
+
+The FES engine supports the following tidal constituents:
+
+============================  =============  =========
+Name                          Speed (deg/h)  XDO
+============================  =============  =========
+M0                            0.0000000      Z ZZZ ZZZ
+Sa1                           0.0410667      Z ZAZ ZYZ
+Sa                            0.0410686      Z ZAZ ZZZ
+Ssa                           0.0821373      Z ZBZ ZZZ
+Sta                           0.1232040      Z ZCZ ZYZ
+Mm                            0.5443747      Z AZY ZZZ
+Mm2                           0.5490165      Z AZZ ZZA
+Mm1                           0.5536583      Z AZA ZZB
+A5                            1.0158958      Z BXZ ZZZ
+MSf                           1.0158958      Z BXZ ZZZ
+Mf1                           1.0887494      Z BZX ZZZ
+Mf2                           1.0933912      Z BZY ZZA
+Mf                            1.0980330      Z BZZ ZZZ
+Mtm                           1.6424077      Z CZY ZZZ
+MSqm                          2.1139288      Z DXZ ZZZ
+2Q1                           12.8542862     A WZB ZZY
+Sigma1 (:math:`{\sigma}1`)    12.9271398     A WBZ ZZY
+Q1                            13.3986609     A XZA ZZY
+Rho1 (:math:`{\rho}1`)        13.4715145     A XBY ZZY
+O1                            13.9430356     A YZZ ZZY
+MP1                           14.0251729     A YBZ ZZA
+M11                           14.4874103     A ZZY ZZA
+M13                           14.4920521     A ZZZ ZZZ
+M1                            14.4966939     A ZZA ZZA
+M12                           14.4966939     A ZZA ZZA
+Chi1 (:math:`{\chi}1`)        14.5695476     A ZBY ZZA
+Pi1 (:math:`{\pi}1`)          14.9178647     A AWZ ZAY
+P1                            14.9589314     A AXZ ZZY
+S1                            15.0000000     A AYZ ZZZ
+K1                            15.0410686     A AZZ ZZA
+Psi1 (:math:`{\psi}1`)        15.0821353     A AAZ ZYA
+Phi1 (:math:`{\phi}1`)        15.1232059     A ABZ ZZA
+Theta1 (:math:`{\theta}1`)    15.5125897     A BXA ZZA
+J1                            15.5854433     A BZY ZZA
+SO1                           16.0569644     A CXZ ZZA
+OO1                           16.1391017     A CZZ ZZA
+2NS2                          26.8794591     B VBB ZZZ
+OQ2                           27.3416965     B WZA ZZB
+Eps2 (:math:`{\epsilon}2`)    27.4238338     B WBA ZZZ
+MNS2                          27.4238338     B WBA ZZZ
+MNuS2 (:math:`M{\nu}S2`)      27.4966874     B WDY ZZZ
+2MK2                          27.8860712     B XZZ ZZZ
+2N2                           27.8953548     B XZB ZZZ
+2MS2                          27.9682085     B XBZ ZZZ
+Mu2 (:math:`{\mu}2`)          27.9682085     B XBZ ZZZ
+N2P                           28.4350877     B YZZ ZZY
+N2                            28.4397295     B YZA ZZZ
+Nu2 (:math:`{\nu}2`)          28.5125832     B YBY ZZZ
+MSK2                          28.9019670     B ZXZ ZZZ
+M2                            28.9841042     B ZZZ ZZZ
+MKS2                          29.0662415     B ZBZ ZZZ
+Lambda2 (:math:`{\lambda}2`)  29.4556253     B AXA ZZB
+2MN2                          29.5284789     B AZY ZZB
+L2                            29.5284789     B AZY ZZB
+L2P                           29.5331208     B AZZ ZZA
+NKM2                          29.5377626     B AZA ZZZ
+T2                            29.9589333     B BWZ ZAZ
+S2                            30.0000000     B BXZ ZZZ
+R2                            30.0410667     B BYZ ZYB
+K2                            30.0821373     B BZZ ZZZ
+MSN2                          30.5443747     B CXY ZZZ
+Eta2 (:math:`{\eta}2`)        30.6265120     B CZY ZZZ
+2SM2                          31.0158958     B DVZ ZZZ
+SKM2                          31.0980330     B DXZ ZZZ
+2SMu2 (:math:`2S{\mu}2`)      32.0317915     B FTZ ZZZ
+2MK3                          42.9271398     C YZZ ZZY
+MO3                           42.9271398     C YZZ ZZY
+M3                            43.4761564     C ZZZ ZZZ
+SO3                           43.9430356     C AXZ ZZY
+MK3                           44.0251729     C AZZ ZZA
+SK3                           45.0410686     C CXZ ZZA
+2MNS4                         56.4079380     D WBA ZZZ
+N4                            56.8794591     D XZB ZZZ
+3MS4                          56.9523127     D XBZ ZZZ
+MN4                           57.4238338     D YZA ZZZ
+MNu4 (:math:`M{\nu}4`)        57.4966874     D YBY ZZZ
+M4                            57.9682085     D ZZZ ZZZ
+SN4                           58.4397295     D AXA ZZZ
+ML4                           58.5125832     D AZY ZZZ
+NK4                           58.5218668     D AZA ZZZ
+MS4                           58.9841042     D BXZ ZZZ
+MK4                           59.0662415     D BZZ ZZZ
+2MSN4                         59.5284789     D CXY ZZZ
+S4                            60.0000000     D DVZ ZZZ
+R4                            60.0821334     D DXZ ZXZ
+SK4                           60.0821373     D DXZ ZZZ
+2MP5                          72.9271398     E AXZ ZZY
+2NM6                          85.8635633     F XZB ZZZ
+2MN6                          86.4079380     F YZA ZZZ
+M6                            86.9523127     F ZZZ ZZZ
+MSN6                          87.4238338     F AXA ZZZ
+MNK6                          87.5059711     F AZA ZZZ
+2MS6                          87.9682085     F BXZ ZZZ
+2MK6                          88.0503458     F BZZ ZZZ
+2SM6                          88.9841042     F DVZ ZZZ
+MSK6                          89.0662415     F DXZ ZZZ
+S6                            90.0000000     F FTZ ZZZ
+M8                            115.9364170    H ZZZ ZZZ
+3MS8                          116.9523127    H BXZ ZZZ
+============================  =============  =========
+
+For detailed information about each constituent's mathematical formulation, and
+reference, see the :ref:`FES constituent implementation details
+<schureman_reference>` page.
+
+Class Documentation
+-------------------
+
+.. autoclass:: pyfes.darwin.WaveTable
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. autoclass:: pyfes.darwin.Wave
+    :members:
+    :undoc-members:
+    :show-inheritance:

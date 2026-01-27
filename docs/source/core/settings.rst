@@ -1,9 +1,17 @@
 .. currentmodule:: pyfes.core
 
 .. autoclass:: Settings
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. autoclass:: FesRuntimeSettings
+   :show-inheritance:
 
    .. automethod:: __init__
 
-   .. autoattribute:: astronomic_formulae
+.. autoclass:: PerthRuntimeSettings
+   :members:
+   :show-inheritance:
 
-   .. autoattribute:: time_tolerance
+   .. automethod:: __init__

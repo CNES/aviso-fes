@@ -43,6 +43,30 @@ and Tamura (1987).
 
 .. autofunction:: pyfes.evaluate_equilibrium_long_period
 
+Constituent map
+---------------
+
+.. currentmodule:: pyfes
+
+.. autoclass:: pyfes.core.ConstituentMap
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+FES/Darwin engine
+-----------------
+
+.. currentmodule:: pyfes
+
+.. autofunction:: pyfes.darwin.constituents
+
+Perth/Doodson engine
+--------------------
+
+.. currentmodule:: pyfes
+
+.. autofunction:: pyfes.perth.constituents
+
 Configuration file
 ------------------
 
@@ -52,13 +76,17 @@ file. For more information on the configuration file format, see the
 
 .. currentmodule:: pyfes
 
-.. autofunction:: pyfes.load_config
+.. autofunction:: pyfes.config.load
 
 Configuration classes
 ---------------------
 
 The configuration classes are used to store the configuration of the tidal
 model.
+
+.. autoclass:: pyfes.config.Configuration
+   :members:
+   :show-inheritance:
 
 .. autoclass:: pyfes.config.Common
    :members:
@@ -85,38 +113,23 @@ The settings are used to control the behavior of the tidal evaluation.
    :undoc-members:
    :show-inheritance:
 
+.. autoclass:: pyfes.FesRuntimeSettings
+   :show-inheritance:
+
+   .. automethod:: __init__
+
+.. autoclass:: pyfes.PerthRuntimeSettings
+   :members:
+   :show-inheritance:
+
+   .. automethod:: __init__
+
 Astronomic angles
 -----------------
 
 .. currentmodule:: pyfes.astronomic_angle
 
 .. autoclass:: pyfes.astronomic_angle.AstronomicAngle
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Tidal constituents
-------------------
-
-.. currentmodule:: pyfes.constituents
-
-.. autofunction:: pyfes.constituents.known
-
-.. autofunction:: pyfes.constituents.name
-
-.. autofunction:: pyfes.constituents.parse
-
-Constituents Analysis
----------------------
-
-.. currentmodule:: pyfes.wave_table
-
-.. autoclass:: pyfes.wave_table.WaveTable
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-.. autoclass:: pyfes.wave_table.WaveDict
    :members:
    :undoc-members:
    :show-inheritance:

@@ -1,17 +1,16 @@
 .. currentmodule:: pyfes.core
 
-.. _core_constituents:
+.. _schureman_reference:
 
-Tidal constituents
-==================
-
-List of tidal constituents handled by the library. Use :py:func:`pyfes.core.darwin.constituents` to retrieve the runtime mapping from constituent string keys to internal values. Keys correspond to the names below (for example, ``M2``).
+Constituents Reference
+======================
 
 .. _constituent-mm:
 
-.. rubric:: :math:`Mm`
+Mm
+--
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``Mm``.
+:math:`Mm`
 
 =============  =============  =============
 V              u              Factor-f
@@ -25,9 +24,10 @@ V              u              Factor-f
 
 .. _constituent-mf:
 
-.. rubric:: :math:`Mf`
+Mf
+--
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``Mf``.
+:math:`Mf`
 
 =============  =============  =============
 V              u              Factor-f
@@ -41,9 +41,10 @@ V              u              Factor-f
 
 .. _constituent-mtm:
 
-.. rubric:: :math:`Mtm`
+Mtm
+---
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``Mtm``.
+:math:`Mtm`
 
 ==============  ==============  ==============
 V               u               Factor-f
@@ -57,9 +58,10 @@ V               u               Factor-f
 
 .. _constituent-msqm:
 
-.. rubric:: :math:`MSqm`
+MSqm
+----
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``MSqm``.
+:math:`MSqm`
 
 ===============  ===============  ===============
 V                u                Factor-f
@@ -73,9 +75,10 @@ V                u                Factor-f
 
 .. _constituent-ssa:
 
-.. rubric:: :math:`Ssa`
+Ssa
+---
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``Ssa``.
+:math:`Ssa`
 
 ==========  ==========  ==========
 V           u           Factor-f
@@ -89,9 +92,10 @@ V           u           Factor-f
 
 .. _constituent-sa:
 
-.. rubric:: :math:`Sa`
+Sa
+--
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``Sa``.
+:math:`Sa`
 
 ==========  ==========  ==========
 V           u           Factor-f
@@ -105,9 +109,10 @@ V           u           Factor-f
 
 .. _constituent-2q1:
 
-.. rubric:: :math:`2Q_1`
+2Q1
+---
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``2Q1``.
+:math:`2Q_1`
 
 ====================================  ====================================  ====================================
 V                                     u                                     Factor-f
@@ -121,9 +126,10 @@ V                                     u                                     Fact
 
 .. _constituent-sigma1:
 
-.. rubric:: :math:`\sigma_1`
+Sigma1
+------
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``Sigma1``.
+:math:`\sigma_1`
 
 ================================  ================================  ================================
 V                                 u                                 Factor-f
@@ -137,9 +143,10 @@ V                                 u                                 Factor-f
 
 .. _constituent-q1:
 
-.. rubric:: :math:`Q_1`
+Q1
+--
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``Q1``.
+:math:`Q_1`
 
 ===================================  ===================================  ===================================
 V                                    u                                    Factor-f
@@ -153,9 +160,10 @@ V                                    u                                    Factor
 
 .. _constituent-rho1:
 
-.. rubric:: :math:`\rho_1`
+Rho1
+----
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``Rho1``.
+:math:`\rho_1`
 
 ====================================  ====================================  ====================================
 V                                     u                                     Factor-f
@@ -169,9 +177,10 @@ V                                     u                                     Fact
 
 .. _constituent-o1:
 
-.. rubric:: :math:`O_1`
+O1
+--
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``O1``.
+:math:`O_1`
 
 ===============================  ===============================  ===============================
 V                                u                                Factor-f
@@ -185,9 +194,10 @@ V                                u                                Factor-f
 
 .. _constituent-mp1:
 
-.. rubric:: :math:`MP_1`
+MP1
+---
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``MP1``.
+:math:`MP_1`
 
 ================================  ================================  ================================
 V                                 u                                 Factor-f
@@ -201,9 +211,10 @@ V                                 u                                 Factor-f
 
 .. _constituent-m1:
 
-.. rubric:: :math:`M1`
+M1
+--
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``M1``.
+:math:`M1`
 
 ==========================  ==========================  ==========================
 V                           u                           Factor-f
@@ -213,9 +224,10 @@ V                           u                           Factor-f
 
 .. _constituent-m11:
 
-.. rubric:: :math:`M1_{1}`
+M11
+---
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``M11``.
+:math:`M1_{1}`
 
 ==================================  ==================================  ==================================
 V                                   u                                   Factor-f
@@ -229,9 +241,10 @@ V                                   u                                   Factor-f
 
 .. _constituent-m12:
 
-.. rubric:: :math:`M1_{2}`
+M12
+---
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``M12``.
+:math:`M1_{2}`
 
 ==================================  ==================================  ==================================
 V                                   u                                   Factor-f
@@ -245,9 +258,10 @@ V                                   u                                   Factor-f
 
 .. _constituent-m13:
 
-.. rubric:: :math:`M1_{3}`
+M13
+---
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``M13``.
+:math:`M1_{3}`
 
 =================  =================  =================
 V                  u                  Factor-f
@@ -261,9 +275,10 @@ V                  u                  Factor-f
 
 .. _constituent-chi1:
 
-.. rubric:: :math:`\chi_1`
+Chi1
+----
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``Chi1``.
+:math:`\chi_1`
 
 ===================================  ===================================  ===================================
 V                                    u                                    Factor-f
@@ -277,9 +292,10 @@ V                                    u                                    Factor
 
 .. _constituent-pi1:
 
-.. rubric:: :math:`\pi_1`
+Pi1
+---
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``Pi1``.
+:math:`\pi_1`
 
 ================================  ================================  ================================
 V                                 u                                 Factor-f
@@ -293,9 +309,10 @@ V                                 u                                 Factor-f
 
 .. _constituent-p1:
 
-.. rubric:: :math:`P_1`
+P1
+--
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``P1``.
+:math:`P_1`
 
 ==========================  ==========================  ==========================
 V                           u                           Factor-f
@@ -309,9 +326,10 @@ V                           u                           Factor-f
 
 .. _constituent-s1:
 
-.. rubric:: :math:`S_1`
+S1
+--
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``S1``.
+:math:`S_1`
 
 ==========  ==========  ==========
 V           u           Factor-f
@@ -325,9 +343,10 @@ V           u           Factor-f
 
 .. _constituent-k1:
 
-.. rubric:: :math:`K_1`
+K1
+--
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``K1``.
+:math:`K_1`
 
 ==========================  ==========================  ==========================
 V                           u                           Factor-f
@@ -341,9 +360,10 @@ V                           u                           Factor-f
 
 .. _constituent-psi1:
 
-.. rubric:: :math:`\psi_1`
+Psi1
+----
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``Psi1``.
+:math:`\psi_1`
 
 ================================  ================================  ================================
 V                                 u                                 Factor-f
@@ -357,9 +377,10 @@ V                                 u                                 Factor-f
 
 .. _constituent-phi1:
 
-.. rubric:: :math:`\phi_1`
+Phi1
+----
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``Phi1``.
+:math:`\phi_1`
 
 ===========================  ===========================  ===========================
 V                            u                            Factor-f
@@ -373,9 +394,10 @@ V                            u                            Factor-f
 
 .. _constituent-theta1:
 
-.. rubric:: :math:`\theta_1`
+Theta1
+------
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``Theta1``.
+:math:`\theta_1`
 
 ==================================  ==================================  ==================================
 V                                   u                                   Factor-f
@@ -389,9 +411,10 @@ V                                   u                                   Factor-f
 
 .. _constituent-j1:
 
-.. rubric:: :math:`J_1`
+J1
+--
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``J1``.
+:math:`J_1`
 
 ==================================  ==================================  ==================================
 V                                   u                                   Factor-f
@@ -405,9 +428,10 @@ V                                   u                                   Factor-f
 
 .. _constituent-oo1:
 
-.. rubric:: :math:`OO_1`
+OO1
+---
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``OO1``.
+:math:`OO_1`
 
 ===============================  ===============================  ===============================
 V                                u                                Factor-f
@@ -421,9 +445,10 @@ V                                u                                Factor-f
 
 .. _constituent-mns2:
 
-.. rubric:: :math:`2MNS_2 = M_2 + N_2 + S_2`
+MNS2
+----
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``MNS2``.
+:math:`2MNS_2 = M_2 + N_2 + S_2`
 
 ========================  ========================  ========================
 V                         u                         Factor-f
@@ -437,9 +462,10 @@ V                         u                         Factor-f
 
 .. _constituent-eps2:
 
-.. rubric:: :math:`\varepsilon_2`
+Eps2
+----
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``Eps2``.
+:math:`\varepsilon_2`
 
 ========================  ========================  ========================
 V                         u                         Factor-f
@@ -449,9 +475,10 @@ V                         u                         Factor-f
 
 .. _constituent-2n2:
 
-.. rubric:: :math:`2N_2`
+2N2
+---
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``2N2``.
+:math:`2N_2`
 
 =========================  =========================  =========================
 V                          u                          Factor-f
@@ -465,9 +492,10 @@ V                          u                          Factor-f
 
 .. _constituent-mu2:
 
-.. rubric:: :math:`\mu_2`
+Mu2
+---
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``Mu2``.
+:math:`\mu_2`
 
 ====================  ====================  ====================
 V                     u                     Factor-f
@@ -481,9 +509,10 @@ V                     u                     Factor-f
 
 .. _constituent-2ms2:
 
-.. rubric:: :math:`2MS_2 = 2M_2 - S_2`
+2MS2
+----
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``2MS2``.
+:math:`2MS_2 = 2M_2 - S_2`
 
 ====================  ====================  ====================
 V                     u                     Factor-f
@@ -493,9 +522,10 @@ V                     u                     Factor-f
 
 .. _constituent-n2:
 
-.. rubric:: :math:`N_2`
+N2
+--
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``N2``.
+:math:`N_2`
 
 ========================  ========================  ========================
 V                         u                         Factor-f
@@ -509,9 +539,10 @@ V                         u                         Factor-f
 
 .. _constituent-nu2:
 
-.. rubric:: :math:`\nu_2`
+Nu2
+---
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``Nu2``.
+:math:`\nu_2`
 
 ========================  ========================  ========================
 V                         u                         Factor-f
@@ -525,9 +556,10 @@ V                         u                         Factor-f
 
 .. _constituent-m2:
 
-.. rubric:: :math:`M_2`
+M2
+--
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``M2``.
+:math:`M_2`
 
 ====================  ====================  ====================
 V                     u                     Factor-f
@@ -541,9 +573,10 @@ V                     u                     Factor-f
 
 .. _constituent-mks2:
 
-.. rubric:: :math:`MKS_2 = M_2 + K_2 - S_2`
+MKS2
+----
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``MKS2``.
+:math:`MKS_2 = M_2 + K_2 - S_2`
 
 ==========================================  ==========================================  ==========================================
 V                                           u                                           Factor-f
@@ -553,9 +586,10 @@ V                                           u                                   
 
 .. _constituent-lambda2:
 
-.. rubric:: :math:`\lambda_2`
+Lambda2
+-------
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``Lambda2``.
+:math:`\lambda_2`
 
 ================================  ================================  ================================
 V                                 u                                 Factor-f
@@ -569,9 +603,10 @@ V                                 u                                 Factor-f
 
 .. _constituent-l2:
 
-.. rubric:: :math:`L_2`
+L2
+--
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``L2``.
+:math:`L_2`
 
 =====================================  =====================================  =====================================
 V                                      u                                      Factor-f
@@ -585,9 +620,10 @@ V                                      u                                      Fa
 
 .. _constituent-2mn2:
 
-.. rubric:: :math:`2MN_2 = 2M_2 - N_2`
+2MN2
+----
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``2MN2``.
+:math:`2MN_2 = 2M_2 - N_2`
 
 =====================================  =====================================  =====================================
 V                                      u                                      Factor-f
@@ -597,9 +633,10 @@ V                                      u                                      Fa
 
 .. _constituent-t2:
 
-.. rubric:: :math:`T_2`
+T2
+--
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``T2``.
+:math:`T_2`
 
 ====================  ====================  ====================
 V                     u                     Factor-f
@@ -613,9 +650,10 @@ V                     u                     Factor-f
 
 .. _constituent-s2:
 
-.. rubric:: :math:`S_2`
+S2
+--
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``S2``.
+:math:`S_2`
 
 ==========  ==========  ==========
 V           u           Factor-f
@@ -629,9 +667,10 @@ V           u           Factor-f
 
 .. _constituent-r2:
 
-.. rubric:: :math:`R_2`
+R2
+--
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``R2``.
+:math:`R_2`
 
 =================================  =================================  =================================
 V                                  u                                  Factor-f
@@ -645,9 +684,10 @@ V                                  u                                  Factor-f
 
 .. _constituent-k2:
 
-.. rubric:: :math:`K_2`
+K2
+--
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``K2``.
+:math:`K_2`
 
 =============================  =============================  =============================
 V                              u                              Factor-f
@@ -661,9 +701,10 @@ V                              u                              Factor-f
 
 .. _constituent-msn2:
 
-.. rubric:: :math:`MSN_2 = M_2 + S_2 - N_2`
+MSN2
+----
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``MSN2``.
+:math:`MSN_2 = M_2 + S_2 - N_2`
 
 =================  =================  =================
 V                  u                  Factor-f
@@ -673,9 +714,10 @@ V                  u                  Factor-f
 
 .. _constituent-eta2:
 
-.. rubric:: :math:`\eta_2 = KJ_2`
+Eta2
+----
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``Eta2``.
+:math:`\eta_2 = KJ_2`
 
 =======================  =======================  =======================
 V                        u                        Factor-f
@@ -689,9 +731,10 @@ V                        u                        Factor-f
 
 .. _constituent-2sm2:
 
-.. rubric:: :math:`2SM_2 = 2S_2 - M_2`
+2SM2
+----
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``2SM2``.
+:math:`2SM_2 = 2S_2 - M_2`
 
 ====================  ====================  ====================
 V                     u                     Factor-f
@@ -701,9 +744,10 @@ V                     u                     Factor-f
 
 .. _constituent-mo3:
 
-.. rubric:: :math:`MO_3 = M_2 + O_1`
+MO3
+---
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``MO3``.
+:math:`MO_3 = M_2 + O_1`
 
 =================================  =================================  =================================
 V                                  u                                  Factor-f
@@ -713,9 +757,10 @@ V                                  u                                  Factor-f
 
 .. _constituent-2mk3:
 
-.. rubric:: :math:`2MK_3 = 2M_2 - K_1`
+2MK3
+----
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``2MK3``.
+:math:`2MK_3 = 2M_2 - K_1`
 
 ==================================  ==================================  ==================================
 V                                   u                                   Factor-f
@@ -725,9 +770,10 @@ V                                   u                                   Factor-f
 
 .. _constituent-m3:
 
-.. rubric:: :math:`M_3`
+M3
+--
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``M3``.
+:math:`M_3`
 
 ====================  ====================  ====================
 V                     u                     Factor-f
@@ -741,9 +787,10 @@ V                     u                     Factor-f
 
 .. _constituent-mk3:
 
-.. rubric:: :math:`MK_3 = M_2 + K_1`
+MK3
+---
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``MK3``.
+:math:`MK_3 = M_2 + K_1`
 
 ==================================  ==================================  ==================================
 V                                   u                                   Factor-f
@@ -753,9 +800,10 @@ V                                   u                                   Factor-f
 
 .. _constituent-n4:
 
-.. rubric:: :math:`N_4 = N_2 + N_2`
+N4
+--
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``N4``.
+:math:`N_4 = N_2 + N_2`
 
 =========================  =========================  =========================
 V                          u                          Factor-f
@@ -765,9 +813,10 @@ V                          u                          Factor-f
 
 .. _constituent-mn4:
 
-.. rubric:: :math:`MN_4 = M_2 + N_2`
+MN4
+---
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``MN4``.
+:math:`MN_4 = M_2 + N_2`
 
 ========================  ========================  ========================
 V                         u                         Factor-f
@@ -777,9 +826,10 @@ V                         u                         Factor-f
 
 .. _constituent-m4:
 
-.. rubric:: :math:`M_4 = 2M_2`
+M4
+--
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``M4``.
+:math:`M_4 = 2M_2`
 
 ====================  ====================  ====================
 V                     u                     Factor-f
@@ -793,9 +843,10 @@ V                     u                     Factor-f
 
 .. _constituent-sn4:
 
-.. rubric:: :math:`SN_4 = S_2 + N_2`
+SN4
+---
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``SN4``.
+:math:`SN_4 = S_2 + N_2`
 
 ========================  ========================  ========================
 V                         u                         Factor-f
@@ -805,9 +856,10 @@ V                         u                         Factor-f
 
 .. _constituent-ms4:
 
-.. rubric:: :math:`MS_4 = M_2 + S_2`
+MS4
+---
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``MS4``.
+:math:`MS_4 = M_2 + S_2`
 
 ====================  ====================  ====================
 V                     u                     Factor-f
@@ -821,9 +873,10 @@ V                     u                     Factor-f
 
 .. _constituent-mk4:
 
-.. rubric:: :math:`MK_4 = M_2 + K_2`
+MK4
+---
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``MK4``.
+:math:`MK_4 = M_2 + K_2`
 
 =========================================  =========================================  =========================================
 V                                          u                                          Factor-f
@@ -837,9 +890,10 @@ V                                          u                                    
 
 .. _constituent-s4:
 
-.. rubric:: :math:`S_4 = S_2 + S_2`
+S4
+--
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``S4``.
+:math:`S_4 = S_2 + S_2`
 
 ==========  ==========  ==========
 V           u           Factor-f
@@ -849,9 +903,10 @@ V           u           Factor-f
 
 .. _constituent-sk4:
 
-.. rubric:: :math:`SK_4 = S_2 + K_2`
+SK4
+---
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``SK4``.
+:math:`SK_4 = S_2 + K_2`
 
 =============================  =============================  =============================
 V                              u                              Factor-f
@@ -861,9 +916,10 @@ V                              u                              Factor-f
 
 .. _constituent-r4:
 
-.. rubric:: :math:`R_4 = R_2 + R_2`
+R4
+--
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``R4``.
+:math:`R_4 = R_2 + R_2`
 
 ======================  ======================  ======================
 V                       u                       Factor-f
@@ -873,9 +929,10 @@ V                       u                       Factor-f
 
 .. _constituent-2mn6:
 
-.. rubric:: :math:`2MN_6 = 2M_2 + N_2`
+2MN6
+----
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``2MN6``.
+:math:`2MN_6 = 2M_2 + N_2`
 
 ========================  ========================  ========================
 V                         u                         Factor-f
@@ -885,9 +942,10 @@ V                         u                         Factor-f
 
 .. _constituent-m6:
 
-.. rubric:: :math:`M_6 = 3M_2`
+M6
+--
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``M6``.
+:math:`M_6 = 3M_2`
 
 ====================  ====================  ====================
 V                     u                     Factor-f
@@ -897,9 +955,10 @@ V                     u                     Factor-f
 
 .. _constituent-msn6:
 
-.. rubric:: :math:`MSN_6 = M_2 + S_2 + N_2`
+MSN6
+----
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``MSN6``.
+:math:`MSN_6 = M_2 + S_2 + N_2`
 
 ========================  ========================  ========================
 V                         u                         Factor-f
@@ -909,9 +968,10 @@ V                         u                         Factor-f
 
 .. _constituent-2ms6:
 
-.. rubric:: :math:`2MS_6 = 2M_2 + S_2`
+2MS6
+----
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``2MS6``.
+:math:`2MS_6 = 2M_2 + S_2`
 
 ====================  ====================  ====================
 V                     u                     Factor-f
@@ -921,9 +981,10 @@ V                     u                     Factor-f
 
 .. _constituent-2mk6:
 
-.. rubric:: :math:`2MK_6 = 2M_2 + K_2`
+2MK6
+----
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``2MK6``.
+:math:`2MK_6 = 2M_2 + K_2`
 
 ==========================================  ==========================================  ==========================================
 V                                           u                                           Factor-f
@@ -933,9 +994,10 @@ V                                           u                                   
 
 .. _constituent-2sm6:
 
-.. rubric:: :math:`2SM_6 = 2S_2 + M_2`
+2SM6
+----
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``2SM6``.
+:math:`2SM_6 = 2S_2 + M_2`
 
 ====================  ====================  ====================
 V                     u                     Factor-f
@@ -945,9 +1007,10 @@ V                     u                     Factor-f
 
 .. _constituent-msk6:
 
-.. rubric:: :math:`MSK_6 = M_2 + K_2 + S_2`
+MSK6
+----
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``MSK6``.
+:math:`MSK_6 = M_2 + K_2 + S_2`
 
 ===================================  ===================================  ===================================
 V                                    u                                    Factor-f
@@ -957,9 +1020,10 @@ V                                    u                                    Factor
 
 .. _constituent-s6:
 
-.. rubric:: :math:`S_6 = 3S_2`
+S6
+--
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``S6``.
+:math:`S_6 = 3S_2`
 
 ==========  ==========  ==========
 V           u           Factor-f
@@ -969,9 +1033,10 @@ V           u           Factor-f
 
 .. _constituent-m8:
 
-.. rubric:: :math:`M_8 = 4M_2`
+M8
+--
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``M8``.
+:math:`M_8 = 4M_2`
 
 ====================  ====================  ====================
 V                     u                     Factor-f
@@ -981,9 +1046,10 @@ V                     u                     Factor-f
 
 .. _constituent-msf:
 
-.. rubric:: :math:`MSf = M_2 - S_2`
+MSf
+---
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``MSf``.
+:math:`MSf = M_2 - S_2`
 
 ================================  ================================  ================================
 V                                 u                                 Factor-f
@@ -993,9 +1059,10 @@ V                                 u                                 Factor-f
 
 .. _constituent-a5:
 
-.. rubric:: :math:`A5`
+A5
+--
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``A5``.
+:math:`A5`
 
 ===============  ===============  ===============
 V                u                Factor-f
@@ -1009,9 +1076,10 @@ V                u                Factor-f
 
 .. _constituent-sa1:
 
-.. rubric:: :math:`Sa_1`
+Sa1
+---
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``Sa1``.
+:math:`Sa_1`
 
 ===============  ===============  ===============
 V                u                Factor-f
@@ -1025,9 +1093,10 @@ V                u                Factor-f
 
 .. _constituent-sta:
 
-.. rubric:: :math:`Sta`
+Sta
+---
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``Sta``.
+:math:`Sta`
 
 ================  ================  ================
 V                 u                 Factor-f
@@ -1041,9 +1110,10 @@ V                 u                 Factor-f
 
 .. _constituent-mm2:
 
-.. rubric:: :math:`Mm_2`
+Mm2
+---
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``Mm2``.
+:math:`Mm_2`
 
 ==============  ==============  ==============
 V               u               Factor-f
@@ -1057,9 +1127,10 @@ V               u               Factor-f
 
 .. _constituent-mm1:
 
-.. rubric:: :math:`Mm_1`
+Mm1
+---
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``Mm1``.
+:math:`Mm_1`
 
 ===================  ===================  ===================
 V                    u                    Factor-f
@@ -1073,9 +1144,10 @@ V                    u                    Factor-f
 
 .. _constituent-mf1:
 
-.. rubric:: :math:`Mf_1`
+Mf1
+---
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``Mf1``.
+:math:`Mf_1`
 
 ===============  ===============  ===============
 V                u                Factor-f
@@ -1089,9 +1161,10 @@ V                u                Factor-f
 
 .. _constituent-mf2:
 
-.. rubric:: :math:`Mf_2`
+Mf2
+---
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``Mf2``.
+:math:`Mf_2`
 
 ===================  ===================  ===================
 V                    u                    Factor-f
@@ -1105,9 +1178,10 @@ V                    u                    Factor-f
 
 .. _constituent-m0:
 
-.. rubric:: :math:`M_0`
+M0
+--
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``M0``.
+:math:`M_0`
 
 =============  =============  =============
 V              u              Factor-f
@@ -1121,9 +1195,10 @@ V              u              Factor-f
 
 .. _constituent-n2p:
 
-.. rubric:: :math:`N_2P`
+N2P
+---
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``N2P``.
+:math:`N_2P`
 
 =================================  =================================  =================================
 V                                  u                                  Factor-f
@@ -1137,9 +1212,10 @@ V                                  u                                  Factor-f
 
 .. _constituent-l2p:
 
-.. rubric:: :math:`L_2P`
+L2P
+---
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``L2P``.
+:math:`L_2P`
 
 ================================  ================================  ================================
 V                                 u                                 Factor-f
@@ -1153,9 +1229,10 @@ V                                 u                                 Factor-f
 
 .. _constituent-msk2:
 
-.. rubric:: :math:`MSK2`
+MSK2
+----
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``MSK2``.
+:math:`MSK2`
 
 ========================================  ========================================  ========================================
 V                                         u                                         Factor-f
@@ -1165,9 +1242,10 @@ V                                         u                                     
 
 .. _constituent-skm2:
 
-.. rubric:: :math:`SKM2`
+SKM2
+----
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``SKM2``.
+:math:`SKM2`
 
 ==========================================  ==========================================  ==========================================
 V                                           u                                           Factor-f
@@ -1177,9 +1255,10 @@ V                                           u                                   
 
 .. _constituent-oq2:
 
-.. rubric:: :math:`OQ2`
+OQ2
+---
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``OQ2``.
+:math:`OQ2`
 
 =======================================  =======================================  =======================================
 V                                        u                                        Factor-f
@@ -1189,9 +1268,10 @@ V                                        u                                      
 
 .. _constituent-3ms4:
 
-.. rubric:: :math:`3MS4`
+3MS4
+----
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``3MS4``.
+:math:`3MS4`
 
 ====================  ====================  ====================
 V                     u                     Factor-f
@@ -1201,9 +1281,10 @@ V                     u                     Factor-f
 
 .. _constituent-mnu4:
 
-.. rubric:: :math:`MNu4 = M2 + Nu2`
+MNu4
+----
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``MNu4``.
+:math:`MNu4 = M2 + Nu2`
 
 ======================  ======================  ======================
 V                       u                       Factor-f
@@ -1213,9 +1294,10 @@ V                       u                       Factor-f
 
 .. _constituent-2msn4:
 
-.. rubric:: :math:`2MSN4 = M2 + S2 - N2`
+2MSN4
+-----
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``2MSN4``.
+:math:`2MSN4 = M2 + S2 - N2`
 
 =======================  =======================  =======================
 V                        u                        Factor-f
@@ -1225,9 +1307,10 @@ V                        u                        Factor-f
 
 .. _constituent-2ns2:
 
-.. rubric:: :math:`2NS2`
+2NS2
+----
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``2NS2``.
+:math:`2NS2`
 
 =========================  =========================  =========================
 V                          u                          Factor-f
@@ -1237,9 +1320,10 @@ V                          u                          Factor-f
 
 .. _constituent-mnus2:
 
-.. rubric:: :math:`MNuS2 = M2 + Nu2 - S2`
+MNuS2
+-----
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``MNuS2``.
+:math:`MNuS2 = M2 + Nu2 - S2`
 
 ========================  ========================  ========================
 V                         u                         Factor-f
@@ -1249,9 +1333,10 @@ V                         u                         Factor-f
 
 .. _constituent-2mk2:
 
-.. rubric:: :math:`2MK2`
+2MK2
+----
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``2MK2``.
+:math:`2MK2`
 
 =========================================  =========================================  =========================================
 V                                          u                                          Factor-f
@@ -1261,9 +1346,10 @@ V                                          u                                    
 
 .. _constituent-nkm2:
 
-.. rubric:: :math:`NKM2 = N2 + K2 - M2`
+NKM2
+----
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``NKM2``.
+:math:`NKM2 = N2 + K2 - M2`
 
 ==============================  ==============================  ==============================
 V                               u                               Factor-f
@@ -1273,9 +1359,10 @@ V                               u                               Factor-f
 
 .. _constituent-ml4:
 
-.. rubric:: :math:`ML4 = M2 + L2`
+ML4
+---
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``ML4``.
+:math:`ML4 = M2 + L2`
 
 ============================  ============================  ============================
 V                             u                             Factor-f
@@ -1285,9 +1372,10 @@ V                             u                             Factor-f
 
 .. _constituent-so1:
 
-.. rubric:: :math:`SO1`
+SO1
+---
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``SO1``.
+:math:`SO1`
 
 ===============================  ===============================  ===============================
 V                                u                                Factor-f
@@ -1297,9 +1385,10 @@ V                                u                                Factor-f
 
 .. _constituent-so3:
 
-.. rubric:: :math:`SO3`
+SO3
+---
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``SO3``.
+:math:`SO3`
 
 ================================  ================================  ================================
 V                                 u                                 Factor-f
@@ -1309,9 +1398,10 @@ V                                 u                                 Factor-f
 
 .. _constituent-nk4:
 
-.. rubric:: :math:`NK4 = N2 + K2`
+NK4
+---
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``NK4``.
+:math:`NK4 = N2 + K2`
 
 =========================================  =========================================  =========================================
 V                                          u                                          Factor-f
@@ -1321,9 +1411,10 @@ V                                          u                                    
 
 .. _constituent-mnk6:
 
-.. rubric:: :math:`MNK6 = M2 + N2 + K2`
+MNK6
+----
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``MNK6``.
+:math:`MNK6 = M2 + N2 + K2`
 
 =========================================  =========================================  =========================================
 V                                          u                                          Factor-f
@@ -1333,9 +1424,10 @@ V                                          u                                    
 
 .. _constituent-2nm6:
 
-.. rubric:: :math:`3MNL6 = 3M2 + N2 - L2`
+2NM6
+----
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``2NM6``.
+:math:`3MNL6 = 3M2 + N2 - L2`
 
 ==============================  ==============================  ==============================
 V                               u                               Factor-f
@@ -1345,9 +1437,10 @@ V                               u                               Factor-f
 
 .. _constituent-3ms8:
 
-.. rubric:: :math:`3MS8 = M2 + S2`
+3MS8
+----
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``3MS8``.
+:math:`3MS8 = M2 + S2`
 
 ====================  ====================  ====================
 V                     u                     Factor-f
@@ -1357,9 +1450,10 @@ V                     u                     Factor-f
 
 .. _constituent-sk3:
 
-.. rubric:: :math:`SK3`
+SK3
+---
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``SK3``.
+:math:`SK3`
 
 ===========================  ===========================  ===========================
 V                            u                            Factor-f
@@ -1369,9 +1463,10 @@ V                            u                            Factor-f
 
 .. _constituent-2mns4:
 
-.. rubric:: :math:`2MNS4 = 2M2 + N2 - S2`
+2MNS4
+-----
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``2MNS4``.
+:math:`2MNS4 = 2M2 + N2 - S2`
 
 ========================  ========================  ========================
 V                         u                         Factor-f
@@ -1381,9 +1476,10 @@ V                         u                         Factor-f
 
 .. _constituent-2smu2:
 
-.. rubric:: :math:`2SMu2 = S2 - Mu2`
+2SMu2
+-----
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``2SMu2``.
+:math:`2SMu2 = S2 - Mu2`
 
 ====================  ====================  ====================
 V                     u                     Factor-f
@@ -1393,9 +1489,10 @@ V                     u                     Factor-f
 
 .. _constituent-2mp5:
 
-.. rubric:: :math:`2MP5 = 2M2 + P1`
+2MP5
+----
 
-Identifier returned by :py:func:`pyfes.core.darwin.constituents`: ``2MP5``.
+:math:`2MP5 = 2M2 + P1`
 
 ===================  ===================  ===================
 V                    u                    Factor-f

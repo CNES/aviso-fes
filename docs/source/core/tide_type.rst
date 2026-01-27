@@ -1,4 +1,4 @@
-.. automodule:: pyfes.core
+.. currentmodule:: pyfes.core
 
 .. class:: TideType
 
@@ -10,11 +10,11 @@
 
         :param value: The value of the tide type.
 
-    .. autoattribute:: kTide
+    .. autoattribute:: TIDE
 
         Ocean tide
 
-    .. autoattribute:: kRadial
+    .. autoattribute:: RADIAL
 
         Radial tide
 
