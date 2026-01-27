@@ -81,6 +81,10 @@ class Box {
   box_t box_{};
 };
 
+/// @brief Write the geographic box to a stream.
+/// @param[in,out] os The output stream.
+/// @param[in] box The geographic box.
+/// @return The output stream.
 inline auto operator<<(std::ostream& os, const Box& box) -> std::ostream& {
   os << box.wkt();
   return os;

@@ -12,7 +12,7 @@
 
 namespace fes {
 
-/// Ocean tide calculation
+/// Ocean tide prediction.
 ///
 /// @param[in] tidal_model Tidal model used to interpolate the modelized waves
 /// @param[in] epoch Date of the tide calculation expressed in number of seconds
@@ -32,10 +32,10 @@ namespace fes {
 ///   - <b>0</b>: the tide is undefined (no data available at the given
 ///     position).
 ///   - <b>Positive values</b>: the tide is interpolated at the given
-///     position using <pre>N</pre> data points (where <pre>N</pre> is the
+///     position using \c N data points (where \c N is the
 ///     number of data points used for the interpolation).
 ///   - <b>Negative values</b>: the tide is extrapolated at the given
-///     position using <pre>-N</pre> data points (where <pre>N</pre> is the
+///     position using \c -N data points (where \c N is the
 ///     number of data points used for the extrapolation).
 /// @note The units of the returned tide are the same as the units of the
 /// constituents loaded in the tidal model.

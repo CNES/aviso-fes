@@ -2,7 +2,7 @@
 //
 // All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
-/// @file include/fes/darwin/component.hpp
+/// @file include/fes/darwin/wave.hpp
 /// @brief Tidal constituent properties
 #pragma once
 #include <array>

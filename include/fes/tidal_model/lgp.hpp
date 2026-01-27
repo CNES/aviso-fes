@@ -93,6 +93,8 @@ class LGP : public fes::AbstractTidalModel<T> {
   ///
   /// @param[in] index The mesh index.
   /// @param[in] codes %LGP codes.
+  /// @param[in] enum_mapper The enum mapper that converts between tidal
+  /// constituent names and their identifiers.
   /// @param[in] tide_type The tide type handled by the model.
   /// @param[in] max_distance The maximum distance allowed to extrapolate the
   /// wave model. By default, extrapolation is disabled, all points outside the
@@ -411,6 +413,11 @@ LGP<T, N>::LGP(
 }
 
 // /////////////////////////////////////////////////////////////////////////////
+
+/// @brief Transform a geographic point to Earth-Centered Earth-Fixed (ECEF)
+/// coordinates.
+/// @param[in] point The geographic point to transform.
+/// @return The ECEF coordinates as a 1x3 matrix.
 inline auto transform_to_ecef(const geometry::Point& point)
     -> Eigen::Matrix<double, 1, 3> {
   // Convert the point to Earth-Centered Earth-Fixed coordinates

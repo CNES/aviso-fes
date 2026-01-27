@@ -25,6 +25,8 @@ class Cartesian : public AbstractTidalModel<T> {
   ///
   /// @param[in] lon The longitude axis.
   /// @param[in] lat The latitude axis.
+  /// @param[in] enum_mapper The enum mapper that converts between tidal
+  /// constituent names and their identifiers.
   /// @param[in] tide_type The tide type handled by the model.
   /// @param[in] row_major Whether the data is stored in longitude-major order.
   Cartesian(Axis lon, Axis lat, EnumMapper<uint8_t> enum_mapper,

@@ -1,3 +1,9 @@
+// Copyright (c) 2025 CNES
+//
+// All rights reserved. Use of this source code is governed by a
+// BSD-style license that can be found in the LICENSE file.
+/// @file include/fes/perth/inference.hpp
+/// @brief Perth tidal constituents inference.
 #pragma once
 
 #include <unordered_map>
@@ -23,7 +29,7 @@ class Inference {
   ///
   /// @param[in] components The constituent table to use for frequency
   ///   calculation.
-  /// @param[in] inference_type The type of interpolation to use.
+  /// @param[in] interpolation_type The type of interpolation to use.
   Inference(const WaveTable& components,
             const InterpolationType interpolation_type =
                 InterpolationType::kLinearAdmittance);

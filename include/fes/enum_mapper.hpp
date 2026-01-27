@@ -199,12 +199,17 @@ class EnumMapper {
     return by_value_;
   }
 
-  /// @brief Iterator access (sorted by value).
+  /// @brief Returns a read-only (constant) iterator that points to the first
+  /// element in the mapper.
+  /// @return An iterator to the first element.
   auto begin() const noexcept ->
       typename std::vector<std::pair<T, std::string>>::const_iterator {
     return by_value_.begin();
   }
 
+  /// @brief Returns a read-only (constant) iterator that points to one past the
+  /// last element in the mapper.
+  /// @return An iterator to one past the last element.
   auto end() const noexcept ->
       typename std::vector<std::pair<T, std::string>>::const_iterator {
     return by_value_.end();

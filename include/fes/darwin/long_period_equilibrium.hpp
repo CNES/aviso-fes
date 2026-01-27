@@ -2,7 +2,7 @@
 //
 // All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
-/// @file include/fes/wave/long_period_equilibrium.hpp
+/// @file include/fes/darwin/long_period_equilibrium.hpp
 /// @brief Long period equilibrium ocean tides.
 #pragma once
 #include <Eigen/Core>

@@ -1,3 +1,9 @@
+// Copyright (c) 2025 CNES
+//
+// All rights reserved. Use of this source code is governed by a
+// BSD-style license that can be found in the LICENSE file.
+/// @file include/fes/perth/table.hpp
+/// @brief Perth tidal constituents table.
 #pragma once
 
 #include <Eigen/Core>
@@ -23,8 +29,9 @@ namespace perth {
 template <typename T>
 class WaveSet : public TidalConstituents {
  public:
-  using value_type = T;
+  /// @brief Type of the container that holds the keys of the wave set.
   using Key = std::array<Constituent, kNumConstituentItems>;
+  /// @brief Type of the container that holds the items of the wave set.
   using Item = std::array<T, kNumConstituentItems>;
 
   /// @brief Default constructor
@@ -100,6 +107,7 @@ class WaveSet : public TidalConstituents {
 
   /// Set the tide of a constituent
   /// @param[in] ident The constituent identifier
+  /// @param[out] value The tide value
   void set_tide(uint8_t ident, const Complex &value) override {
     if (ident >= items_.size()) {
       throw std::out_of_range("ident out of range");
@@ -109,25 +117,36 @@ class WaveSet : public TidalConstituents {
 
   /// Set the tide of a constituent
   /// @param[in] ident The constituent identifier
-  /// @param[in] value The tide value
+  /// @param[out] value The tide value
   void set_tide(Constituent ident, const Complex &value) {
     items_[static_cast<std::size_t>(ident)].tide = value;
   }
 
+  /// @brief Update the nodal corrections for all constituents at a given epoch
+  /// @param[in] epoch The epoch in seconds since 1970-01-01T00:00:00Z
+  /// @param[in] group_modulations Whether to group modulations
+  /// @param[in] acc The accelerator to use for angle calculations
   auto update_nodal_corrections(const double epoch,
                                 const bool group_modulations, Accelerator &acc)
       -> void;
 
-  auto nodal_correction(const Constituent constituent) const
+  //// @brief Get the nodal correction for a given constituent
+  /// @param[in] constituent The constituent identifier
+  /// @return The nodal correction associated with the constituent
+  constexpr auto nodal_correction(const Constituent constituent) const
       -> const NodalCorrections & {
     auto index = static_cast<std::size_t>(constituent);
     return nodal_corrections_[index];
   }
 
  private:
+  /// The keys of the constituent set.
   Key keys_{};
+  /// The items of the constituent set.
   Item items_{};
+  /// The keys as a vector.
   std::vector<Constituent> keys_vector_;
+  /// The nodal corrections for each constituent.
   std::vector<NodalCorrections> nodal_corrections_;
 };
 

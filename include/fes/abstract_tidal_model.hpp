@@ -131,9 +131,10 @@ class AbstractTidalModel
  public:
   /// Build a tidal model with a given tide type.
   ///
+  /// @param[in] enum_mapper The enum mapper that converts between tidal
+  /// constituent names and their identifiers.
   /// @param[in] tide_type The tide type handled by the model.
-  explicit AbstractTidalModel(EnumMapper<uint8_t> enum_mapper,
-                              TideType tide_type)
+  AbstractTidalModel(EnumMapper<uint8_t> enum_mapper, TideType tide_type)
       : enum_mapper_(std::move(enum_mapper)), tide_type_(tide_type) {}
 
   /// Destructor

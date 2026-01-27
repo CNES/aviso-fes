@@ -21,6 +21,7 @@
 namespace fes {
 namespace mesh {
 
+/// @brief Vertex attribute in a triangle.
 struct VertexAttribute {
   /// The vertex ID (0, 1, or 2) in the triangle.
   uint8_t vertex_id;

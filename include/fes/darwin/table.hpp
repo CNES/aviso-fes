@@ -2,7 +2,7 @@
 //
 // All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
-/// @file include/fes/wave/table.hpp
+/// @file include/fes/darwin/table.hpp
 /// @brief Table of tidal constituents
 #pragma once
 #include <Eigen/Core>
@@ -130,6 +130,7 @@ class WaveTable : public TidalConstituents {
 
   /// Set the tide of a constituent
   /// @param[in] ident The constituent identifier
+  /// @param[out] value The tide value
   void set_tide(uint8_t ident, const Complex& value) override {
     if (ident >= wave_index_.size()) {
       throw std::out_of_range("ident out of range");

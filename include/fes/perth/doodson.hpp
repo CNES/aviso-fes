@@ -1,3 +1,9 @@
+// Copyright (c) 2025 CNES
+//
+// All rights reserved. Use of this source code is governed by a
+// BSD-style license that can be found in the LICENSE file.
+/// @file include/fes/perth/doodson.hpp
+/// @brief Doodson's astronomical variables and tidal arguments.
 #pragma once
 
 #include <Eigen/Dense>
@@ -28,7 +34,7 @@ inline auto calculate_celestial_vector(const angle::Astronomic& angle) noexcept
 
 /// @brief Evaluate Doodson's tidal argument at a given time.
 /// @param[in] angle Astronomic angles.
-/// @param[in] component Tide component to evaluate.
+/// @param[in] doodson_number Doodson number as a 7-dimensional vector.
 /// @return Doodson's tidal argument
 inline auto calculate_doodson_argument(
     const angle::Astronomic& angle,

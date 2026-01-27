@@ -1,3 +1,9 @@
+// Copyright (c) 2025 CNES
+//
+// All rights reserved. Use of this source code is governed by a
+// BSD-style license that can be found in the LICENSE file.
+/// @file include/fes/perth/tide.hpp
+/// @brief Perth tide prediction functions.
 #pragma once
 
 #include <boost/optional.hpp>
@@ -55,8 +61,27 @@ inline auto compute_tide_from_waves(WaveTable& wave_table, Inference* inference,
   return {tide, tide_lp};
 }
 
+/// Ocean tide calculation
+///
+/// @param[in] lon Longitude in degrees for the position at which the tide is
+/// calculated
+/// @param[in] lat Latitude in degrees for the position at which the tide is
+/// calculated
+/// @param[in] epoch Date of the tide calculation expressed in number of seconds
+/// elapsed since 1970-01-01T00:00:00Z
+/// @param[in] group_modulations Whether to group modulations
+/// @param[in,out] wave_table Wave table to use for the tide computation
+/// @param[in,out] inference Optional inference object to compute missing
+/// components
+/// @param[in] tidal_model Tidal model to use for the tide computation
+/// @param[in,out] acc Accelerator used for angle calculations
+/// @return A tuple containing:
+/// - The height of the diurnal and semi-diurnal constituents of the tidal
+///   spectrum.
+/// - The height of the long period wave constituents of the tidal spectrum.
+/// - The quality of the interpolation.
 template <typename T>
-auto evaluate_tide(const double lon, const double lat, const double time,
+auto evaluate_tide(const double lon, const double lat, const double epoch,
                    const bool group_modulations, WaveTable& wave_table,
                    Inference* inference,
                    const AbstractTidalModel<T>* tidal_model, Accelerator* acc)
@@ -70,13 +95,14 @@ auto evaluate_tide(const double lon, const double lat, const double time,
     return {std::numeric_limits<double>::quiet_NaN(),
             std::numeric_limits<double>::quiet_NaN(), quality};
   }
-  auto tides = compute_tide_from_waves(wave_table, inference, *acc, lat, time,
+  auto tides = compute_tide_from_waves(wave_table, inference, *acc, lat, epoch,
                                        group_modulations);
   return {std::get<0>(tides), std::get<1>(tides), quality};
 }
 
 }  // namespace detail
 
+/// @copydoc fes::evaluate_tide
 template <typename T>
 auto evaluate_tide(const AbstractTidalModel<T>* const tidal_model,
                    const Eigen::Ref<const Eigen::VectorXd>& epoch,
@@ -118,29 +144,7 @@ auto evaluate_tide(const AbstractTidalModel<T>* const tidal_model,
   return std::make_tuple(tide, long_period, quality);
 }
 
-/// @brief Compute the ocean tide from a list of known tidal constituents.
-///
-/// Unlike the other evaluate_tide overload which interpolates constituents from
-/// a tidal model, this function computes the tidal prediction directly from a
-/// list of tidal constituents whose properties (amplitude and phase) are known.
-/// This is typically used for tide gauge analysis and prediction, where the
-/// constituents have been previously determined from harmonic analysis of
-/// observed sea level data.
-///
-/// @param[in] constituents A map of tidal constituents with their
-/// complex cartesian equivalent to the polar representation (amplitude and
-/// phase).
-/// @param[in] epoch Date of the tide calculation expressed in number of seconds
-/// elapsed since 1970-01-01T00:00:00Z (can be a vector of multiple times).
-/// @param[in] latitude Latitude in degrees for the position.
-/// @param[in] settings Settings for the tide computation.
-/// @return A tuple containing:
-/// - The height of the diurnal and semi-diurnal constituents of the tidal
-///   spectrum for each epoch.
-/// - The height of the long period wave constituents of the tidal spectrum
-///   for each epoch.
-/// @note The units of the returned tide are the same as the units of the input
-/// constituents.
+/// @copydoc fes::darwin::evaluate_tide_from_constituents
 auto evaluate_tide_from_constituents(
     const std::map<Constituent, Complex>& constituents,
     const Eigen::Ref<const Eigen::VectorXd>& epoch, const double latitude,
