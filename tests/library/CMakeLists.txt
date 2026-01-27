@@ -25,6 +25,7 @@ add_subdirectory(mesh)
 add_subdirectory(tidal_model)
 
 add_testcase(axis fes)
+add_testcase(delta_t fes)
 add_testcase(enum_mapper fes)
 
 add_subdirectory(darwin)

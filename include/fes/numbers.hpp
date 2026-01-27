@@ -6,6 +6,8 @@
 /// @brief Constants used in the FES library.
 #pragma once
 
+#include <cstdint>
+
 namespace fes {
 namespace numbers {
 
@@ -16,6 +18,24 @@ constexpr auto use_schureman_constants = true;
 #else
 constexpr auto use_schureman_constants = false;
 #endif
+
+/// @brief The Modified Julian Date epoch in seconds.
+constexpr double kModifiedJulianEpoch = 2400000.5;
+
+/// @brief The number of seconds in a day.
+constexpr int64_t kSecondsPerDay = 86400;
+
+/// @brief The number of microseconds in a second.
+constexpr int64_t kMicrosecondsPerSecond = 1000000;
+
+/// @brief The number of days in a century.
+constexpr int64_t kDaysPerCentury = 36525;
+
+/// @brief Julian Day Number for the J2000.0 epoch.
+constexpr int64_t kJ2000JulianDay = 2451545;
+
+/// @brief Julian Day Number for the Unix epoch (1970-01-01T00:00:00Z).
+constexpr double kUnixEpochJulianDay = 2440587.5;
 
 /// @brief Mean value of the obliquity factor for the lunar long-period
 /// constituent Mm
