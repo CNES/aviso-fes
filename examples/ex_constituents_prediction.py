@@ -94,13 +94,14 @@ print(
 )
 print('-' * 70)
 
+fes_constituents = pyfes.darwin.constituents()
+
 for name, (amplitude, phase) in BREST_TICON3_DATA.items():
-    try:
+    if name in fes_constituents:
         # Try to parse the constituent name - this will raise if unknown
-        constituent_id = pyfes.constituents.parse(name)
-        constituents[constituent_id] = (amplitude, phase)
+        constituents[name] = (amplitude, phase)
         print(f'{name:<12} {amplitude:>15.3f} {phase:>13.3f}  ✓ included')
-    except ValueError:
+    else:
         # Constituent not recognized by pyfes
         skipped.append((name, amplitude, phase))
         print(f'{name:<12} {amplitude:>15.3f} {phase:>13.3f}  ✗ not in pyfes')
@@ -142,10 +143,7 @@ print(f"""Prediction Settings:
 # using the observed tidal constituents.
 
 tide, long_period = pyfes.evaluate_tide_from_constituents(
-    constituents,
-    dates,
-    BREST_LON,
-    BREST_LAT,
+    constituents, dates, BREST_LAT, settings=pyfes.FesRuntimeSettings()
 )
 
 # Total sea level from tides

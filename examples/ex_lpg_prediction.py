@@ -41,17 +41,12 @@ os.environ['DATASET_DIR'] = str(
     pathlib.Path().absolute().parent / 'tests' / 'python' / 'dataset'
 )
 
-handlers: dict[
-    str,
-    pyfes.core.AbstractTidalModelComplex128
-    | pyfes.core.AbstractTidalModelComplex64,
-]
-handlers = pyfes.load_config(pathlib.Path().absolute() / 'fes_lpg.yml')
+config = pyfes.config.load(pathlib.Path().absolute() / 'fes_lpg.yml')
 
 # %%
-# ``handlers`` is a dictionary that contains the handlers to the ocean and
-# radial tide models.
-print(handlers)
+# ``config`` is a dictionary that contains the models loaded from the
+# configuration file and the associated runtime settings.
+print(config)
 
 # %%
 # Define the area of interest.
@@ -84,18 +79,18 @@ dates = numpy.full(shape, 'now', dtype='datetime64[us]')
 # %%
 # We can now calculate the ocean tide and the radial tide.
 tide, lp, lgp_flag = pyfes.evaluate_tide(
-    handlers['tide'],
+    config.models['tide'],
     dates.ravel(),
     lons.ravel(),
     lats.ravel(),
-    num_threads=0,
+    settings=config.settings,
 )
 load, load_lp, _ = pyfes.evaluate_tide(
-    handlers['radial'],
+    config.models['radial'],
     dates.ravel(),
     lons.ravel(),
     lats.ravel(),
-    num_threads=0,
+    settings=config.settings,
 )
 
 # %%

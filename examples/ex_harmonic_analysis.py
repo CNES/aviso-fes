@@ -38,20 +38,19 @@ with netCDF4.Dataset(SIGNAL, 'r') as ds:
 # %%
 # Then, we will create an instance of a :py:class:`pyfes.WaveTable
 # <pyfes.wave_table.WaveTable>` object:
-wt = pyfes.WaveTable()
+wt = pyfes.darwin.WaveTable()
 
 # %%
-# By default, all components known by this object are loaded into memory. The
-# list of components known by this object can be retrieved using the
-# :py:func:`pyfes.constituents.known`
-# method.
-print(pyfes.constituents.known())
+# By default, all tidal components are loaded into memory. Use
+# :py:func:`pyfes.darwin.constituents` to retrieve a mapping of all available
+# constituent names and their IDs.
+print(pyfes.darwin.constituents().keys())
 
 # %%
 # If you want to restrict the analysis to only a few components, you must
 # provide a list to the constructor in order to specify the waves to be
 # analyzed.
-wt = pyfes.WaveTable(
+wt = pyfes.darwin.WaveTable(
     [
         'Mm',
         'Mf',

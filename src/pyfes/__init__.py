@@ -15,6 +15,8 @@ from collections.abc import Mapping
 from .core.tidal_model import (
     AbstractTidalModelComplex128,
     AbstractTidalModelComplex64,
+    TIDE as TIDE,
+    RADIAL as RADIAL,
 )
 from .core import (
     Formulae as Formulae,
@@ -36,6 +38,8 @@ from . import config as config
 from .version import __version__  # noqa: F401
 
 __all__ = [
+    'RADIAL',
+    'TIDE',
     'AstronomicAngle',
     'FesRuntimeSettings',
     'Formulae',

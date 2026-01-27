@@ -42,12 +42,12 @@ os.environ['DATASET_DIR'] = str(
 #     `GitHub repository
 #     <https://github.com/CNES/aviso-fes/blob/main/examples/fes_slev.yml>`_.
 #
-handlers = pyfes.load_config(pathlib.Path().absolute() / 'fes_slev.yml')
+config = pyfes.config.load(pathlib.Path().absolute() / 'fes_slev.yml')
 
 # %%
-# ``handlers`` is a dictionary that contains the handlers to the ocean and
-# radial tide models.
-print(handlers)
+# ``config`` is a dictionary that contains the models loaded from the
+# configuration file and the associated runtime settings.
+print(config)
 
 # %%
 # .. hint::
@@ -79,10 +79,10 @@ lats = numpy.full(dates.shape, lat)
 # %%
 # We can now calculate the ocean tide and the radial tide.
 tide, lp, _ = pyfes.evaluate_tide(
-    handlers['tide'], dates, lons, lats, num_threads=1
+    config.models['tide'], dates, lons, lats, settings=config.settings
 )
 load, load_lp, _ = pyfes.evaluate_tide(
-    handlers['radial'], dates, lons, lats, num_threads=1
+    config.models['radial'], dates, lons, lats, settings=config.settings
 )
 
 # %%

@@ -44,17 +44,12 @@ os.environ['DATASET_DIR'] = str(
 #     `GitHub repository
 #     <https://github.com/CNES/aviso-fes/blob/main/examples/fes_slev.yml>`_.
 #
-handlers: dict[
-    str,
-    pyfes.core.AbstractTidalModelComplex128
-    | pyfes.core.AbstractTidalModelComplex64,
-]
-handlers = pyfes.load_config(pathlib.Path().absolute() / 'fes_slev.yml')
+config = pyfes.config.load(pathlib.Path().absolute() / 'fes_slev.yml')
 
 # %%
-# ``handlers`` is a dictionary that contains the handlers to the ocean and
-# radial tide models.
-print(handlers)
+# ``config`` is a dictionary that contains the models loaded from the
+# configuration file and the associated runtime settings.
+print(config)
 
 # %%
 # .. hint::
@@ -67,7 +62,7 @@ print(handlers)
 #
 #     .. code-block:: python
 #
-#         handlers = pyfes.load_config('fes_slev.yaml', bbox=(-10, 40, 10, 60))
+#         config = pyfes.config.load('fes_slev.yaml', bbox=(-10, 40, 10, 60))
 #
 # We can now create a global grid to calculate the geocentric ocean tide.
 # The grid is defined by its extent and its resolution.
@@ -80,10 +75,18 @@ dates = numpy.full(shape, 'now', dtype='datetime64[us]')
 # %%
 # We can now calculate the ocean tide and the radial tide.
 tide, lp, _ = pyfes.evaluate_tide(
-    handlers['tide'], dates.ravel(), lons.ravel(), lats.ravel(), num_threads=0
+    config.models['tide'],
+    dates.ravel(),
+    lons.ravel(),
+    lats.ravel(),
+    settings=config.settings,
 )
 load, load_lp, _ = pyfes.evaluate_tide(
-    handlers['radial'], dates.ravel(), lons.ravel(), lats.ravel(), num_threads=0
+    config.models['radial'],
+    dates.ravel(),
+    lons.ravel(),
+    lats.ravel(),
+    settings=config.settings,
 )
 
 # %%

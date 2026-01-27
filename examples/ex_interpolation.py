@@ -57,12 +57,13 @@ def load_model(
         amp = numpy.ma.filled(ds.variables[f'{wave}_amp'][:], numpy.nan)
         pha = numpy.ma.filled(ds.variables[f'{wave}_phase'][:], numpy.nan)
         pha = numpy.radians(pha)
-        values = amp * numpy.cos(pha) + 1j * amp * numpy.sin(pha)
+        values = amp * numpy.exp(1j * pha)
 
         result = pyfes.core.tidal_model.LGP2Complex64(
             pyfes.core.mesh.Index(lon, lat, triangle),
             codes=code,
-            tide_type=pyfes.core.kTide,
+            constituent_map=pyfes.darwin.constituents(),
+            tide_type=pyfes.TIDE,
             max_distance=max_distance,
         )
         result.add_constituent(wave, values)
@@ -94,7 +95,7 @@ print(values)
 
 # %%
 # Calculate the amplitude of the M2 wave interpolated on the grid.
-grid = values[pyfes.core.kM2]
+grid = values['M2']
 grid = numpy.ma.masked_invalid(grid)
 grid = grid.reshape(lon.shape)
 grid = numpy.absolute(grid)
@@ -131,7 +132,7 @@ matplotlib.pyplot.show()
 #   calculated on the sphere. The expected unit is meters.
 model = load_model(MODEL, 'M2', max_distance=20_000.0)
 values, quality = model.interpolate(lon.ravel(), lat.ravel(), num_threads=1)
-grid = values[pyfes.core.kM2]
+grid = values['M2']
 grid = numpy.ma.masked_invalid(grid)
 grid = grid.reshape(lon.shape)
 grid = numpy.absolute(grid)
