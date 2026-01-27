@@ -57,7 +57,7 @@ print(f'period [{time_series[period].min()}, {time_series[period].max()}]')
 # %%
 # Creation of the object controlling the harmonic analysis of the waves M2, K1,
 # O1, P1, S1, S2.
-wave_table = pyfes.WaveTable(['M2', 'K1', 'O1', 'P1', 'S1', 'S2'])
+wave_table = pyfes.darwin.WaveTable(['M2', 'K1', 'O1', 'P1', 'S1', 'S2'])
 print('%d tidal constituents to be analysed' % len(wave_table))
 
 # %%
@@ -208,7 +208,9 @@ def apply_along_axis(func1d, axis, arr, *args, **kwargs):
 #
 #   To analyze the entire time series, we would have to loop on the 13 faces
 #   storing the different geographical areas of the Earth.
-future = apply_along_axis(pyfes.WaveTable.harmonic_analysis, 2, ds, *(f, v0u))
+future = apply_along_axis(
+    pyfes.darwin.WaveTable.harmonic_analysis, 2, ds, *(f, v0u)
+)
 analysis = future.compute()
 
 # %%
