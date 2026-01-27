@@ -54,6 +54,20 @@ class Axis {
     }
   }
 
+  /// Build an axis from start, end and step.
+  ///
+  /// @param[in] start The first value of the axis.
+  /// @param[in] end The last value of the axis.
+  /// @param[in] step The step of the axis.
+  /// @param[in] is_circular True if the axis is circular. For example,
+  /// longitude is circular.
+  Axis(const double start, const double end, const double step,
+       const bool is_circular = false)
+      : Axis(Eigen::VectorXd::LinSpaced(
+                 static_cast<int64_t>(std::round((end - start) / step)) + 1,
+                 start, end),
+             1e-6, is_circular) {}
+
   /// Compare two axes for equality.
   ///
   /// @param[in] other The other axis.

@@ -28,6 +28,8 @@ TEST(Axis, Constructor) {
   EXPECT_THROW({ axis(-1); }, std::out_of_range);
   EXPECT_THROW({ axis(360); }, std::out_of_range);
 
+  EXPECT_EQ(axis, Axis(0, 359.0, 1.0));
+
   points = Eigen::VectorXd::LinSpaced(360, 359.0, 0.0);
   axis = Axis(points);
   EXPECT_EQ(axis.size(), 360);
