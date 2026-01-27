@@ -80,23 +80,6 @@ static auto build_wave_table(const AbstractTidalModel<T>* const tidal_model)
   return result;
 }
 
-/// Build wave table from known constituents
-///
-/// @param[in] constituents A map of tidal constituents with their
-/// complex-valued (amplitude and phase) properties.
-/// @return The wave table.
-static inline auto build_wave_table_from_constituents(
-    const std::map<Constituent, Complex>& constituents) -> WaveTable {
-  auto wave_table = WaveTable();
-  for (const auto& item : constituents) {
-    auto& wave = wave_table[item.first];
-    wave->dynamic(true);
-    wave->admittance(false);
-    wave->tide(item.second);
-  }
-  return wave_table;
-}
-
 /// Compute tide for a single epoch from a prepared wave table
 ///
 /// This function handles the core tide computation logic that is common

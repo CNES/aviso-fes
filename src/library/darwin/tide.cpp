@@ -10,6 +10,18 @@
 namespace fes {
 namespace darwin {
 
+inline auto build_wave_table_from_constituents(
+    const std::map<Constituent, Complex>& constituents) -> WaveTable {
+  auto wave_table = WaveTable();
+  for (const auto& item : constituents) {
+    auto& wave = wave_table[item.first];
+    wave->dynamic(true);
+    wave->admittance(false);
+    wave->tide(item.second);
+  }
+  return wave_table;
+}
+
 auto evaluate_tide_from_constituents(
     const std::map<Constituent, std::complex<double>>& constituents,
     const Eigen::Ref<const Eigen::VectorXd>& epoch, const double latitude,
@@ -21,7 +33,7 @@ auto evaluate_tide_from_constituents(
   auto worker = [&](const int64_t start, const int64_t end) {
     auto acc = Accelerator(settings.astronomic_formulae(),
                            settings.time_tolerance(), 0);
-    auto wave_table = detail::build_wave_table_from_constituents(constituents);
+    auto wave_table = build_wave_table_from_constituents(constituents);
     auto lpe = LongPeriodEquilibrium(wave_table);
 
     for (auto ix = start; ix < end; ++ix) {
