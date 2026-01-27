@@ -478,7 +478,9 @@ constexpr auto utc_2_tdt(const double epoch) -> double {
 auto FES_MATH_CONSTEXPR
 Astronomic::schureman_order1(const double epoch) noexcept -> void {
   auto reference = 25567.5;
-  auto jc = ((epoch / 86400.0) + reference) / 36525.0;
+  auto jc =
+      ((epoch / static_cast<double>(numbers::kSecondsPerDay)) + reference) /
+      static_cast<double>(numbers::kDaysPerCentury);
 
   // Schureman, P. 162
 
@@ -507,7 +509,9 @@ Astronomic::schureman_order1(const double epoch) noexcept -> void {
 auto FES_MATH_CONSTEXPR
 Astronomic::schureman_order3(const double epoch) noexcept -> void {
   auto reference = 25567.5;
-  auto jc = ((epoch / 86400.0) + reference) / 36525.0;
+  auto jc =
+      ((epoch / static_cast<double>(numbers::kSecondsPerDay)) + reference) /
+      static_cast<double>(numbers::kDaysPerCentury);
 
   // Schureman, P. 162
 
@@ -645,7 +649,8 @@ auto FES_MATH_CONSTEXPR Astronomic::update(const double epoch) noexcept
   ((*this).*update_)(epoch);
 
   // T mean solar angle relative to Greenwich
-  t_ = std::remainder(180.0 + 15.0 * (std::fmod(epoch, 86400) / 3600), 360.0);
+  t_ = std::remainder(
+      180.0 + 15.0 * (std::fmod(epoch, numbers::kSecondsPerDay) / 3600), 360.0);
 
   // Normalize angles to [0, 2π)
   t_ = detail::math::radians(t_);
