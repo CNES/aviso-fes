@@ -11,6 +11,25 @@
 namespace fes {
 namespace perth {
 
+/// Build wave table from known constituents
+///
+/// @param[in] constituents A map of tidal constituents with their
+/// complex-valued (amplitude and phase) properties.
+/// @return The wave table.
+static inline auto build_wave_table_from_constituents(
+    const std::map<Constituent, Complex>& constituents) -> WaveTable {
+  auto tide_waves = std::vector<Constituent>();
+  tide_waves.reserve(constituents.size());
+  for (const auto& item : constituents) {
+    tide_waves.push_back(item.first);
+  }
+  auto wave_table = WaveTable(tide_waves);
+  for (const auto& item : constituents) {
+    auto& wave = wave_table[item.first];
+    wave.tide = item.second;
+  }
+  return wave_table;
+}
 auto evaluate_tide_from_constituents(
     const std::map<Constituent, std::complex<double>>& constituents,
     const Eigen::Ref<const Eigen::VectorXd>& epoch, const double latitude,
@@ -22,12 +41,7 @@ auto evaluate_tide_from_constituents(
   // List of the tidal waves to be used for the tide calculation
   // Worker responsible for the calculation of the tide at a given position
   auto worker = [&](const int64_t start, const int64_t end) {
-    auto tide_waves = std::vector<Constituent>();
-    tide_waves.reserve(constituents.size());
-    for (const auto& item : constituents) {
-      tide_waves.push_back(item.first);
-    }
-    auto wave_table = WaveTable(tide_waves);
+    auto wave_table = build_wave_table_from_constituents(constituents);
     auto acc = Accelerator(settings.astronomic_formulae(),
                            settings.time_tolerance(), 0);
     auto inference = std::unique_ptr<Inference>(

@@ -29,6 +29,7 @@ add_testcase(darwin fes)
 add_testcase(delta_t fes)
 add_testcase(enum_mapper fes)
 add_testcase(xdo fes)
+add_testcase(tide fes)
 
 add_subdirectory(darwin)
 add_subdirectory(perth)

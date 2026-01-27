@@ -128,7 +128,8 @@ auto evaluate_tide(const AbstractTidalModel<T>* const tidal_model,
 /// observed sea level data.
 ///
 /// @param[in] constituents A map of tidal constituents with their
-/// complex-valued (amplitude and phase) properties.
+/// complex cartesian equivalent to the polar representation (amplitude and
+/// phase).
 /// @param[in] epoch Date of the tide calculation expressed in number of seconds
 /// elapsed since 1970-01-01T00:00:00Z (can be a vector of multiple times).
 /// @param[in] latitude Latitude in degrees for the position.
