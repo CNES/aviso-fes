@@ -124,7 +124,7 @@ def evaluate_tide_from_constituents(
 
     Args:
         constituents: Dictionary mapping tidal constituents to their
-            (amplitude, phase) properties. Amplitude is in centimeters and
+            (amplitude, phase) properties. Amplitude is in metric units and
             phase is in degrees.
         date: Date of the tide calculation.
         latitude: Latitude in degrees for the position.
