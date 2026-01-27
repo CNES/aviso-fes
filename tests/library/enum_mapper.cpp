@@ -18,6 +18,7 @@ class EnumMapperTest : public ::testing::Test {
     mapper_.add_entry(static_cast<uint8_t>(Color::Red), "red");
     mapper_.add_entry(static_cast<uint8_t>(Color::Green), "green");
     mapper_.add_entry(static_cast<uint8_t>(Color::Blue), "blue");
+    mapper_.finalize();
   }
 
   EnumMapper<uint8_t> mapper_;
@@ -36,13 +37,13 @@ TEST(EnumMapperBasicTest, ReserveDoesNotThrow) {
 
 // Test add_entry
 TEST(EnumMapperBasicTest, AddEntryIncreasesSize) {
-  EnumMapper<Color> mapper;
+  EnumMapper<int8_t> mapper;
   EXPECT_EQ(mapper.size(), 0);
 
-  mapper.add_entry(Color::Red, "red");
+  mapper.add_entry(static_cast<int8_t>(Color::Red), "red");
   EXPECT_EQ(mapper.size(), 1);
 
-  mapper.add_entry(Color::Green, "green");
+  mapper.add_entry(static_cast<int8_t>(Color::Green), "green");
   EXPECT_EQ(mapper.size(), 2);
 }
 
@@ -149,7 +150,7 @@ TEST_F(EnumMapperTest, ItemsReturnsAllItems) {
 
 // Test empty mapper
 TEST(EnumMapperBasicTest, EmptyMapper) {
-  EnumMapper<Color> mapper;
+  EnumMapper<int8_t> mapper;
   EXPECT_EQ(mapper.size(), 0);
   EXPECT_TRUE(mapper.keys().empty());
   EXPECT_TRUE(mapper.values().empty());
@@ -162,6 +163,7 @@ TEST(EnumMapperBasicTest, IntegerEnumSupport) {
   mapper.add_entry(1, "one");
   mapper.add_entry(2, "two");
   mapper.add_entry(3, "three");
+  mapper.finalize();
 
   EXPECT_EQ(mapper.from_string("one"), 1);
   EXPECT_EQ(mapper.from_string("TWO"), 2);

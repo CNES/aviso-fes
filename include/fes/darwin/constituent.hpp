@@ -164,6 +164,7 @@ inline auto map() -> EnumMapper<uint8_t> {
   for (auto& id : kAll) {
     mapper.add_entry(static_cast<uint8_t>(id), name(id));
   }
+  mapper.finalize();
   return mapper;
 }
 
