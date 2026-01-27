@@ -142,7 +142,7 @@ auto evaluate_tide(const AbstractTidalModel<T>* const tidal_model,
 /// @note The units of the returned tide are the same as the units of the input
 /// constituents.
 auto evaluate_tide_from_constituents(
-    const std::map<Constituent, std::complex<double>>& constituents,
+    const std::map<Constituent, Complex>& constituents,
     const Eigen::Ref<const Eigen::VectorXd>& epoch, const double latitude,
     const Settings& settings) -> std::tuple<Eigen::VectorXd, Eigen::VectorXd>;
 

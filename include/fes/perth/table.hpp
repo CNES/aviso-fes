@@ -133,12 +133,12 @@ class WaveSet : public TidalConstituents {
 
 /// @brief Data structure that holds the tide of a constituent.
 struct Wave {
-  Vector7b doodson_number;    //!< Doodson number of the constituent
-  std::complex<double> tide;  //!< Tide of the constituent
-  double tidal_argument;      //!< Doodson argument
-  TidalType type;             //!< Type of tidal wave
-  bool is_inferred = false;   //!< Whether the tide was inferred from the
-                              //!< constituents
+  Vector7b doodson_number;   //!< Doodson number of the constituent
+  Complex tide;              //!< Tide of the constituent
+  double tidal_argument;     //!< Doodson argument
+  TidalType type;            //!< Type of tidal wave
+  bool is_inferred = false;  //!< Whether the tide was inferred from the
+                             //!< constituents
 };
 
 /// @brief Alias for a constituent table.

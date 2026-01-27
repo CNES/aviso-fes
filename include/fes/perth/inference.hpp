@@ -1,7 +1,5 @@
 #pragma once
 
-#include <complex>
-#include <cstdint>
 #include <unordered_map>
 #include <utility>
 #include <vector>
@@ -41,9 +39,9 @@ class Inference {
   /// @brief Type for interpolation functions.
   /// The function takes in the frequencies and amplitudes of three components
   /// and returns a complex number representing the interpolated value.
-  using Interpolator = std::function<std::complex<double>(
-      double, const std::complex<double>&, double, const std::complex<double>&,
-      double, const std::complex<double>&, double)>;
+  using Interpolator =
+      std::function<Complex(double, const Complex&, double, const Complex&,
+                            double, const Complex&, double)>;
 
   /// Inferred diurnal constituents with their frequencies.
   static std::unordered_map<Constituent, double> kInferredDiurnalConstituents_;
@@ -104,14 +102,14 @@ class Inference {
   /// @param[in,out] node The TideComponent for the node constituent.
   /// @param[in] lat The latitude for the computation.
   auto evaluate_node_tide(Wave& node, const double lat) const
-      -> const std::complex<double>& {
+      -> const Complex& {
     if (node.is_inferred) {
       constexpr auto gamma2 = 0.682;
       constexpr auto amplitude = 0.0279;  // m
       auto p20 = 0.5 - 1.5 * detail::math::pow<2>(
                                  std::sin(detail::math::radians(lat)));
       auto xi = gamma2 * p20 * std::sqrt(1.25 / detail::math::pi<double>());
-      node.tide = std::complex<double>(xi * amplitude, 0.0);
+      node.tide = Complex(xi * amplitude, 0.0);
     }
     return node.tide;
   }
