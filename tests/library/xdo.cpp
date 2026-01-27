@@ -6,6 +6,8 @@
 
 #include <gtest/gtest.h>
 
+#include <stdexcept>
+
 namespace fes {
 
 // Test the code function with standard values
@@ -84,7 +86,7 @@ TEST(XdoNumerical, SpecialCodes) {
                                                 127, -128, 127};
   // This will produce characters based on the code function
   const std::string result = xdo_numerical(limits_doodson);
-  EXPECT_EQ(result.length(), 7);
+  EXPECT_EQ(result.length(), 7U);
 }
 
 // Test xdo_alphabetical with known constituents
@@ -127,11 +129,7 @@ TEST(XdoAlphabetical, EdgeCases) {
   // Test with int8_t limits
   const Eigen::Vector<int8_t, 7> limits_doodson{127, -128, 127, -128,
                                                 127, -128, 127};
-  const std::string result = xdo_alphabetical(limits_doodson);
-  EXPECT_EQ(result.length(), 7);
-  // Note: This test exercises out-of-bounds array access which is undefined
-  // behavior We just verify the function doesn't crash and returns the expected
-  // length
+  EXPECT_THROW(xdo_alphabetical(limits_doodson), std::out_of_range);
 }
 
 // Test xdo_alphabetical array bounds
@@ -149,11 +147,9 @@ TEST(XdoAlphabetical, ArrayBounds) {
   EXPECT_EQ(xdo_alphabetical(max_doodson), "PPPPPPP");
 
   // Test with value that gives index beyond 24: value = 17 -> index 25 (out of
-  // bounds!) This would be undefined behavior, but let's test what happens
+  // bounds!)
   const Eigen::Vector<int8_t, 7> overflow_doodson{17, 17, 17, 17, 17, 17, 17};
-  // The result is undefined, but the function should not crash
-  const std::string overflow_result = xdo_alphabetical(overflow_doodson);
-  EXPECT_EQ(overflow_result.length(), 7);
+  EXPECT_THROW(xdo_alphabetical(overflow_doodson), std::out_of_range);
 }
 
 // Test mathematical correctness of XDO transformations
@@ -205,8 +201,8 @@ TEST(XdoConsistency, NumericalVsAlphabetical) {
   const std::string numerical = xdo_numerical(test_doodson);
   const std::string alphabetical = xdo_alphabetical(test_doodson);
 
-  EXPECT_EQ(numerical.length(), 7);
-  EXPECT_EQ(alphabetical.length(), 7);
+  EXPECT_EQ(numerical.length(), 7U);
+  EXPECT_EQ(alphabetical.length(), 7U);
   EXPECT_EQ(numerical.length(), alphabetical.length());
 }
 
@@ -219,14 +215,13 @@ TEST(XdoRobustness, InputValidation) {
   const std::string numerical = xdo_numerical(valid_doodson);
   const std::string alphabetical = xdo_alphabetical(valid_doodson);
 
-  EXPECT_EQ(numerical.length(), 7);
-  EXPECT_EQ(alphabetical.length(), 7);
+  EXPECT_EQ(numerical.length(), 7U);
+  EXPECT_EQ(alphabetical.length(), 7U);
 
-  // Test with extreme values
   const Eigen::Vector<int8_t, 7> extreme_doodson{127, -128, 0, 0, 0, 0, 0};
 
   EXPECT_NO_THROW(xdo_numerical(extreme_doodson));
-  EXPECT_NO_THROW(xdo_alphabetical(extreme_doodson));
+  EXPECT_THROW(xdo_alphabetical(extreme_doodson), std::out_of_range);
 }
 
 // Test constexpr evaluation capability

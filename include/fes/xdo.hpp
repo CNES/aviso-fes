@@ -49,7 +49,11 @@ inline auto xdo_alphabetical(const Eigen::Ref<const Vector7b>& doodson)
   auto result = std::string();
   result.reserve(7);
   for (const auto& value : doodson) {
-    result.push_back(xdo[value + 8]);
+    size_t ix = value + 8;
+    if (ix >= xdo.size()) {
+      throw std::out_of_range("Doodson number out of range for XDO code");
+    }
+    result.push_back(xdo[ix]);
   }
   return result;
 }
