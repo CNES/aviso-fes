@@ -33,6 +33,7 @@ from .type_hints import (
 )
 from .core import darwin, perth
 from . import config as config
+from .version import __version__  # noqa: F401
 
 __all__ = [
     'AstronomicAngle',
