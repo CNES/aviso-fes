@@ -47,6 +47,8 @@ def test_constructor() -> None:
             wt['M2'].name(),
         ]
     )
+    assert 'Q1' in wt
+    assert 'XX' not in wt
 
 
 def test_wave() -> None:
