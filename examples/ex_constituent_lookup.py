@@ -231,20 +231,20 @@ def classify_constituent(name: str) -> str:
 
 
 # Classify all constituents
-darwin_classified = {}
-perth_classified = {}
+darwin_classified: dict[str, list[pyfes.darwin.Wave]] = {}
+perth_classified: dict[str, list[pyfes.perth.Wave]] = {}
 
-for const in darwin_constituents:
-    tide_type = classify_constituent(const.name())
+for fes_tidal_constituent in darwin_constituents:
+    tide_type = classify_constituent(fes_tidal_constituent.name())
     if tide_type not in darwin_classified:
         darwin_classified[tide_type] = []
-    darwin_classified[tide_type].append(const)
+    darwin_classified[tide_type].append(fes_tidal_constituent)
 
-for const in perth_constituents:
-    tide_type = classify_constituent(const.name())
+for got_tidal_constituent in perth_constituents:
+    tide_type = classify_constituent(got_tidal_constituent.name())
     if tide_type not in perth_classified:
         perth_classified[tide_type] = []
-    perth_classified[tide_type].append(const)
+    perth_classified[tide_type].append(got_tidal_constituent)
 
 # Print classification
 print(f'\n{"Type":<15} {"Darwin":<10} {"PERTH5":<10}')

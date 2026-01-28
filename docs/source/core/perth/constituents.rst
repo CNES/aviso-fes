@@ -38,7 +38,7 @@ Available Constituents
 The PERTH engine supports the following tidal constituents:
 
 ============================  =============  =========
-Name                          Speed (deg/h)  XDO      
+Name                          Speed (deg/h)  XDO
 ============================  =============  =========
 Node                          0.0022064      Z ZZZ AZB
 Sa1                           0.0410667      Z ZAZ ZYZ

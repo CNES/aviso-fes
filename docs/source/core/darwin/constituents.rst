@@ -38,7 +38,7 @@ Available Constituents
 The FES engine supports the following tidal constituents:
 
 ============================  =============  =========
-Name                          Speed (deg/h)  XDO      
+Name                          Speed (deg/h)  XDO
 ============================  =============  =========
 M0                            0.0000000      Z ZZZ ZZZ
 Sa1                           0.0410667      Z ZAZ ZYZ

@@ -70,10 +70,10 @@ print(config)
 # `engine comparison example <ex_engine_comparison.html>`_ for details on
 # choosing between engines.
 
-print(f"\nRuntime Settings: {type(config.settings).__name__}")
-print("Engine: FES/Darwin (Schureman nodal corrections)")
-print(f"Astronomical formulae: {config.settings.astronomic_formulae}")
-print(f"Time tolerance: {config.settings.time_tolerance} seconds")
+print(f'\nRuntime Settings: {type(config.settings).__name__}')
+print('Engine: FES/Darwin (Schureman nodal corrections)')
+print(f'Astronomical formulae: {config.settings.astronomic_formulae}')
+print(f'Time tolerance: {config.settings.time_tolerance} seconds')
 
 # %%
 # .. hint::
