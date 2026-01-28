@@ -119,7 +119,7 @@ static auto init_table(py::module &m) -> void {
            R"__doc__(Properties of the tide waves handled by PERTH
 
 Args:
-  constituents: List of constituent names provided by the model. 
+  constituents: List of constituent names provided by the model.
     Constituents in this list will be disabled for inference;
     all others will be inferred.
 )__doc__")
