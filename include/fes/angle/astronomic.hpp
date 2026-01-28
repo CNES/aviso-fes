@@ -468,7 +468,7 @@ class Astronomic {
 
 /// @brief Converts UTC to Terrestrial Dynamical Time (TDT).
 /// @param[in] epoch UTC epoch
-constexpr auto utc_2_tdt(const double epoch) -> double {
+FES_MATH_CONSTEXPR auto utc_2_tdt(const double epoch) -> double {
   return epoch + fetch_delta_time(epoch);
 }
 

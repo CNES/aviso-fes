@@ -158,7 +158,7 @@ constexpr auto epoch_to_year(double epoch) noexcept -> double {
 ///
 /// @note Future extrapolation becomes increasingly uncertain.
 /// @see https://www.iers.org for current Earth rotation data.
-constexpr auto fetch_delta_time(double epoch) -> double {
+FES_MATH_CONSTEXPR auto fetch_delta_time(double epoch) -> double {
   double year = epoch_to_year(epoch);
 
   // Modern era: IERS table lookup with linear interpolation
