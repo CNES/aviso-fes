@@ -53,6 +53,6 @@ Returns:
 }  // namespace darwin
 }  // namespace fes
 
-auto init_darwin_long_period_equilibrium_tide(py::module& m) {
+void init_darwin_long_period_equilibrium_tide(py::module& m) {
   fes::darwin::init_wave_order2(m);
 }
