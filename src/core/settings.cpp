@@ -42,6 +42,34 @@ Args:
 Returns:
     Reference to the Settings object.
 )__doc__")
+      .def("with_group_modulations", &Settings::with_group_modulations,
+           py::arg("group_modulations"),
+           R"__doc__(
+Set whether to use group modulation nodal corrections.
+
+Args:
+    group_modulations: True to use group modulation nodal corrections.
+
+Returns:
+    Reference to the Settings object.
+
+Raises:
+    ValueError: If the setting isn't called on a PerthRuntimeSettings object.
+)__doc__")
+      .def("with_inference_type", &Settings::with_inference_type,
+           py::arg("inference_type"),
+           R"__doc__(
+Set the inference interpolation type.
+
+Args:
+    inference_type: Inference interpolation type.
+
+Returns:
+    Reference to the Settings object.
+
+Raises:
+    ValueError: If the setting isn't called on a PerthRuntimeSettings object.
+)__doc__")
       .def("with_time_tolerance", &Settings::with_time_tolerance,
            py::arg("time_tolerance"),
            R"__doc__(
@@ -76,8 +104,15 @@ Args:
 Returns:
     Reference to the Settings object.
 )__doc__")
-      .def_property_readonly("formulae", &Settings::astronomic_formulae,
+      .def_property_readonly("astronomic_formulae",
+                             &Settings::astronomic_formulae,
                              "Get the astronomic formulae.")
+      .def_property_readonly(
+          "group_modulations", &PerthRuntimeSettings::group_modulations,
+          "Get whether to use group modulation nodal corrections.")
+      .def_property_readonly("inference_type",
+                             &PerthRuntimeSettings::inference_type,
+                             "Get the inference interpolation type.")
       .def_property_readonly("time_tolerance", &Settings::time_tolerance,
                              "Get the time tolerance.")
       .def_property_readonly(
@@ -90,36 +125,7 @@ Returns:
 
   py::class_<PerthRuntimeSettings, Settings>(m, "PerthRuntimeSettings",
                                              "Settings for the PERTH5 engine.")
-      .def(py::init<>(), "Default constructor.")
-      .def("with_group_modulations",
-           &PerthRuntimeSettings::with_group_modulations,
-           py::arg("group_modulations"),
-           R"__doc__(
-Set whether to use group modulation nodal corrections.
-
-Args:
-    group_modulations: True to use group modulation nodal corrections.
-
-Returns:
-    Reference to the PerthRuntimeSettings object.
-)__doc__")
-      .def("with_inference_type", &PerthRuntimeSettings::with_inference_type,
-           py::arg("inference_type"),
-           R"__doc__(
-Set the inference interpolation type.
-
-Args:
-    inference_type: Inference interpolation type.
-
-Returns:
-    Reference to the PerthRuntimeSettings object.
-)__doc__")
-      .def_property_readonly(
-          "group_modulations", &PerthRuntimeSettings::group_modulations,
-          "Get whether to use group modulation nodal corrections.")
-      .def_property_readonly("inference_type",
-                             &PerthRuntimeSettings::inference_type,
-                             "Get the inference interpolation type.");
+      .def(py::init<>(), "Default constructor.");
 }
 
 }  // namespace fes
