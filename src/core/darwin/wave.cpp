@@ -4,6 +4,7 @@
 // BSD-style license that can be found in the LICENSE file.
 #include "fes/darwin/wave.hpp"
 
+#include <pybind11/complex.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
