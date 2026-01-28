@@ -3,34 +3,177 @@
 Changelog
 #########
 
-2025.9.1
+2026.2.0
 ========
 
+.. important::
+
+   **Major API Changes**: This release introduces the PERTH5/Doodson prediction
+   engine and significantly restructures the Python API. Existing code will
+   require updates. See the Migration Guide below for details.
+
+New Features
+------------
+* **Added PERTH5/Doodson prediction engine**: Introduced support for the PERTH5
+  tidal prediction engine, which uses Doodson number classification with group
+  modulations. This engine is compatible with GOT (Goddard Ocean Tide) models
+  including GOT4.10, GOT5.5, and GOT5.6. The PERTH5 engine was developed by
+  Dr. Richard Ray at NASA GSFC and supports 123 tidal constituents.
+
+* **Dual prediction engine support**: The library now supports two prediction
+  engines:
+
+  * **FES/Darwin Engine**: Classical Darwin notation with Schureman nodal
+    corrections (142 constituents). Compatible with FES2014 and FES2022 atlases.
+  * **PERTH5/Doodson Engine**: Doodson number classification with group
+    modulations (123 constituents). Compatible with GOT atlases.
+
+* **Automatic UTC to TT conversion**: The ``evaluate_tide()`` function no longer
+  requires a ``leap_seconds`` parameter. The library now automatically converts
+  UTC dates to Terrestrial Time (TT) using dynamically updated IERS tables that
+  include leap second data and Earth rotation parameters (UT1-UTC).
+
+Breaking Changes
+----------------
+
+* **Restructured Python API**: The API has been significantly reorganized:
+
+  * ``pyfes.darwin`` and ``pyfes.perth`` submodules have been introduced for
+    engine-specific constituents
+  * ``pyfes.FesRuntimeSettings`` for FES/Darwin engine configuration
+  * ``pyfes.PerthRuntimeSettings`` for PERTH5/Doodson engine configuration
+  * The generic ``pyfes.Settings`` class has been removed
+
+* **Changed** ``pyfes.config.load()`` **return type**: Now returns a
+  ``Configuration`` named tuple with ``models`` and ``settings`` attributes
+  instead of a plain dictionary.
+
+* **Changed** ``evaluate_tide()`` **signature**: The function signature has been
+  simplified. The ``leap_seconds`` parameter has been removed since time
+  conversion is now automatic. The ``num_threads`` parameter has been removed
+  from the function call and is now configured through the ``settings`` object
+  using the ``.with_num_threads()`` method.
+
+  .. code-block:: python
+
+     # Old API
+     tide, lp, flags = pyfes.evaluate_tide(
+         handler['tide'],
+         dates,
+         leap_seconds,
+         lon,
+         lat,
+         settings,
+         num_threads=0
+     )
+
+     # New API
+     config = pyfes.config.load('config.yaml')
+     tide, lp, flags = pyfes.evaluate_tide(
+         config.models['tide'],
+         dates,
+         lon,
+         lat,
+         settings=config.settings,
+     )
+
+* **Configuration file changes**: Configuration files now support an ``engine``
+  parameter to specify which prediction engine to use:
+
+  .. code-block:: yaml
+
+     tide:
+       lgp:
+         engine: fes  # or 'perth5' for GOT models, default is 'fes'
+         path: ${FES_DATA}/ocean_tide.nc
+         # ... other parameters
+
+* **Source code reorganization**: Python source code has been moved from
+  ``src/pyfes/`` and ``src/core/`` to ``src/python/pyfes/`` and
+  ``src/python/core/`` respectively.
+
+Migration Guide
+~~~~~~~~~~~~~~~
+
+**For basic tide evaluation:**
+
+.. code-block:: python
+
+   # Old code (2025.9.0)
+   import pyfes
+   import pyfes.config as config_handler
+
+   config = config_handler.load('config.yaml')
+   tide, lp, flags = pyfes.evaluate_tide(
+       config['tide'],
+       dates,
+       leap_secons,
+       lon,
+       lat,
+       settings,
+       num_threads=0
+   )
+
+   # New code (2026.2.0)
+   import pyfes
+
+   config = pyfes.config.load('config.yaml')
+   tide, lp, flags = pyfes.evaluate_tide(
+       config.models['tide'],
+       dates,
+       lon,
+       lat,
+       settings=config.settings,
+   )
+
+**For custom runtime settings:**
+
+.. code-block:: python
+
+   # FES/Darwin engine
+   settings = (
+       pyfes.FesRuntimeSettings()
+       .with_astronomic_formulae(pyfes.Formulae.SCHUREMAN_ORDER_1)
+       .with_time_tolerance(3600.0)
+       .with_num_threads(0)
+   )
+
+   # PERTH5/Doodson engine
+   settings = (
+       pyfes.PerthRuntimeSettings()
+       .with_group_modulations(True)
+       .with_inference_type(pyfes.InterpolationType.LINEAR_ADMITTANCE)
+       .with_astronomic_formulae(pyfes.Formulae.IERS)
+       .with_num_threads(0)
+   )
+
+Documentation
+-------------
+* Added comprehensive prediction engines documentation comparing FES/Darwin and
+  PERTH5/Doodson engines.
+* Added C++ API documentation with examples for both prediction engines.
+* Added constituent reference tables with speeds and Doodson numbers.
+
 Bug Fixes
-----------
+---------
 * **Fixed bounding box filtering for vertex interpolation in LGP models**:
   Resolved a bug where vertex interpolation in LGP tidal models didn't properly
-  handle bounding box constraints. When a query point coincided exactly with a
-  mesh vertex, the interpolation would bypass the ``selected_indices_`` check,
-  potentially returning invalid results for points outside the specified
-  bounding box.
-* **Fixed Box construction when crossing dateline in LPG mesh triangle
+  handle bounding box constraints.
+* **Fixed Box construction when crossing dateline in LGP mesh triangle
   selection**: Resolved an issue where bounding box construction failed when
-  crossing the international dateline during LPG mesh triangle selection.
-* **Improved error handling for vertex interpolation**: Changed the return type
-  of ``handle_vertex_interpolation`` to bool for better error handling.
-* **Enhanced test coverage**: Parameterized bbox in ``test_bbox_lgp2`` for
-  improved test coverage.
+  crossing the international dateline.
+* **Improved NetCDF reading performance**: Enhanced performance by loading
+  selected indices directly rather than loading all elements before subsampling.
 
-Performance Improvements
-------------------------
-* **Improved NetCDF reading performance**: Enhanced performance by loading all
-  elements before subsampling the area of interest, reducing I/O overhead.
+Testing
+-------
+* Added comprehensive test coverage for leap seconds handling.
+* Added pickle serialization tests for configuration objects.
 
-Maintenance
------------
-* **Updated pre-commit hooks**: Updated pre-commit hooks to their latest versions
-  for improved code quality checks.
+Build System
+------------
+* Reorganized source directory structure for clearer separation of Python
+  bindings.
 
 2025.9.0
 ========
