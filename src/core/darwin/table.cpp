@@ -187,6 +187,16 @@ Returns:
           },
           py::arg("index"))
       .def(
+          "__contains__",
+          [](const WaveTable& self, const std::string& name) -> bool {
+            try {
+              return self.contains(constituents::parse(name));
+            } catch (...) {
+              return false;
+            }
+          },
+          py::arg("index"))
+      .def(
           "__iter__",
           [](const WaveTable& self) {
             return py::make_iterator(self.begin(), self.end());

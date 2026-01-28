@@ -76,6 +76,43 @@ static auto init_table(py::module &m) -> void {
           },
           "Get the name of the wave.");
 
+  class WaveIterator {
+   public:
+    using pointer = const perth::Wave *;
+    using reference = const perth::Wave &;
+
+    WaveIterator(const perth::WaveTable *table,
+                 std::vector<Constituent>::const_iterator it)
+        : table_(table), current_(it) {}
+
+    auto operator*() const -> reference { return (*table_)[*current_]; }
+
+    auto operator->() const -> pointer { return &(*table_)[*current_]; }
+
+    auto operator++() -> WaveIterator & {
+      ++current_;
+      return *this;
+    }
+
+    auto operator++(int) -> WaveIterator {
+      auto tmp = *this;
+      ++(*this);
+      return tmp;
+    }
+
+    auto operator==(const WaveIterator &other) const -> bool {
+      return current_ == other.current_;
+    }
+
+    auto operator!=(const WaveIterator &other) const -> bool {
+      return !(*this == other);
+    }
+
+   private:
+    const perth::WaveTable *table_;
+    std::vector<Constituent>::const_iterator current_;
+  };
+
   py::class_<perth::WaveTable>(m, "WaveTable", "Table of tidal constituents.")
       .def(
           py::init([](const boost::optional<std::vector<std::string>>
@@ -106,6 +143,25 @@ static auto init_table(py::module &m) -> void {
             return self[id];
           },
           py::arg("constituent"), "Get a constituent by its enum value.")
+      .def(
+          "__contains__",
+          [](const perth::WaveTable &self,
+             const std::string &constituent) -> bool {
+            try {
+              return self.contains(constituents::parse(constituent));
+            } catch (...) {
+              return false;
+            }
+          },
+          py::arg("constituent"),
+          "Check if a constituent is in the table by its name.")
+      .def(
+          "__iter__",
+          [](const perth::WaveTable &self) {
+            return py::make_iterator(WaveIterator(&self, self.begin()),
+                                     WaveIterator(&self, self.end()));
+          },
+          py::keep_alive<0, 1>(), "Iterate over the waves in the table.")
       .def(
           "keys",
           [](const perth::WaveTable &self) {

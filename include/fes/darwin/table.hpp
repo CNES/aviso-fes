@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "fes/angle/astronomic.hpp"
+#include "fes/darwin/constituent.hpp"
 #include "fes/darwin/wave.hpp"
 #include "fes/tidal_constituents.hpp"
 #include "fes/types.hpp"
@@ -320,6 +321,17 @@ class WaveTable : public TidalConstituents {
   auto compute_nodal_modulations(const Eigen::Ref<const Eigen::VectorXd>& epoch,
                                  const angle::Formulae& formulae) const
       -> std::tuple<Eigen::MatrixXd, Eigen::MatrixXd>;
+
+  /// @brief Check if a constituent is in the table
+  /// @param[in] ident The constituent identifier
+  /// @return true if the constituent is in the table
+  inline auto contains(const Constituent ident) const noexcept -> bool {
+    auto it =
+        std::find_if(waves_.begin(), waves_.end(), [ident](const auto& wave) {
+          return wave != nullptr && wave->ident() == ident;
+        });
+    return it != waves_.end();
+  }
 
  private:
   /// Typename to a function pointer to get a wave from the table

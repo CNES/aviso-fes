@@ -77,6 +77,13 @@ class WaveSet : public TidalConstituents {
   /// @brief Get the items of the constituent set
   constexpr auto items() noexcept -> Item & { return items_; }
 
+  /// @brief Check if a constituent is in the table
+  /// @param[in] ident The constituent identifier
+  /// @return true if the constituent is in the table
+  inline auto contains(const Constituent ident) const noexcept -> bool {
+    return std::find(keys_.begin(), keys_.end(), ident) != keys_.end();
+  }
+
   /// @brief Get the keys as a vector
   constexpr auto keys_vector() const -> const std::vector<Constituent> & {
     return keys_vector_;
