@@ -96,6 +96,10 @@ print('-' * 70)
 
 fes_constituents = pyfes.darwin.constituents()
 
+# Note: Using pyfes.darwin.constituents() because TICON-3 data follows
+# Darwin notation conventions. If working with GOT-based constituent data,
+# use pyfes.perth.constituents() instead.
+
 for name, (amplitude, phase) in BREST_TICON3_DATA.items():
     if name in fes_constituents:
         # Try to parse the constituent name - this will raise if unknown
@@ -141,6 +145,21 @@ print(f"""Prediction Settings:
 #
 # Call :func:`evaluate_tide_from_constituents` to compute the tide at Brest
 # using the observed tidal constituents.
+#
+# We use **FesRuntimeSettings** because these constituents follow Darwin
+# notation (from TICON-3 harmonic analysis). If you're working with
+# constituents from a GOT-based atlas or using Doodson notation, use
+# **PerthRuntimeSettings** instead:
+#
+# .. code-block:: python
+#
+#     # For Doodson-based constituents
+#     tide, long_period = pyfes.evaluate_tide_from_constituents(
+#         constituents, dates, BREST_LAT, settings=pyfes.PerthRuntimeSettings()
+#     )
+#
+# For more information on engine selection, see the
+# `engine comparison example <ex_engine_comparison.html>`_.
 
 tide, long_period = pyfes.evaluate_tide_from_constituents(
     constituents, dates, BREST_LAT, settings=pyfes.FesRuntimeSettings()

@@ -50,6 +50,32 @@ config = pyfes.config.load(pathlib.Path().absolute() / 'fes_slev.yml')
 print(config)
 
 # %%
+# Prediction Engine Information
+# ==============================
+#
+# This configuration uses the **FES/Darwin engine**, which employs Darwin's
+# harmonic notation with Schureman's nodal corrections. This is the classical
+# engine designed for FES tidal atlases.
+#
+# The Darwin engine:
+#
+# * Uses fundamental astronomical arguments (s, h, p, N, p₁)
+# * Applies individual Schureman nodal corrections to each constituent
+# * Supports 142 tidal constituents
+# * Uses traditional admittance for minor constituents
+#
+# To use the **PERTH5/Doodson engine** instead (for GOT tidal models), set
+# ``engine: perth5`` in your YAML configuration. The PERTH5 engine uses Doodson
+# number classification and group modulations. See the
+# `engine comparison example <ex_engine_comparison.html>`_ for details on
+# choosing between engines.
+
+print(f"\nRuntime Settings: {type(config.settings).__name__}")
+print("Engine: FES/Darwin (Schureman nodal corrections)")
+print(f"Astronomical formulae: {config.settings.astronomic_formulae}")
+print(f"Time tolerance: {config.settings.time_tolerance} seconds")
+
+# %%
 # .. hint::
 #
 #     By default, the function :func:`pyfes.load_config` loads the entire

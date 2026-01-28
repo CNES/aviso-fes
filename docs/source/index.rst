@@ -55,16 +55,50 @@ Where:
 The :term:`FES` models, such as FES2022, are sophisticated global atlases that provide
 the location-specific amplitudes (:math:`H`) and phase lags (:math:`\kappa`)
 for a large number of tidal constituents. The **PyFES** library acts as the
-harmonic prediction engine. When a user requests a tide prediction for a
-specific location and time, the library:
+harmonic prediction engine.
 
-1.  Retrieves the amplitude and phase for each constituent from the FES model
+PyFES Dual-Engine Architecture
+-------------------------------
+
+PyFES implements **two distinct prediction engines** that differ in their
+mathematical formulation and constituent notation:
+
+* **FES/Darwin Engine** (``engine: fes``): Uses :term:`Darwin notation` with
+  Schureman's nodal corrections. This is the classical approach developed for
+  FES tidal atlases (FES2014, FES2022). It supports 142 tidal constituents and
+  follows traditional oceanographic conventions.
+
+* **PERTH5/Doodson Engine** (``engine: perth5``): Uses :term:`Doodson number`
+  classification with group modulations. Developed by Dr. Richard Ray at NASA
+  Goddard Space Flight Center, this engine is designed for GOT (Goddard Ocean
+  Tide) models. It supports 123 tidal constituents and offers configurable
+  inference modes.
+
+Both engines implement the same fundamental harmonic method but differ in their
+constituent representation and approach to nodal corrections. The choice of
+engine depends on your tidal atlas format. For a detailed comparison, see
+:ref:`prediction_engines`.
+
+Prediction Workflow
+-------------------
+
+When a user requests a tide prediction for a specific location and time, PyFES:
+
+1.  Retrieves the amplitude and phase for each constituent from the tidal model
     maps at the desired location.
 2.  Calculates the astronomical argument (the angle inside the cosine function)
     for the specified time using the known astronomical speeds of each constituent.
-3.  Applies the fundamental prediction equation shown above, summing the
+3.  Applies nodal corrections appropriate to the selected engine:
+
+    * **Darwin engine**: Individual Schureman nodal factors (*f*) and phase
+      corrections (*u*)
+    * **PERTH5 engine**: Group modulation corrections or individual corrections
+      based on configuration
+
+4.  Applies the fundamental prediction equation shown above, summing the
     contributions of all constituents.
-4.  Adds the local mean sea level (:math:`H_0`) to produce the final predicted
+5.  Infers minor constituents not in the atlas using admittance relationships.
+6.  Adds the local mean sea level (:math:`H_0`) to produce the final predicted
     tide height relative to the datum.
 
 References
@@ -109,6 +143,7 @@ Contact
    setup
    conda
    auto_examples/index.rst
+   prediction_engines
    pyfes
    api
    core

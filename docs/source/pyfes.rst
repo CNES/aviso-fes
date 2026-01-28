@@ -253,41 +253,280 @@ long-period tides, is calculated by summing the outputs.
         bbox = (-10, 40, 10, 60)
         cfg = pyfes.config.load('fes2014b.yaml', bbox=bbox)
 
+.. _runtime_settings:
+
 Runtime Settings
 ----------------
 
-Runtime settings pick the engine and tune the prediction. When you load a
-configuration file, PyFES returns ``cfg.settings`` as either
-:class:`pyfes.FesRuntimeSettings` or :class:`pyfes.PerthRuntimeSettings`
-depending on the ``engine`` key. You can also build settings manually:
+Runtime settings control the prediction engine behavior and must match your
+tidal atlas format. When you load a configuration file via
+:func:`pyfes.config.load`, PyFES automatically instantiates the appropriate
+settings class based on the ``engine`` key in your YAML file:
+
+* ``engine: fes`` → :class:`pyfes.FesRuntimeSettings`
+* ``engine: perth5`` → :class:`pyfes.PerthRuntimeSettings`
+
+Each engine has specific configuration options tailored to its prediction
+methodology. The settings are returned in ``cfg.settings`` and passed to
+prediction functions.
+
+FES/Darwin Runtime Settings
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For FES tidal atlases (FES2014, FES2022), use :class:`pyfes.FesRuntimeSettings`:
 
 .. code-block:: python
 
-    # PERTH5 engine with group modulations and Fourier admittance
+    import pyfes
+
+    # Create Darwin engine settings with recommended defaults
+    settings = (
+        pyfes.FesRuntimeSettings()
+        .with_astronomic_formulae(pyfes.Formulae.SCHUREMAN_ORDER_1)
+        .with_time_tolerance(3600.0)
+        .with_num_threads(0)
+    )
+
+    # Use with tide evaluation
+    tide, lp, flags = pyfes.evaluate_tide(
+        tide_model, dates, lons, lats, settings=settings
+    )
+
+**Available Options:**
+
+.. list-table::
+   :header-rows: 1
+   :widths: 35 65
+
+   * - Option
+     - Description
+   * - ``with_astronomic_formulae``
+     - Astronomical angle formulation:
+
+       * ``SCHUREMAN_ORDER_1`` (default): First-order Schureman formulations
+       * ``SCHUREMAN_ORDER_3``: Third-order Schureman (higher accuracy)
+       * ``IERS``: IERS conventions (modern ephemerides)
+
+       Default is ``SCHUREMAN_ORDER_1`` for consistency with historical FES
+       conventions.
+   * - ``with_time_tolerance``
+     - Time span in seconds for angle reuse optimization. Astronomical angles
+       are expensive to compute; this setting allows reusing angles within the
+       specified tolerance. Default: 3600.0 (1 hour). Set to 0.0 to disable
+       caching.
+   * - ``with_num_threads``
+     - Number of parallel threads for computation. Set to 0 (default) to let
+       PyFES automatically determine the optimal thread count based on
+       available CPU cores.
+
+**Example with Third-Order Schureman:**
+
+.. code-block:: python
+
+    # Higher accuracy with third-order formulations
+    settings = (
+        pyfes.FesRuntimeSettings()
+        .with_astronomic_formulae(pyfes.Formulae.SCHUREMAN_ORDER_3)
+        .with_time_tolerance(1800.0)  # 30-minute tolerance
+        .with_num_threads(4)  # Explicit thread count
+    )
+
+PERTH5/Doodson Runtime Settings
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For GOT models and Doodson-based atlases, use :class:`pyfes.PerthRuntimeSettings`:
+
+.. code-block:: python
+
+    import pyfes
+
+    # Create PERTH5 engine settings with recommended defaults
+    settings = (
+        pyfes.PerthRuntimeSettings()
+        .with_group_modulations(True)
+        .with_inference_type(pyfes.InterpolationType.LINEAR_ADMITTANCE)
+        .with_astronomic_formulae(pyfes.Formulae.IERS)
+        .with_time_tolerance(3600.0)
+        .with_num_threads(0)
+    )
+
+    # Use with tide evaluation
+    tide, lp, flags = pyfes.evaluate_tide(
+        tide_model, dates, lons, lats, settings=settings
+    )
+
+**Available Options:**
+
+.. list-table::
+   :header-rows: 1
+   :widths: 35 65
+
+   * - Option
+     - Description
+   * - ``with_group_modulations``
+     - Enable group-based nodal corrections. When ``True`` (recommended),
+       related constituents are modulated together, providing computational
+       efficiency. When ``False``, individual nodal corrections are applied.
+       Default: ``True``.
+   * - ``with_inference_type``
+     - Admittance interpolation strategy for minor constituents:
+
+       * ``ZERO_ADMITTANCE``: No inference; use only provided constituents
+       * ``LINEAR_ADMITTANCE`` (default): Linear interpolation (balanced)
+       * ``FOURIER_ADMITTANCE``: Fourier-based interpolation (most accurate)
+
+       Choose based on your accuracy requirements and computational budget.
+   * - ``with_astronomic_formulae``
+     - Astronomical angle formulation:
+
+       * ``IERS`` (default): IERS conventions (recommended for PERTH5)
+       * ``SCHUREMAN_ORDER_1``: First-order Schureman
+       * ``SCHUREMAN_ORDER_3``: Third-order Schureman
+
+       Default is ``IERS`` for consistency with modern ephemerides.
+   * - ``with_time_tolerance``
+     - Time span in seconds for angle reuse optimization. Default: 3600.0
+       (1 hour).
+   * - ``with_num_threads``
+     - Number of parallel threads. Default: 0 (auto-detect).
+
+**Example with Maximum Accuracy:**
+
+.. code-block:: python
+
+    # High-precision configuration for critical applications
     settings = (
         pyfes.PerthRuntimeSettings()
         .with_group_modulations(True)
         .with_inference_type(pyfes.InterpolationType.FOURIER_ADMITTANCE)
         .with_astronomic_formulae(pyfes.Formulae.IERS)
-        .with_num_threads(0)
+        .with_time_tolerance(0.0)  # No caching, recompute every time
+        .with_num_threads(8)
     )
 
-    tide, lp, flag = pyfes.evaluate_tide(
-        tide_model, dates, lons, lats, settings=settings)
+**Example with Minimal Inference:**
 
-Key options:
+.. code-block:: python
 
-* ``with_astronomic_formulae``: Astronomic angles formulation. FES defaults to
-  ``SCHUREMAN_ORDER_1``; PERTH5 defaults to ``IERS``.
-* ``with_time_tolerance``: Time span (seconds) over which astronomical angles
-  are reused.
-* ``with_num_threads``: Parallel threads (``0`` lets PyFES choose).
-* ``with_group_modulations`` (PERTH5 only): Enable group-modulation nodal
-  corrections.
-* ``with_inference_type`` (PERTH5 only): Admittance interpolation strategy
-  (``ZERO_ADMITTANCE``, ``LINEAR_ADMITTANCE``, or ``FOURIER_ADMITTANCE``).
+    # Use only explicitly provided constituents (no inference)
+    settings = (
+        pyfes.PerthRuntimeSettings()
+        .with_group_modulations(True)
+        .with_inference_type(pyfes.InterpolationType.ZERO_ADMITTANCE)
+        .with_astronomic_formulae(pyfes.Formulae.IERS)
+    )
+
+Choosing Between Engines
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The choice of engine depends on your tidal atlas format. Both engines share
+the same high-level API, but each is optimized for different atlas types.
+
+**Use FES/Darwin (FesRuntimeSettings) when:**
+
+* Your tidal atlas is FES2014 or FES2022
+* Following traditional oceanographic conventions
+* Replicating established FES-based predictions
+* Working with atlases using Darwin notation
+
+**Use PERTH5/Doodson (PerthRuntimeSettings) when:**
+
+* Your tidal atlas is GOT4.10, GOT5.5, GOT5.6, or similar
+* Working with Richard Ray's tide models
+* Need group modulation capabilities
+* Require fine control over admittance interpolation
+* Working with atlases using Doodson notation
+
+.. important::
+
+    Both sections (``tide`` and ``radial``) in your configuration file must
+    use the same engine. Mixing engines is not supported.
+
+For a detailed comparison of the two engines, see :ref:`prediction_engines`.
+
+Performance Tuning
+~~~~~~~~~~~~~~~~~~
+
+**Time Tolerance:**
+
+The ``with_time_tolerance`` setting controls how long astronomical angles are
+cached and reused. This is a key performance optimization:
+
+* **Larger tolerance** (e.g., 3600 seconds): Faster computation, slightly
+  reduced precision
+* **Smaller tolerance** (e.g., 60 seconds): More accurate, more computation
+* **Zero tolerance**: Maximum accuracy, no caching, slowest
+
+For most applications, the default 3600 seconds (1 hour) provides excellent
+accuracy with good performance.
+
+**Thread Count:**
+
+Setting ``with_num_threads(0)`` (default) lets PyFES automatically choose the
+optimal thread count. For production systems, you may want to set an explicit
+count based on available CPU cores and concurrent workloads.
+
+**Inference Type (PERTH5 only):**
+
+The inference type affects both accuracy and performance:
+
+* ``ZERO_ADMITTANCE``: Fastest, no additional constituents
+* ``LINEAR_ADMITTANCE``: Good balance (recommended default)
+* ``FOURIER_ADMITTANCE``: Highest accuracy, more computation
+
+Examples
+~~~~~~~~
+
+**Complete Prediction Workflow:**
+
+.. code-block:: python
+
+    import pyfes
+    import numpy as np
+
+    # Load configuration (automatically creates appropriate settings)
+    config = pyfes.config.load('fes2022b.yaml')
+
+    # Define prediction coordinates and times
+    dates = np.arange('2025-01-01', '2025-01-02', dtype='datetime64[h]')
+    lons = np.array([-7.688, 0.0, 10.5])
+    lats = np.array([59.195, 45.0, 30.0])
+
+    # Evaluate tide components
+    ocean_tide, lp_tide, flags = pyfes.evaluate_tide(
+        config.models['tide'], dates, lons, lats, settings=config.settings
+    )
+    radial_tide, _, _ = pyfes.evaluate_tide(
+        config.models['radial'], dates, lons, lats, settings=config.settings
+    )
+
+    # Calculate total geocentric tide
+    total_tide = ocean_tide + radial_tide + lp_tide
+
+**Custom Settings Override:**
+
+.. code-block:: python
+
+    # Load configuration but override settings
+    config = pyfes.config.load('fes2022b.yaml')
+
+    # Create custom settings
+    custom_settings = (
+        pyfes.FesRuntimeSettings()
+        .with_astronomic_formulae(pyfes.Formulae.SCHUREMAN_ORDER_3)
+        .with_time_tolerance(0.0)  # Maximum accuracy
+    )
+
+    # Use custom settings instead of config.settings
+    tide, lp, flags = pyfes.evaluate_tide(
+        config.models['tide'], dates, lons, lats, settings=custom_settings
+    )
 
 .. note::
 
-    A full example of tide prediction is available in the `gallery
-    <auto_examples/ex_prediction.html>`_.
+    Complete examples of tide prediction are available in the `example gallery
+    <auto_examples/index.html>`_, including:
+
+    * :doc:`auto_examples/ex_prediction` - Basic prediction example
+    * :doc:`auto_examples/ex_engine_comparison` - Engine comparison
+    * :doc:`auto_examples/ex_constituents_prediction` - Constituent-based prediction

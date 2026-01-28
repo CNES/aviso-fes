@@ -27,8 +27,6 @@ astronomic angles.
    :maxdepth: 1
 
    core/astronomic_angle
-   core/wave
-   core/wave_table
    core/darwin/index
    core/perth/index
 

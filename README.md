@@ -22,6 +22,8 @@ predict tidal behavior.
 data
 - **Support multiple tidal models** including the latest FES2022 and legacy
   FES2014
+- **Dual prediction engines** supporting both Darwin (FES) and Doodson (GOT)
+  harmonic notation systems
 - **Handle large-scale data processing** for research and operational
   applications
 
@@ -36,6 +38,33 @@ Want to see PyFES in action?
 - **Astronomical constants** and tidal constituent analysis
 
 The examples run completely in the cloud - no software installation needed!
+
+## Prediction Engines
+
+PyFES provides two sophisticated prediction engines to support different tidal
+atlas formats and harmonic notation systems:
+
+### FES/Darwin Engine
+- **Classical Darwin notation** with Schureman nodal corrections
+- **142 supported tidal constituents**
+- Compatible with **FES2014 and FES2022** atlases
+- Traditional oceanographic conventions
+- Individual nodal modulation for each constituent
+
+### PERTH5/Doodson Engine
+- **Doodson number** classification system
+- **Group modulation** nodal corrections
+- **123 supported tidal constituents**
+- Compatible with **GOT** (Goddard Ocean Tide) models
+- Developed by **Dr. Richard Ray** at NASA GSFC
+- **Configurable inference modes**: zero, linear, or Fourier admittance
+
+Both engines share the same high-level API—simply specify your preferred engine
+in the configuration file. The choice depends on your tidal atlas format:
+**FES atlases use the Darwin engine**, while **GOT atlases use the PERTH5 engine**.
+
+See the [Prediction Engines documentation](https://cnes.github.io/aviso-fes/prediction_engines.html)
+for a detailed comparison and usage guidance.
 
 ## About FES2022
 
