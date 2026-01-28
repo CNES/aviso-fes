@@ -156,6 +156,8 @@ TEST_F(WaveTableTest, InitialValues) {
   for (std::size_t i = 0; i < kNumConstituentItems; ++i) {
     Constituent constituent = static_cast<Constituent>(i);
     const auto& component = table[constituent];
+    ASSERT_EQ(component.id, constituent)
+        << "Constituent ID should match for constituent " << i;
     EXPECT_EQ(component.tide.real(), 0.0)
         << "Real part should be 0 for constituent " << i;
     EXPECT_EQ(component.tide.imag(), 0.0)

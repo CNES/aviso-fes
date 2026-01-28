@@ -114,14 +114,20 @@ WaveTable::WaveTable(const std::vector<Constituent>& constituents) {
     const auto& wave = kv.second;
     auto index = constituent_to_index(key);
     auto inferred = std::find(constituents.begin(), constituents.end(), key);
-    items[index] = {wave.doodson_number,
-                    {0, 0},
-                    0,
-                    wave.type,
-                    inferred == constituents.end()};
+    items[index] = {
+        wave.doodson_number, {0, 0},   0,
+        wave.type,           kv.first, inferred == constituents.end()};
     keys[index] = key;
   }
   WaveSet<Wave>::operator=(WaveSet<Wave>(std::move(keys), std::move(items)));
+}
+
+WaveTable::WaveTable(const std::vector<std::string>& constituent_names) {
+  std::vector<Constituent> constituents;
+  for (const auto& name : constituent_names) {
+    constituents.push_back(constituents::parse(name));
+  }
+  *this = WaveTable(constituents);
 }
 
 }  // namespace perth

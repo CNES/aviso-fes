@@ -1,5 +1,6 @@
 #include "fes/perth/table.hpp"
 
+#include <pybind11/complex.h>
 #include <pybind11/eigen.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -20,9 +21,9 @@ static auto init_table(py::module &m) -> void {
   py::class_<perth::Wave>(
       m, "Wave", "Data structure that holds the tide of a constituent.")
       .def_property_readonly(
-          "doodson_number",
+          "doodson_numbers",
           [](const perth::Wave &self) -> Eigen::Vector<int8_t, 7> {
-            return self.doodson_number;
+            return self.doodson_numbers;
           },
           "Doodson number of the constituent.")
       .def_property_readonly(
@@ -46,33 +47,25 @@ static auto init_table(py::module &m) -> void {
       .def_property_readonly(
           "freq",
           [](const perth::Wave &self) -> double {
-            return tidal_frequency(self.doodson_number.head(6).cast<double>());
+            return tidal_frequency(self.doodson_numbers.head(6).cast<double>());
           },
           "Get the frequency of the tidal constituent.")
       .def(
           "xdo_numerical",
           [](const perth::Wave &self) -> std::string {
-            return xdo_numerical(self.doodson_number);
+            return xdo_numerical(self.doodson_numbers);
           },
           "Get the XDO numerical representation of the wave.")
       .def(
           "xdo_alphabetical",
           [](const perth::Wave &self) -> std::string {
-            return xdo_alphabetical(self.doodson_number);
+            return xdo_alphabetical(self.doodson_numbers);
           },
           "Get the XDO alphabetical representation of the wave.")
       .def(
           "name",
           [](const perth::Wave &self) -> std::string {
-            auto wt = WaveTable{};
-            for (const auto id : wt.keys()) {
-              const auto &wave = wt[id];
-              if (wave.doodson_number == self.doodson_number &&
-                  wave.tide == self.tide) {
-                return constituents::name(id);
-              }
-            }
-            return std::string{"Unknown"};
+            return constituents::name(self.id);
           },
           "Get the name of the wave.");
 
@@ -114,23 +107,22 @@ static auto init_table(py::module &m) -> void {
   };
 
   py::class_<perth::WaveTable>(m, "WaveTable", "Table of tidal constituents.")
-      .def(
-          py::init([](const boost::optional<std::vector<std::string>>
-                          &constituents) {
-            if (constituents) {
-              std::vector<Constituent> ids;
-              ids.reserve(constituents->size());
-              for (const auto &name : *constituents) {
-                ids.push_back(constituents::parse(name));
-              }
-              return perth::WaveTable(ids);
-            } else {
-              return perth::WaveTable();
-            }
-          }),
-          py::arg("constituents") = boost::none,
-          "Create a WaveTable from a list of constituent names. If the list is "
-          "empty, all constituents are included.")
+      .def(py::init([](const boost::optional<std::vector<std::string>>
+                           &constituents) {
+             if (constituents) {
+               return perth::WaveTable(*constituents);
+             } else {
+               return perth::WaveTable();
+             }
+           }),
+           py::arg("constituents") = boost::none,
+           R"__doc__(Properties of the tide waves handled by PERTH
+
+Args:
+  constituents: List of constituent names provided by the model. 
+    Constituents in this list will be disabled for inference;
+    all others will be inferred.
+)__doc__")
       .def(
           "__len__",
           [](const perth::WaveTable &self) -> size_t { return self.size(); },
@@ -138,7 +130,7 @@ static auto init_table(py::module &m) -> void {
       .def(
           "__getitem__",
           [](const perth::WaveTable &self,
-             std::string constituent) -> const Wave & {
+             const std::string &constituent) -> const Wave & {
             auto id = constituents::parse(constituent);
             return self[id];
           },

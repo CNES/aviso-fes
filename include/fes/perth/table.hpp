@@ -11,6 +11,7 @@
 #include <cstddef>
 #include <limits>
 #include <stdexcept>
+#include <string>
 #include <utility>
 #include <vector>
 
@@ -159,10 +160,11 @@ class WaveSet : public TidalConstituents {
 
 /// @brief Data structure that holds the tide of a constituent.
 struct Wave {
-  Vector7b doodson_number;   //!< Doodson number of the constituent
+  Vector7b doodson_numbers;  //!< Doodson number of the constituent
   Complex tide;              //!< Tide of the constituent
   double tidal_argument;     //!< Doodson argument
   TidalType type;            //!< Type of tidal wave
+  Constituent id;            //!< Constituent identifier
   bool is_inferred = false;  //!< Whether the tide was inferred from the
                              //!< constituents
 };
@@ -170,10 +172,15 @@ struct Wave {
 /// @brief Alias for a constituent table.
 class WaveTable : public WaveSet<Wave> {
  public:
-  /// @brief Create a constituent table from a list of constituent names.
-  /// @param[in] constituents The list of constituent names to include in the
-  /// table. If empty, all constituents are included.
+  /// @brief Create the PERTH wave table.
+  /// @param[in] constituents The list of constituent names provided by the
+  ///     model. Constituents not in this list will be inferred.
   explicit WaveTable(const std::vector<Constituent> &constituents = {});
+
+  /// @brief Create the PERTH wave table.
+  /// @param[in] constituent_names The list of constituent names provided by the
+  ///     model. Constituents not in this list will be inferred.
+  explicit WaveTable(const std::vector<std::string> &constituent_names);
 };
 
 template <typename T>
@@ -196,7 +203,7 @@ auto WaveSet<T>::update_nodal_corrections(const double epoch,
   for (const auto &key : keys_) {
     auto &component = (*this)[key];
     component.tidal_argument = calculate_doodson_argument(
-        angle, component.doodson_number.template cast<double>());
+        angle, component.doodson_numbers.template cast<double>());
   }
 }
 

@@ -146,7 +146,7 @@ auto populate_and_sort_inferred(
     const auto ident = item.first;
     const auto ampl = item.second;
     const auto doodson_number =
-        components[ident].doodson_number.head(6).cast<double>();
+        components[ident].doodson_numbers.head(6).cast<double>();
     mutable_inferred[ident] = {tidal_frequency(doodson_number), ampl};
     keys.push_back(ident);
   }
