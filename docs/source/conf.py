@@ -94,7 +94,7 @@ def create_constituent_rst(
     lines.append(
         f'{"Name":<{name_width}}  '
         f'{"Speed (deg/h)":<{speed_width}}  '
-        f'{"XDO":<{xdo_width}}'
+        f'{"XDO"}'
     )
     lines.append(separator)
 
