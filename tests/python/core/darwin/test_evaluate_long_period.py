@@ -8,11 +8,8 @@ import netCDF4
 import numpy
 from pyfes import core
 
-LONG_PERIOD = (
-    pathlib.Path(__file__).parent.parent
-    / 'dataset'
-    / 'equilibrium_long_period.nc'
-)
+DATASET_DIR = pathlib.Path(__file__).parent.parent.parent / 'dataset'
+LONG_PERIOD = DATASET_DIR / 'equilibrium_long_period.nc'
 
 
 def test_evaluate_equilibrium_long_period() -> None:

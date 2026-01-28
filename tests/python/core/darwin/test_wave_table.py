@@ -14,11 +14,10 @@ import numpy
 from pyfes import core
 import pytest
 
-from . import is_free_threaded
+from .. import is_free_threaded
 
-FES_TIDE_TIME_SERIES = (
-    pathlib.Path(__file__).parent.parent / 'dataset' / 'fes_tide_time_series.nc'
-)
+DATASET_DIR = pathlib.Path(__file__).parent.parent.parent / 'dataset'
+FES_TIDE_TIME_SERIES = DATASET_DIR / 'fes_tide_time_series.nc'
 
 
 def test_constructor() -> None:
