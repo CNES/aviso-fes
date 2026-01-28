@@ -1,6 +1,6 @@
-"""**********************************************
+"""***********************************************
 Comparing FES/Darwin and PERTH5/Doodson Engines
-**********************************************
+***********************************************
 
 This example demonstrates the differences between PyFES's two prediction
 engines:
