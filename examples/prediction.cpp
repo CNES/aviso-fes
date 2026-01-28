@@ -5,6 +5,7 @@
 #include <iostream>
 #include <list>
 #include <map>
+#include <memory>
 #include <netcdf>
 #include <numbers>
 #include <tuple>
@@ -85,7 +86,7 @@ static auto ocean_tide_constituents() -> std::list<fes::darwin::Constituent> {
 /// @param degrees Value in degrees
 /// @return Value in radians
 template <typename T>
-constexpr auto to_radians(const T& degrees) -> T {
+constexpr auto to_radians(const T &degrees) -> T {
   return degrees * std::numbers::pi / 180.0;
 }
 
@@ -93,7 +94,7 @@ constexpr auto to_radians(const T& degrees) -> T {
 /// @param amp Amplitude vector
 /// @param pha Phase vector in degrees
 /// @return A complex vector representing the wave
-auto polar(const std::vector<float>& amp, const std::vector<float>& pha)
+auto polar(const std::vector<float> &amp, const std::vector<float> &pha)
     -> Eigen::VectorXcf {
   auto size = amp.size();
   if (size != pha.size()) {
@@ -113,8 +114,8 @@ auto polar(const std::vector<float>& amp, const std::vector<float>& pha)
 /// @param filename The path to the NetCDF file
 /// @param model The tidal model to update
 static auto load_tide_data_from_file(
-    const fes::darwin::Constituent ident, const std::string& filename,
-    std::unique_ptr<fes::tidal_model::Cartesian<float>>& model) -> void {
+    const fes::darwin::Constituent ident, const std::string &filename,
+    std::unique_ptr<fes::tidal_model::Cartesian<float>> &model) -> void {
   try {
     // Open the NetCDF file for reading
     netCDF::NcFile ds(filename, netCDF::NcFile::read);
@@ -166,7 +167,8 @@ static auto load_tide_data_from_file(
           fes::Axis(Eigen::Map<const Eigen::VectorXd>(lat.data(), lat.size()),
                     1e-6, false);
       model = std::move(std::make_unique<fes::tidal_model::Cartesian<float>>(
-          std::move(x_axis), std::move(y_axis), fes::TideType::kRadial, false));
+          std::move(x_axis), std::move(y_axis),
+          fes::darwin::constituents::map(), fes::TideType::kRadial, false));
     }
 
     // Combine amplitude and phase into a complex wave
@@ -174,7 +176,7 @@ static auto load_tide_data_from_file(
 
     // Finally, add the constituent to the model
     model->add_constituent(ident, std::move(wave));
-  } catch (netCDF::exceptions::NcException& e) {
+  } catch (netCDF::exceptions::NcException &e) {
     std::cerr << "Error opening file: " << e.what() << std::endl;
     exit(EXIT_FAILURE);
   }
@@ -187,7 +189,7 @@ static auto load_load_tide_model()
   auto tide_paths = load_tide_paths();
   std::unique_ptr<fes::tidal_model::Cartesian<float>> model = nullptr;
 
-  for (const auto& [ident, path] : tide_paths) {
+  for (const auto &[ident, path] : tide_paths) {
     load_tide_data_from_file(ident, path, model);
   }
   return model;
@@ -198,7 +200,7 @@ static auto load_load_tide_model()
 static auto load_ocean_tide_model()
     -> std::unique_ptr<fes::tidal_model::LGP2<float>> {
   try {
-    auto lpg2_model = std::make_unique<fes::tidal_model::LGP2<float>>();
+    auto lpg2_model = std::unique_ptr<fes::tidal_model::LGP2<float>>(nullptr);
     // Open the NetCDF file for reading
     netCDF::NcFile ds(OCEAN_TIDE, netCDF::NcFile::read);
 
@@ -234,11 +236,11 @@ static auto load_ocean_tide_model()
         Eigen::Map<
             const Eigen::Matrix<int32_t, Eigen::Dynamic, 6, Eigen::RowMajor>>(
             lgp2_codes.data(), triangles, 6),
-        fes::TideType::kTide, 100'000);
+        fes::darwin::constituents::map(), fes::TideType::kTide, 100'000);
 
     // Read and add each constituent to the model
-    for (const auto& ident : ocean_tide_constituents()) {
-      std::string prefix = fes::constituents::name(ident);
+    for (const auto &ident : ocean_tide_constituents()) {
+      std::string prefix = fes::darwin::constituents::name(ident);
       std::string var_name = prefix + "_amplitude";
 
       // Get the amplitude variable
@@ -268,7 +270,7 @@ static auto load_ocean_tide_model()
     }
     return lpg2_model;
 
-  } catch (netCDF::exceptions::NcException& e) {
+  } catch (netCDF::exceptions::NcException &e) {
     std::cerr << "Error opening file: " << e.what() << std::endl;
     exit(EXIT_FAILURE);
   }
