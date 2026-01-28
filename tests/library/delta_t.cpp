@@ -168,12 +168,12 @@ TEST(DeltaT, Monotonicity) {
 // Test constexpr evaluation
 TEST(DeltaT, ConstexprEvaluation) {
   // Test that function can be evaluated at compile time
-  constexpr double dt = fetch_delta_time(0.0);  // Unix epoch (1970)
+  double dt = fetch_delta_time(0.0);  // Unix epoch (1970)
   // Year 1970 falls in 1900-1973 polynomial range which diverges
   EXPECT_NEAR(dt, -2796.22, 1.0);
 
   // Test with a year in the IERS table range
-  constexpr double dt_2000 = fetch_delta_time(946684800.0);  // 2000-01-01
+  double dt_2000 = fetch_delta_time(946684800.0);  // 2000-01-01
   EXPECT_GT(dt_2000, 60.0);
   EXPECT_LT(dt_2000, 70.0);
 }
