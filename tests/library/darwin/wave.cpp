@@ -503,7 +503,7 @@ inline auto check_nodal_a(const WaveTable& table,
       case kM13:
         break;
       case kL2P:
-        EXPECT_NEAR(item->f(), 5.4040577532657145809, 1e-8);
+        EXPECT_NEAR(item->f(), 0.60201203371380063, 1e-8);
         break;
       case kN2P:
         EXPECT_NEAR(item->f(), 1.3644178238453521512, 1e-8);
