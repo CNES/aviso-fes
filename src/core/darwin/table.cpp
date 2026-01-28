@@ -11,6 +11,7 @@
 #include "fes/darwin/constituent.hpp"
 #include "fes/python/datemanip.hpp"
 #include "fes/python/datetime64.hpp"
+#include "fes/python/optional.hpp"  // IWYU pragma: keep
 
 namespace py = pybind11;
 
@@ -18,22 +19,33 @@ namespace fes {
 namespace darwin {
 
 static void init_table(py::module& m) {
-  py::class_<WaveTable>(m, "WaveTable", "Properties of tide waves computed")
-      .def(py::init<std::vector<std::string>>(),
-           py::arg("waves") = std::vector<std::string>{})
+  py::class_<WaveTable>(m, "WaveTable",
+                        "Properties of the tide waves handled by FES")
+      .def(py::init([](const boost::optional<std::vector<std::string>>&
+                           constituents) {
+             if (constituents) {
+               return WaveTable(*constituents);
+             } else {
+               return WaveTable();
+             }
+           }),
+           py::arg("constituents") = boost::none,
+           R"__doc__(Properties of the tide waves handled by FES.
+
+  Args:
+    constituents: List of tidal constituents to handle. If None, all
+      constituents known to FES will be used.
+  )__doc__")
       .def("compute_nodal_corrections", &WaveTable::compute_nodal_corrections,
            py::arg("angles"),
-           R"__doc__(
-Compute nodal corrections.
+           R"__doc__(Compute nodal corrections.
 
 Args:
-    angles: Astronomic angle, indicating the date on which the tide is to be
-        calculated.
+  angles: Astronomical angle indicating the date for which to calculate the tide.
 )__doc__")
-      .def("admittance", &WaveTable::admittance, R"__doc__(
-Compute waves by admittance from these 7 major ones : O1, Q1, K1, 2n2, N2, M2,
-K2.
-)__doc__")
+      .def("admittance", &WaveTable::admittance,
+           "Compute waves by admittance from the 7 major constituents: O1, Q1, "
+           "K1, 2N2, N2, M2, K2.")
       .def_static(
           "harmonic_analysis",
           [](const Eigen::Ref<const Eigen::VectorXd>& h,
