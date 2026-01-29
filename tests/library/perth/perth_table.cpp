@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <boost/range/algorithm/find.hpp>
 #include <complex>
 #include <cstddef>
 #include <vector>
@@ -36,7 +37,7 @@ TEST(WaveSetTest, ConstructorWithKeysAndItems) {
 
   // Verify data integrity
   for (std::size_t i = 0; i < kNumConstituentItems; ++i) {
-    Constituent constituent = static_cast<Constituent>(i);
+    auto constituent = static_cast<Constituent>(i);
     EXPECT_EQ(array[constituent].tide.real(), static_cast<double>(i));
     EXPECT_EQ(array[constituent].tide.imag(), static_cast<double>(i + 1));
   }
@@ -103,7 +104,7 @@ TEST(WaveSetTest, RetrieveKeysAsVector) {
 
   WaveSet<Wave> array(std::move(test_keys), std::move(test_items));
 
-  auto keys_vector = array.keys_vector();
+  const auto& keys_vector = array.keys_vector();
   EXPECT_EQ(keys_vector.size(), kNumConstituentItems);
 
   for (std::size_t i = 0; i < kNumConstituentItems; ++i) {
@@ -119,9 +120,8 @@ class WaveTableTest : public ::testing::Test {
  protected:
   WaveTable table = WaveTable(WaveTableTest::enabled_);
 
-  auto is_enabled(Constituent constituent) const -> bool {
-    return std::find(enabled_.begin(), enabled_.end(), constituent) !=
-           enabled_.end();
+  static auto is_enabled(Constituent constituent) -> bool {
+    return boost::range::find(enabled_, constituent) != enabled_.end();
   }
 };
 
@@ -141,7 +141,7 @@ TEST_F(WaveTableTest, AllConstituentsPresent) {
   // Check that all constituent values from 0 to kNumConstituents-1 are present
   std::vector<bool> found(kNumConstituentItems, false);
   for (auto constituent : keys_vector) {
-    std::size_t index = static_cast<std::size_t>(constituent);
+    auto index = static_cast<std::size_t>(constituent);
     ASSERT_LT(index, kNumConstituentItems);
     found[index] = true;
   }
@@ -154,7 +154,7 @@ TEST_F(WaveTableTest, AllConstituentsPresent) {
 TEST_F(WaveTableTest, InitialValues) {
   // All tide table values should be initialized to (0, 0)
   for (std::size_t i = 0; i < kNumConstituentItems; ++i) {
-    Constituent constituent = static_cast<Constituent>(i);
+    auto constituent = static_cast<Constituent>(i);
     const auto& component = table[constituent];
     ASSERT_EQ(component.id, constituent)
         << "Constituent ID should match for constituent " << i;
@@ -172,7 +172,7 @@ TEST_F(WaveTableTest, DataConsistency) {
   const auto& keys = table.keys();
   for (std::size_t i = 0; i < kNumConstituentItems; ++i) {
     Constituent constituent = keys[i];
-    std::size_t constituent_index = static_cast<std::size_t>(constituent);
+    auto constituent_index = static_cast<std::size_t>(constituent);
     EXPECT_EQ(constituent_index, i)
         << "Key at position " << i << " should match its constituent value";
   }

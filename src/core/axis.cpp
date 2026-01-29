@@ -32,7 +32,8 @@ Args:
           longitude is circular.
 )__doc__")
       .def(
-          "__str__", [](const Axis& self) { return std::string(self); },
+          "__str__",
+          [](const Axis& self) -> std::string { return std::string(self); },
           R"__doc__(
 Return the string representation of the axis.
 

@@ -6,6 +6,8 @@
 
 #include <gtest/gtest.h>
 
+#include <boost/range/algorithm/find.hpp>
+
 namespace fes {
 
 // Test enum for testing purposes
@@ -100,23 +102,20 @@ TEST_F(EnumMapperTest, ExistsInvalidValue) {
 TEST_F(EnumMapperTest, KeysReturnsAllKeys) {
   auto keys = mapper_.keys();
   EXPECT_EQ(keys.size(), 3);
-  EXPECT_NE(std::find(keys.begin(), keys.end(), "red"), keys.end());
-  EXPECT_NE(std::find(keys.begin(), keys.end(), "green"), keys.end());
-  EXPECT_NE(std::find(keys.begin(), keys.end(), "blue"), keys.end());
+  EXPECT_NE(boost::range::find(keys, "red"), keys.end());
+  EXPECT_NE(boost::range::find(keys, "green"), keys.end());
+  EXPECT_NE(boost::range::find(keys, "blue"), keys.end());
 }
 
 // Test values method
 TEST_F(EnumMapperTest, ValuesReturnsAllValues) {
   auto values = mapper_.values();
   EXPECT_EQ(values.size(), 3);
-  EXPECT_NE(
-      std::find(values.begin(), values.end(), static_cast<uint8_t>(Color::Red)),
-      values.end());
-  EXPECT_NE(std::find(values.begin(), values.end(),
-                      static_cast<uint8_t>(Color::Green)),
+  EXPECT_NE(boost::range::find(values, static_cast<uint8_t>(Color::Red)),
             values.end());
-  EXPECT_NE(std::find(values.begin(), values.end(),
-                      static_cast<uint8_t>(Color::Blue)),
+  EXPECT_NE(boost::range::find(values, static_cast<uint8_t>(Color::Green)),
+            values.end());
+  EXPECT_NE(boost::range::find(values, static_cast<uint8_t>(Color::Blue)),
             values.end());
 }
 

@@ -51,20 +51,24 @@ Gets the wave name
       .def_property(
           "tide",
           [](const Wave& self) -> std::complex<double> { return self.tide(); },
-          [](Wave& self, std::complex<double>& tide) { self.tide(tide); },
+          [](Wave& self, std::complex<double>& tide) -> void {
+            self.tide(tide);
+          },
           R"__doc__(
 Gets the tide associated to the wave.
 )__doc__")
       .def_property(
           "admittance",
           [](const Wave& self) -> bool { return self.admittance(); },
-          [](Wave& self, bool& admittance) { self.admittance(admittance); },
+          [](Wave& self, bool& admittance) -> void {
+            self.admittance(admittance);
+          },
           R"__doc__(
 Returns True if the wave is computed by admittance.
 )__doc__")
       .def_property(
           "dynamic", [](const Wave& self) -> bool { return self.dynamic(); },
-          [](Wave& self, bool& dynamic) { self.dynamic(dynamic); },
+          [](Wave& self, bool& dynamic) -> void { self.dynamic(dynamic); },
           R"__doc__(
 Returns True if the wave is computed by dynamically.
 )__doc__")

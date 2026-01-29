@@ -81,7 +81,7 @@ TEST(InterpolatorLGP1, Constructor) {
   lgp1.add_constituent(darwin::kS2, values);
   auto acc = std::unique_ptr<Accelerator>(
       lgp1.accelerator(angle::Formulae::kMeeus, 0.0));
-  Quality quality;
+  Quality quality = 0;
   auto x = lgp1.interpolate({0.0, 0.0}, quality, acc.get());
   EXPECT_EQ(x.size(), 1);
 }

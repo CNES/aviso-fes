@@ -26,7 +26,7 @@ static void init_enum_mapper(py::module& m) {
            "Get the number of entries in the mapper.")
       .def(
           "__contains__",
-          [](const EnumMapper<uint8_t>& self, const std::string& name) {
+          [](const EnumMapper<uint8_t>& self, const std::string& name) -> bool {
             try {
               self.from_string(name);
               return true;
@@ -43,9 +43,8 @@ static void init_enum_mapper(py::module& m) {
            "Return list of (value, name) pairs in the mapper.")
       .def(
           "get_name",
-          [](const EnumMapper<uint8_t>& self, const uint8_t value) {
-            return self.to_string(value);
-          },
+          [](const EnumMapper<uint8_t>& self, const uint8_t value)
+              -> std::string { return self.to_string(value); },
           py::arg("value"), "Get the string name for a given enum value.");
 }
 

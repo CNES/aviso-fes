@@ -11,7 +11,7 @@ namespace detail {
 
 TEST(Thread, ParallelFor) {
   auto data = std::vector<size_t>(100);
-  auto callable = [&data](const size_t start, const size_t end) {
+  auto callable = [&data](const size_t start, const size_t end) -> void {
     for (auto i = start; i < end; ++i) {
       data[i] = i;
     }
@@ -24,7 +24,7 @@ TEST(Thread, ParallelFor) {
 
 TEST(Thread, ParallelForCatchException) {
   auto data = std::vector<size_t>(100);
-  auto callable = [&data](const size_t start, const size_t end) {
+  auto callable = [&data](const size_t start, const size_t end) -> void {
     for (auto i = start; i < end; ++i) {
       data[i] = i;
     }

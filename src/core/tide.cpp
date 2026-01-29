@@ -81,7 +81,9 @@ void init_evaluate_tide(py::module& m) {
       [](const fes::AbstractTidalModel<T>* const tidal_model, py::array& date,
          const Eigen::Ref<const Eigen::VectorXd>& longitude,
          const Eigen::Ref<const Eigen::VectorXd>& latitude,
-         const fes::Settings& settings) {
+         const fes::Settings& settings)
+          -> std::tuple<Eigen::VectorXd, Eigen::VectorXd,
+                        fes::Vector<fes::Quality>> {
         return py_evaluate_tide<T>(tidal_model, date, longitude, latitude,
                                    settings);
       },

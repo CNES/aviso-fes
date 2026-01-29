@@ -285,7 +285,7 @@ TEST(InferenceOceanTide, RealCase) {
     auto& tide = tide_table[constituent].tide;
     std::cout << "Constituent: " << static_cast<int>(constituent)
               << ", Value: " << tide.real() << " + " << tide.imag() << "i"
-              << std::endl;
+              << '\n';
   }
 }
 

@@ -32,7 +32,7 @@ Args:
 )__doc__")
       .def(
           "update",
-          [](angle::Astronomic& self, const py::handle& date) {
+          [](angle::Astronomic& self, const py::handle& date) -> void {
             self.update(python::datemanip::as_float64(date));
           },
           py::arg("date"),

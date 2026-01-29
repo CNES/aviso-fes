@@ -27,7 +27,7 @@ class EvaluateTideTest : public ::testing::Test {
                               const T constituent, const Complex& value) {
     Eigen::Matrix<Complex, 4, 1> values =
         Eigen::Matrix<Complex, 4, 1>::Constant(value);
-    model.add_constituent(static_cast<uint8_t>(constituent), std::move(values));
+    model.add_constituent(static_cast<uint8_t>(constituent), values);
   }
 
   void SetUp() override {
@@ -102,7 +102,7 @@ class EvaluateTideFromConstituentsTest : public ::testing::Test {
  protected:
   static auto add_constituent(
       std::map<darwin::Constituent, Complex>& map,
-      std::function<darwin::Constituent(const std::string&)> func,
+      const std::function<darwin::Constituent(const std::string&)>& func,
       const std::string& name, const std::pair<double, double>& value) {
     map[func(name)] =
         std::polar(value.first, detail::math::radians(value.second));
@@ -110,7 +110,7 @@ class EvaluateTideFromConstituentsTest : public ::testing::Test {
 
   static auto add_constituent(
       std::map<perth::Constituent, Complex>& map,
-      std::function<perth::Constituent(const std::string&)> func,
+      const std::function<perth::Constituent(const std::string&)>& func,
       const std::string& name, const std::pair<double, double>& value) {
     map[func(name)] =
         std::polar(value.first, detail::math::radians(value.second));

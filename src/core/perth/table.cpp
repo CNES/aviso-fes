@@ -107,14 +107,14 @@ static auto init_table(py::module &m) -> void {
   };
 
   py::class_<perth::WaveTable>(m, "WaveTable", "Table of tidal constituents.")
-      .def(py::init([](const boost::optional<std::vector<std::string>>
-                           &constituents) {
-             if (constituents) {
-               return perth::WaveTable(*constituents);
-             } else {
-               return perth::WaveTable();
-             }
-           }),
+      .def(py::init(
+               [](const boost::optional<std::vector<std::string>> &constituents)
+                   -> perth::WaveTable {
+                 if (constituents) {
+                   return perth::WaveTable(*constituents);
+                 }
+                 return perth::WaveTable();
+               }),
            py::arg("constituents") = boost::none,
            R"__doc__(Properties of the tide waves handled by PERTH
 
@@ -149,25 +149,26 @@ Args:
           "Check if a constituent is in the table by its name.")
       .def(
           "__iter__",
-          [](const perth::WaveTable &self) {
+          [](const perth::WaveTable &self)
+              -> py::typing::Iterator<const fes::perth::Wave &> {
             return py::make_iterator(WaveIterator(&self, self.begin()),
                                      WaveIterator(&self, self.end()));
           },
           py::keep_alive<0, 1>(), "Iterate over the waves in the table.")
       .def(
           "keys",
-          [](const perth::WaveTable &self) {
+          [](const perth::WaveTable &self) -> std::vector<std::string> {
             std::vector<std::string> keys;
             keys.reserve(self.size());
             for (const auto &wave : self.keys()) {
-              keys.push_back(constituents::name(wave));
+              keys.emplace_back(constituents::name(wave));
             }
             return keys;
           },
           "Get the list of constituent names in the table.")
       .def(
           "values",
-          [](const perth::WaveTable &self) {
+          [](const perth::WaveTable &self) -> std::vector<perth::Wave> {
             std::vector<perth::Wave> values;
             values.reserve(self.size());
             for (const auto &wave : self.items()) {

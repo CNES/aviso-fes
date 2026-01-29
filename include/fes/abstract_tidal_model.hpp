@@ -222,7 +222,7 @@ class AbstractTidalModel
                           TidalConstituents& constituents,
                           Accelerator* acc) const -> Quality {
     Quality quality;
-    for (const auto& item : this->interpolate(point, quality, acc)) {
+    for (auto&& item : this->interpolate(point, quality, acc)) {
       constituents.set_tide(std::get<0>(item), std::get<1>(item));
     }
     return quality;

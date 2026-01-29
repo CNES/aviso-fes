@@ -21,14 +21,14 @@ namespace darwin {
 static void init_table(py::module& m) {
   py::class_<WaveTable>(m, "WaveTable",
                         "Properties of the tide waves handled by FES")
-      .def(py::init([](const boost::optional<std::vector<std::string>>&
-                           constituents) {
-             if (constituents) {
-               return WaveTable(*constituents);
-             } else {
-               return WaveTable();
-             }
-           }),
+      .def(py::init(
+               [](const boost::optional<std::vector<std::string>>& constituents)
+                   -> WaveTable {
+                 if (constituents) {
+                   return WaveTable(*constituents);
+                 }
+                 return WaveTable();
+               }),
            py::arg("constituents") = boost::none,
            R"__doc__(Properties of the tide waves handled by FES.
 
@@ -189,7 +189,8 @@ Return the list of tidal waves handled by this instance.
 Returns:
   List of tidal waves.
 )__doc__")
-      .def("__len__", [](const WaveTable& self) { return self.size(); })
+      .def("__len__",
+           [](const WaveTable& self) -> size_t { return self.size(); })
       .def(
           "__getitem__",
           [](const WaveTable& self,
@@ -210,7 +211,8 @@ Returns:
           py::arg("index"))
       .def(
           "__iter__",
-          [](const WaveTable& self) {
+          [](const WaveTable& self)
+              -> py::typing::Iterator<std::shared_ptr<fes::darwin::Wave>> {
             return py::make_iterator(self.begin(), self.end());
           },
           py::keep_alive<0, 1>());

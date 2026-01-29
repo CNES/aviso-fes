@@ -11,7 +11,7 @@ namespace darwin {
 
 class AstronomicAngle : public angle::Astronomic {
  public:
-  AstronomicAngle(const bool overload_angle = false) : angle::Astronomic() {
+  explicit AstronomicAngle(const bool overload_angle = false) {
     s_ = 3.4550013579944832;
     h_ = 4.8910358580921542;
     p_ = 5.2822083020245900;
