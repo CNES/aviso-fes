@@ -56,7 +56,8 @@ atlas formats and harmonic notation systems:
 - **Group modulation** nodal corrections
 - **123 supported tidal constituents**
 - Compatible with **GOT** (Goddard Ocean Tide) models
-- Developed by **Dr. Richard Ray** at NASA GSFC
+- Developed by **Dr. Richard Ray** at NASA GSFC, original code is available
+  [here](https://codeberg.org/rray/perth5)
 - **Configurable inference modes**: zero, linear, or Fourier admittance
 
 Both engines share the same high-level API—simply specify your preferred engine
