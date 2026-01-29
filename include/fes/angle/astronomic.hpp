@@ -168,7 +168,7 @@ class Astronomic {
   /// @brief Gets the unity node factor.
   ///
   /// @return 1
-  FES_MATH_CONSTEXPR auto f_1() const noexcept -> double { return 1; }
+  constexpr auto f_1() const noexcept -> double { return 1; }
 
   /// @brief Gets the node factor of @f$J_1@f$.
   ///
