@@ -26,6 +26,8 @@ from .core import (
     Settings as Settings,
     TidalType as TidalType,
     InterpolationType as InterpolationType,
+    tidal_model as tidal_model,
+    Axis as Axis,
 )
 from . import core
 from .type_hints import (
@@ -41,6 +43,7 @@ __all__ = [
     'RADIAL',
     'TIDE',
     'AstronomicAngle',
+    'Axis',
     'FesRuntimeSettings',
     'Formulae',
     'InterpolationType',
@@ -52,6 +55,7 @@ __all__ = [
     'evaluate_tide',
     'evaluate_tide_from_constituents',
     'perth',
+    'tidal_model',
 ]
 
 
