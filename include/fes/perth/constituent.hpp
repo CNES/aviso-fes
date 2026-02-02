@@ -124,7 +124,7 @@ constexpr auto kAll = std::array<Constituent, kNumConstituentItems>{
 /// @brief Convert a constituent enum to its string name.
 /// @param[in] constituent The constituent to convert.
 /// @return The string name of the constituent.
-auto name(Constituent constituent) -> const char* const;
+auto name(Constituent constituent) -> const char*;
 
 /// @brief Parse a constituent name string to its enum value.
 /// @param[in] name The name of the constituent.

@@ -31,7 +31,7 @@ constexpr auto kConstituentNames =
         "Sta",    "T2",    "Theta1",
     };
 
-auto name(Constituent constituent) -> const char* const {
+auto name(Constituent constituent) -> const char* {
   const auto ix = static_cast<std::size_t>(constituent);
   if (ix >= kNumConstituentItems) {
     throw std::invalid_argument("unknown constituent: " +

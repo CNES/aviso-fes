@@ -149,7 +149,7 @@ auto parse(const std::string& name) -> Constituent;
 ///
 /// @param[in] constituent Tidal constituent.
 /// @return Tidal constituent name.
-auto name(Constituent constituent) -> const char* const;
+auto name(Constituent constituent) -> const char*;
 
 /// @brief Get the tidal constituent names handled by the library.
 /// @return Tidal constituent names.
