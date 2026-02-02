@@ -12,6 +12,8 @@
 #include <string>
 #include <vector>
 
+#include "fes/types.hpp"
+
 namespace fes {
 
 /// @brief Class to map enum values to strings and vice versa.
@@ -233,5 +235,8 @@ class EnumMapper {
   /// Whether finalize() has been called
   bool finalized_ = false;
 };
+
+/// @brief Type alias for Constituent enum mapping.
+using ConstituentMap = EnumMapper<ConstituentId>;
 
 }  // namespace fes

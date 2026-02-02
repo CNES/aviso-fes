@@ -29,11 +29,14 @@ enum class InterpolationType : uint8_t {
 class Settings {
  public:
   /// @brief Constructor.
-  constexpr Settings(EngineType engine_type) : engine_type_(engine_type) {}
+  explicit constexpr Settings(EngineType engine_type)
+      : engine_type_(engine_type) {}
 
   /// @brief Get the engine type.
   /// @return Engine type.
-  constexpr EngineType engine_type() const noexcept { return engine_type_; }
+  constexpr auto engine_type() const noexcept -> EngineType {
+    return engine_type_;
+  }
 
   /// @brief Set the astronomic formulae.
   /// @param formulae Astronomic formulae.
@@ -45,7 +48,7 @@ class Settings {
 
   /// @brief Get the astronomic formulae.
   /// @return Astronomic formulae.
-  constexpr angle::Formulae astronomic_formulae() const noexcept {
+  constexpr auto astronomic_formulae() const noexcept -> angle::Formulae {
     return astronomic_formulae_;
   }
 
@@ -58,7 +61,9 @@ class Settings {
 
   /// @brief Get the time tolerance.
   /// @return Time tolerance in seconds.
-  constexpr double time_tolerance() const noexcept { return time_tolerance_; }
+  constexpr auto time_tolerance() const noexcept -> double {
+    return time_tolerance_;
+  }
 
   /// @brief Set whether to use group modulation nodal corrections.
   auto with_group_modulations(bool group_modulations) -> Settings& {
@@ -72,7 +77,7 @@ class Settings {
 
   /// @brief Get whether to use group modulation nodal corrections.
   /// @return True if group modulation nodal corrections are used.
-  constexpr bool group_modulations() const noexcept {
+  constexpr auto group_modulations() const noexcept -> bool {
     return group_modulations_;
   }
 
@@ -87,7 +92,7 @@ class Settings {
   }
 
   /// @brief Get the inference interpolation type.
-  constexpr InterpolationType inference_type() const noexcept {
+  constexpr auto inference_type() const noexcept -> InterpolationType {
     return inference_type_;
   }
 
@@ -101,7 +106,7 @@ class Settings {
 
   /// @brief Get the number of threads to use for computation.
   /// @return Number of threads.
-  constexpr size_t num_threads() const noexcept { return num_threads_; }
+  constexpr auto num_threads() const noexcept -> size_t { return num_threads_; }
 
  protected:
   /// Egine type to use for the tide computation

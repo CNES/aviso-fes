@@ -38,7 +38,7 @@ enum TideType : uint8_t {
 };
 
 /// @brief Constituent values type
-using ConstituentValues = std::vector<std::pair<uint8_t, Complex>>;
+using ConstituentValues = std::vector<std::pair<ConstituentId, Complex>>;
 
 /// @brief Base class for accelerating the interpolation of tidal models.
 ///
@@ -91,8 +91,8 @@ class Accelerator {
 
   /// @brief Appends a tidal constituent value to the cached interpolated
   /// values.
-  auto emplace_back(const uint8_t& constituent, const Complex& value) noexcept
-      -> void {
+  auto emplace_back(const ConstituentId& constituent,
+                    const Complex& value) noexcept -> void {
     values_.emplace_back(constituent, value);
   }
 
@@ -131,12 +131,11 @@ class AbstractTidalModel
  public:
   /// Build a tidal model with a given tide type.
   ///
-  /// @param[in] enum_mapper The enum mapper that converts between tidal
+  /// @param[in] constituent_map The enum mapper that converts between tidal
   /// constituent names and their identifiers.
   /// @param[in] tide_type The tide type handled by the model.
-  AbstractTidalModel(EnumMapper<uint8_t> enum_mapper, TideType tide_type)
-      : enum_mapper_(std::move(enum_mapper)), tide_type_(tide_type) {}
-
+  AbstractTidalModel(ConstituentMap constituent_map, TideType tide_type)
+      : map_(std::move(constituent_map)), tide_type_(tide_type) {}
   /// Destructor
   virtual ~AbstractTidalModel() = default;
 
@@ -157,7 +156,7 @@ class AbstractTidalModel
   ///
   /// @param[in] ident The tidal constituent identifier.
   /// @param[in] wave The tidal constituent modelled.
-  virtual auto add_constituent(const uint8_t ident,
+  virtual auto add_constituent(const ConstituentId ident,
                                Vector<std::complex<T>> wave) -> void = 0;
 
   /// Add a tidal constituent to the model.
@@ -168,7 +167,7 @@ class AbstractTidalModel
   inline auto add_constituent(const std::string& name,
                               Vector<std::complex<T>> wave) -> void {
     try {
-      add_constituent(enum_mapper_.from_string(name), std::move(wave));
+      add_constituent(map_.from_string(name), std::move(wave));
     } catch (const std::invalid_argument& e) {
       throw std::invalid_argument("constituent name not known: " + name);
     }
@@ -181,7 +180,7 @@ class AbstractTidalModel
     dynamic_.clear();
     dynamic_.reserve(dynamic.size());
     for (auto& item : dynamic) {
-      dynamic_.push_back(enum_mapper_.from_string(item));
+      dynamic_.push_back(map_.from_string(item));
     }
   }
 
@@ -190,13 +189,14 @@ class AbstractTidalModel
     auto result = std::vector<std::string>();
     result.reserve(dynamic_.size());
     for (const auto& item : dynamic_) {
-      result.push_back(enum_mapper_.to_string(item));
+      result.push_back(map_.to_string(item));
     }
     return result;
   }
 
   /// Get the dynamic tidal constituents not interpolated by the model.
-  constexpr auto dynamic_ids() const noexcept -> const std::vector<uint8_t>& {
+  constexpr auto dynamic_ids() const noexcept
+      -> const std::vector<ConstituentId>& {
     return dynamic_;
   }
 
@@ -230,7 +230,7 @@ class AbstractTidalModel
 
   /// Get the tidal constituents handled by the model.
   constexpr auto data() const
-      -> const std::map<uint8_t, Vector<std::complex<T>>>& {
+      -> const std::map<ConstituentId, Vector<std::complex<T>>>& {
     return data_;
   }
 
@@ -247,8 +247,8 @@ class AbstractTidalModel
   constexpr auto size() const -> size_t { return data_.size(); }
 
   /// Get the tidal constituent identifiers handled by the model.
-  inline auto identifiers() const -> std::vector<uint8_t> {
-    auto result = std::vector<uint8_t>();
+  inline auto identifiers() const -> std::vector<ConstituentId> {
+    auto result = std::vector<ConstituentId>();
     result.reserve(data_.size());
     for (const auto& item : data_) {
       result.push_back(std::get<0>(item));
@@ -260,19 +260,19 @@ class AbstractTidalModel
   constexpr auto tide_type() const -> TideType { return tide_type_; }
 
   /// Get the enum mapper for constituents.
-  constexpr auto enum_mapper() const -> const EnumMapper<uint8_t>& {
-    return enum_mapper_;
+  constexpr auto constituent_map() const -> const ConstituentMap& {
+    return map_;
   }
 
  protected:
   /// Enum mapper for constituents
-  EnumMapper<uint8_t> enum_mapper_;
+  ConstituentMap map_;
 
   /// Tidal constituents handled by the model.
-  std::map<uint8_t, Vector<std::complex<T>>> data_{};
+  std::map<ConstituentId, Vector<std::complex<T>>> data_{};
 
   /// List of tidal constituents handled by the model but not interpolated.
-  std::vector<uint8_t> dynamic_{};
+  std::vector<ConstituentId> dynamic_{};
 
   /// Tide type
   TideType tide_type_{TideType::kTide};

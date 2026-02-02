@@ -21,7 +21,7 @@ void init_cartesian_model(py::module& m, const std::string& suffix) {
              std::shared_ptr<fes::tidal_model::Cartesian<T>>>(
       m, ("Cartesian" + suffix).c_str(),
       "A tidal model that uses a Cartesian grid to store the wave models.")
-      .def(py::init<Axis, Axis, EnumMapper<uint8_t>, TideType, bool>(),
+      .def(py::init<Axis, Axis, ConstituentMap, TideType, bool>(),
            py::arg("lon"), py::arg("lat"), py::arg("constituent_map"),
            py::arg("tide_type") = kTide, py::arg("longitude_major") = true,
            R"__doc__(

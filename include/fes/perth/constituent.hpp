@@ -17,7 +17,7 @@ namespace fes {
 namespace perth {
 
 /// @brief Enum class representing tidal constituents.
-enum Constituent : uint8_t {
+enum Constituent : ConstituentId {
   kNode = 0,  //!< Node
   kSa1,       //!< @f$Sa_1@f$
   kSa,        //!< @f$Sa@f$
@@ -137,16 +137,7 @@ auto known() -> std::array<std::string, kNumConstituentItems>;
 
 /// @brief Create and return an EnumMapper for the Constituent enum.
 /// @return EnumMapper for Constituent.
-inline auto map() -> EnumMapper<uint8_t> {
-  EnumMapper<uint8_t> mapper;
-  mapper.reserve(kNumConstituentItems);
-
-  for (auto& id : kAll) {
-    mapper.add_entry(static_cast<uint8_t>(id), name(id));
-  }
-  mapper.finalize();
-  return mapper;
-}
+auto map() -> const ConstituentMap&;
 
 }  // namespace constituents
 

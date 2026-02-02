@@ -15,7 +15,7 @@ namespace fes {
 namespace darwin {
 
 /// Tidal constituents known by the library.
-enum Constituent : uint8_t {
+enum Constituent : ConstituentId {
   k2MK2,            //!< @f$2MK_2@f$
   k2MK3,            //!< @f$2MK_3@f$
   k2MK6,            //!< @f$2MK_6@f$
@@ -157,16 +157,7 @@ auto known() -> std::array<std::string, kNumConstituentItems>;
 
 /// @brief Create and return an EnumMapper for the Constituent enum.
 /// @return EnumMapper for Constituent.
-inline auto map() -> EnumMapper<uint8_t> {
-  EnumMapper<uint8_t> mapper;
-  mapper.reserve(kNumConstituentItems);
-
-  for (auto& id : kAll) {
-    mapper.add_entry(static_cast<uint8_t>(id), name(id));
-  }
-  mapper.finalize();
-  return mapper;
-}
+auto map() -> const ConstituentMap&;
 
 }  // namespace constituents
 }  // namespace darwin

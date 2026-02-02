@@ -10,6 +10,9 @@
 
 namespace fes {
 
+/// @brief Integer type used for tidal constituents identifiers.
+using ConstituentId = uint8_t;
+
 /// @brief Complex number type used for tidal constituents.
 using Complex = std::complex<double>;
 

@@ -21,7 +21,7 @@ class TidalConstituents {
   /// Set the tide of a constituent
   /// @param[in] ident The constituent identifier
   /// @param[in] value The tide value
-  virtual void set_tide(const uint8_t ident, const Complex& value) = 0;
+  virtual void set_tide(const ConstituentId ident, const Complex& value) = 0;
 };
 
 }  // namespace fes

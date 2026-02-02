@@ -54,7 +54,7 @@ class PyAbstractTidalModel : public AbstractTidalModel<T> {
                            quality, acc);
   }
 
-  void add_constituent(const uint8_t ident,
+  void add_constituent(const ConstituentId ident,
                        Vector<std::complex<T>> wave) override {
     PYBIND11_OVERLOAD_PURE(void, cname, add_constituent, ident, wave);
   }
@@ -80,7 +80,7 @@ static auto interpolate(const AbstractTidalModel<T>& self,
     throw std::invalid_argument("lon and lat must have the same size");
   }
   // Allocate result vectors
-  auto values = std::map<uint8_t, Eigen::VectorXcd>();
+  auto values = std::map<ConstituentId, Eigen::VectorXcd>();
   auto qualities = Eigen::Matrix<int8_t, -1, 1>(lon.size());
 
   for (auto&& ident : self.identifiers()) {
@@ -107,7 +107,8 @@ static auto interpolate(const AbstractTidalModel<T>& self,
   detail::parallel_for(thread, lon.size(), num_threads);
   auto result = std::map<std::string, Eigen::VectorXcd>();
   for (auto&& item : values) {
-    result[self.enum_mapper().to_string(item.first)] = std::move(item.second);
+    result[self.constituent_map().to_string(item.first)] =
+        std::move(item.second);
   }
   return std::make_tuple(result, qualities);
 }
@@ -182,7 +183,7 @@ equilibrium wave calculation routine (`lpe_minus_n_waves`).
             auto ids = std::vector<std::string>();
             ids.reserve(self.size());
             for (auto&& ident : self.identifiers()) {
-              ids.push_back(self.enum_mapper().to_string(ident));
+              ids.push_back(self.constituent_map().to_string(ident));
             }
             return ids;
           },

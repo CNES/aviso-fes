@@ -17,6 +17,7 @@
 #include <vector>
 
 #include "fes/abstract_tidal_model.hpp"
+#include "fes/enum_mapper.hpp"
 #include "fes/geometry/box.hpp"
 #include "fes/mesh/index.hpp"
 #include "fes/types.hpp"
@@ -93,7 +94,7 @@ class LGP : public fes::AbstractTidalModel<T> {
   ///
   /// @param[in] index The mesh index.
   /// @param[in] codes %LGP codes.
-  /// @param[in] enum_mapper The enum mapper that converts between tidal
+  /// @param[in] constituent_map The enum mapper that converts between tidal
   /// constituent names and their identifiers.
   /// @param[in] tide_type The tide type handled by the model.
   /// @param[in] max_distance The maximum distance allowed to extrapolate the
@@ -104,7 +105,7 @@ class LGP : public fes::AbstractTidalModel<T> {
   /// minimum latitude, the maximum longitude, and the maximum latitude. If the
   /// bounding box is not provided, all LGP codes will be considered.
   LGP(std::shared_ptr<mesh::Index> index, codes_t codes,
-      EnumMapper<uint8_t> enum_mapper, TideType tide_type,
+      ConstituentMap constituent_map, TideType tide_type,
       double max_distance = 0,
       const boost::optional<std::tuple<double, double, double, double>>& bbox =
           {});
@@ -116,8 +117,8 @@ class LGP : public fes::AbstractTidalModel<T> {
   ///
   /// @param[in] ident The wave model identifier.
   /// @param[in] wave The wave model.
-  inline auto add_constituent(const uint8_t ident, Vector<std::complex<T>> wave)
-      -> void override {
+  inline auto add_constituent(const ConstituentId ident,
+                              Vector<std::complex<T>> wave) -> void override {
     // wave is a vector of values for each LGP codes. The number of values must
     // match the number of LGP codes handled by this instance.
     if (expected_data_size_ != wave.size()) {
@@ -387,10 +388,10 @@ auto LGP<T, N>::calculate_expected_data_size() -> void {
 template <typename T, int N>
 LGP<T, N>::LGP(
     std::shared_ptr<mesh::Index> index, LGP::codes_t codes,
-    EnumMapper<uint8_t> enum_mapper, TideType tide_type,
+    ConstituentMap constituent_map, TideType tide_type,
     const double max_distance,
     const boost::optional<std::tuple<double, double, double, double>>& bbox)
-    : AbstractTidalModel<T>(std::move(enum_mapper), tide_type),
+    : AbstractTidalModel<T>(std::move(constituent_map), tide_type),
       index_(std::move(index)),
       max_distance_(max_distance),
       codes_(std::move(codes)) {

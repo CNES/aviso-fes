@@ -25,8 +25,8 @@ discretization.
 )__doc__")
       .def(py::init<
                std::shared_ptr<mesh::Index>,
-               typename tidal_model::LGP1<T>::codes_t, EnumMapper<uint8_t>,
-               TideType, double,
+               typename tidal_model::LGP1<T>::codes_t, ConstituentMap, TideType,
+               double,
                boost::optional<std::tuple<double, double, double, double>>>(),
            py::arg("index"), py::arg("codes"), py::arg("constituent_map"),
            py::arg("tide_type") = kTide, py::arg("max_distance") = 0,
@@ -74,8 +74,8 @@ discretization.
 )__doc__")
       .def(py::init<
                std::shared_ptr<mesh::Index>,
-               typename tidal_model::LGP2<T>::codes_t, EnumMapper<uint8_t>,
-               TideType, double,
+               typename tidal_model::LGP2<T>::codes_t, ConstituentMap, TideType,
+               double,
                boost::optional<std::tuple<double, double, double, double>>>(),
            py::arg("index"), py::arg("codes"), py::arg("constituent_map"),
            py::arg("tide_type") = kTide, py::arg("max_distance") = 0,

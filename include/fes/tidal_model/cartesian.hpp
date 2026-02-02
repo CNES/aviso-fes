@@ -25,23 +25,23 @@ class Cartesian : public AbstractTidalModel<T> {
   ///
   /// @param[in] lon The longitude axis.
   /// @param[in] lat The latitude axis.
-  /// @param[in] enum_mapper The enum mapper that converts between tidal
+  /// @param[in] constituent_map The enum mapper that converts between tidal
   /// constituent names and their identifiers.
   /// @param[in] tide_type The tide type handled by the model.
   /// @param[in] row_major Whether the data is stored in longitude-major order.
-  Cartesian(Axis lon, Axis lat, EnumMapper<uint8_t> enum_mapper,
+  Cartesian(Axis lon, Axis lat, ConstituentMap constituent_map,
             const TideType tide_type, const bool row_major = true)
-      : AbstractTidalModel<T>(std::move(enum_mapper), tide_type),
+      : AbstractTidalModel<T>(std::move(constituent_map), tide_type),
         row_major_(row_major),
-        lon_(std::move(lon)),
-        lat_(std::move(lat)) {}
+        lon_(lon),
+        lat_(lat) {}
 
   /// Add a tidal constituent to the model.
   ///
   /// @param[in] ident The tidal constituent identifier.
   /// @param[in] wave The tidal constituent modelled.
-  inline auto add_constituent(const uint8_t ident, Vector<std::complex<T>> wave)
-      -> void override {
+  inline auto add_constituent(const ConstituentId ident,
+                              Vector<std::complex<T>> wave) -> void override {
     if (wave.size() != lon_.size() * lat_.size()) {
       throw std::invalid_argument("wave size does not match expected size");
     }

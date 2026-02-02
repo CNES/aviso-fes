@@ -8,6 +8,7 @@
 #include <string>
 
 #include "fes/detail/string.hpp"
+#include "fes/enum_mapper.hpp"
 
 namespace fes {
 namespace darwin {
@@ -54,6 +55,20 @@ auto parse(const std::string& constituent_name) -> Constituent {
     }
   }
   throw std::invalid_argument("unknown constituent name: " + constituent_name);
+}
+
+auto map() -> const ConstituentMap& {
+  static auto mapper = []() -> const ConstituentMap {
+    ConstituentMap m;
+    m.reserve(kNumConstituentItems);
+
+    for (auto& id : kAll) {
+      m.add_entry(static_cast<ConstituentId>(id), name(id));
+    }
+    m.finalize();
+    return m;
+  }();
+  return mapper;
 }
 
 }  // namespace constituents

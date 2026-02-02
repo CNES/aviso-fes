@@ -9,24 +9,25 @@
 
 #include "fes/enum_mapper.hpp"
 #include "fes/perth/constituent.hpp"
+#include "fes/types.hpp"
 
 namespace py = pybind11;
 
 namespace fes {
 
 static void init_enum_mapper(py::module& m) {
-  py::class_<EnumMapper<uint8_t>>(
+  py::class_<ConstituentMap>(
       m, "ConstituentMap",
       "Mapper between constituent enum values and their string names.")
-      .def("__getitem__", &EnumMapper<uint8_t>::from_string, py::arg("name"),
+      .def("__getitem__", &ConstituentMap::from_string, py::arg("name"),
            "Get enum value by string name (case-insensitive).")
-      .def("__setitem__", &EnumMapper<uint8_t>::add_entry, py::arg("value"),
+      .def("__setitem__", &ConstituentMap::add_entry, py::arg("value"),
            py::arg("name"), "Add an entry mapping enum value to string name.")
-      .def("__len__", &EnumMapper<uint8_t>::size,
+      .def("__len__", &ConstituentMap::size,
            "Get the number of entries in the mapper.")
       .def(
           "__contains__",
-          [](const EnumMapper<uint8_t>& self, const std::string& name) -> bool {
+          [](const ConstituentMap& self, const std::string& name) -> bool {
             try {
               self.from_string(name);
               return true;
@@ -35,15 +36,15 @@ static void init_enum_mapper(py::module& m) {
             }
           },
           py::arg("name"), "Check if a string name exists in the mapper.")
-      .def("keys", &EnumMapper<uint8_t>::keys,
+      .def("keys", &ConstituentMap::keys,
            "Return list of all string names (keys) in the mapper.")
-      .def("values", &EnumMapper<uint8_t>::values,
+      .def("values", &ConstituentMap::values,
            "Return list of all enum values in the mapper.")
-      .def("items", &EnumMapper<uint8_t>::items,
+      .def("items", &ConstituentMap::items,
            "Return list of (value, name) pairs in the mapper.")
       .def(
           "get_name",
-          [](const EnumMapper<uint8_t>& self, const uint8_t value)
+          [](const ConstituentMap& self, const ConstituentId value)
               -> std::string { return self.to_string(value); },
           py::arg("value"), "Get the string name for a given enum value.");
 }
