@@ -333,8 +333,8 @@ class Common:
     #: is None, which means the whole grid is loaded.
     bbox: tuple[float, float, float, float] | None = None
     #: The tidal prediction engine to use. Either 'fes' for the FES/Darwin
-    #: engine or 'perth5' for the PERTH5 engine. Default is 'fes'.
-    engine: str = 'fes'
+    #: engine or 'perth5' for the PERTH5 engine.
+    engine: Engine = Engine.FES
 
     def __post_init__(self) -> None:
         """Validate the configuration."""
@@ -344,8 +344,6 @@ class Common:
             raise ValueError('longitude cannot be empty.')
         if not self.latitude:
             raise ValueError('latitude cannot be empty.')
-        if self.engine not in tuple(item.value for item in Engine):
-            raise ValueError(f'Unknown engine: {self.engine!r}.')
         known_constituents = tuple(map(str.upper, self.constituent_map.keys()))
         for item in self.dynamic:
             if item.upper() not in known_constituents:
@@ -354,7 +352,7 @@ class Common:
     @cached_property
     def constituent_map(self) -> ConstituentMap:
         """Return the constituent map for the selected engine."""
-        if self.engine == Engine.FES.value:
+        if self.engine == Engine.FES:
             return darwin_constituents()
         return perth_constituents()
 
@@ -679,21 +677,21 @@ def parse(path: str | os.PathLike) -> dict[str, Any]:
 def _load_model(
     settings: dict[str, Any],
     tidal_type: str,
+    engine: Engine,
     bbox: tuple[float, float, float, float] | None = None,
-) -> tuple[TidalModel, Engine]:
+) -> TidalModel:
     """Load a configuration file into memory.
 
     Args:
         settings: A dictionary defining the YAML document.
         tidal_type: The type of the tidal model to load.
+        engine: The tidal prediction engine to use.
         bbox: Bounding box to consider when loading the tidal model. It is
             represented as a tuple of four floats: (min_lon, min_lat, max_lon,
             max_lat). If not provided, the whole grid is loaded.
 
     Returns:
-        A tuple containing:
-        - The tidal model loaded from the configuration file.
-        - The engine type (FES or PERTH5).
+        The tidal model loaded from the configuration file.
 
     """
 
@@ -704,20 +702,14 @@ def _load_model(
                 'unexpected keyword argument "tidal_type"'
             )
 
-    def get_engine(config: dict[str, Any], section: str) -> Engine:
-        engine_str = config.get(section, {}).get('engine', 'fes')
-        return Engine(engine_str)
-
     if 'cartesian' in settings:
         tidal_type_exists(settings, 'cartesian')
-        engine = get_engine(settings, 'cartesian')
-        settings['cartesian'].update(tidal_type=tidal_type)
-        return Cartesian(bbox=bbox, **settings['cartesian']).load(), engine
+        settings['cartesian'].update(tidal_type=tidal_type, engine=engine)
+        return Cartesian(bbox=bbox, **settings['cartesian']).load()
     if 'lgp' in settings:
         tidal_type_exists(settings, 'lgp')
-        engine = get_engine(settings, 'lgp')
-        settings['lgp'].update(tidal_type=tidal_type)
-        return LGP(bbox=bbox, **settings['lgp']).load(), engine
+        settings['lgp'].update(tidal_type=tidal_type, engine=engine)
+        return LGP(bbox=bbox, **settings['lgp']).load()
 
     raise ValueError(
         'No tidal model found. Expected either "cartesian" or "lgp".'
@@ -784,10 +776,19 @@ def load(
     """
     models: dict[Literal['tide', 'radial'], TidalModel] = {}
     user_settings: dict[str, Any] = parse(path)
-    engine: Engine | None = None
 
     if user_settings is None or len(user_settings) == 0:
         raise ValueError(f'Configuration file {path!r} is empty.')
+
+    # Extract engine from top-level configuration (default to FES)
+    engine_str: str = user_settings.pop('engine', 'fes')
+    try:
+        engine = Engine(engine_str)
+    except ValueError as err:
+        raise ValueError(
+            f'Configuration file {path!r} is invalid. '
+            f'Unknown engine: {engine_str!r}.'
+        ) from err
 
     for key, settings in user_settings.items():
         if key not in ['tide', 'radial']:
@@ -798,19 +799,10 @@ def load(
         key = cast("Literal['tide', 'radial']", key)
 
         try:
-            model, model_engine = _load_model(
-                settings, tidal_type=key, bbox=bbox
+            model = _load_model(
+                settings, tidal_type=key, engine=engine, bbox=bbox
             )
             models[key] = model
-            # Use the engine from the first model loaded
-            if engine is None:
-                engine = model_engine
-            elif engine != model_engine:
-                raise ValueError(
-                    f'Configuration file {path!r} is invalid. '
-                    f'All models must use the same engine. '
-                    f'Found {engine.value!r} and {model_engine.value!r}.'
-                )
         except TypeError as err:
             if 'unexpected keyword argument' in str(err):
                 msg = str(err)
@@ -823,9 +815,5 @@ def load(
                     f'{section!r}.'
                 ) from err
             raise err from None
-
-    # Default to FES engine if no models were loaded (shouldn't happen)
-    if engine is None:
-        engine = Engine.FES
 
     return Configuration(models=models, settings=create_settings(engine))

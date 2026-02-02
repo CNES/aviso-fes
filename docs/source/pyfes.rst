@@ -44,29 +44,28 @@ Configuration File
 ------------------
 
 To perform a tide prediction, PyFES requires a configuration file in
-`YAML <https://yaml.org/>`_ format. This file tells the software where to find
-the tidal model data and how it's structured.
+`YAML <https://yaml.org/>`_ format. This file specifies where to find the tidal
+model data and how it is structured.
 
-At its core, the YAML file describes the models for two different tidal effects:
+The YAML file begins with a global configuration header. The optional ``engine``
+keyword selects the prediction engine: either ``fes`` (default) or ``perth5``.
+If specified, this keyword must appear at the top level of the file.
 
-* **tide**: This section defines the primary ocean tide model used to calculate
-  the tide's vertical rise and fall (oceanic elevations).
-* **radial**: This section defines the model for the **ocean tide loading**
-  effect. This is a secondary effect where the weight of the ocean tide causes
-  the flexible sea floor to deform, which also needs to be accounted for in
-  precise measurements.
+The configuration then describes two tidal components:
 
-Each of these sections must specify the grid type of the model data, which can
-be either a ``cartesian`` grid or an ``lgp`` (unstructured triangular) grid.
-Every model section also accepts an ``engine`` key set to ``fes`` (default) or
-``perth5``. All sections within a single configuration file must use the same
-engine.
+* **tide**: The primary ocean tide model, used to compute oceanic elevations
+  (the vertical rise and fall of the sea surface).
+* **radial**: The ocean tide loading model, which accounts for elastic
+  deformation of the seafloor under the weight of the overlying water column.
+
+Each section must specify the grid type of its model data: ``cartesian`` for
+regular grids or ``lgp`` for unstructured triangular meshes.
 
 .. note::
 
-    You can use environment variables in your YAML file paths. For example,
-    ``${FES_DATA}/my_model.nc`` will be automatically expanded if you have an
-    environment variable named ``FES_DATA``.
+    File paths support environment variable expansion. For example,
+    ``${FES_DATA}/my_model.nc`` resolves using the ``FES_DATA`` environment
+    variable.
 
 .. _cartesian_grid:
 
@@ -94,8 +93,6 @@ separate NetCDF file. This format is often used for tide loading models.
   will be considered as part of the model components and will be disabled from
   the admittance calculation and/or in the long-period equilibrium wave
   calculation routine (``lpe_minus_n_waves``). Optional, default: ``[]``.
-* ``engine``: Prediction engine to use (``fes`` or ``perth5``). Default:
-  ``fes``.
 * ``epsilon``: A small tolerance value to check if the longitude axis wraps
   around 360 degrees. Default: ``1e-6``.
 
@@ -147,8 +144,6 @@ stored in a single NetCDF file.
   will be considered as part of the model components and will be disabled from
   the admittance calculation and/or in the long-period equilibrium wave
   calculation routine (``lpe_minus_n_waves``). Optional, default: ``[]``.
-* ``engine``: Prediction engine to use (``fes`` or ``perth5``). Default:
-  ``fes``.
 * ``triangle``: Name of the variable defining the mesh's triangles.
   Default: ``triangle``.
 * ``max_distance``: The maximum distance (in grid units) to extrapolate a value
@@ -170,9 +165,9 @@ the **radial** tide loading (Cartesian grid) and another for the primary
    :caption: fes2014b.yaml
 
    # Ocean Tide Loading model on a Cartesian grid
+   engine: fes
    radial:
      cartesian:
-       engine: fes
        paths:
          2N2: ${FES_DATA}/fes2014b_load_tide/2n2.nc
          K1: ${FES_DATA}/fes2014b_load_tide/k1.nc
@@ -204,8 +199,7 @@ the **radial** tide loading (Cartesian grid) and another for the primary
        phase: pha_{constituent}
 
 Using the PERTH5 engine just requires switching the ``engine`` keys to
-``perth5`` (both ``tide`` and ``radial`` sections must match) and providing a
-PERTH-compatible atlas.
+``perth5`` and providing a PERTH-compatible atlas.
 
 .. _using_the_config:
 
