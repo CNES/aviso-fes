@@ -1,0 +1,30 @@
+engine: perth5
+tide:
+  cartesian:
+    longitude: longitude
+    latitude: latitude
+    paths:
+      2N2: ${DATASET_DIR}/2n2.nc
+      J1: ${DATASET_DIR}/j1.nc
+      K1: ${DATASET_DIR}/k1.nc
+      K2: ${DATASET_DIR}/k2.nc
+      M13: ${DATASET_DIR}/m13.nc
+      M2: ${DATASET_DIR}/m2.nc
+      M3: ${DATASET_DIR}/m3.nc
+      M4: ${DATASET_DIR}/m4.nc
+      MF: ${DATASET_DIR}/Mf.nc
+      MM: ${DATASET_DIR}/Mm.nc
+      MS4: ${DATASET_DIR}/ms4.nc
+      MTM: ${DATASET_DIR}/Mt.nc
+      MU2: ${DATASET_DIR}/mu2.nc
+      N2: ${DATASET_DIR}/n2.nc
+      NODE: ${DATASET_DIR}/Node.nc
+      O1: ${DATASET_DIR}/o1.nc
+      OO1: ${DATASET_DIR}/oo1.nc
+      P1: ${DATASET_DIR}/p1.nc
+      Q1: ${DATASET_DIR}/q1.nc
+      S1: ${DATASET_DIR}/s1.nc
+      S2: ${DATASET_DIR}/s2.nc
+      SA: ${DATASET_DIR}/Sa.nc
+      SIGMA1: ${DATASET_DIR}/sig1.nc
+      SSA: ${DATASET_DIR}/Ssa.nc
