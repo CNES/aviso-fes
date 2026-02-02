@@ -116,7 +116,7 @@ class Settings {
   /// Type of inference interpolation to use
   InterpolationType inference_type_{InterpolationType::kZeroAdmittance};
   /// Number of threads to use for computation
-  size_t num_threads_{1};
+  size_t num_threads_{0};
 };
 
 /// @brief Settings for the FES engine.
