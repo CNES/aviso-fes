@@ -184,6 +184,13 @@ class AbstractTidalModel
     }
   }
 
+  /// Set the dynamic tidal constituents not interpolated by the model.
+  ///
+  /// @param[in] dynamic The dynamic tidal constituents.
+  inline auto dynamic(std::vector<ConstituentId> dynamic) -> void {
+    dynamic_ = std::move(dynamic);
+  }
+
   /// Get the dynamic tidal constituents not interpolated by the model.
   inline auto dynamic() const -> std::vector<std::string> {
     auto result = std::vector<std::string>();
