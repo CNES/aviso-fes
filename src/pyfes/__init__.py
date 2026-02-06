@@ -183,7 +183,7 @@ def evaluate_tide_from_constituents(
         ...     np.timedelta64(1, 'h'),
         ... )
         >>> tide, lp = pyfes.evaluate_tide_from_constituents(
-        ...     constituents, dates, -5.0, 48.0
+        ...     constituents, dates, 48.0
         ... )
 
     Note:

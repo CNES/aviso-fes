@@ -114,7 +114,7 @@ print(wt.generate_markdown_table())
 #
 #         config = pyfes.config.load('fes_slev.yaml', bbox=(-10, 40, 10, 60))
 #
-# Setup the longitude and latitude of the location where we want to calculate
+# Set up the longitude and latitude of the location where we want to calculate
 # the tide.
 lon = -7.688
 lat = 59.195

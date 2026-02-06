@@ -99,16 +99,16 @@ def schureman_recomputed_values() -> AstronomicConstants:
     # (in miles)
     # R = 239_000
 
-    # Mass (of sun/mass) of earthy (S/E)
+    # Mass (of sun/mass) of earth (S/E)
     SE = 331_954
 
     # Mass of moon/mass of earth (M/E)
     ME = 0.012_27
 
-    # Solar parallex
+    # Solar parallax
     c1: float = math.radians(dms_to_deg(0, 0, 8.80))
 
-    # Lunar equatorial parallex
+    # Lunar equatorial parallax
     c: float = math.radians(dms_to_deg(0, 57, 2.70))
 
     # Mean earth radius in miles

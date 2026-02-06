@@ -7,8 +7,8 @@ description of the FES2022 tidal solution is given in the `handbook
 and in the paper (Lyard et al. 2024).
 
 The library uses a set of tidal components to predict the ocean tide at any
-location on the Earth. The source code provides an older version of the FES
-model (99), because it is significantly smaller than newer versions. **Do not
+location on the Earth. The source code provides an older version of the FES99
+model, because it is significantly smaller than newer versions. **Do not
 use it for scientific purposes**. You can download the model from the `AVISO
 <https://www.aviso.altimetry.fr/en/data/products/auxiliary-products/global-tide-fes.html>`_
 website.

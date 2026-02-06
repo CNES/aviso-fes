@@ -20,7 +20,7 @@ import pyfes
 
 # %%
 # The distribution contains a time series fes_tide_time_series.nc that will be
-# used in this help.
+# used in this example.
 SIGNAL = (
     pathlib.Path().absolute().parent
     / 'tests'
@@ -148,7 +148,7 @@ h_tide = wt.tide_from_tide_series(time, w)
 # Finally, we can visualize the original signal's height adjusted by the tidal
 # height derived from harmonic analysis. The outcome is zero because the
 # analyzed signal originates from the tidal model using identical
-# waves as those in the harmonic analysis.
+# waves to those in the harmonic analysis.
 matplotlib.pyplot.plot(time, h, label='Original')
 matplotlib.pyplot.plot(time, h - h_tide, label='Corrected height')
 matplotlib.pyplot.legend()

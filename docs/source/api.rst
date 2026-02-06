@@ -7,10 +7,10 @@ Tide evaluation
 ---------------
 
 This function evaluates the tidal height at a given time and location. The
-location is given as a tuple of latitude and longitude in degrees. The time is
-given as numpy datetime64 array. The tidal height is returned as a numpy array
-of the same length as the time array. The tidal height is given in the same
-units as the tidal model.
+location is specified by longitude and latitude in degrees. The time is
+given as a numpy datetime64 array. The function returns a tuple of three numpy
+arrays: the short-period tide heights, the long-period tide heights, and the
+quality flags. The tidal heights are given in the same units as the tidal model.
 
 .. autofunction:: pyfes.evaluate_tide
 
@@ -18,12 +18,12 @@ Tide evaluation from constituents
 ---------------------------------
 
 This function evaluates the tidal height at a given time and location using
-the provided tidal constituents. The location is given as latitude and
-longitude in degrees. The time is given as numpy datetime64 array. The tidal
-height is returned as a tuple of two numpy arrays: the first array contains the
-short-period tide heights, and the second array contains the long-period tide
-heights. Both arrays have the same length as the time array. The tidal heights
-are given in the same units as the tidal model.
+the provided tidal constituents. The location is given as latitude in degrees.
+The time is given as a numpy datetime64 array. The tidal height is returned as
+a tuple of two numpy arrays: the first array contains the short-period tide
+heights, and the second array contains the long-period tide heights. Both
+arrays have the same length as the time array. The tidal heights are given in
+the same units as the tidal model.
 
 .. autofunction:: pyfes.evaluate_tide_from_constituents
 
@@ -34,11 +34,12 @@ This function calculates equilibrium ocean tides over long periods using the
 Cartwright-Tayler-Edden spectral line summation method. It incorporates both 2nd
 and 3rd order tidal potential components, with validation against Tamura's
 potential model. The function accepts multiple key inputs: time as numpy
-datetime64 array, latitude in degrees (positive northward), optional computation
-settings (which include thread count configuration via ``with_num_threads()``).
+datetime64 array, latitude in degrees (positive northward), optional list of
+constituents to exclude, and optional computation settings (which include thread
+count configuration via ``with_num_threads()``).
 When the thread count is set to 0, the function automatically determines the
 optimal thread count. Returns a
-vector of computed tide heights. This implementation is based on established
+numpy array of computed tide heights. This implementation is based on established
 research by Cartwright & Tayler (1971), Cartwright & Edden (1973),
 and Tamura (1987).
 

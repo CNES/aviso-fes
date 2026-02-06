@@ -10,7 +10,7 @@ single precision. While the latter is quicker and more memory-efficient, it
 sacrifices some accuracy. Regardless of the chosen precision, all internal
 computations are performed using double precision.
 
-PyFES can now run two prediction engines:
+PyFES supports two prediction engines:
 
 * **FES/Darwin** (``engine: darwin``): the historical engine using Schureman/Darwin
   nodal corrections and admittance handling.

@@ -2,15 +2,15 @@ C++ API
 =======
 
 This library allows you to make tide predictions using C++ and Python. The
-Python part is documented in the rest of this documentation. Here, we want to
-explain to readers who only want to use the C++ part of this library.
+Python part is documented in the rest of this documentation. This section is
+intended for readers who primarily want to use the C++ part of this library.
 
 This documentation presents how to use the API to calculate tides in C++ using
 either the FES 2022 model or GOT models. The FES 2022 model is used to make tide
 predictions in SWOT KaRIn products.
 
-The management part is not provided in this library, but we will illustrate it
-with the example. In a more advanced use case, this library must be integrated
+Build system integration is not provided in this library, but we will illustrate it
+with an example. In a more advanced use case, this library must be integrated
 with CMake, but here we will focus on explaining basic usage using command line
 commands to make it as simple as possible.
 

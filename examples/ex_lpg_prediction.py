@@ -51,7 +51,7 @@ print(config)
 
 # %%
 # Define the area of interest.
-# Here we are interested in the area around the french coast.
+# Here we are interested in the area around the French coast.
 LON_MIN = -5.0
 LON_MAX = 10.0
 LAT_MIN = 40.0
@@ -70,7 +70,7 @@ EXTRAPOLATED = 2
 
 # %%
 # We can now create a grid to calculate the geocentric ocean tide around the
-# french coast.
+# French coast.
 lons = numpy.arange(LON_MIN, LON_MAX + LON_STEP, LON_STEP)
 lats = numpy.arange(LAT_MIN, LAT_MAX + LAT_STEP, LAT_STEP)
 lons, lats = numpy.meshgrid(lons, lats)

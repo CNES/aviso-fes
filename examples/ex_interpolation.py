@@ -36,7 +36,7 @@ def load_model(
     wave: str,
     max_distance: float = 0.0,
 ) -> pyfes.core.tidal_model.LGP2Complex64:
-    """ "Load a tidal wave model from a netCDF file.
+    """Load a tidal wave model from a netCDF file.
 
     Args:
         model: Path to the netCDF file.
@@ -85,7 +85,7 @@ lon, lat = numpy.meshgrid(
 # Interpolate the waves loaded from the model.
 values, quality = model.interpolate(lon.ravel(), lat.ravel(), num_threads=1)
 # %%
-# Values is dictionary of numpy arrays. Each key is the name of a wave and the
+# Values is a dictionary of numpy arrays. Each key is the name of a wave and the
 # value is the interpolated values. Quality is a numpy array of integers. The
 # value is positive if the point is interpolated, negative if the point is
 # extrapolated with the nearest vertices and zero if the point is outside the

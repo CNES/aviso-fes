@@ -1,21 +1,21 @@
 Setup with the existing python
 ===============================
 
-We will present how to compile the code, install and run the various scripts
-with `setuptools <https://setuptools.readthedocs.io/en/latest/>`_.
+This section explains how to compile the code, install, and run the various
+scripts using `setuptools <https://setuptools.readthedocs.io/en/latest/>`_.
 
 Requirements
 ############
 
-Because the programs are written in Python, and some parts of the library in
-C++, you must have Python 3, at least Python version 3.10, a C++ compiler and
-`cmake <https://cmake.org/>`_ installed on your system to build the library.
+Since the programs are written in Python and C++, you must have Python 3 (at
+least version 3.10), a C++ compiler, and `cmake <https://cmake.org/>`_
+installed on your system to build the library.
 
 .. note::
 
    The C++ compiler must support the ISO C++ 2014 standard
 
-The compiling C++ requires the following development library:
+Compiling the C++ code requires the following development libraries:
 
 * `Boost <https://www.boost.org/>`_
 * `Eigen3 <http://eigen.tuxfamily.org/>`_
@@ -34,7 +34,7 @@ You can install these packages on Ubuntu by typing the following command:
     sudo apt-add-repository multiverse && sudo apt-get update # MKL is in the multiverse repo.
     sudo apt-get install g++ cmake libeigen3-dev libmkl-dev libboost-dev
 
-You need, also, to install Python libraries before configuring and installing
+You also need to install Python libraries before configuring and installing
 this software:
 
 * `numpy <https://www.numpy.org/>`_
