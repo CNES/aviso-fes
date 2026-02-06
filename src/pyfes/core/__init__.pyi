@@ -4,7 +4,7 @@ import numpy.typing
 import typing
 from typing import ClassVar, overload
 
-from . import darwin as darwin, perth as perth, tidal_model as tidal_model
+from . import darwin as darwin, perth as perth, tidal_model as tidal_model, mesh as mesh
 
 from ..type_hints import (
     MatrixComplex128,
@@ -56,6 +56,7 @@ __all__ = [
     'evaluate_tide_from_constituents',
     'generate_markdown_table',
     'known_constituents',
+    'mesh',
     'parse_constituent',
     'perth',
     'tidal_model',
