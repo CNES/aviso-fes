@@ -58,11 +58,14 @@ atlas formats and harmonic notation systems:
 - Compatible with **GOT** (Goddard Ocean Tide) models
 - Developed by **Dr. Richard Ray** at NASA GSFC, original code is available
   [here](https://codeberg.org/rray/perth5)
-- **Configurable inference modes**: zero, linear, or Fourier admittance
+- **Configurable inference modes**: zero, linear, spline, or Fourier
 
-Both engines share the same high-level API—simply specify your preferred engine
-in the configuration file. The choice depends on your tidal atlas format:
-**FES atlases use the Darwin engine**, while **GOT atlases use the PERTH5 engine**.
+Both engines share the same high-level API and support the same set of
+configurable inference types—simply specify your preferred engine in the
+configuration file (`engine: darwin` or `engine: perth`). The choice depends on
+your tidal atlas format: **FES atlases use the Darwin engine** (recommended
+inference: `SPLINE`), while **GOT atlases use the PERTH5 engine** (recommended
+inference: `LINEAR`).
 
 See the [Prediction Engines documentation](https://cnes.github.io/aviso-fes/prediction_engines.html)
 for a detailed comparison and usage guidance.
