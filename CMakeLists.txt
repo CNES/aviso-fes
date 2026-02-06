@@ -88,33 +88,22 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE RELWITHDEBINFO)
 endif()
 
-if(FES_BUILD_PYTHON_BINDINGS)
-  set(CMAKE_CXX_STANDARD 20)
-else()
-  set(CMAKE_CXX_STANDARD 14)
-endif()
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_MACOSX_RPATH 1)
 
 include(CheckCXXCompilerFlag)
 
-if(FES_BUILD_PYTHON_BINDINGS)
-  set(CXX_STD "20")
-else()
-  set(CXX_STD "14")
-endif()
-
 if(NOT WIN32)
-  check_cxx_compiler_flag("-std=c++${CXX_STD}" HAS_CPP14_FLAG)
+  check_cxx_compiler_flag("-std=c++14" HAS_CPP14_FLAG)
 else()
-  check_cxx_compiler_flag("/std=c++${CXX_STD}" HAS_CPP14_FLAG)
+  check_cxx_compiler_flag("/std=c++14" HAS_CPP14_FLAG)
 endif()
 
 if(NOT HAS_CPP14_FLAG)
-  message(FATAL_ERROR "Unsupported compiler -- requires C++${CXX_STD} support!")
+  message(FATAL_ERROR "Unsupported compiler -- requires C++14 support!")
 endif()
-unset(CXX_STD)
 
 # Enable all warnings
 if(NOT WIN32)
