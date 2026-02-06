@@ -120,8 +120,8 @@ print(f'\nDarwin Engine:  {len(darwin_constituents):3d} constituents')
 print(f'PERTH5 Engine:  {len(perth_constituents):3d} constituents')
 
 # Find constituents unique to each engine
-darwin_set = {item.name() for item in darwin_constituents}
-perth_set = {item.name() for item in perth_constituents}
+darwin_set = {item.name for item in darwin_constituents}
+perth_set = {item.name for item in perth_constituents}
 common = darwin_set & perth_set
 darwin_only = darwin_set - perth_set
 perth_only = perth_set - darwin_set
@@ -216,15 +216,15 @@ print('  • Nodal corrections: Individual Schureman factors')
 perth_settings_linear = (
     pyfes.PerthRuntimeSettings()
     .with_group_modulations(True)
-    .with_inference_type(pyfes.InterpolationType.LINEAR_ADMITTANCE)
     .with_astronomic_formulae(pyfes.Formulae.IERS)
+    .with_inference_type(pyfes.LINEAR)
     .with_num_threads(0)
 )
 
 perth_settings_fourier = (
     pyfes.PerthRuntimeSettings()
     .with_group_modulations(True)
-    .with_inference_type(pyfes.InterpolationType.FOURIER_ADMITTANCE)
+    .with_inference_type(pyfes.FOURIER)
     .with_astronomic_formulae(pyfes.Formulae.IERS)
 )
 

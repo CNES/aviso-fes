@@ -36,15 +36,16 @@ with netCDF4.Dataset(SIGNAL, 'r') as ds:
     h = ds['ocean'][:] * 1e-2  # cm to m
 
 # %%
-# Then, we will create an instance of a :py:class:`pyfes.WaveTable
-# <pyfes.wave_table.WaveTable>` object:
+# Then, we will create an instance of a :py:class:`pyfes.WaveTableInterface`
+# object. This class is handle an retrieve the properties of the tidal waves
+# handled by prediction engines.
 wt = pyfes.darwin.WaveTable()
 
 # %%
 # By default, all tidal components are loaded into memory. Use
-# :py:func:`pyfes.darwin.constituents` to retrieve a mapping of all available
-# constituent names and their IDs.
-print(pyfes.darwin.constituents().keys())
+# :py:func:`pyfes.known_constituents` to retrieve the list of available tidal
+# constituents in pyfes.
+print(pyfes.known_constituents())
 
 # %%
 # If you want to restrict the analysis to only a few components, you must
@@ -123,10 +124,10 @@ wt = pyfes.darwin.WaveTable(
 )
 
 # %%
-# The :py:meth:`pyfes.WaveTable.keys <pyfes.core.WaveTable.keys>` method
-# allows to retrieve the list of waves defined during the construction of the
-# object.
-print(wt.keys())
+# The :py:property:`pyfes.WaveTable.constituents
+# <pyfes.core.WaveTable.constituents>` method allows to retrieve the list of
+# tidal constituents supported by the instance:
+print(wt.constituents)
 
 # %%
 # The different nodal corrections are then calculated from the time series to

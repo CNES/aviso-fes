@@ -15,8 +15,12 @@ from collections.abc import Mapping
 from .core import (
     TidalModelInterfaceComplex128,
     TidalModelInterfaceComplex64,
-    TIDE as TIDE,
+    FOURIER as FOURIER,
+    LINEAR as LINEAR,
     RADIAL as RADIAL,
+    SPLINE as SPLINE,
+    TIDE as TIDE,
+    ZERO as ZERO,
 )
 from .core import (
     Formulae as Formulae,
@@ -25,10 +29,14 @@ from .core import (
     PerthRuntimeSettings,
     Settings as Settings,
     TideType as TideType,
+    known_constituents as known_constituents,
+    parse_constituent as parse_constituent,
     tidal_model as tidal_model,
     darwin as darwin,
     perth as perth,
     Axis as Axis,
+    WaveInterface as WaveInterface,
+    WaveTableInterface as WaveTableInterface,
 )
 from . import core
 from .type_hints import (
@@ -40,19 +48,28 @@ from . import config as config
 from .version import __version__  # noqa: F401
 
 __all__ = [
+    'FOURIER',
+    'LINEAR',
     'RADIAL',
+    'SPLINE',
     'TIDE',
+    'ZERO',
     'AstronomicAngle',
     'Axis',
     'FesRuntimeSettings',
     'Formulae',
     'PerthRuntimeSettings',
+    'Settings',
     'TideType',
+    'WaveInterface',
+    'WaveTableInterface',
     'config',
     'darwin',
     'evaluate_equilibrium_long_period',
     'evaluate_tide',
     'evaluate_tide_from_constituents',
+    'known_constituents',
+    'parse_constituent',
     'perth',
     'tidal_model',
 ]

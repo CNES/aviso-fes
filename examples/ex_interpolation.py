@@ -62,7 +62,6 @@ def load_model(
         result = pyfes.core.tidal_model.LGP2Complex64(
             pyfes.core.mesh.Index(lon, lat, triangle),
             codes=code,
-            constituent_map=pyfes.darwin.constituents(),
             tide_type=pyfes.TIDE,
             max_distance=max_distance,
         )

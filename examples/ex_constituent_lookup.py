@@ -76,8 +76,8 @@ for const, desc in major_constituents_info:
 # Common, Unique, and Engine-Specific Constituents
 # =================================================
 
-darwin_set = {item.name() for item in darwin_constituents}
-perth_set = {item.name() for item in perth_constituents}
+darwin_set = {item.name for item in darwin_constituents}
+perth_set = {item.name for item in perth_constituents}
 
 common = darwin_set & perth_set
 darwin_only = darwin_set - perth_set
@@ -231,17 +231,17 @@ def classify_constituent(name: str) -> str:
 
 
 # Classify all constituents
-darwin_classified: dict[str, list[pyfes.darwin.Wave]] = {}
-perth_classified: dict[str, list[pyfes.perth.Wave]] = {}
+darwin_classified: dict[str, list[pyfes.WaveInterface]] = {}
+perth_classified: dict[str, list[pyfes.WaveInterface]] = {}
 
 for fes_tidal_constituent in darwin_constituents:
-    tide_type = classify_constituent(fes_tidal_constituent.name())
+    tide_type = classify_constituent(fes_tidal_constituent.name)
     if tide_type not in darwin_classified:
         darwin_classified[tide_type] = []
     darwin_classified[tide_type].append(fes_tidal_constituent)
 
 for got_tidal_constituent in perth_constituents:
-    tide_type = classify_constituent(got_tidal_constituent.name())
+    tide_type = classify_constituent(got_tidal_constituent.name)
     if tide_type not in perth_classified:
         perth_classified[tide_type] = []
     perth_classified[tide_type].append(got_tidal_constituent)

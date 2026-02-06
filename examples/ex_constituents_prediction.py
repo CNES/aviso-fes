@@ -94,7 +94,7 @@ print(
 )
 print('-' * 70)
 
-fes_constituents = pyfes.darwin.constituents()
+fes_constituents = pyfes.known_constituents()
 
 # Note: Using pyfes.darwin.constituents() because TICON-3 data follows
 # Darwin notation conventions. If working with GOT-based constituent data,
