@@ -44,21 +44,20 @@ Glossary
         Finite Element Solution, a series of global ocean tide atlases.
 
     Group Modulation
-        A nodal correction technique used in the PERTH5/Doodson prediction
-        engine where related constituents are modulated together as groups,
-        rather than applying individual corrections to each constituent. This
-        approach provides computational efficiency while maintaining accuracy.
-        Enabled via ``with_group_modulations(True)`` in
-        :class:`pyfes.PerthRuntimeSettings`.
+        A nodal correction technique where related constituents are modulated
+        together as groups, rather than applying individual corrections to each
+        constituent. This approach provides computational efficiency while
+        maintaining accuracy. Enabled via ``with_group_modulations(True)`` in
+        the runtime settings.
 
     Inference
         The process of estimating minor tidal constituents from major
-        constituents using admittance relationships. The PERTH5 engine offers
-        three inference types: ``ZERO_ADMITTANCE`` (no inference),
-        ``LINEAR_ADMITTANCE`` (linear interpolation), and
-        ``FOURIER_ADMITTANCE`` (Fourier-based interpolation). The FES/Darwin
-        engine uses traditional admittance methods. See also
-        :term:`Admittance`.
+        constituents using admittance relationships. PyFES offers four generic
+        inference types usable with any engine: ``ZERO`` (no inference),
+        ``LINEAR`` (linear interpolation, recommended for GOT atlases),
+        ``SPLINE`` (spline-based interpolation, recommended for FES atlases),
+        and ``FOURIER`` (Fourier-based interpolation). See also
+        :term:`Admittance` and :ref:`inference_types`.
 
     LEGOS
         Laboratoire d'Etudes en Géophysique et Océanographie Spatiales, a

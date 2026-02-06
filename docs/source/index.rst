@@ -63,16 +63,18 @@ PyFES Dual-Engine Architecture
 PyFES implements **two distinct prediction engines** that differ in their
 mathematical formulation and constituent notation:
 
-* **FES/Darwin Engine** (``engine: fes``): Uses :term:`Darwin notation` with
+* **FES/Darwin Engine** (``engine: darwin``): Uses :term:`Darwin notation` with
   Schureman's nodal corrections. This is the classical approach developed for
   FES tidal atlases (FES2014, FES2022). It supports 142 tidal constituents and
   follows traditional oceanographic conventions.
 
-* **PERTH5/Doodson Engine** (``engine: perth5``): Uses :term:`Doodson number`
+* **PERTH5/Doodson Engine** (``engine: perth``): Uses :term:`Doodson number`
   classification with group modulations. Developed by Dr. Richard Ray at NASA
   Goddard Space Flight Center, this engine is designed for GOT (Goddard Ocean
-  Tide) models. It supports 123 tidal constituents and offers configurable
-  inference modes.
+  Tide) models. It supports 123 tidal constituents.
+
+Both engines support configurable inference modes (``ZERO``, ``LINEAR``,
+``SPLINE``, ``FOURIER``) for handling minor constituents.
 
 Both engines implement the same fundamental harmonic method but differ in their
 constituent representation and approach to nodal corrections. The choice of

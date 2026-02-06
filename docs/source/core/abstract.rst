@@ -3,14 +3,14 @@ Abstract classes
 
 .. currentmodule:: pyfes.core
 
-.. autoclass:: AbstractTidalModelComplex64
+.. autoclass:: TidalModelInterfaceComplex64
     :show-inheritance:
     :members:
     :inherited-members:
 
     .. automethod:: __init__
 
-.. autoclass:: AbstractTidalModelComplex128
+.. autoclass:: TidalModelInterfaceComplex128
     :show-inheritance:
     :members:
     :inherited-members:
@@ -21,3 +21,18 @@ Abstract classes
     :show-inheritance:
     :members:
     :inherited-members:
+
+
+.. autoclass:: WaveInterface
+    :show-inheritance:
+    :members:
+    :inherited-members:
+
+    .. automethod:: __init__
+
+.. autoclass:: WaveTableInterface
+    :show-inheritance:
+    :members:
+    :undoc-members:
+
+    .. automethod:: __init__

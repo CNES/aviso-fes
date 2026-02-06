@@ -47,14 +47,15 @@ os.environ['DATASET_DIR'] = str(
 config = pyfes.config.load(pathlib.Path().absolute() / 'fes_slev.yml')
 
 # %%
-# ``config`` is a dictionary that contains the models loaded from the
-# configuration file and the associated runtime settings.
+# ``config`` is a :py:class:`~pyfes.config.Configuration` namedtuple that
+# contains the tidal models and the runtime settings loaded from the
+# configuration file.
 print(config)
 
 # %%
 # .. hint::
 #
-#     By default, the function :func:`pyfes.load_config` loads the entire
+#     By default, the function :func:`pyfes.config.load` loads the entire
 #     numeric grid into memory. To predict the tide for a specific region, you
 #     can use the ``bbox`` keyword argument to specify the region's bounding
 #     box. This bounding box is a tuple of four elements: minimum longitude,

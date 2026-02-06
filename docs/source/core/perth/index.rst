@@ -109,8 +109,9 @@ of constituents. Enable them via:
 Inference Types
 ---------------
 
-The PERTH5 engine offers three distinct modes for handling minor constituents
-not explicitly provided in the tidal atlas:
+PyFES offers four inference modes for handling minor constituents not explicitly
+provided in the tidal atlas. These modes are **generic** and can be used with
+any engine:
 
 .. list-table:: Inference Interpolation Modes
    :header-rows: 1
@@ -118,17 +119,24 @@ not explicitly provided in the tidal atlas:
 
    * - Mode
      - Description
-   * - ``ZERO_ADMITTANCE``
+   * - ``ZERO``
      - No inference performed; use only explicitly provided constituents. Best
        when atlas contains all needed constituents or minimal inference is
        desired.
-   * - ``LINEAR_ADMITTANCE``
-     - Linear interpolation between constituents (default). Provides good
-       balance between accuracy and computational cost.
-   * - ``FOURIER_ADMITTANCE``
-     - Fourier-based admittance interpolation. Most accurate but
-       computationally more expensive. Recommended for high-precision
-       applications.
+   * - ``LINEAR``
+     - Linear interpolation between constituents. Provides good balance
+       between accuracy and computational cost. Recommended for GOT atlases.
+   * - ``SPLINE``
+     - Spline-based admittance interpolation. Recommended for FES atlases.
+   * - ``FOURIER``
+     - Fourier-based admittance interpolation. Computationally more expensive.
+
+.. note::
+
+   Inference types are **generic** and can be used with any engine. To
+   reproduce the results of a given tidal model, the appropriate inference
+   type should be selected: ``SPLINE`` for FES atlases and ``LINEAR`` for GOT
+   atlases.
 
 **Configuration Examples:**
 
@@ -137,19 +145,19 @@ not explicitly provided in the tidal atlas:
     # No inference - explicit constituents only
     settings = (
         pyfes.PerthRuntimeSettings()
-        .with_inference_type(pyfes.InterpolationType.ZERO_ADMITTANCE)
+        .with_inference_type(pyfes.ZERO)
     )
 
-    # Linear admittance (default, recommended for most uses)
+    # Linear admittance (recommended for GOT)
     settings = (
         pyfes.PerthRuntimeSettings()
-        .with_inference_type(pyfes.InterpolationType.LINEAR_ADMITTANCE)
+        .with_inference_type(pyfes.LINEAR)
     )
 
-    # Maximum accuracy with Fourier interpolation
+    # Fourier-based interpolation
     settings = (
         pyfes.PerthRuntimeSettings()
-        .with_inference_type(pyfes.InterpolationType.FOURIER_ADMITTANCE)
+        .with_inference_type(pyfes.FOURIER)
     )
 
 Choose the inference type based on your accuracy requirements and available
@@ -187,14 +195,14 @@ used in satellite altimetry and oceanographic applications.
 Configuration
 -------------
 
-To use the PERTH5 engine, set ``engine: perth5`` in your YAML configuration
-file:
+To use the PERTH5 engine, set ``engine: perth`` at the top level of your YAML
+configuration file:
 
 .. code-block:: yaml
 
+    engine: perth
     tide:
       cartesian:
-        engine: perth5
         paths:
           M2: ${GOT_DATA}/got5.6_m2.nc
           S2: ${GOT_DATA}/got5.6_s2.nc
@@ -205,7 +213,6 @@ file:
 
     radial:
       cartesian:
-        engine: perth5
         paths:
           M2: ${GOT_DATA}/got5.6_load_m2.nc
           S2: ${GOT_DATA}/got5.6_load_s2.nc
@@ -220,7 +227,7 @@ Runtime settings for the PERTH5 engine:
     settings = (
         pyfes.PerthRuntimeSettings()
         .with_group_modulations(True)
-        .with_inference_type(pyfes.InterpolationType.LINEAR_ADMITTANCE)
+        .with_inference_type(pyfes.LINEAR)
         .with_astronomic_formulae(pyfes.Formulae.IERS)
         .with_time_tolerance(3600.0)
         .with_num_threads(0)

@@ -1,16 +1,16 @@
 .. currentmodule:: pyfes.core
 
-PERTH Constituents
-==================
+DOODSON Constituents
+====================
 
-This page documents all tidal constituents supported by the PERTH
+This page documents all tidal constituents supported by the DOODSON
 prediction engine.
 
 Accessing Constituents Programmatically
 ---------------------------------------
 
 To retrieve the wave properties of the constituents supported by the
-PERTH engine, you can use the :func:`pyfes.perth.WaveTable`
+DOODSON engine, you can use the :func:`pyfes.perth.WaveTable`
 class, which provides a mapping of constituent names to their corresponding
 properties.
 
@@ -18,24 +18,27 @@ properties.
 
     import pyfes
 
-    # Get the constituent map for the PERTH engine
+    # Get the constituent map for the DOODSON engine
     wt = pyfes.perth.WaveTable()
 
     # Access a specific constituent by name
     m2 = wt['M2']
     # Print the name and frequency of the M2 constituent
-    print(f"Name: {m2.name()}, Frequency: {m2.freq}")
+    print(f"Name: {m2.name}, Frequency: {m2.frequency()}")
 
     # Iterate over all constituents
     for wave in wt:
-        print(f"Constituent: {wave.name()}, Frequency: {wave.freq}")
+        print(f"Constituent: {wave.name}, Frequency: {wave.frequency()}")
 
-.. _perth_constituents:
+    # Display the wave table as a formatted markdown table
+    print(wt.generate_markdown_table())
+
+.. _doodson_constituents:
 
 Available Constituents
 ----------------------
 
-The PERTH engine supports the following tidal constituents:
+The DOODSON engine supports the following tidal constituents:
 
 ============================  =============  =========
 Name                          Speed (deg/h)  XDO
@@ -77,16 +80,16 @@ Ups1 (:math:`{\upsilon}1`)    16.6834764     A DZY ZZA
 Eps2 (:math:`{\epsilon}2`)    27.4238338     B WBA ZZZ
 2N2                           27.8953548     B XZB ZZZ
 2MS2                          27.9682085     B XBZ ZZZ
-2MS2                          27.9682085     B XBZ ZZZ
+Mu2 (:math:`{\mu}2`)          27.9682085     B XBZ ZZZ
 N2P                           28.4350877     B YZZ ZZA
 N2                            28.4397295     B YZA ZZZ
 Nu2 (:math:`{\nu}2`)          28.5125832     B YBY ZZZ
 Gamma2 (:math:`{\gamma}2`)    28.9112506     B ZXB ZZB
-Alpa2                         28.9430376     B ZYZ ZAB
+Alpha2 (:math:`{\alpha}2`)    28.9430376     B ZYZ ZAB
 M2                            28.9841042     B ZZZ ZZZ
 Beta2 (:math:`{\beta}2`)      29.0251709     B ZAZ ZYZ
 Delta2 (:math:`{\delta}2`)    29.0662415     B ZBZ ZZZ
-Delta2 (:math:`{\delta}2`)    29.0662415     B ZBZ ZZZ
+MKS2                          29.0662415     B ZBZ ZZZ
 Lambda2 (:math:`{\lambda}2`)  29.4556253     B AXA ZZB
 2MN2                          29.5284789     B AZY ZZZ
 L2                            29.5284789     B AZY ZZB
@@ -99,7 +102,7 @@ MSN2                          30.5443747     B CXY ZZZ
 Eta2 (:math:`{\eta}2`)        30.6265120     B CZY ZZZ
 2SM2                          31.0158958     B DVZ ZZZ
 2MK3                          42.9271398     C YZZ ZZC
-2MK3                          42.9271398     C YZZ ZZC
+MO3                           42.9271398     C YZZ ZZC
 M3                            43.4761563     C ZZZ ZZB
 MK3                           44.0251729     C AZZ ZZA
 N4                            56.8794590     D XZB ZZZ

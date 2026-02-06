@@ -20,8 +20,8 @@ Overview
      - FES/Darwin Engine
      - PERTH5/Doodson Engine
    * - Engine code
-     - ``fes``
-     - ``perth5``
+     - ``darwin``
+     - ``perth``
    * - Notation system
      - Darwin
      - Doodson
@@ -41,8 +41,11 @@ Overview
      - ``SCHUREMAN_ORDER_1``
      - ``IERS``
    * - Admittance handling
-     - Traditional admittance
      - Configurable inference modes
+     - Configurable inference modes
+   * - Recommended inference
+     - ``SPLINE``
+     - ``LINEAR``
 
 Both engines implement the fundamental harmonic method for tidal prediction but
 differ in their mathematical formulation, constituent representation, and
@@ -106,9 +109,16 @@ Admittance and Inference
 -------------------------
 
 Minor constituents not explicitly provided in the tidal atlas are inferred
-using traditional admittance relationships. The admittance is the complex ratio
-between a minor and major constituent, allowing PyFES to estimate amplitudes
-and phases for constituents not in the atlas.
+using admittance relationships. The admittance is the complex ratio between a
+minor and major constituent, allowing PyFES to estimate amplitudes and phases
+for constituents not in the atlas.
+
+.. note::
+
+   Inference types are now **generic** and can be used with any engine. To
+   reproduce the results of a given tidal model, the appropriate inference
+   type should be selected: ``SPLINE`` for FES atlases (FES2014, FES2022)
+   and ``LINEAR`` for GOT atlases (GOT4.10, GOT5.5, GOT5.6).
 
 References
 ----------
@@ -169,11 +179,14 @@ Group modulations are enabled via:
 
     settings = pyfes.PerthRuntimeSettings().with_group_modulations(True)
 
+.. _inference_types:
+
 Inference Types
 ---------------
 
-The PERTH5 engine offers three modes for handling constituents not explicitly
-provided in the tidal atlas:
+PyFES offers four inference modes for handling constituents not explicitly
+provided in the tidal atlas. These modes are **generic** and can be used with
+any engine, although the recommended default depends on the tidal atlas:
 
 .. list-table:: Inference Types
    :header-rows: 1
@@ -181,27 +194,35 @@ provided in the tidal atlas:
 
    * - Type
      - Description
-   * - ``ZERO_ADMITTANCE``
+   * - ``ZERO``
      - No inference; use only explicitly provided constituents
-   * - ``LINEAR_ADMITTANCE``
-     - Linear interpolation between constituents (default, good balance)
-   * - ``FOURIER_ADMITTANCE``
-     - Fourier-based admittance interpolation (most accurate)
+   * - ``LINEAR``
+     - Linear interpolation between constituents (recommended for GOT)
+   * - ``SPLINE``
+     - Spline-based admittance interpolation (recommended for FES)
+   * - ``FOURIER``
+     - Fourier-based admittance interpolation
 
-Select the inference type based on your accuracy requirements:
+Select the inference type based on your tidal atlas and accuracy requirements:
 
 .. code-block:: python
 
-    # Maximum accuracy with Fourier interpolation
+    # Recommended for FES atlases (spline interpolation)
+    settings = (
+        pyfes.FesRuntimeSettings()
+        .with_inference_type(pyfes.SPLINE)
+    )
+
+    # Recommended for GOT atlases (linear interpolation)
     settings = (
         pyfes.PerthRuntimeSettings()
-        .with_inference_type(pyfes.InterpolationType.FOURIER_ADMITTANCE)
+        .with_inference_type(pyfes.LINEAR)
     )
 
     # No inference, explicit constituents only
     settings = (
-        pyfes.PerthRuntimeSettings()
-        .with_inference_type(pyfes.InterpolationType.ZERO_ADMITTANCE)
+        pyfes.FesRuntimeSettings()
+        .with_inference_type(pyfes.ZERO)
     )
 
 IERS Astronomical Formulae
@@ -289,8 +310,14 @@ Traditional admittance relationships based on oceanographic conventions:
 
 **PERTH5 Engine**:
 
-Configurable inference with three modes (zero, linear, Fourier), allowing
-fine-tuned control over minor constituent estimation.
+Configurable inference with four modes (zero, linear, spline, Fourier),
+allowing fine-tuned control over minor constituent estimation.
+
+.. note::
+
+   Although the admittance calculation approaches differ historically between
+   the engines, the inference types are now **generic** and can be configured
+   on either engine via ``with_inference_type()``.
 
 .. _choosing_engine:
 
@@ -326,13 +353,13 @@ Compatibility Requirements
 .. warning::
 
    **Both sections of your configuration file must use the same engine.**
-   Mixing engines (e.g., ``fes`` for tide and ``perth5`` for radial) is not
+   Mixing engines (e.g., ``darwin`` for tide and ``perth`` for radial) is not
    supported and will result in an error.
 
 The engine must match your tidal atlas format:
 
-* **FES atlases** (FES2014, FES2022) → Use ``engine: fes``
-* **GOT atlases** (GOT4.10, GOT5.5, GOT5.6) → Use ``engine: perth5``
+* **FES atlases** (FES2014, FES2022) → Use ``engine: darwin``
+* **GOT atlases** (GOT4.10, GOT5.5, GOT5.6) → Use ``engine: perth``
 
 Configuration Examples
 ----------------------
@@ -342,16 +369,15 @@ Configuration Examples
 .. code-block:: yaml
 
     # FES2022 Configuration
+    engine: darwin
     tide:
       lgp:
-        engine: fes
         path: ${FES_DATA}/fes2022b/ocean_tide.nc
         codes: codes
         constituents: [2N2, K1, K2, M2, N2, O1, P1, Q1, S1, S2]
 
     radial:
       cartesian:
-        engine: fes
         paths:
           M2: ${FES_DATA}/fes2022b_load/m2.nc
           S2: ${FES_DATA}/fes2022b_load/s2.nc
@@ -362,9 +388,9 @@ Configuration Examples
 .. code-block:: yaml
 
     # GOT5.6 Configuration
+    engine: perth
     tide:
       cartesian:
-        engine: perth5
         paths:
           M2: ${GOT_DATA}/got5.6_m2.nc
           S2: ${GOT_DATA}/got5.6_s2.nc
@@ -374,7 +400,6 @@ Configuration Examples
 
     radial:
       cartesian:
-        engine: perth5
         paths:
           M2: ${GOT_DATA}/got5.6_load_m2.nc
           # ... other constituents
@@ -382,7 +407,9 @@ Configuration Examples
 Runtime Settings
 ----------------
 
-Each engine has its own runtime settings class with engine-specific options.
+Each engine has its own runtime settings class. Both share common options
+(inference type, thread count, time tolerance) defined in
+:class:`pyfes.Settings`, with engine-specific defaults.
 
 **FES/Darwin Settings**:
 
@@ -392,6 +419,7 @@ Each engine has its own runtime settings class with engine-specific options.
 
     settings = (
         pyfes.FesRuntimeSettings()
+        .with_inference_type(pyfes.SPLINE)
         .with_astronomic_formulae(pyfes.Formulae.SCHUREMAN_ORDER_1)
         .with_time_tolerance(3600.0)
         .with_num_threads(0)
@@ -406,7 +434,7 @@ Each engine has its own runtime settings class with engine-specific options.
     settings = (
         pyfes.PerthRuntimeSettings()
         .with_group_modulations(True)
-        .with_inference_type(pyfes.InterpolationType.LINEAR_ADMITTANCE)
+        .with_inference_type(pyfes.LINEAR)
         .with_astronomic_formulae(pyfes.Formulae.IERS)
         .with_time_tolerance(3600.0)
         .with_num_threads(0)
@@ -442,17 +470,19 @@ You can query which constituents are supported by each engine:
     import pyfes
 
     # List Darwin engine constituents
-    darwin_constituents = pyfes.darwin.constituents()
-    print(f"Darwin: {len(darwin_constituents)} constituents")
+    darwin_wt = pyfes.darwin.WaveTable()
+    print(f"Darwin: {len(darwin_wt)} constituents")
 
     # List PERTH5 engine constituents
-    perth_constituents = pyfes.perth.constituents()
-    print(f"PERTH5: {len(perth_constituents)} constituents")
+    perth_wt = pyfes.perth.WaveTable()
+    print(f"PERTH5: {len(perth_wt)} constituents")
 
     # Find common and unique constituents
-    common = set(darwin_constituents) & set(perth_constituents)
-    darwin_only = set(darwin_constituents) - set(perth_constituents)
-    perth_only = set(perth_constituents) - set(darwin_constituents)
+    darwin_names = {w.name for w in darwin_wt}
+    perth_names = {w.name for w in perth_wt}
+    common = darwin_names & perth_names
+    darwin_only = darwin_names - perth_names
+    perth_only = perth_names - darwin_names
 
     print(f"Common: {len(common)}")
     print(f"Darwin-only: {len(darwin_only)}")
@@ -501,13 +531,16 @@ These functions work identically with both engines:
 Engine-Specific Features
 -------------------------
 
-While the core API is identical, each engine has unique configuration options:
+While the core API is identical, each engine has specific recommended defaults:
 
-* **FES/Darwin**: Traditional admittance settings
-* **PERTH5**: Group modulations and inference type selection
+* **FES/Darwin**: Schureman nodal corrections, ``SPLINE`` inference recommended
+* **PERTH5**: Group modulations, ``LINEAR`` inference recommended
 
-These are configured via :class:`pyfes.FesRuntimeSettings` or
-:class:`pyfes.PerthRuntimeSettings` as appropriate.
+Both engines support the same set of inference types (``ZERO``, ``LINEAR``,
+``SPLINE``, ``FOURIER``) and share the common settings defined in
+:class:`pyfes.Settings`. Engine-specific subclasses
+(:class:`pyfes.FesRuntimeSettings` and :class:`pyfes.PerthRuntimeSettings`)
+provide the appropriate defaults.
 
 Performance Considerations
 ==========================

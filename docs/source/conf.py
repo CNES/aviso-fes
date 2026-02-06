@@ -7,7 +7,7 @@ import importlib.metadata
 import pathlib
 import sys
 import sysconfig
-import numpy
+from typing import cast
 
 #: The directory containing this file.
 HERE = pathlib.Path(__file__).absolute().parent
@@ -51,23 +51,16 @@ def create_constituent_rst(
     table: object,
 ) -> str:
     """Generate an RST table for the tidal constituents."""
-
-    def convert_frequency_to_degrees_per_hour(frequency: float) -> float:
-        """Convert frequency from cycles per second to degrees per hour."""
-        if isinstance(table, pyfes.core.darwin.WaveTable):
-            return numpy.degrees(frequency)
-        return frequency
-
+    table = cast(pyfes.core.WaveTableInterface, table)
     data = {}
-    for constituent in table.keys():
-        component = table[constituent]
-        name, greek_notation = pretty_name(component.name())
+    for component in table:
+        name, greek_notation = pretty_name(component.name)
         if greek_notation:
             name = f'{name} ({greek_notation})'
-        frequency = component.freq
+        frequency = component.frequency(pyfes.core.DEGREE_PER_HOUR)
         xdo = component.xdo_alphabetical()
-        data[constituent] = {
-            'speed': convert_frequency_to_degrees_per_hour(frequency),
+        data[component.name] = {
+            'speed': frequency,
             'name': name,
             'xdo': f'{xdo[:1]} {xdo[1:4]} {xdo[4:]}',
         }
@@ -146,11 +139,14 @@ properties.
     # Access a specific constituent by name
     m2 = wt['M2']
     # Print the name and frequency of the M2 constituent
-    print(f"Name: {{m2.name()}}, Frequency: {{m2.freq}}")
+    print(f"Name: {{m2.name}}, Frequency: {{m2.frequency()}}")
 
     # Iterate over all constituents
     for wave in wt:
-        print(f"Constituent: {{wave.name()}}, Frequency: {{wave.freq}}")
+        print(f"Constituent: {{wave.name}}, Frequency: {{wave.frequency()}}")
+
+    # Display the wave table as a formatted markdown table
+    print(wt.generate_markdown_table())
 
 .. _{ref_label}_constituents:
 
@@ -162,10 +158,10 @@ The {engine_name} engine supports the following tidal constituents:
 {create_constituent_rst(wave_table)}
 """
 
-    if include_details and engine_name == 'FES':
+    if include_details and engine_name == 'DARWIN':
         content += """
 For detailed information about each constituent's mathematical formulation, and
-reference, see the :ref:`FES constituent implementation details
+reference, see the :ref:`DARWIN constituent implementation details
 <schureman_reference>` page.
 """
 
@@ -204,7 +200,7 @@ def fes_constituent_rst() -> None:
     """Generate and write the RST table for the FES tidal constituents."""
     rst_path = HERE / 'core' / 'darwin' / 'constituents.rst'
     content = generate_constituent_rst_content(
-        engine_name='FES',
+        engine_name='DARWIN',
         module_name='darwin',
         wave_table=pyfes.darwin.WaveTable(),
         include_details=True,
@@ -216,7 +212,7 @@ def perth_constituent_rst() -> None:
     """Generate and write the RST table for the PERTH tidal constituents."""
     rst_path = HERE / 'core' / 'perth' / 'constituents.rst'
     content = generate_constituent_rst_content(
-        engine_name='PERTH',
+        engine_name='DOODSON',
         module_name='perth',
         wave_table=pyfes.perth.WaveTable(),
         include_details=False,

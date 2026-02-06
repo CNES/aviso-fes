@@ -1,8 +1,8 @@
 .. currentmodule:: pyfes.core
 
 .. py:function:: pyfes.core.evaluate_tide(\
-        tidal_model: Union[pyfes.core.AbstractTidalModelComplex64, \
-                            pyfes.core.AbstractTidalModelComplex128], \
+        tidal_model: Union[pyfes.core.TidalModelInterfaceComplex64, \
+                            pyfes.core.TidalModelInterfaceComplex128], \
         date: VectorDateTime64, \
         longitude: VectorFloat64, \
         latitude: VectorFloat64, \
@@ -17,9 +17,9 @@
         calculated
    :param latitude: Latitude in degrees for the position at which the tide is
         calculated
-   :param settings: Settings for the tide computation.
-   :param num_threads: Number of threads to use for the computation. If 0, the
-        number of threads is automatically determined.
+   :param settings: Settings for the tide computation. The number of threads
+        used for the computation is controlled via
+        ``settings.with_num_threads()``.
    :return: A tuple of three elements that contains:
      * The height of the the diurnal and semi-diurnal constituents of the
        tidal spectrum (cm)
@@ -44,6 +44,6 @@
       constituents is always computed because this value does not depend on
       model data.
 
-.. autofunction:: pyfes.core.darwin.evaluate_equilibrium_long_period
+.. autofunction:: pyfes.core.evaluate_equilibrium_long_period
 
 .. autofunction:: pyfes.core.evaluate_tide_from_constituents

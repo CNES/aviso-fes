@@ -278,8 +278,9 @@ engines. The differences primarily lie in minor constituents and specific
 modeling choices for each engine.
 
 When working with tidal constituents:
-  • Check constituent availability using pyfes.darwin.constituents() or
-    pyfes.perth.constituents()
+  • Use pyfes.darwin.WaveTable() or pyfes.perth.WaveTable() to list
+    each engine's supported constituents
+  • Use pyfes.known_constituents() for a combined list of all known names
   • Match your constituent list to your tidal atlas format
   • Use Darwin engine with FES atlases
   • Use PERTH5 engine with GOT atlases

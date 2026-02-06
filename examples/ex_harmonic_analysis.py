@@ -3,8 +3,8 @@ Harmonic Analysis
 *****************
 
 This example demonstrates how to perform harmonic analysis on a signal using the
-:func:`harmonic_analysis <pyfes.wave_table.WaveTable.harmonic_analysis>`
-function.
+:meth:`harmonic_analysis <pyfes.WaveTableInterface.harmonic_analysis>`
+method.
 
 First, we import the required modules.
 """
@@ -37,8 +37,8 @@ with netCDF4.Dataset(SIGNAL, 'r') as ds:
 
 # %%
 # Then, we will create an instance of a :py:class:`pyfes.WaveTableInterface`
-# object. This class is handle an retrieve the properties of the tidal waves
-# handled by prediction engines.
+# object. This class handles and retrieves the properties of the tidal waves
+# supported by the prediction engine.
 wt = pyfes.darwin.WaveTable()
 
 # %%
@@ -124,9 +124,8 @@ wt = pyfes.darwin.WaveTable(
 )
 
 # %%
-# The :py:property:`pyfes.WaveTable.constituents
-# <pyfes.core.WaveTable.constituents>` method allows to retrieve the list of
-# tidal constituents supported by the instance:
+# The :py:attr:`~pyfes.WaveTableInterface.constituents` property returns the
+# list of tidal constituent names supported by this wave table instance:
 print(wt.constituents)
 
 # %%
@@ -136,7 +135,7 @@ f, vu = wt.compute_nodal_modulations(time)
 
 # %%
 # These coefficients are used by :meth:`harmonic analysis
-# <pyfes.wave_table.WaveTable.harmonic_analysis>` to determine the properties
+# <pyfes.WaveTableInterface.harmonic_analysis>` to determine the properties
 # of the different tidal waves defined during the construction of the instance.
 w = wt.harmonic_analysis(h, f, vu)
 

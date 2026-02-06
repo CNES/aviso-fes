@@ -26,7 +26,7 @@ using two distinct prediction engines:
 * 142 supported tidal constituents
 * Compatible with: FES2014, FES2022 atlases
 * Default formulae: ``SCHUREMAN_ORDER_1``
-* Traditional admittance for minor constituents
+* Configurable inference modes (default: ``kSpline`` for FES)
 
 **PERTH5/Doodson Engine**
 
@@ -34,7 +34,7 @@ using two distinct prediction engines:
 * 123 supported tidal constituents
 * Compatible with: GOT4.10, GOT5.5, GOT5.6 atlases
 * Default formulae: ``IERS``
-* Configurable inference modes (zero, linear, or Fourier admittance)
+* Configurable inference modes (zero, linear, spline, or Fourier)
 * Developed by Dr. Richard Ray (NASA GSFC)
 
 Both engines support two types of tidal models:
@@ -102,8 +102,9 @@ The FES C++ API consists of several key components:
 
 4. **Configuration Classes**:
 
-   * ``fes::FesRuntimeSettings``: Configuration for FES/Darwin engine
-   * ``fes::PerthRuntimeSettings``: Configuration for PERTH5/Doodson engine
+   * ``fes::FESSettings``: Default configuration for FES/Darwin engine
+   * ``fes::PerthSettings``: Default configuration for PERTH5/Doodson engine
+   * ``fes::Settings``: Base settings class (shared by both engines)
    * ``fes::angle::Formulae``: Enumeration of astronomical formulae options
 
 Engine Configuration
@@ -112,19 +113,28 @@ Engine Configuration
 FES/Darwin Engine Settings
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The FES/Darwin engine uses ``fes::FesRuntimeSettings`` for configuration:
+The FES/Darwin engine uses ``fes::FESSettings`` (a subclass of
+``fes::Settings``) for configuration:
 
 .. code-block:: c++
 
    #include "fes/settings.hpp"
 
-   // Create FES runtime settings
-   auto settings = fes::FesRuntimeSettings()
+   // Create FES runtime settings (defaults: kSpline inference, kSchuremanOrder1)
+   auto settings = fes::FESSettings()
        .with_num_threads(0)  // 0 = auto-detect
        .with_astronomic_formulae(fes::angle::Formulae::kSchuremanOrder1)
+       .with_inference_type(fes::InferenceType::kSpline)
        .with_time_tolerance(3600.0);  // 1 hour angle caching
 
-Configuration options:
+Configuration options (all defined on the base ``fes::Settings`` class):
+
+* **inference_type**: Controls minor constituent inference:
+
+  * ``kSpline``: Spline-based interpolation (default, recommended for FES)
+  * ``kLinear``: Linear interpolation (recommended for GOT)
+  * ``kZero``: No inference (fastest, requires all constituents)
+  * ``kFourier``: Fourier-based (Munk-Cartwright)
 
 * **astronomic_formulae**: Choose between ``kSchuremanOrder1`` (traditional),
   ``kSchuremanOrder3``, or ``kIERS`` (modern conventions)
@@ -135,60 +145,62 @@ Configuration options:
 PERTH5/Doodson Engine Settings
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The PERTH5/Doodson engine uses ``fes::PerthRuntimeSettings`` for configuration:
+The PERTH5/Doodson engine uses ``fes::PerthSettings`` (a subclass of
+``fes::Settings``) for configuration:
 
 .. code-block:: c++
 
    #include "fes/settings.hpp"
 
-   // Create PERTH5 runtime settings with linear admittance
-   auto settings = fes::PerthRuntimeSettings()
+   // Create PERTH5 runtime settings (defaults: kLinear inference, kIERS)
+   auto settings = fes::PerthSettings()
        .with_num_threads(0)
-       .with_astronomic_formulae(fes::angle::Formulae::kIERS)
        .with_group_modulations(true)
-       .with_inference_type(fes::InterpolationType::kLinearAdmittance);
+       .with_inference_type(fes::InferenceType::kLinear);
 
-   // Or with Fourier admittance for maximum accuracy
-   auto precise_settings = fes::PerthRuntimeSettings()
-       .with_astronomic_formulae(fes::angle::Formulae::kIERS)
+   // Or with Fourier interpolation
+   auto precise_settings = fes::PerthSettings()
        .with_group_modulations(true)
-       .with_inference_type(fes::InterpolationType::kFourierAdmittance);
+       .with_inference_type(fes::InferenceType::kFourier);
 
-Configuration options:
+Additional configuration options:
 
-* **astronomic_formulae**: Typically ``kIERS`` for modern conventions
 * **group_modulations**: Enable efficient grouped nodal corrections
-* **inference_type**: Controls minor constituent inference:
+* **astronomic_formulae**: Defaults to ``kIERS`` for modern conventions
 
-  * ``kZeroAdmittance``: No inference (fastest, requires all constituents)
-  * ``kLinearAdmittance``: Linear interpolation (balanced, recommended)
-  * ``kFourierAdmittance``: Fourier-based (most accurate, slower)
+.. note::
 
-* **num_threads**: Number of threads for parallel computation
+   Inference types are **generic** and defined on the base ``fes::Settings``
+   class. All four modes (``kSpline``, ``kLinear``, ``kZero``, ``kFourier``)
+   can be used with any engine.
 
 Inference Types Comparison
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. list-table:: PERTH5 Inference Types
+.. list-table:: Inference Types (``fes::InferenceType``)
    :header-rows: 1
-   :widths: 25 20 15 40
+   :widths: 20 20 15 45
 
    * - Inference Type
      - Accuracy
      - Speed
      - Use Case
-   * - ``kZeroAdmittance``
+   * - ``kZero``
      - Lowest (no inference)
      - Fastest
      - All constituents available in atlas
-   * - ``kLinearAdmittance``
+   * - ``kLinear``
      - Good (balanced)
      - Fast
-     - General use (recommended)
-   * - ``kFourierAdmittance``
+     - Recommended for GOT atlases
+   * - ``kSpline``
+     - High
+     - Fast
+     - Recommended for FES atlases (default)
+   * - ``kFourier``
      - Highest (best)
      - Slower
-     - High-precision applications
+     - Munk-Cartwright Fourier series
 
 Step-by-Step Usage Guide
 ------------------------
@@ -214,8 +226,9 @@ Define the paths to your model data files:
 Step 3: Load Tidal Constituents
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Create functions to specify which tidal constituents to load. The constituent
-enumeration depends on your chosen engine:
+Create functions to specify which tidal constituents to load. Both engines use
+the unified ``fes::ConstituentId`` enum, but each engine namespace provides its
+own set of supported constituent constants:
 
 **For FES/Darwin Engine (fes::darwin namespace):**
 
@@ -225,11 +238,14 @@ enumeration depends on your chosen engine:
 
 **For PERTH5/Doodson Engine (fes::perth namespace):**
 
+The PERTH5 namespace provides similar constituent constants under
+``fes::perth``:
+
 .. code-block:: c++
 
    #include "fes/perth/constituent.hpp"
 
-   static auto ocean_tide_constituents() -> std::list<fes::perth::Constituent> {
+   static auto ocean_tide_constituents() -> std::list<fes::ConstituentId> {
      return {
        fes::perth::kM2,   fes::perth::kS2,   fes::perth::kN2,
        fes::perth::kK2,   fes::perth::kK1,   fes::perth::kO1,
@@ -296,15 +312,14 @@ Create model instances and configure settings based on your chosen engine:
 .. code-block:: c++
 
    // Load models using perth namespace constituents
-   auto radial_handler = load_load_tide_model();  // Using fes::perth::Constituent
-   auto tide_handler = load_ocean_tide_model();   // Using fes::perth::Constituent
+   auto radial_handler = load_load_tide_model();  // Using fes::ConstituentId
+   auto tide_handler = load_ocean_tide_model();   // Using fes::ConstituentId
 
    // Create PERTH5 runtime settings
-   auto settings = fes::PerthRuntimeSettings()
+   auto settings = fes::PerthSettings()
        .with_num_threads(0)
-       .with_astronomic_formulae(fes::angle::Formulae::kIERS)
        .with_group_modulations(true)
-       .with_inference_type(fes::InterpolationType::kLinearAdmittance);
+       .with_inference_type(fes::InferenceType::kLinear);
 
 Step 8: Prepare Input Data
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -379,7 +394,7 @@ Here's an example skeleton for using the PERTH5/Doodson engine with GOT models:
    #include "fes/perth/constituent.hpp"
 
    // Define GOT model paths
-   static std::map<fes::perth::Constituent, std::string> got_tide_paths() {
+   static std::map<fes::ConstituentId, std::string> got_tide_paths() {
      return {
        {fes::perth::kM2, "/path/to/got5.6/m2.nc"},
        {fes::perth::kS2, "/path/to/got5.6/s2.nc"},
@@ -391,15 +406,14 @@ Here's an example skeleton for using the PERTH5/Doodson engine with GOT models:
    }
 
    int main() {
-     // Load GOT model (similar to FES loading, but with perth::Constituent)
+     // Load GOT model (similar to FES loading, using fes::ConstituentId)
      auto tide_handler = load_got_model();  // Implementation similar to FES
 
      // Create PERTH5 settings
-     auto settings = fes::PerthRuntimeSettings()
+     auto settings = fes::PerthSettings()
          .with_num_threads(0)
-         .with_astronomic_formulae(fes::angle::Formulae::kIERS)
          .with_group_modulations(true)
-         .with_inference_type(fes::InterpolationType::kLinearAdmittance);
+         .with_inference_type(fes::InferenceType::kLinear);
 
      // Prepare time series
      Eigen::VectorXd times(24);
@@ -450,23 +464,22 @@ API Compatibility
 Despite different internal formulations, both engines share the same high-level
 API. The only differences are:
 
-1. **Constituent namespace**: ``fes::darwin`` vs ``fes::perth``
-2. **Settings class**: ``FesRuntimeSettings`` vs ``PerthRuntimeSettings``
+1. **Constituent helpers**: ``fes::darwin::constituents`` vs ``fes::perth::constituents``
+2. **Settings class**: ``FESSettings`` vs ``PerthSettings`` (both inherit ``Settings``)
 
-This means you can switch engines with minimal code changes:
+Both use the unified ``fes::ConstituentId`` enum. This means you can switch
+engines with minimal code changes:
 
 .. code-block:: c++
 
-   // Engine-specific: constituent type and settings
+   // Engine-specific: settings only
    #ifdef USE_FES_ENGINE
-   using Constituent = fes::darwin::Constituent;
-   auto settings = fes::FesRuntimeSettings()
-       .with_astronomic_formulae(fes::angle::Formulae::kSchuremanOrder1);
+   auto settings = fes::FESSettings()
+       .with_inference_type(fes::InferenceType::kSpline);
    #else
-   using Constituent = fes::perth::Constituent;
-   auto settings = fes::PerthRuntimeSettings()
-       .with_astronomic_formulae(fes::angle::Formulae::kIERS)
-       .with_inference_type(fes::InterpolationType::kLinearAdmittance);
+   auto settings = fes::PerthSettings()
+       .with_group_modulations(true)
+       .with_inference_type(fes::InferenceType::kLinear);
    #endif
 
    // Engine-agnostic: tide evaluation
@@ -588,12 +601,13 @@ Key takeaways for using the C++ API:
    * Switch engines by changing constituent namespace and settings class
    * No changes needed in the tide evaluation code
 
-4. **Engine-specific features**:
+4. **Generic inference types** (``fes::InferenceType``):
 
-   * Darwin: Schureman nodal corrections, traditional admittance
-   * PERTH5: Group modulations, configurable inference modes
+   * ``kSpline`` (recommended for FES), ``kLinear`` (recommended for GOT)
+   * ``kZero`` (no inference), ``kFourier`` (Munk-Cartwright)
+   * All modes available on any engine
 
 5. **Runtime settings provide fine-tuning**:
 
-   * ``FesRuntimeSettings`` for Darwin engine
-   * ``PerthRuntimeSettings`` for PERTH5 engine
+   * ``fes::FESSettings`` for Darwin engine (defaults: ``kSpline``, ``kSchuremanOrder1``)
+   * ``fes::PerthSettings`` for PERTH5 engine (defaults: ``kLinear``, ``kIERS``)

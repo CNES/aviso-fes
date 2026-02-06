@@ -45,8 +45,9 @@ os.environ['DATASET_DIR'] = str(
 config = pyfes.config.load(pathlib.Path().absolute() / 'fes_slev.yml')
 
 # %%
-# ``config`` is a dictionary that contains the models loaded from the
-# configuration file and the associated runtime settings.
+# ``config`` is a :py:class:`~pyfes.config.Configuration` namedtuple that
+# contains the tidal models and the runtime settings loaded from the
+# configuration file.
 print(config)
 
 # %%
@@ -76,9 +77,34 @@ print(f'Astronomical formulae: {config.settings.astronomic_formulae}')
 print(f'Time tolerance: {config.settings.time_tolerance} seconds')
 
 # %%
+# Displaying the Configuration as a Markdown Table
+# =================================================
+#
+# You can generate a markdown table summarizing the engine settings and the
+# constituent list (modeled vs. inferred) using
+# :func:`pyfes.core.generate_markdown_table`. Pass the settings and the list
+# of modeled constituents to see which ones are provided by the atlas and which
+# ones will be inferred.
+print(
+    pyfes.core.generate_markdown_table(
+        config.settings, config.models['tide'].identifiers()
+    )
+)
+
+# %%
+# Displaying the Wave Table
+# ==========================
+#
+# You can also display a markdown table for any
+# :py:class:`~pyfes.WaveTableInterface` instance. This shows the detailed
+# properties of each constituent (name, frequency, Doodson number, etc.).
+wt = config.models['tide'].wave_table(config.settings.engine_type)
+print(wt.generate_markdown_table())
+
+# %%
 # .. hint::
 #
-#     By default, the function :func:`pyfes.load_config` loads the entire
+#     By default, the function :func:`pyfes.config.load` loads the entire
 #     numeric grid into memory. To predict the tide for a specific region, you
 #     can use the ``bbox`` keyword argument to specify the region's bounding
 #     box. This bounding box is a tuple of four elements: minimum longitude,
@@ -86,7 +112,7 @@ print(f'Time tolerance: {config.settings.time_tolerance} seconds')
 #
 #     .. code-block:: python
 #
-#         handlers = pyfes.load_config('fes_slev.yaml', bbox=(-10, 40, 10, 60))
+#         config = pyfes.config.load('fes_slev.yaml', bbox=(-10, 40, 10, 60))
 #
 # Setup the longitude and latitude of the location where we want to calculate
 # the tide.

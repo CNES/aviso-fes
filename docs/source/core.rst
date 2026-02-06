@@ -14,7 +14,9 @@ These classes are used to map the C++ enumerators to Python.
 .. toctree::
    :maxdepth: 1
 
+   core/engine_type
    core/formulae
+   core/inference_type
    core/tide_type
 
 Tidal Constituents

@@ -11,6 +11,7 @@
 #include <tuple>
 #include <vector>
 
+#include "fes/constituent.hpp"
 #include "fes/settings.hpp"
 #include "fes/tidal_model/cartesian.hpp"
 #include "fes/tidal_model/lgp.hpp"
@@ -27,58 +28,63 @@
 
 /// @brief Load tide paths for all constituents
 /// @return A map of constituent identifiers to their file paths
-static std::map<fes::darwin::Constituent, std::string> load_tide_paths() {
-  return {{fes::darwin::Constituent::k2N2, LOAD_TIDE("2n2.nc")},
-          {fes::darwin::Constituent::kEps2, LOAD_TIDE("eps2.nc")},
-          {fes::darwin::Constituent::kJ1, LOAD_TIDE("j1.nc")},
-          {fes::darwin::Constituent::kK1, LOAD_TIDE("k1.nc")},
-          {fes::darwin::Constituent::kK2, LOAD_TIDE("k2.nc")},
-          {fes::darwin::Constituent::kL2, LOAD_TIDE("l2.nc")},
-          {fes::darwin::Constituent::kLambda2, LOAD_TIDE("lambda2.nc")},
-          {fes::darwin::Constituent::kM2, LOAD_TIDE("m2.nc")},
-          {fes::darwin::Constituent::kM3, LOAD_TIDE("m3.nc")},
-          {fes::darwin::Constituent::kM4, LOAD_TIDE("m4.nc")},
-          {fes::darwin::Constituent::kM6, LOAD_TIDE("m6.nc")},
-          {fes::darwin::Constituent::kM8, LOAD_TIDE("m8.nc")},
-          {fes::darwin::Constituent::kMf, LOAD_TIDE("mf.nc")},
-          {fes::darwin::Constituent::kMKS2, LOAD_TIDE("mks2.nc")},
-          {fes::darwin::Constituent::kMm, LOAD_TIDE("mm.nc")},
-          {fes::darwin::Constituent::kMN4, LOAD_TIDE("mn4.nc")},
-          {fes::darwin::Constituent::kMS4, LOAD_TIDE("ms4.nc")},
-          {fes::darwin::Constituent::kMSf, LOAD_TIDE("msf.nc")},
-          {fes::darwin::Constituent::kMSqm, LOAD_TIDE("msqm.nc")},
-          {fes::darwin::Constituent::kMtm, LOAD_TIDE("mtm.nc")},
-          {fes::darwin::Constituent::kMu2, LOAD_TIDE("mu2.nc")},
-          {fes::darwin::Constituent::kN2, LOAD_TIDE("n2.nc")},
-          {fes::darwin::Constituent::kN4, LOAD_TIDE("n4.nc")},
-          {fes::darwin::Constituent::kNu2, LOAD_TIDE("nu2.nc")},
-          {fes::darwin::Constituent::kO1, LOAD_TIDE("o1.nc")},
-          {fes::darwin::Constituent::kP1, LOAD_TIDE("p1.nc")},
-          {fes::darwin::Constituent::kQ1, LOAD_TIDE("q1.nc")},
-          {fes::darwin::Constituent::kR2, LOAD_TIDE("r2.nc")},
-          {fes::darwin::Constituent::kS1, LOAD_TIDE("s1.nc")},
-          {fes::darwin::Constituent::kS2, LOAD_TIDE("s2.nc")},
-          {fes::darwin::Constituent::kS4, LOAD_TIDE("s4.nc")},
-          {fes::darwin::Constituent::kSa, LOAD_TIDE("sa.nc")},
-          {fes::darwin::Constituent::kSsa, LOAD_TIDE("ssa.nc")},
-          {fes::darwin::Constituent::kT2, LOAD_TIDE("t2.nc")}};
+static std::map<fes::ConstituentId, std::string> load_tide_paths() {
+  return {{fes::ConstituentId::k2N2, LOAD_TIDE("2n2.nc")},
+          {fes::ConstituentId::kEps2, LOAD_TIDE("eps2.nc")},
+          {fes::ConstituentId::kJ1, LOAD_TIDE("j1.nc")},
+          {fes::ConstituentId::kK1, LOAD_TIDE("k1.nc")},
+          {fes::ConstituentId::kK2, LOAD_TIDE("k2.nc")},
+          {fes::ConstituentId::kL2, LOAD_TIDE("l2.nc")},
+          {fes::ConstituentId::kLambda2, LOAD_TIDE("lambda2.nc")},
+          {fes::ConstituentId::kM2, LOAD_TIDE("m2.nc")},
+          {fes::ConstituentId::kM3, LOAD_TIDE("m3.nc")},
+          {fes::ConstituentId::kM4, LOAD_TIDE("m4.nc")},
+          {fes::ConstituentId::kM6, LOAD_TIDE("m6.nc")},
+          {fes::ConstituentId::kM8, LOAD_TIDE("m8.nc")},
+          {fes::ConstituentId::kMf, LOAD_TIDE("mf.nc")},
+          {fes::ConstituentId::kMKS2, LOAD_TIDE("mks2.nc")},
+          {fes::ConstituentId::kMm, LOAD_TIDE("mm.nc")},
+          {fes::ConstituentId::kMN4, LOAD_TIDE("mn4.nc")},
+          {fes::ConstituentId::kMS4, LOAD_TIDE("ms4.nc")},
+          {fes::ConstituentId::kMSf, LOAD_TIDE("msf.nc")},
+          {fes::ConstituentId::kMSqm, LOAD_TIDE("msqm.nc")},
+          {fes::ConstituentId::kMtm, LOAD_TIDE("mtm.nc")},
+          {fes::ConstituentId::kMu2, LOAD_TIDE("mu2.nc")},
+          {fes::ConstituentId::kN2, LOAD_TIDE("n2.nc")},
+          {fes::ConstituentId::kN4, LOAD_TIDE("n4.nc")},
+          {fes::ConstituentId::kNu2, LOAD_TIDE("nu2.nc")},
+          {fes::ConstituentId::kO1, LOAD_TIDE("o1.nc")},
+          {fes::ConstituentId::kP1, LOAD_TIDE("p1.nc")},
+          {fes::ConstituentId::kQ1, LOAD_TIDE("q1.nc")},
+          {fes::ConstituentId::kR2, LOAD_TIDE("r2.nc")},
+          {fes::ConstituentId::kS1, LOAD_TIDE("s1.nc")},
+          {fes::ConstituentId::kS2, LOAD_TIDE("s2.nc")},
+          {fes::ConstituentId::kS4, LOAD_TIDE("s4.nc")},
+          {fes::ConstituentId::kSa, LOAD_TIDE("sa.nc")},
+          {fes::ConstituentId::kSsa, LOAD_TIDE("ssa.nc")},
+          {fes::ConstituentId::kT2, LOAD_TIDE("t2.nc")}};
 }
 
 /// @brief Get the ocean tide constituents to load
 /// @return A list of constituent identifiers
-static auto ocean_tide_constituents() -> std::list<fes::darwin::Constituent> {
-  return {fes::darwin::k2N2,     fes::darwin::kEps2, fes::darwin::kJ1,
-          fes::darwin::kK1,      fes::darwin::kK2,   fes::darwin::kL2,
-          fes::darwin::kLambda2, fes::darwin::kM2,   fes::darwin::kM3,
-          fes::darwin::kM4,      fes::darwin::kM6,   fes::darwin::kM8,
-          fes::darwin::kMKS2,    fes::darwin::kMN4,  fes::darwin::kMS4,
-          fes::darwin::kMSf,     fes::darwin::kMf,   fes::darwin::kMm,
-          fes::darwin::kMSqm,    fes::darwin::kMtm,  fes::darwin::kMu2,
-          fes::darwin::kN2,      fes::darwin::kN4,   fes::darwin::kNu2,
-          fes::darwin::kO1,      fes::darwin::kP1,   fes::darwin::kQ1,
-          fes::darwin::kR2,      fes::darwin::kS1,   fes::darwin::kS2,
-          fes::darwin::kS4,      fes::darwin::kSa,   fes::darwin::kSsa,
-          fes::darwin::kT2};
+static auto ocean_tide_constituents() -> std::list<fes::ConstituentId> {
+  return {fes::ConstituentId::k2N2,     fes::ConstituentId::kEps2,
+          fes::ConstituentId::kJ1,      fes::ConstituentId::kK1,
+          fes::ConstituentId::kK2,      fes::ConstituentId::kL2,
+          fes::ConstituentId::kLambda2, fes::ConstituentId::kM2,
+          fes::ConstituentId::kM3,      fes::ConstituentId::kM4,
+          fes::ConstituentId::kM6,      fes::ConstituentId::kM8,
+          fes::ConstituentId::kMKS2,    fes::ConstituentId::kMN4,
+          fes::ConstituentId::kMS4,     fes::ConstituentId::kMSf,
+          fes::ConstituentId::kMf,      fes::ConstituentId::kMm,
+          fes::ConstituentId::kMSqm,    fes::ConstituentId::kMtm,
+          fes::ConstituentId::kMu2,     fes::ConstituentId::kN2,
+          fes::ConstituentId::kN4,      fes::ConstituentId::kNu2,
+          fes::ConstituentId::kO1,      fes::ConstituentId::kP1,
+          fes::ConstituentId::kQ1,      fes::ConstituentId::kR2,
+          fes::ConstituentId::kS1,      fes::ConstituentId::kS2,
+          fes::ConstituentId::kS4,      fes::ConstituentId::kSa,
+          fes::ConstituentId::kSsa,     fes::ConstituentId::kT2};
 }
 
 /// @brief Convert degrees to radians
@@ -114,7 +120,7 @@ auto polar(const std::vector<float> &amp, const std::vector<float> &pha)
 /// @param filename The path to the NetCDF file
 /// @param model The tidal model to update
 static auto load_tide_data_from_file(
-    const fes::darwin::Constituent ident, const std::string &filename,
+    const fes::ConstituentId ident, const std::string &filename,
     std::unique_ptr<fes::tidal_model::Cartesian<float>> &model) -> void {
   try {
     // Open the NetCDF file for reading
@@ -167,8 +173,7 @@ static auto load_tide_data_from_file(
           fes::Axis(Eigen::Map<const Eigen::VectorXd>(lat.data(), lat.size()),
                     1e-6, false);
       model = std::move(std::make_unique<fes::tidal_model::Cartesian<float>>(
-          std::move(x_axis), std::move(y_axis),
-          fes::darwin::constituents::map(), fes::TideType::kRadial, false));
+          std::move(x_axis), std::move(y_axis), fes::TideType::kRadial, false));
     }
 
     // Combine amplitude and phase into a complex wave
@@ -236,11 +241,11 @@ static auto load_ocean_tide_model()
         Eigen::Map<
             const Eigen::Matrix<int32_t, Eigen::Dynamic, 6, Eigen::RowMajor>>(
             lgp2_codes.data(), triangles, 6),
-        fes::darwin::constituents::map(), fes::TideType::kTide, 100'000);
+        fes::TideType::kTide, 100'000);
 
     // Read and add each constituent to the model
     for (const auto &ident : ocean_tide_constituents()) {
-      std::string prefix = fes::darwin::constituents::name(ident);
+      std::string prefix = fes::constituents::name(ident);
       std::string var_name = prefix + "_amplitude";
 
       // Get the amplitude variable
@@ -283,7 +288,7 @@ int main() {
   auto tide_handler = load_ocean_tide_model();
   // Create the FES settings
   auto settings =
-      fes::FesRuntimeSettings().with_num_threads(0).with_astronomic_formulae(
+      fes::FESSettings().with_num_threads(0).with_astronomic_formulae(
           fes::angle::Formulae::kIERS);
   // Create a timeseries of dates starting from the first january 1983
   Eigen::VectorXd times(24);

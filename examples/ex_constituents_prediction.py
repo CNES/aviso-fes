@@ -96,9 +96,9 @@ print('-' * 70)
 
 fes_constituents = pyfes.known_constituents()
 
-# Note: Using pyfes.darwin.constituents() because TICON-3 data follows
-# Darwin notation conventions. If working with GOT-based constituent data,
-# use pyfes.perth.constituents() instead.
+# Note: pyfes.known_constituents() returns the list of all constituent names
+# recognized by pyfes. You can also use pyfes.darwin.WaveTable() or
+# pyfes.perth.WaveTable() to check engine-specific support.
 
 for name, (amplitude, phase) in BREST_TICON3_DATA.items():
     if name in fes_constituents:

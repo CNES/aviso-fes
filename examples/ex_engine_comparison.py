@@ -100,9 +100,9 @@ print('\nNodeal Corrections:')
 print('  Applied via group modulations (constituents grouped together)')
 print('  More computationally efficient than individual corrections')
 print('\nInference Modes:')
-print('  • ZERO_ADMITTANCE: No inference')
-print('  • LINEAR_ADMITTANCE: Linear interpolation (default)')
-print('  • FOURIER_ADMITTANCE: Fourier-based (most accurate)')
+print('  • ZERO: No inference')
+print('  • LINEAR: Linear interpolation (default)')
+print('  • FOURIER: Fourier-based (most accurate)')
 
 # %%
 # Listing Constituents by Engine
@@ -232,14 +232,14 @@ print('\nPERTH5/Doodson Settings (Linear Admittance):')
 print(f'  {perth_settings_linear}')
 print('  • Astronomic formulae: IERS (modern conventions)')
 print('  • Group modulations: Enabled (efficient)')
-print('  • Inference: LINEAR_ADMITTANCE (balanced)')
+print('  • Inference: LINEAR (balanced)')
 print('  • Threads: 0 (auto-detect)')
 
 print('\nPERTH5/Doodson Settings (Fourier Admittance):')
 print(f'  {perth_settings_fourier}')
 print('  • Astronomic formulae: IERS')
 print('  • Group modulations: Enabled')
-print('  • Inference: FOURIER_ADMITTANCE (maximum accuracy)')
+print('  • Inference: FOURIER (maximum accuracy)')
 
 # %%
 # Configuration File Examples
@@ -333,18 +333,18 @@ print('PERTH5 Inference Types')
 print('=' * 70)
 
 inference_comparison = """
-┌────────────────────┬───────────────┬────────────┬──────────────────┐
-│ Inference Type     │ Accuracy      │ Speed      │ Use Case         │
-├────────────────────┼───────────────┼────────────┼──────────────────┤
-│ ZERO_ADMITTANCE    │ Lowest        │ Fastest    │ All constituents │
-│                    │ (no inference)│            │ in atlas         │
-├────────────────────┼───────────────┼────────────┼──────────────────┤
-│ LINEAR_ADMITTANCE  │ Good          │ Fast       │ General use      │
-│                    │ (balanced)    │            │ (recommended)    │
-├────────────────────┼───────────────┼────────────┼──────────────────┤
-│ FOURIER_ADMITTANCE │ Highest       │ Slower     │ High-precision   │
-│                    │ (best)        │            │ applications     │
-└────────────────────┴───────────────┴────────────┴──────────────────┘
+┌────────────────┬───────────────┬────────────┬──────────────────┐
+│ Inference Type │ Accuracy      │ Speed      │ Use Case         │
+├────────────────┼───────────────┼────────────┼──────────────────┤
+│ ZERO           │ Lowest        │ Fastest    │ All constituents │
+│                │ (no inference)│            │ in atlas         │
+├────────────────┼───────────────┼────────────┼──────────────────┤
+│ LINEAR         │ Good          │ Fast       │ General use      │
+│                │ (balanced)    │            │ (recommended)    │
+├────────────────┼───────────────┼────────────┼──────────────────┤
+│ FOURIER        │ Highest       │ Slower     │ High-precision   │
+│                │ (best)        │            │ applications     │
+└────────────────┴───────────────┴────────────┴──────────────────┘
 """
 print(inference_comparison)
 
@@ -352,19 +352,13 @@ print('\nCode Examples:')
 print('-' * 70)
 print("""
 # No inference
-settings = pyfes.PerthRuntimeSettings().with_inference_type(
-    pyfes.InterpolationType.ZERO_ADMITTANCE
-)
+settings = pyfes.PerthRuntimeSettings().with_inference_type(pyfes.ZERO)
 
 # Balanced (default)
-settings = pyfes.PerthRuntimeSettings().with_inference_type(
-    pyfes.InterpolationType.LINEAR_ADMITTANCE
-)
+settings = pyfes.PerthRuntimeSettings().with_inference_type(pyfes.LINEAR)
 
 # Maximum accuracy
-settings = pyfes.PerthRuntimeSettings().with_inference_type(
-    pyfes.InterpolationType.FOURIER_ADMITTANCE
-)
+settings = pyfes.PerthRuntimeSettings().with_inference_type(pyfes.FOURIER)
 """)
 
 # %%
@@ -405,6 +399,51 @@ print(example_code)
 print('✓ No code changes needed to switch engines')
 print('✓ Just update the YAML configuration file')
 print('✓ Settings are automatically created based on engine type')
+
+# %%
+# Generating Markdown Tables
+# ===========================
+#
+# PyFES provides two ways to display constituent information as markdown
+# tables:
+#
+# 1. :func:`pyfes.core.generate_markdown_table` generates a table from the
+#    engine settings and a list of modeled constituents, showing which
+#    constituents are provided by the model and which are inferred.
+#
+# 2. :meth:`WaveTableInterface.generate_markdown_table
+#    <pyfes.WaveTableInterface.generate_markdown_table>` generates a table
+#    listing the properties of each constituent in a wave table (name,
+#    frequency, Doodson number, etc.).
+
+# Table for the Darwin engine settings
+print('\n' + '=' * 70)
+print('Markdown Table: FES/Darwin Configuration')
+print('=' * 70)
+print(
+    pyfes.core.generate_markdown_table(fes_settings, ['M2', 'S2', 'K1', 'O1'])
+)
+
+# Table for the PERTH5 engine settings
+print('\n' + '=' * 70)
+print('Markdown Table: PERTH5/Doodson Configuration')
+print('=' * 70)
+print(
+    pyfes.core.generate_markdown_table(
+        perth_settings_linear, ['M2', 'S2', 'K1', 'O1']
+    )
+)
+
+# %%
+# You can also display the wave table itself to see the full list of
+# constituents and their properties.
+print('\n' + '=' * 70)
+print('Darwin Wave Table (first 10 constituents)')
+print('=' * 70)
+wt = pyfes.darwin.WaveTable(
+    ['M2', 'S2', 'N2', 'K2', 'K1', 'O1', 'P1', 'Q1', 'Mf', 'Mm']
+)
+print(wt.generate_markdown_table())
 
 # %%
 # Summary

@@ -1,16 +1,16 @@
 .. currentmodule:: pyfes.core
 
-FES Constituents
-================
+DARWIN Constituents
+===================
 
-This page documents all tidal constituents supported by the FES
+This page documents all tidal constituents supported by the DARWIN
 prediction engine.
 
 Accessing Constituents Programmatically
 ---------------------------------------
 
 To retrieve the wave properties of the constituents supported by the
-FES engine, you can use the :func:`pyfes.darwin.WaveTable`
+DARWIN engine, you can use the :func:`pyfes.darwin.WaveTable`
 class, which provides a mapping of constituent names to their corresponding
 properties.
 
@@ -18,24 +18,27 @@ properties.
 
     import pyfes
 
-    # Get the constituent map for the FES engine
+    # Get the constituent map for the DARWIN engine
     wt = pyfes.darwin.WaveTable()
 
     # Access a specific constituent by name
     m2 = wt['M2']
     # Print the name and frequency of the M2 constituent
-    print(f"Name: {m2.name()}, Frequency: {m2.freq}")
+    print(f"Name: {m2.name}, Frequency: {m2.frequency()}")
 
     # Iterate over all constituents
     for wave in wt:
-        print(f"Constituent: {wave.name()}, Frequency: {wave.freq}")
+        print(f"Constituent: {wave.name}, Frequency: {wave.frequency()}")
 
-.. _fes_constituents:
+    # Display the wave table as a formatted markdown table
+    print(wt.generate_markdown_table())
+
+.. _darwin_constituents:
 
 Available Constituents
 ----------------------
 
-The FES engine supports the following tidal constituents:
+The DARWIN engine supports the following tidal constituents:
 
 ============================  =============  =========
 Name                          Speed (deg/h)  XDO
@@ -142,7 +145,7 @@ M8                            115.9364170    H ZZZ ZZZ
 ============================  =============  =========
 
 For detailed information about each constituent's mathematical formulation, and
-reference, see the :ref:`FES constituent implementation details
+reference, see the :ref:`DARWIN constituent implementation details
 <schureman_reference>` page.
 
 Class Documentation

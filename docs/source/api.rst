@@ -35,37 +35,14 @@ Cartwright-Tayler-Edden spectral line summation method. It incorporates both 2nd
 and 3rd order tidal potential components, with validation against Tamura's
 potential model. The function accepts multiple key inputs: time as numpy
 datetime64 array, latitude in degrees (positive northward), optional computation
-settings, and a thread count for parallel processing. When num_threads is set
-to 0, the function automatically determines optimal thread count. Returns a
+settings (which include thread count configuration via ``with_num_threads()``).
+When the thread count is set to 0, the function automatically determines the
+optimal thread count. Returns a
 vector of computed tide heights. This implementation is based on established
 research by Cartwright & Tayler (1971), Cartwright & Edden (1973),
 and Tamura (1987).
 
 .. autofunction:: pyfes.evaluate_equilibrium_long_period
-
-Constituent map
----------------
-
-.. currentmodule:: pyfes
-
-.. autoclass:: pyfes.core.ConstituentMap
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-FES/Darwin engine
------------------
-
-.. currentmodule:: pyfes
-
-.. autofunction:: pyfes.darwin.constituents
-
-Perth/Doodson engine
---------------------
-
-.. currentmodule:: pyfes
-
-.. autofunction:: pyfes.perth.constituents
 
 Configuration file
 ------------------

@@ -4,17 +4,17 @@ Introduction
 ============
 
 To forecast tides, instantiate either a
-:class:`pyfes.core.AbstractTidalModelComplex128` for double precision floating
-point calculations, or a :class:`pyfes.core.AbstractTidalModelComplex64` for
+:class:`pyfes.core.TidalModelInterfaceComplex128` for double precision floating
+point calculations, or a :class:`pyfes.core.TidalModelInterfaceComplex64` for
 single precision. While the latter is quicker and more memory-efficient, it
 sacrifices some accuracy. Regardless of the chosen precision, all internal
 computations are performed using double precision.
 
 PyFES can now run two prediction engines:
 
-* **FES/Darwin** (``engine: fes``): the historical engine using Schureman/Darwin
+* **FES/Darwin** (``engine: darwin``): the historical engine using Schureman/Darwin
   nodal corrections and admittance handling.
-* **PERTH5/Doodson** (``engine: perth5``): a Doodson-number-based engine that
+* **PERTH5/Doodson** (``engine: perth``): a Doodson-number-based engine that
   supports group modulations and multiple inference interpolation modes.
 
 Both engines share the same high-level API; you select the engine in the YAML
@@ -48,7 +48,7 @@ To perform a tide prediction, PyFES requires a configuration file in
 model data and how it is structured.
 
 The YAML file begins with a global configuration header. The optional ``engine``
-keyword selects the prediction engine: either ``fes`` (default) or ``perth5``.
+keyword selects the prediction engine: either ``darwin`` (default) or ``perth``.
 If specified, this keyword must appear at the top level of the file.
 
 The configuration then describes two tidal components:
@@ -165,7 +165,7 @@ the **radial** tide loading (Cartesian grid) and another for the primary
    :caption: fes2014b.yaml
 
    # Ocean Tide Loading model on a Cartesian grid
-   engine: fes
+   engine: darwin
    radial:
      cartesian:
        paths:
@@ -178,7 +178,6 @@ the **radial** tide loading (Cartesian grid) and another for the primary
    # Primary Ocean Tide model on an unstructured (LGP) grid
    tide:
      lgp:
-       engine: fes
        path: ${FES_DATA}/fes2014b_elevations/fes2014b_elevations.nc
        codes: codes
        dynamic:
@@ -198,8 +197,8 @@ the **radial** tide loading (Cartesian grid) and another for the primary
        amplitude: amp_{constituent}
        phase: pha_{constituent}
 
-Using the PERTH5 engine just requires switching the ``engine`` keys to
-``perth5`` and providing a PERTH-compatible atlas.
+Using the PERTH5 engine just requires switching the top-level ``engine`` key to
+``perth`` and providing a PERTH-compatible atlas.
 
 .. _using_the_config:
 
@@ -257,8 +256,8 @@ tidal atlas format. When you load a configuration file via
 :func:`pyfes.config.load`, PyFES automatically instantiates the appropriate
 settings class based on the ``engine`` key in your YAML file:
 
-* ``engine: fes`` → :class:`pyfes.FesRuntimeSettings`
-* ``engine: perth5`` → :class:`pyfes.PerthRuntimeSettings`
+* ``engine: darwin`` → :class:`pyfes.FesRuntimeSettings`
+* ``engine: perth`` → :class:`pyfes.PerthRuntimeSettings`
 
 Each engine has specific configuration options tailored to its prediction
 methodology. The settings are returned in ``cfg.settings`` and passed to
@@ -276,6 +275,7 @@ For FES tidal atlases (FES2014, FES2022), use :class:`pyfes.FesRuntimeSettings`:
     # Create Darwin engine settings with recommended defaults
     settings = (
         pyfes.FesRuntimeSettings()
+        .with_inference_type(pyfes.SPLINE)
         .with_astronomic_formulae(pyfes.Formulae.SCHUREMAN_ORDER_1)
         .with_time_tolerance(3600.0)
         .with_num_threads(0)
@@ -308,6 +308,15 @@ For FES tidal atlases (FES2014, FES2022), use :class:`pyfes.FesRuntimeSettings`:
        are expensive to compute; this setting allows reusing angles within the
        specified tolerance. Default: 3600.0 (1 hour). Set to 0.0 to disable
        caching.
+   * - ``with_inference_type``
+     - Admittance interpolation strategy for minor constituents:
+
+       * ``SPLINE`` (recommended for FES): Spline-based interpolation
+       * ``LINEAR``: Linear interpolation
+       * ``FOURIER``: Fourier-based interpolation
+       * ``ZERO``: No inference; use only provided constituents
+
+       Inference types are generic and can be used with any engine.
    * - ``with_num_threads``
      - Number of parallel threads for computation. Set to 0 (default) to let
        PyFES automatically determine the optimal thread count based on
@@ -338,7 +347,7 @@ For GOT models and Doodson-based atlases, use :class:`pyfes.PerthRuntimeSettings
     settings = (
         pyfes.PerthRuntimeSettings()
         .with_group_modulations(True)
-        .with_inference_type(pyfes.InterpolationType.LINEAR_ADMITTANCE)
+        .with_inference_type(pyfes.LINEAR)
         .with_astronomic_formulae(pyfes.Formulae.IERS)
         .with_time_tolerance(3600.0)
         .with_num_threads(0)
@@ -365,11 +374,12 @@ For GOT models and Doodson-based atlases, use :class:`pyfes.PerthRuntimeSettings
    * - ``with_inference_type``
      - Admittance interpolation strategy for minor constituents:
 
-       * ``ZERO_ADMITTANCE``: No inference; use only provided constituents
-       * ``LINEAR_ADMITTANCE`` (default): Linear interpolation (balanced)
-       * ``FOURIER_ADMITTANCE``: Fourier-based interpolation (most accurate)
+       * ``LINEAR`` (recommended for GOT): Linear interpolation
+       * ``SPLINE``: Spline-based interpolation
+       * ``FOURIER``: Fourier-based interpolation
+       * ``ZERO``: No inference; use only provided constituents
 
-       Choose based on your accuracy requirements and computational budget.
+       Inference types are generic and can be used with any engine.
    * - ``with_astronomic_formulae``
      - Astronomical angle formulation:
 
@@ -392,7 +402,7 @@ For GOT models and Doodson-based atlases, use :class:`pyfes.PerthRuntimeSettings
     settings = (
         pyfes.PerthRuntimeSettings()
         .with_group_modulations(True)
-        .with_inference_type(pyfes.InterpolationType.FOURIER_ADMITTANCE)
+        .with_inference_type(pyfes.FOURIER)
         .with_astronomic_formulae(pyfes.Formulae.IERS)
         .with_time_tolerance(0.0)  # No caching, recompute every time
         .with_num_threads(8)
@@ -406,7 +416,7 @@ For GOT models and Doodson-based atlases, use :class:`pyfes.PerthRuntimeSettings
     settings = (
         pyfes.PerthRuntimeSettings()
         .with_group_modulations(True)
-        .with_inference_type(pyfes.InterpolationType.ZERO_ADMITTANCE)
+        .with_inference_type(pyfes.ZERO)
         .with_astronomic_formulae(pyfes.Formulae.IERS)
     )
 
@@ -460,13 +470,15 @@ Setting ``with_num_threads(0)`` (default) lets PyFES automatically choose the
 optimal thread count. For production systems, you may want to set an explicit
 count based on available CPU cores and concurrent workloads.
 
-**Inference Type (PERTH5 only):**
+**Inference Type:**
 
-The inference type affects both accuracy and performance:
+The inference type affects both accuracy and performance. Inference types are
+generic and can be used with any engine:
 
-* ``ZERO_ADMITTANCE``: Fastest, no additional constituents
-* ``LINEAR_ADMITTANCE``: Good balance (recommended default)
-* ``FOURIER_ADMITTANCE``: Highest accuracy, more computation
+* ``ZERO``: Fastest, no additional constituents
+* ``LINEAR``: Good balance (recommended for GOT atlases)
+* ``SPLINE``: Spline-based interpolation (recommended for FES atlases)
+* ``FOURIER``: Fourier-based interpolation
 
 Examples
 ~~~~~~~~

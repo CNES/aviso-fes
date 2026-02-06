@@ -44,8 +44,9 @@ os.environ['DATASET_DIR'] = str(
 config = pyfes.config.load(pathlib.Path().absolute() / 'fes_lpg.yml')
 
 # %%
-# ``config`` is a dictionary that contains the models loaded from the
-# configuration file and the associated runtime settings.
+# ``config`` is a :py:class:`~pyfes.config.Configuration` namedtuple that
+# contains the tidal models and the runtime settings loaded from the
+# configuration file.
 print(config)
 
 # %%

@@ -88,6 +88,12 @@ the complex ratio between a minor and major constituent:
 This allows PyFES to estimate amplitudes and phases for many additional
 constituents beyond those in the atlas, improving prediction accuracy.
 
+.. note::
+
+   Inference types are now **generic** and can be used with any engine. For
+   FES atlases, the recommended inference type is ``SPLINE``. See
+   :ref:`inference_types` for all available modes.
+
 Supported Constituents
 ----------------------
 
@@ -116,20 +122,20 @@ admittance to infer the remaining constituents for complete tidal predictions.
 Configuration
 -------------
 
-To use the Darwin engine, set ``engine: fes`` in your YAML configuration file:
+To use the Darwin engine, set ``engine: darwin`` at the top level of your YAML
+configuration file:
 
 .. code-block:: yaml
 
+    engine: darwin
     tide:
       lgp:
-        engine: fes
         path: ${FES_DATA}/fes2022b/ocean_tide.nc
         codes: codes
         constituents: [2N2, K1, K2, M2, N2, O1, P1, Q1, S1, S2]
 
     radial:
       cartesian:
-        engine: fes
         paths:
           M2: ${FES_DATA}/fes2022b_load/m2.nc
           S2: ${FES_DATA}/fes2022b_load/s2.nc
@@ -142,6 +148,7 @@ Runtime settings for the Darwin engine:
 
     settings = (
         pyfes.FesRuntimeSettings()
+        .with_inference_type(pyfes.SPLINE)
         .with_astronomic_formulae(pyfes.Formulae.SCHUREMAN_ORDER_1)
         .with_time_tolerance(3600.0)
         .with_num_threads(0)
