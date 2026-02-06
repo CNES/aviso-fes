@@ -134,7 +134,7 @@ class WaveInterface {
   }
 
   /// Gets the period of the wave (hours)
-  constexpr auto period() const noexcept -> double {
+  inline auto period() const noexcept -> double {
     return detail::math::two_pi<double>() / frequency();
   }
 
