@@ -285,9 +285,7 @@ def test_evaluate_tide_from_constituents() -> None:
         constituents,
         dates,
         BREST_LOCATION[1],
-        core.FesRuntimeSettings()
-        .with_num_threads(1)
-        .with_compute_long_period_equilibrium(True),
+        core.FesRuntimeSettings().with_num_threads(1),
     )
     assert len(tide) == len(dates)
     assert len(long_period) == len(dates)
