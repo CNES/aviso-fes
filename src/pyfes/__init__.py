@@ -13,8 +13,8 @@ sea level.
 
 from collections.abc import Mapping
 from .core import (
-    AbstractTidalModelComplex128,
-    AbstractTidalModelComplex64,
+    TidalModelInterfaceComplex128,
+    TidalModelInterfaceComplex64,
     TIDE as TIDE,
     RADIAL as RADIAL,
 )
@@ -24,9 +24,10 @@ from .core import (
     FesRuntimeSettings,
     PerthRuntimeSettings,
     Settings as Settings,
-    TidalType as TidalType,
-    InterpolationType as InterpolationType,
+    TideType as TideType,
     tidal_model as tidal_model,
+    darwin as darwin,
+    perth as perth,
     Axis as Axis,
 )
 from . import core
@@ -35,7 +36,6 @@ from .type_hints import (
     VectorFloat64,
     VectorInt8,
 )
-from .core import darwin, perth
 from . import config as config
 from .version import __version__  # noqa: F401
 
@@ -46,9 +46,8 @@ __all__ = [
     'Axis',
     'FesRuntimeSettings',
     'Formulae',
-    'InterpolationType',
     'PerthRuntimeSettings',
-    'TidalType',
+    'TideType',
     'config',
     'darwin',
     'evaluate_equilibrium_long_period',
@@ -60,7 +59,7 @@ __all__ = [
 
 
 def evaluate_tide(
-    tidal_model: AbstractTidalModelComplex128 | AbstractTidalModelComplex64,
+    tidal_model: TidalModelInterfaceComplex128 | TidalModelInterfaceComplex64,
     date: VectorDateTime64,
     longitude: VectorFloat64,
     latitude: VectorFloat64,
@@ -77,10 +76,8 @@ def evaluate_tide(
         latitude: Latitude in degrees for the position at which the tide is
             calculated.
         settings: Settings used for the tide calculation. Using
-          :py:class:`FesRuntimeSettings` runs the FES prediction engine, and
-          :py:class:`PerthRuntimeSettings` runs the PERTH5 prediction
-          engine. The default value is None, which corresponds to the
-          default settings of the FES model.
+          :py:class:`FesRuntimeSettings` runs the Darwin prediction engine
+          and :py:class:`PerthRuntimeSettings` runs the PERTH prediction engine.
 
     Returns:
         * The height of the diurnal and semi-diurnal constituents of the
@@ -107,11 +104,11 @@ def evaluate_tide(
 
     """
     return core.evaluate_tide(
-        tidal_model,  # type: ignore[arg-type]
+        tidal_model,
         date,
         longitude,
         latitude,
-        settings,  # type: ignore[arg-type]
+        settings,
     )
 
 
@@ -138,10 +135,10 @@ def evaluate_tide_from_constituents(
         date: Date of the tide calculation.
         latitude: Latitude in degrees for the position.
         settings: Settings used for the tide calculation. Using
-          :py:class:`FesRuntimeSettings` runs the FES prediction engine, and
-          :py:class:`PerthRuntimeSettings` runs the PERTH5 prediction
+          :py:class:`FesRuntimeSettings` runs the Darwin prediction engine, and
+          :py:class:`PerthRuntimeSettings` runs the PERTH prediction
           engine. The default value is None, which corresponds to the
-          default settings of the FES model.
+          default settings for FES models.
 
     Returns:
         * The height of the diurnal and semi-diurnal constituents of the
@@ -176,10 +173,10 @@ def evaluate_tide_from_constituents(
 
     """
     return core.evaluate_tide_from_constituents(
-        constituents,  # type: ignore[arg-type]
+        constituents,
         date,
         latitude,
-        settings,  # type: ignore[arg-type]
+        settings,
     )
 
 
@@ -187,6 +184,7 @@ def evaluate_equilibrium_long_period(
     date: VectorDateTime64,
     latitude: VectorFloat64,
     *,
+    constituents: list[str] | None = None,
     settings: FesRuntimeSettings | None = None,
 ) -> VectorFloat64:
     """Compute the long period ocean tides.
@@ -209,6 +207,9 @@ def evaluate_equilibrium_long_period(
         date: Date of the tide calculation.
         latitude: Latitude in degrees for the position at which the tide is
             calculated.
+        constituents: List of constituents to remove from the inferred table
+            of long period waves. If None, all constituents are included in the
+            calculation.
         settings: Settings used for the tide calculation. See
             :py:class:`Settings` for more details.
 
@@ -217,8 +218,9 @@ def evaluate_equilibrium_long_period(
         (cm).
 
     """
-    return core.darwin.evaluate_equilibrium_long_period(
+    return core.evaluate_equilibrium_long_period(
         date,
         latitude,
+        constituents or [],
         settings,
     )

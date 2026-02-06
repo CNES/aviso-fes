@@ -56,7 +56,8 @@ struct TriangleQueryResult {
   /// weights.
   /// @param[in] triangle The selected triangle.
   inline TriangleQueryResult(const std::int32_t triangle_index,
-                             geometry::Point point, geometry::Triangle triangle)
+                             const geometry::Point& point,
+                             geometry::Triangle triangle)
       : index(triangle_index), point(point), triangle(std::move(triangle)) {}
 
   /// @brief Constructs a TriangleQueryResult when the query point is outside
@@ -65,9 +66,8 @@ struct TriangleQueryResult {
   /// query point.
   /// @param point The point to be used to calculate the interpolation weights.
   inline TriangleQueryResult(std::vector<VertexAttribute> nearest_vertices,
-                             geometry::Point point)
-      : point(std::move(point)),
-        nearest_vertices(std::move(nearest_vertices)) {}
+                             const geometry::Point& point)
+      : point(point), nearest_vertices(std::move(nearest_vertices)) {}
 
   /// @brief Check if the requested point is inside the mesh.
   /// @return True if the point is inside the mesh, false otherwise.
@@ -102,10 +102,12 @@ class Index : public std::enable_shared_from_this<Index> {
       -> TriangleQueryResult;
 
   /// Get the number of positions in the index
-  inline auto n_positions() const noexcept -> size_t { return lon_.size(); }
+  inline constexpr auto n_positions() const noexcept -> size_t {
+    return lon_.size();
+  }
 
   /// Get the number of triangles in the index
-  inline auto n_triangles() const noexcept -> size_t {
+  inline constexpr auto n_triangles() const noexcept -> size_t {
     return triangles_.rows();
   }
 
@@ -131,15 +133,13 @@ class Index : public std::enable_shared_from_this<Index> {
  private:
   /// Values stored in the R*Tree : Vertex of the triangle in ECEF coordinates,
   /// index of vertex (0, 1 or 2) and index of triangle.
-  using value_t =
+  using ValueType =
       std::pair<geometry::EarthCenteredEarthFixed, std::pair<int8_t, int32_t>>;
 
   /// R*Tree type
-  using rtree_t =
-      boost::geometry::index::rtree<value_t, boost::geometry::index::rstar<16>>;
-
-  /// @brief Magic number for validation
-  static constexpr uint32_t kMagicNumber = 0x46455349;  // "FESI"
+  using RTreeType =
+      boost::geometry::index::rtree<ValueType,
+                                    boost::geometry::index::rstar<16>>;
 
   /// The latitude coordinates of the mesh vertices.
   Eigen::VectorXd lon_;
@@ -151,7 +151,7 @@ class Index : public std::enable_shared_from_this<Index> {
   Eigen::Matrix<int32_t, -1, 3> triangles_;
 
   /// The R*Tree
-  rtree_t rtree_{};
+  RTreeType rtree_{};
 
   /// Search the nearest triangles to a point in ECEF coordinates.
   inline auto nearest(const geometry::EarthCenteredEarthFixed& cartesian_point,

@@ -1,1 +1,1 @@
-add_testcase(astronomic fes)
+add_testcase(astronomic)

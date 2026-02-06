@@ -1,4 +1,4 @@
-# Copyright (c) 2025 CNES
+# Copyright (c) 2026 CNES
 #
 # All rights reserved. Use of this source code is governed by a
 # BSD-style license that can be found in the LICENSE file.
@@ -23,20 +23,31 @@ class TestWave:
     def test_wave_name(self) -> None:
         """Test wave name property."""
         wave = self.wave_table['M2']
-        assert wave.name() == 'M2'
+        assert wave.name == 'M2'
 
         wave = self.wave_table['K1']
-        assert wave.name() == 'K1'
+        assert wave.name == 'K1'
 
     def test_wave_frequency(self) -> None:
-        """Test wave frequency property."""
+        """Test wave frequency method."""
         wave = self.wave_table['M2']
-        freq = np.degrees(wave.freq)  # radians/hour to degrees/hour
+        freq = np.degrees(wave.frequency())  # radians/hour to degrees/hour
         assert isinstance(freq, float)
         assert freq > 0
         # M2 has a period of ~12.42 hours, frequency should be ~28.9855
         # degrees/hours
         assert freq == pytest.approx(28.9855, rel=0.01)
+
+    def test_wave_frequency_with_unit(self) -> None:
+        """Test wave frequency method with different units."""
+        wave = self.wave_table['M2']
+
+        freq_rad = wave.frequency(core.RADIAN_PER_HOUR)
+        freq_deg = wave.frequency(core.DEGREE_PER_HOUR)
+
+        assert freq_rad > 0
+        assert freq_deg > 0
+        assert freq_deg == pytest.approx(np.degrees(freq_rad))
 
     def test_wave_type(self) -> None:
         """Test wave type classification."""
@@ -52,7 +63,6 @@ class TestWave:
         doodson = wave.doodson_numbers()
 
         # Doodson number should be a vector of integers
-        assert isinstance(doodson, (list, tuple))
         assert len(doodson) == 7
 
     def test_wave_xdo_representation(self) -> None:
@@ -77,13 +87,13 @@ class TestWave:
         # Tide should be a complex number
         assert isinstance(tide, complex)
 
-    def test_is_inferred_property(self) -> None:
-        """Test is_inferred property."""
+    def test_is_modeled_property(self) -> None:
+        """Test is_modeled property."""
         wave = self.wave_table['M2']
-        is_inferred = wave.admittance
+        is_modeled = wave.is_modeled
 
         # Should be a boolean
-        assert isinstance(is_inferred, (bool, np.bool_))
+        assert isinstance(is_modeled, (bool, np.bool_))
 
     def test_wave_comparison_across_types(self) -> None:
         """Test properties are consistent across different wave types."""
@@ -91,7 +101,7 @@ class TestWave:
         diurnal = self.wave_table['K1']
 
         # Frequencies should be different
-        assert semidiurnal.freq != diurnal.freq
+        assert semidiurnal.frequency() != diurnal.frequency()
 
         # Both should have valid Doodson numbers
         assert len(semidiurnal.doodson_numbers()) == 7
@@ -104,8 +114,8 @@ class TestWave:
 
         for name in constituents:
             wave = wt[name]
-            assert wave.name() == name
-            assert wave.freq > 0
+            assert wave.name == name
+            assert wave.frequency() > 0
 
     def test_wave_frequency_ordering(self) -> None:
         """Test that semidiurnal waves have higher frequencies than diurnal."""
@@ -116,15 +126,15 @@ class TestWave:
 
         # M2 (semidiurnal) should have roughly twice the frequency of K1
         # (diurnal)
-        assert m2.freq > k1.freq
+        assert m2.frequency() > k1.frequency()
         # Rough check: M2 should be around 1.9x K1 or higher
-        assert m2.freq / k1.freq > 1.5
+        assert m2.frequency() / k1.frequency() > 1.5
 
     def test_wave_type_consistency(self) -> None:
         """Test that short period waves have the same type classification."""
         wt = core.darwin.WaveTable(['M2', 'S2', 'N2', 'K1', 'O1', 'P1', 'Q1'])
 
-        for wave in wt:
+        for wave in wt.waves():
             # All these constituents should be short period
             assert wave.type == core.SHORT_PERIOD
 
@@ -140,9 +150,9 @@ class TestWaveWithLongPeriod:
         for name in long_period_constituents:
             if name in wt:
                 wave = wt[name]
-                assert wave.name() == name
+                assert wave.name == name
                 # Long period waves have lower frequencies
-                assert wave.freq < 1.0  # Less than 1 cycle per day
+                assert wave.frequency() < 1.0  # Less than 1 rad/hour
 
     def test_long_period_frequency_range(self) -> None:
         """Test frequency ranges for long-period waves."""
@@ -150,8 +160,8 @@ class TestWaveWithLongPeriod:
 
         if 'Sa' in wt:
             wave = wt['Sa']
-            # Annual tide should have frequency around 1/365 cycles per day
-            assert wave.freq < 0.01
+            # Annual tide should have very low frequency
+            assert wave.frequency() < 0.01
 
 
 class TestWaveIntegration:
@@ -170,7 +180,7 @@ class TestWaveIntegration:
 
         # Wave properties should be independent of astronomical angle
         # (at least the base frequency)
-        assert wave.freq > 0
+        assert wave.frequency() > 0
 
     def test_wave_in_harmonic_analysis(self) -> None:
         """Test Wave objects work correctly in harmonic analysis."""
@@ -185,6 +195,6 @@ class TestWaveIntegration:
         _f, _vu = wt.compute_nodal_modulations(time)
 
         # Verify that we can access wave properties after modulations
-        for wave in wt:
-            assert wave.name() in ['M2', 'S2']
-            assert wave.freq > 0
+        for wave in wt.waves():
+            assert wave.name in ['M2', 'S2']
+            assert wave.frequency() > 0

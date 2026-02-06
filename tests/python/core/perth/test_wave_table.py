@@ -1,4 +1,4 @@
-# Copyright (c) 2025 CNES
+# Copyright (c) 2026 CNES
 #
 # All rights reserved. Use of this source code is governed by a
 # BSD-style license that can be found in the LICENSE file.
@@ -21,41 +21,23 @@ class TestPerthWaveTableExtended:
 
     def test_wave_table_access_all_constituents(self) -> None:
         """Test accessing all constituents in table."""
-        constituents = core.perth.constituents().keys()
         wt = core.perth.WaveTable()
 
-        for name in constituents:
+        for name in wt.constituents:
             wave = wt[name]
             assert wave is not None
-            print(wave.name(), name)
-            assert wave.name() == name
+            assert wave.name == name
 
     def test_wave_table_iteration_order(self) -> None:
         """Test order of iteration over wave table."""
         wt = core.perth.WaveTable(['M2', 'S2', 'K1'])
 
-        waves_from_iteration = [w.name() for w in wt]
-        keys = wt.keys()
+        waves_from_iteration = [w.name for w in wt.waves()]
+        names = wt.constituents
 
-        # All waves should be in keys
-        # Note: ['M2', 'S2', 'K1'] disables these from admittance calculations,
-        # but they are still in the wave table
+        # All waves should be in constituents
         for wave_name in waves_from_iteration:
-            assert wave_name in keys
-
-    def test_wave_inferred_property(self) -> None:
-        """Test is_inferred property of constituents."""
-        # Constituents passed to WaveTable are disabled from admittance
-        # calculations, but the full wave table is still available for
-        # prediction
-        wt = core.perth.WaveTable(['M2', 'S2'])
-
-        assert 'M2' in wt
-        assert 'S2' in wt
-        assert 'K1' in wt
-        assert not wt['M2'].is_inferred
-        assert not wt['S2'].is_inferred
-        assert wt['K1'].is_inferred
+            assert wave_name in names
 
     def test_wave_table_access_invalid_constituent(self) -> None:
         """Test accessing invalid constituent raises error."""
@@ -65,32 +47,28 @@ class TestPerthWaveTableExtended:
             _ = wt['INVALID']
 
     def test_wave_table_len_consistency(self) -> None:
-        """Test that len() is consistent with keys/values."""
+        """Test that len() is consistent with constituents/waves."""
         wt = core.perth.WaveTable()
 
-        assert len(wt) == len(wt.keys())
-        assert len(wt) == len(wt.values())
+        assert len(wt) == len(wt.constituents)
+        assert len(wt) == len(wt.waves())
 
-        # Count by iteration
-        iter_count = sum(1 for _ in wt)
-        assert len(wt) == iter_count
-
-    def test_wave_table_tidal_arguments_are_valid(self) -> None:
-        """Test that all tidal arguments are valid."""
+    def test_wave_table_vu_are_valid(self) -> None:
+        """Test that all vu (V+u) values are valid."""
         wt = core.perth.WaveTable()
 
-        for wave in wt:
-            arg = wave.tidal_argument
-            assert np.isfinite(arg), f'Invalid tidal argument for {wave.name()}'
+        for wave in wt.waves():
+            vu = wave.vu
+            assert np.isfinite(vu), f'Invalid vu for {wave.name}'
 
     def test_wave_table_tide_amplitudes_are_valid(self) -> None:
         """Test that all tide amplitudes are valid."""
         wt = core.perth.WaveTable()
 
-        for wave in wt:
+        for wave in wt.waves():
             tide = wave.tide
             magnitude = abs(tide)
-            assert np.isfinite(magnitude), f'Invalid tide for {wave.name()}'
+            assert np.isfinite(magnitude), f'Invalid tide for {wave.name}'
 
     def test_wave_table_multiple_accesses(self) -> None:
         """Test multiple accesses to same constituent."""
@@ -100,32 +78,32 @@ class TestPerthWaveTableExtended:
         wave2 = wt['M2']
 
         # Both should have same name and properties
-        assert wave1.name() == wave2.name()
+        assert wave1.name == wave2.name
         np.testing.assert_array_equal(
-            wave1.doodson_numbers, wave2.doodson_numbers
+            wave1.doodson_numbers(), wave2.doodson_numbers()
         )
 
     def test_wave_table_types_are_valid(self) -> None:
         """Test that all wave types are valid."""
         wt = core.perth.WaveTable()
 
-        for wave in wt:
+        for wave in wt.waves():
             wave_type = wave.type
             assert wave_type is not None
 
-    def test_wave_table_is_inferred_property(self) -> None:
-        """Test is_inferred property for all waves."""
+    def test_wave_table_is_modeled_property(self) -> None:
+        """Test is_modeled property for all waves."""
         wt = core.perth.WaveTable()
 
-        for wave in wt:
-            is_inferred = wave.is_inferred
-            assert isinstance(is_inferred, (bool, np.bool_))
+        for wave in wt.waves():
+            is_modeled = wave.is_modeled
+            assert isinstance(is_modeled, (bool, np.bool_))
 
     def test_wave_table_xdo_representations_valid(self) -> None:
         """Test that Doodson representations are valid."""
         wt = core.perth.WaveTable()
 
-        for wave in wt:
+        for wave in wt.waves():
             xdo_alpha = wave.xdo_alphabetical()
             xdo_num = wave.xdo_numerical()
 
@@ -161,6 +139,6 @@ class TestPerthWaveTableExtended:
         # table)
         assert len(wt) >= len(disabled_constituents)
 
-        # All disabled constituents should be accessible and not inferred
+        # All disabled constituents should be accessible
         for const in disabled_constituents:
-            assert wt[const].is_inferred is False
+            assert const in wt

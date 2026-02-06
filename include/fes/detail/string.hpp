@@ -6,7 +6,7 @@
 /// @brief String utility functions.
 #pragma once
 
-#include <algorithm>
+#include <boost/range/algorithm/equal.hpp>
 #include <cctype>
 #include <string>
 
@@ -18,8 +18,8 @@ namespace detail {
 /// @param[in] b Second string to compare.
 /// @return True if the strings are equal ignoring case, false otherwise.
 inline auto iequals(const std::string &a, const std::string &b) -> bool {
-  return std::equal(a.begin(), a.end(), b.begin(), b.end(),
-                    [](char a, char b) { return tolower(a) == tolower(b); });
+  return boost::range::equal(
+      a, b, [](char a, char b) { return tolower(a) == tolower(b); });
 }
 
 }  // namespace detail

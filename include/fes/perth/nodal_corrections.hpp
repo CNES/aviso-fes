@@ -8,7 +8,8 @@
 
 #include <vector>
 
-#include "fes/perth/constituent.hpp"
+#include "fes/constituent.hpp"
+#include "fes/interface/wave.hpp"
 
 namespace fes {
 namespace perth {
@@ -34,8 +35,8 @@ struct NodalCorrections {
 /// @param[in] constituents A vector of constituents for which to compute
 ///   corrections.
 /// @return A vector of NodalCorrections for each constituent.
-auto compute_nodal_corrections(double omega, double p,
-                               const std::vector<Constituent> &constituents)
+auto evaluate_nodal_corrections(double omega, double p,
+                                const std::vector<ConstituentId>& constituents)
     -> std::vector<NodalCorrections>;
 
 /// @brief Compute nodal corrections for a single constituent.
@@ -44,10 +45,10 @@ auto compute_nodal_corrections(double omega, double p,
 /// @param[in] p Mean longitude of lunar perigee, in degrees.
 /// @param[in] constituent The constituent to compute corrections for.
 /// @return Nodal corrections {f, u}.
-inline auto compute_nodal_correction(double omega, double p,
-                                     const Constituent constituent)
+inline auto evaluate_nodal_correction(double omega, double p,
+                                      const ConstituentId constituent)
     -> NodalCorrections {
-  return compute_nodal_corrections(omega, p, {constituent})[0];
+  return evaluate_nodal_corrections(omega, p, {constituent})[0];
 }
 
 /// @brief Computes group modulation nodal corrections.
@@ -68,10 +69,50 @@ inline auto compute_nodal_correction(double omega, double p,
 /// @param[in] constituents A vector of constituents for which to compute
 ///   corrections.
 /// @return A vector of NodalCorrections for each constituent.
-auto compute_nodal_corrections(double perihelion, double omega, double perigee,
-                               double hsolar,
-                               const std::vector<Constituent> &constituents)
+auto evaluate_nodal_corrections(double perihelion, double omega, double perigee,
+                                double hsolar,
+                                const std::vector<ConstituentId>& constituents)
     -> std::vector<NodalCorrections>;
+
+/// @brief Compute group modulation nodal corrections for a single constituent.
+///
+/// @param[in] perihelion Mean longitude of the sun's perihelion, in degrees.
+/// @param[in] omega Mean longitude of the lunar node, in degrees.
+/// @param[in] perigee Mean longitude of the lunar perigee, in degrees.
+/// @param[in] hsolar Mean longitude of the sun, in degrees.
+/// @param[in] constituent The constituent to compute corrections for.
+/// @return Nodal corrections {f, u}.
+inline auto evaluate_nodal_correction(double perihelion, double omega,
+                                      double perigee, double hsolar,
+                                      const ConstituentId constituent)
+    -> NodalCorrections {
+  return evaluate_nodal_corrections(perihelion, omega, perigee, hsolar,
+                                    {constituent})[0];
+}
+
+/// @brief Helper class to evaluate nodal corrections from arguments.
+class NodalCorrectionProcessor {
+  double omega_;
+  double perigee_;
+  double hsolar_;
+  double psolar_;
+  bool group_modulations_;
+
+ public:
+  /// @brief Constructs nodal correction parameters from arguments.
+  explicit NodalCorrectionProcessor(const NodalCorrectionsArgs& args);
+
+  /// @brief Evaluates nodal corrections for a single constituent.
+  /// @param[in] ident Constituent identifier.
+  /// @return Nodal corrections {f, u}.
+  auto operator()(ConstituentId ident) const -> NodalCorrections;
+
+  /// @brief Evaluates nodal corrections for a list of constituents.
+  /// @param[in] ids Vector of constituent identifiers.
+  /// @return Vector of Nodal corrections {f, u}.
+  auto operator()(const std::vector<ConstituentId>& ids) const
+      -> std::vector<NodalCorrections>;
+};
 
 }  // namespace perth
 }  // namespace fes

@@ -1,4 +1,4 @@
-add_testcase(box fes)
-add_testcase(ecef fes)
-add_testcase(point fes)
+add_testcase(box)
+add_testcase(ecef)
+add_testcase(point)
 add_testcase(triangle fes)

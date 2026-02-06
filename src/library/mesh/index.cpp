@@ -58,7 +58,7 @@ Index::Index(Eigen::VectorXd lon, Eigen::VectorXd lat,
                 [](double& lon) { lon = detail::math::normalize_angle(lon); });
 
   // Allocate the values used to build the index.
-  auto values = std::vector<value_t>{};
+  auto values = std::vector<ValueType>{};
   values.reserve(triangles_.rows() * 3);
 
   for (auto ix = 0; ix < triangles_.rows(); ++ix) {
@@ -74,7 +74,7 @@ Index::Index(Eigen::VectorXd lon, Eigen::VectorXd lat,
                           std::make_pair(jx, ix));
     }
   }
-  rtree_ = rtree_t{values.begin(), values.end()};
+  rtree_ = RTreeType{values.begin(), values.end()};
 }
 
 auto Index::search(const geometry::Point& point,

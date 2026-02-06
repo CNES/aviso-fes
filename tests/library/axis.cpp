@@ -18,7 +18,7 @@ TEST(Axis, Constructor) {
   EXPECT_EQ(axis.min_value(), 0);
   EXPECT_EQ(axis.max_value(), 359.0);
   EXPECT_EQ(axis.is_ascending(), true);
-  EXPECT_EQ(axis.is_circular(), false);
+  EXPECT_EQ(axis.is_periodic(), false);
   EXPECT_EQ(axis(0), 0);
   EXPECT_EQ(axis(1), 1.0);
   EXPECT_EQ(axis(359), 359.0);
@@ -38,7 +38,7 @@ TEST(Axis, Constructor) {
   EXPECT_EQ(axis.min_value(), 0);
   EXPECT_EQ(axis.max_value(), 359.0);
   EXPECT_EQ(axis.is_ascending(), false);
-  EXPECT_EQ(axis.is_circular(), false);
+  EXPECT_EQ(axis.is_periodic(), false);
   EXPECT_EQ(axis(0), 359.0);
   EXPECT_EQ(axis(1), 358.0);
   EXPECT_EQ(axis(359), 0);
@@ -65,7 +65,7 @@ TEST(Axis, WrapLongitude) {
       static_cast<Eigen::VectorXd>(Eigen::VectorXd::LinSpaced(360, 0.0, 359.0));
   auto axis = Axis(points, 1e-6, true);
   EXPECT_EQ(axis, Axis(points, 1e-6, true));
-  EXPECT_TRUE(axis.is_circular());
+  EXPECT_TRUE(axis.is_periodic());
   EXPECT_EQ(axis.size(), 360);
   EXPECT_EQ(axis.start(), 0);
   EXPECT_EQ(axis.end(), 359);
@@ -92,7 +92,7 @@ TEST(Axis, WrapLongitude) {
   points = Eigen::VectorXd::LinSpaced(360, 359.0, 0.0);
   axis = Axis(points, 1e-6, true);
   EXPECT_EQ(axis, Axis(points, 1e-6, true));
-  EXPECT_TRUE(axis.is_circular());
+  EXPECT_TRUE(axis.is_periodic());
   EXPECT_EQ(axis.size(), 360);
   EXPECT_EQ(axis.start(), 359);
   EXPECT_EQ(axis.end(), 0);
@@ -120,7 +120,7 @@ TEST(Axis, WrapLongitude) {
 
   points = Eigen::VectorXd::LinSpaced(360, -180, 179);
   axis = Axis(points, 1e-6, true);
-  EXPECT_TRUE(axis.is_circular());
+  EXPECT_TRUE(axis.is_periodic());
   EXPECT_EQ(axis.size(), 360);
   EXPECT_EQ(axis.start(), -180);
   EXPECT_EQ(axis.end(), 179);
@@ -135,7 +135,7 @@ TEST(Axis, WrapLongitude) {
 
   points = Eigen::VectorXd::LinSpaced(360, 180, -179);
   axis = Axis(points, 1e-6, true);
-  EXPECT_TRUE(axis.is_circular());
+  EXPECT_TRUE(axis.is_periodic());
   EXPECT_EQ(axis.size(), 360);
   EXPECT_EQ(axis.start(), 180);
   EXPECT_EQ(axis.end(), -179);

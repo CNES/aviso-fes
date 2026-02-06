@@ -17,9 +17,9 @@ TEST(TidalModelCartesian, Constructor) {
   points << 0, 1, 2, 3, 4;
   auto matrix = Eigen::VectorXcd::Zero(25);
   auto axis = Axis(points);
-  auto model = Cartesian(axis, axis, darwin::constituents::map(), kTide);
-  model.add_constituent(darwin::kM2, matrix);
-  model.add_constituent(darwin::kK2, matrix);
+  auto model = Cartesian(axis, axis, kTide);
+  model.add_constituent(kM2, matrix);
+  model.add_constituent(kK2, matrix);
 
   EXPECT_EQ(model.lon().size(), 5);
   EXPECT_EQ(model.lat().size(), 5);
@@ -31,9 +31,9 @@ TEST(TidalModelCartesian, GetSetState) {
   points << 0, 1, 2, 3, 4;
   auto matrix = Eigen::VectorXcd::Zero(25);
   auto axis = Axis(points);
-  auto model = Cartesian(axis, axis, darwin::constituents::map(), kTide);
-  model.add_constituent(darwin::kM2, matrix);
-  model.add_constituent(darwin::kK2, matrix);
+  auto model = Cartesian(axis, axis, kTide);
+  model.add_constituent(kM2, matrix);
+  model.add_constituent(kK2, matrix);
 }
 
 }  // namespace fes

@@ -6,34 +6,30 @@
 /// @brief Settings for the tide computation.
 #pragma once
 
-#include <cstdint>
+#include <string>
+#include <vector>
 
 #include "fes/angle/astronomic.hpp"
+#include "fes/inference.hpp"
+#include "fes/interface/wave_table.hpp"
 
 namespace fes {
-
-/// @brief Enumeration of available prediction engine types.
-enum class EngineType : uint8_t {
-  kFES = 0,    ///< FES prediction engine
-  kPERTH5 = 1  ///< PERTH5 prediction engine
-};
-
-/// @brief Enumeration of inference (admittance) interpolation types.
-enum class InterpolationType : uint8_t {
-  kZeroAdmittance,     ///< No interpolation of admittances.
-  kLinearAdmittance,   ///< Piecewise linear interpolation of admittances.
-  kFourierAdmittance,  ///< Munk-Cartwright Fourier series interpolation.
-};
 
 /// @brief Settings for the tide computation.
 class Settings {
  public:
   /// @brief Constructor.
-  explicit constexpr Settings(EngineType engine_type)
-      : engine_type_(engine_type) {}
+  constexpr Settings() = default;
 
-  /// @brief Get the engine type.
-  /// @return Engine type.
+  /// @brief Set the engine type for the tidal constituent notation system.
+  /// @param engine_type The engine type.
+  auto with_engine_type(EngineType engine_type) noexcept -> Settings& {
+    engine_type_ = engine_type;
+    return *this;
+  }
+
+  /// @brief Get the engine type for the tidal constituent notation system.
+  /// @return The engine type.
   constexpr auto engine_type() const noexcept -> EngineType {
     return engine_type_;
   }
@@ -66,11 +62,8 @@ class Settings {
   }
 
   /// @brief Set whether to use group modulation nodal corrections.
+  /// @note Only effective with the Perth WaveTable.
   auto with_group_modulations(bool group_modulations) -> Settings& {
-    if (engine_type_ == EngineType::kFES) {
-      throw std::runtime_error(
-          "Group modulations are not supported with FES engine.");
-    }
     group_modulations_ = group_modulations;
     return *this;
   }
@@ -81,18 +74,27 @@ class Settings {
     return group_modulations_;
   }
 
+  /// @brief Set whether to compute the long period equilibrium tide.
+  constexpr auto with_compute_long_period_equilibrium(
+      bool compute_long_period_equilibrium) -> Settings& {
+    compute_long_period_equilibrium_ = compute_long_period_equilibrium;
+    return *this;
+  }
+
+  /// @brief Get whether to compute the long period equilibrium tide.
+  /// @return True if the long period equilibrium tide is computed.
+  constexpr auto compute_long_period_equilibrium() const noexcept -> bool {
+    return compute_long_period_equilibrium_;
+  }
+
   /// @brief Set the inference interpolation type.
-  auto with_inference_type(InterpolationType inference_type) -> Settings& {
-    if (engine_type_ == EngineType::kFES) {
-      throw std::runtime_error(
-          "Inference interpolation is not supported with FES engine.");
-    }
+  auto with_inference_type(InferenceType inference_type) -> Settings& {
     inference_type_ = inference_type;
     return *this;
   }
 
   /// @brief Get the inference interpolation type.
-  constexpr auto inference_type() const noexcept -> InterpolationType {
+  constexpr auto inference_type() const noexcept -> InferenceType {
     return inference_type_;
   }
 
@@ -109,39 +111,56 @@ class Settings {
   constexpr auto num_threads() const noexcept -> size_t { return num_threads_; }
 
  protected:
-  /// Egine type to use for the tide computation
-  EngineType engine_type_;
+  /// @brief Engine type for the tidal constituent notation system.
+  EngineType engine_type_{EngineType::kDarwin};
   /// @brief Astronomic formulae used to calculate the astronomic angles.
   angle::Formulae astronomic_formulae_{angle::Formulae::kSchuremanOrder1};
+  /// Type of inference interpolation to use
+  InferenceType inference_type_{InferenceType::kSpline};
   /// @brief Time in seconds for which astronomical angles are considered
   /// constant.
   double time_tolerance_{0.0};
   /// Whether to use group modulation nodal corrections
   bool group_modulations_{false};
-  /// Type of inference interpolation to use
-  InterpolationType inference_type_{InterpolationType::kZeroAdmittance};
+  /// Whether to compute the long period equilibrium tide.
+  bool compute_long_period_equilibrium_{true};
   /// Number of threads to use for computation
   size_t num_threads_{0};
 };
 
-/// @brief Settings for the FES engine.
-class FesRuntimeSettings : public Settings {
+/// @brief Default settings for FES models.
+class FESSettings : public Settings {
  public:
   /// @brief Constructor.
-  constexpr FesRuntimeSettings() : Settings(EngineType::kFES) {}
-};
-
-/// @brief Settings for the PERTH5 engine.
-class PerthRuntimeSettings : public Settings {
- public:
-  /// @brief Constructor.
-  constexpr PerthRuntimeSettings() : Settings(EngineType::kPERTH5) {
-    // Initialize default settings for PERTH5 engine: use IERS astronomic
-    // formulae and linear admittance interpolation. Group modulations remain
-    // disabled by default, preserving the original PERTH5 behavior.
-    astronomic_formulae_ = angle::Formulae::kIERS;
-    inference_type_ = InterpolationType::kLinearAdmittance;
+  constexpr FESSettings() : Settings() {
+    // Default constructor of Settings already initializes the settings with the
+    // default values for FES models
   }
 };
+
+/// @brief Default settings for GOT models.
+class PerthSettings : public Settings {
+ public:
+  /// @brief Constructor.
+  constexpr PerthSettings() : Settings() {
+    // Override the default settings for FES models with the default settings
+    // for GOT models
+    engine_type_ = EngineType::kDoodson;
+    astronomic_formulae_ = angle::Formulae::kIERS;
+    inference_type_ = InferenceType::kLinear;
+    compute_long_period_equilibrium_ = false;
+  }
+};
+
+/// @brief Generate a Markdown table describing the settings, the constiuents
+/// provided by the model and inferred.
+/// @param[in] settings The settings for which to generate the table.
+/// @param[in] modeled_constituents The list of constituents provided by
+/// the model. Default is empty, in which case the table will only contain
+/// the inferred constituents.
+/// @return A string containing the Markdown table.
+auto generate_markdown_table(
+    const Settings& settings,
+    const std::vector<ConstituentId>& modeled_constituents = {}) -> std::string;
 
 }  // namespace fes

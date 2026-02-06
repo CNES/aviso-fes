@@ -15,7 +15,7 @@ namespace fes {
 namespace geometry {
 
 /// Box type definition.
-using box_t = boost::geometry::model::box<point_t>;
+using GeographicBox = boost::geometry::model::box<GeographicPoint2D>;
 
 /// @brief Geographic box.
 class Box {
@@ -41,23 +41,23 @@ class Box {
   ///
   /// @return The minimum corner of the box.
   constexpr auto min_corner() const -> Point {
-    return Point(boost::geometry::get<boost::geometry::min_corner, 0>(box_),
-                 boost::geometry::get<boost::geometry::min_corner, 1>(box_));
+    return {boost::geometry::get<boost::geometry::min_corner, 0>(box_),
+            boost::geometry::get<boost::geometry::min_corner, 1>(box_)};
   }
 
   /// @brief Get the maximum corner of the box.
   ///
   /// @return The maximum corner of the box.
   constexpr auto max_corner() const -> Point {
-    return Point(boost::geometry::get<boost::geometry::max_corner, 0>(box_),
-                 boost::geometry::get<boost::geometry::max_corner, 1>(box_));
+    return {boost::geometry::get<boost::geometry::max_corner, 0>(box_),
+            boost::geometry::get<boost::geometry::max_corner, 1>(box_)};
   }
 
   /// Write the geographic box to a stream.
   friend auto operator<<(std::ostream& os, const Box& box) -> std::ostream&;
 
   /// Get the WKT representation of the box.
-  auto wkt() const -> boost::geometry::wkt_manipulator<box_t> {
+  auto wkt() const -> boost::geometry::wkt_manipulator<GeographicBox> {
     return boost::geometry::wkt(box_);
   }
 
@@ -78,7 +78,7 @@ class Box {
   }
 
  private:
-  box_t box_{};
+  GeographicBox box_{};
 };
 
 /// @brief Write the geographic box to a stream.

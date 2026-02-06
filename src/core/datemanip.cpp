@@ -42,5 +42,6 @@ Returns:
 }  // namespace fes
 
 auto init_datemanip(py::module& m) -> void {
-  fes::python::datemanip::init_datemanip(m);
+  auto datemanip = m.def_submodule("datemanip", "Date manipulation");
+  fes::python::datemanip::init_datemanip(datemanip);
 }

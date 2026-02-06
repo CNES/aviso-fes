@@ -1,4 +1,4 @@
-# Copyright (c) 2025 CNES
+# Copyright (c) 2026 CNES
 #
 # All rights reserved. Use of this source code is governed by a
 # BSD-style license that can be found in the LICENSE file.
@@ -21,30 +21,22 @@ FES_TIDE_TIME_SERIES = DATASET_DIR / 'fes_tide_time_series.nc'
 
 
 def test_constructor() -> None:
-    wt = core.darwin.WaveTable()
+    wt = core.wave_table_factory(core.DARWIN)
     assert len(wt) == 99
-    assert len(list(wt)) == 99
+    assert len(wt.waves()) == 99
     with pytest.raises(
         ValueError,
         match='unknown constituent name: __M2__',
     ):
         wt['__M2__']
 
-    wt = core.darwin.WaveTable(['Q1', 'O1', 'P1', 'S1', 'K1', 'M2'])
+    constituent_list = ('M2', 'S2', 'N2', 'K1', 'O1', 'Q1')
+    wt = core.wave_table_factory(core.DARWIN, constituent_list)
     assert len(wt) == 6
-    assert sorted(x.name() for x in wt) == sorted(
-        ('Q1', 'O1', 'P1', 'S1', 'K1', 'M2')
-    )
-    assert sorted(wt.keys()) == sorted(['Q1', 'O1', 'P1', 'S1', 'K1', 'M2'])
-    assert sorted(item.name() for item in wt.values()) == sorted(
-        [
-            wt['Q1'].name(),
-            wt['O1'].name(),
-            wt['P1'].name(),
-            wt['S1'].name(),
-            wt['K1'].name(),
-            wt['M2'].name(),
-        ]
+    assert sorted(x.name for x in wt.waves()) == sorted(constituent_list)
+    assert sorted(wt.constituents) == sorted(constituent_list)
+    assert sorted(item.name for item in wt.waves()) == sorted(
+        wt[item].name for item in constituent_list
     )
     assert 'Q1' in wt
     assert 'XX' not in wt
@@ -53,9 +45,9 @@ def test_constructor() -> None:
 def test_wave() -> None:
     aa = core.AstronomicAngle()
     aa.update(datetime.datetime(2000, 1, 1))
-    wt = core.darwin.WaveTable(['M2'])
+    wt = core.wave_table_factory(core.DARWIN, ['M2'])
     wave = wt['M2']
-    assert wave.freq * 24 == pytest.approx(12.140833182614747, 1e-6)
+    assert wave.frequency() * 24 == pytest.approx(12.140833182614747, 1e-6)
     assert wave.type == core.SHORT_PERIOD
 
 
@@ -64,7 +56,8 @@ def test_harmonic_analysis() -> None:
         time = dataset['time'][:].astype('datetime64[us]')
         h = dataset['ocean'][:] * 1e-2
 
-    wt = core.darwin.WaveTable(
+    wt = core.wave_table_factory(
+        core.DARWIN,
         [
             'Mm',
             'Mf',
@@ -152,11 +145,13 @@ def test_harmonic_analysis_with_empty_table() -> None:
     )
     h = numpy.random.default_rng().random(time.shape[0])
 
-    wt = core.darwin.WaveTable(['M2', 'S2', 'N2', 'K1', 'O1', 'Q1'])
+    wt = core.wave_table_factory(
+        core.DARWIN, ['M2', 'S2', 'N2', 'K1', 'O1', 'Q1']
+    )
     w = wt.harmonic_analysis(h, *wt.compute_nodal_modulations(time))
     assert numpy.all(~numpy.isnan(wt.tide_from_tide_series(time, w)))
 
-    wt = core.darwin.WaveTable()
+    wt = core.wave_table_factory(core.DARWIN)
     w = wt.harmonic_analysis(h, *wt.compute_nodal_modulations(time))
     assert numpy.all(~numpy.isnan(wt.tide_from_tide_series(time, w)))
 
@@ -165,7 +160,7 @@ def benchmark_wave_table_operations():
     """Benchmark operations that should be GIL-free."""
 
     def compute_nodal_modulations(dates):
-        wave_table = core.darwin.WaveTable()
+        wave_table = core.wave_table_factory(core.DARWIN)
         return wave_table.compute_nodal_modulations(dates)
 
     # Setup test data
@@ -217,7 +212,9 @@ def test_concurrent_wave_table_access() -> None:
         rng = numpy.random.default_rng(seed=worker_id)
         try:
             # Create independent wave table
-            wave_table = core.darwin.WaveTable(['S1', 'S2', 'M2', 'K1', 'O1'])
+            wave_table = core.wave_table_factory(
+                core.DARWIN, ['S1', 'S2', 'M2', 'K1', 'O1']
+            )
 
             # Perform various operations
             for _ in range(50):
@@ -227,11 +224,11 @@ def test_concurrent_wave_table_access() -> None:
                 )
 
                 if operation == 'keys':
-                    keys = wave_table.keys()
+                    keys = wave_table.constituents
                     assert len(keys) > 0
 
                 elif operation == 'values':
-                    values = wave_table.values()
+                    values = wave_table.waves()
                     assert len(values) > 0
 
                 elif operation == 'harmonic_analysis':

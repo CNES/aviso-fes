@@ -3,6 +3,7 @@
 #include <cmath>
 
 #include "fes/detail/math.hpp"
+#include "fes/perth/doodson.hpp"
 
 namespace fes {
 namespace perth {
@@ -11,8 +12,8 @@ using detail::math::degrees;
 using detail::math::pow;
 using detail::math::radians;
 
-auto compute_nodal_corrections(double omega, double p,
-                               const std::vector<Constituent> &constituents)
+auto evaluate_nodal_corrections(double omega, double p,
+                                const std::vector<ConstituentId> &constituents)
     -> std::vector<NodalCorrections> {
   const auto sinn = std::sin(radians(omega));
   const auto cosn = std::cos(radians(omega));
@@ -182,7 +183,7 @@ auto compute_nodal_corrections(double omega, double p,
 
       switch (constituent) {
         case kSO1:
-          nodal_offset = compute_nodal_correction(omega, p, kO1);
+          nodal_offset = evaluate_nodal_correction(omega, p, kO1);
           correction.f = nodal_offset.f;
           correction.u = -nodal_offset.u;
           break;
@@ -192,65 +193,65 @@ auto compute_nodal_corrections(double omega, double p,
         case k2MS2:
         case kMSN6:
         case k2MS6:
-          nodal_offset = compute_nodal_correction(omega, p, kM2);
+          nodal_offset = evaluate_nodal_correction(omega, p, kM2);
           correction.f = pow<2>(nodal_offset.f);
           correction.u = 2.0 * nodal_offset.u;
           break;
         case kMSN2:
-          nodal_offset = compute_nodal_correction(omega, p, kM2);
+          nodal_offset = evaluate_nodal_correction(omega, p, kM2);
           correction.f = pow<2>(nodal_offset.f);
           correction.u = 0;
           break;
         case k2MN2:
-          nodal_offset = compute_nodal_correction(omega, p, kM2);
+          nodal_offset = evaluate_nodal_correction(omega, p, kM2);
           correction.f = pow<3>(nodal_offset.f);
           correction.u = nodal_offset.u;
           break;
         case k2SM2:
-          nodal_offset = compute_nodal_correction(omega, p, kM2);
+          nodal_offset = evaluate_nodal_correction(omega, p, kM2);
           correction.f = nodal_offset.f;
           correction.u = -nodal_offset.u;
           break;
         case kM6:
         case k2MN6:
-          nodal_offset = compute_nodal_correction(omega, p, kM2);
+          nodal_offset = evaluate_nodal_correction(omega, p, kM2);
           correction.f = pow<3>(nodal_offset.f);
           correction.u = 3.0 * nodal_offset.u;
           break;
         case kM8:
-          nodal_offset = compute_nodal_correction(omega, p, kM2);
+          nodal_offset = evaluate_nodal_correction(omega, p, kM2);
           correction.f = pow<4>(nodal_offset.f);
           correction.u = 4.0 * nodal_offset.u;
           break;
         case kMK4:
         case kMKS2:
-          nodal_corrections = compute_nodal_corrections(omega, p, {kM2, kK2});
+          nodal_corrections = evaluate_nodal_corrections(omega, p, {kM2, kK2});
           correction.f = nodal_corrections[0].f * nodal_corrections[1].f;
           correction.u = nodal_corrections[0].u + nodal_corrections[1].u;
           break;
         case kMSK6:
-          nodal_corrections = compute_nodal_corrections(omega, p, {kM2, kK2});
+          nodal_corrections = evaluate_nodal_corrections(omega, p, {kM2, kK2});
           correction.f = nodal_corrections[0].f * nodal_corrections[1].f;
           correction.u = nodal_corrections[0].u - nodal_corrections[1].u;
           break;
         case k2MK6:
-          nodal_corrections = compute_nodal_corrections(omega, p, {kM2, kK2});
+          nodal_corrections = evaluate_nodal_corrections(omega, p, {kM2, kK2});
           correction.f =
               pow<2>(nodal_corrections[0].f) * nodal_corrections[1].f;
           correction.u = 2.0 * nodal_corrections[0].u + nodal_corrections[1].u;
           break;
         case kMO3:
-          nodal_corrections = compute_nodal_corrections(omega, p, {kM2, kO1});
+          nodal_corrections = evaluate_nodal_corrections(omega, p, {kM2, kO1});
           correction.f = nodal_corrections[0].f * nodal_corrections[1].f;
           correction.u = nodal_corrections[0].u + nodal_corrections[1].u;
           break;
         case kMK3:
-          nodal_corrections = compute_nodal_corrections(omega, p, {kM2, kK1});
+          nodal_corrections = evaluate_nodal_corrections(omega, p, {kM2, kK1});
           correction.f = nodal_corrections[0].f * nodal_corrections[1].f;
           correction.u = nodal_corrections[0].u + nodal_corrections[1].u;
           break;
         case k2MK3:
-          nodal_corrections = compute_nodal_corrections(omega, p, {kM2, kK1});
+          nodal_corrections = evaluate_nodal_corrections(omega, p, {kM2, kK1});
           correction.f =
               pow<2>(nodal_corrections[0].f) * nodal_corrections[1].f;
           correction.u = 2.0 * nodal_corrections[0].u - nodal_corrections[1].u;
@@ -263,9 +264,9 @@ auto compute_nodal_corrections(double omega, double p,
   return corrections;
 }
 
-auto compute_nodal_corrections(double perihelion, double omega, double perigee,
-                               double hsolar,
-                               const std::vector<Constituent> &constituents)
+auto evaluate_nodal_corrections(double perihelion, double omega, double perigee,
+                                double hsolar,
+                                const std::vector<ConstituentId> &constituents)
     -> std::vector<NodalCorrections> {
   auto h = radians(hsolar);
   auto p = radians(perigee);
@@ -462,13 +463,39 @@ auto compute_nodal_corrections(double perihelion, double omega, double perigee,
     }
 
     if (term2 == 0.0) {
-      correction = compute_nodal_correction(omega, perigee, constituent);
+      correction = evaluate_nodal_correction(omega, perigee, constituent);
     } else {
       correction.f = std::sqrt(term1 * term1 + term2 * term2);
       correction.u = degrees(std::atan2(term1, term2));
     }
   }
   return corrections;
+}
+
+NodalCorrectionProcessor::NodalCorrectionProcessor(
+    const NodalCorrectionsArgs &args) {
+  auto doodson_args = calculate_celestial_vector(args.angles());
+  omega_ = -doodson_args(4);
+  perigee_ = doodson_args(3);
+  hsolar_ = doodson_args(2);
+  psolar_ = doodson_args(5);
+  group_modulations_ = args.group_modulations();
+}
+
+auto NodalCorrectionProcessor::operator()(ConstituentId ident) const
+    -> NodalCorrections {
+  if (group_modulations_) {
+    return evaluate_nodal_correction(psolar_, omega_, perigee_, hsolar_, ident);
+  }
+  return evaluate_nodal_correction(omega_, perigee_, ident);
+}
+
+auto NodalCorrectionProcessor::operator()(const std::vector<ConstituentId> &ids)
+    const -> std::vector<NodalCorrections> {
+  if (group_modulations_) {
+    return evaluate_nodal_corrections(psolar_, omega_, perigee_, hsolar_, ids);
+  }
+  return evaluate_nodal_corrections(omega_, perigee_, ids);
 }
 
 }  // namespace perth

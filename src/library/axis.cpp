@@ -8,6 +8,30 @@
 
 namespace fes {
 
+Axis::Axis(const Eigen::Ref<const Eigen::VectorXd>& points,
+           const double epsilon, const bool is_longitude)
+    : is_longitude_(is_longitude),
+      period_(is_longitude ? detail::math::circle_degrees<double>() : 0.0) {
+  if (points.size() > std::numeric_limits<int64_t>::max()) {
+    throw std::invalid_argument(
+        "the size of the axis must not contain more than " +
+        std::to_string(std::numeric_limits<int64_t>::max()) + "elements.");
+  }
+
+  if (points.size() < 2) {
+    throw std::invalid_argument(
+        "the size of the axis must contain at least 2 elements.");
+  }
+  // If this is a longitude axis, normalize the points.
+  if (is_longitude_) {
+    auto normalized_values = Axis::normalize_longitude(points);
+    normalized_values ? initialize(*normalized_values, epsilon)
+                      : initialize(points, epsilon);
+  } else {
+    initialize(points);
+  }
+}
+
 auto Axis::is_evenly_spaced(const Eigen::Ref<const Eigen::VectorXd>& points)
     -> boost::optional<double> {
   size_t n = points.size();
@@ -38,7 +62,7 @@ auto Axis::normalize_longitude(const Eigen::VectorXd& points)
   auto monotonic = true;
   auto ascending = points.size() < 2 ? true : points[0] < points[1];
 
-  for (auto ix = Eigen::Index(1); ix < points.size(); ++ix) {
+  for (int64_t ix = 1; ix < points.size(); ++ix) {
     monotonic =
         ascending ? points[ix - 1] < points[ix] : points[ix - 1] > points[ix];
 
@@ -51,7 +75,7 @@ auto Axis::normalize_longitude(const Eigen::VectorXd& points)
     auto result = std::make_unique<Eigen::VectorXd>(points);
     auto cross = false;
 
-    for (Eigen::Index ix = 1; ix < result->size(); ++ix) {
+    for (int64_t ix = 1; ix < result->size(); ++ix) {
       if (!cross) {
         cross = ascending ? (*result)[ix - 1] > (*result)[ix]
                           : (*result)[ix - 1] < (*result)[ix];
@@ -83,8 +107,8 @@ auto Axis::initialize(const Eigen::Ref<const Eigen::VectorXd>& values,
 
   is_ascending_ = size_ < 2 ? true : (*this)(0) < (*this)(1);
 
-  if (is_circular_) {
-    is_circular_ =
+  if (is_longitude_) {
+    is_longitude_ =
         detail::math::is_same(static_cast<double>(std::fabs(step_ * size_)),
                               detail::math::circle_degrees<double>(), epsilon);
   }
@@ -103,9 +127,9 @@ auto Axis::find_indices(double coordinate) const
   /// If the value is outside the circle, then the value is between the last
   /// and first index.
   if (i0 == -1) {
-    return is_circular_ ? optional_t(std::make_tuple(
-                              static_cast<int64_t>(length - 1), 0LL))
-                        : optional_t();
+    return is_longitude_ ? optional_t(std::make_tuple(
+                               static_cast<int64_t>(length - 1), 0LL))
+                         : optional_t();
   }
 
   // Given the delta between the found coordinate and the given coordinate,
@@ -119,13 +143,13 @@ auto Axis::find_indices(double coordinate) const
     if (delta < 0) {
       // The found point is located after the coordinate provided.
       is_ascending_ ? --i0 : ++i0;
-      if (is_circular_) {
+      if (is_longitude_) {
         i0 = detail::math::remainder(i0, length);
       }
     } else {
       // The found point is located before the coordinate provided.
       is_ascending_ ? ++i1 : --i1;
-      if (is_circular_) {
+      if (is_longitude_) {
         i1 = detail::math::remainder(i1, length);
       }
     }

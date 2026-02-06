@@ -16,8 +16,8 @@ TEST(DoodsonTest, CalculateCelestialVector) {
 
   // Expected values based on the provided test case
   Vector6d expected;
-  expected << 160.59900704910373, 119.4907876655474, 280.08979471465113 - 360.0,
-      111.5928443590156, 266.13901453365702 - 360.0, 282.64503464175243 - 360.0;
+  expected << 160.59900704910373, 119.4907876655474, 280.08979471465113,
+      111.5928443590156, 266.13901453365702, 282.64503464175243;
 
   // Use EXPECT_NEAR with appropriate tolerance for floating point comparison
   const double tolerance = 1e-4;
@@ -42,6 +42,12 @@ TEST(DoodsonTest, CalculateDoodsonArgument) {
   double result = calculate_doodson_argument(astronomic_angles,
                                              doodson_number.cast<double>());
   EXPECT_NEAR(result, 86.139014533657019, 1e-5);
+}
+
+TEST(DoodsonTest, TidalFrequency) {
+  auto lambda2 = Vector7b{2, 1, -2, 1, 0, 0, 2};
+  double result = tidal_frequency(lambda2);
+  EXPECT_NEAR(result, 29.455625, 1e-5);
 }
 
 }  // namespace perth

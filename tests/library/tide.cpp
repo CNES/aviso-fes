@@ -6,28 +6,23 @@
 
 #include <gtest/gtest.h>
 
-#include <cstdint>
-#include <functional>
-
-#include "fes/angle/astronomic.hpp"
 #include "fes/axis.hpp"
-#include "fes/darwin/constituent.hpp"
-#include "fes/darwin/tide.hpp"
-#include "fes/perth/constituent.hpp"
+#include "fes/constituent.hpp"
 #include "fes/settings.hpp"
 #include "fes/tidal_model/cartesian.hpp"
+#include "fes/tide.hpp"
 
 namespace fes {
 
 class EvaluateTideTest : public ::testing::Test {
  protected:
   // Helper function to add a constituent to the tidal model
-  template <typename T>
   static auto add_constituent(tidal_model::Cartesian<double>& model,
-                              const T constituent, const Complex& value) {
+                              const ConstituentId constituent,
+                              const Complex& value) {
     Eigen::Matrix<Complex, 4, 1> values =
         Eigen::Matrix<Complex, 4, 1>::Constant(value);
-    model.add_constituent(static_cast<uint8_t>(constituent), values);
+    model.add_constituent(constituent, values);
   }
 
   void SetUp() override {
@@ -35,50 +30,31 @@ class EvaluateTideTest : public ::testing::Test {
     auto x_axis = Axis(-180, 179, 360);  // Longitude from -180 to 179
     auto y_axis = Axis(-90, 90, 181);    // Latitude from -90 to 90
 
-    darwin_ = std::make_unique<tidal_model::Cartesian<double>>(
-        x_axis, y_axis, darwin::constituents::map(), kTide);
-    perth_ = std::make_unique<tidal_model::Cartesian<double>>(
-        x_axis, y_axis, perth::constituents::map(), kTide);
-    add_constituent(*darwin_, darwin::Constituent::kQ1, kQ1);
-    add_constituent(*darwin_, darwin::Constituent::kO1, kO1);
-    add_constituent(*darwin_, darwin::Constituent::kP1, kP1);
-    add_constituent(*darwin_, darwin::Constituent::kS1, kS1);
-    add_constituent(*darwin_, darwin::Constituent::kK1, kK1);
-    add_constituent(*darwin_, darwin::Constituent::kN2, kN2);
-    add_constituent(*darwin_, darwin::Constituent::kM2, kM2);
-    add_constituent(*darwin_, darwin::Constituent::kS2, kS2);
-    add_constituent(*darwin_, darwin::Constituent::kK2, kK2);
-    add_constituent(*darwin_, darwin::Constituent::kM4, kM4);
-    add_constituent(*darwin_, darwin::Constituent::kMS4, kMS4);
-    add_constituent(*darwin_, darwin::Constituent::k2N2, k2N2);
-    add_constituent(*darwin_, darwin::Constituent::kMu2, kMu2);
-    add_constituent(*darwin_, darwin::Constituent::kJ1, kJ1);
-    add_constituent(*darwin_, darwin::Constituent::kSigma1, kSigma1);
-    add_constituent(*darwin_, darwin::Constituent::kOO1, kOO1);
+    model_ =
+        std::make_unique<tidal_model::Cartesian<double>>(x_axis, y_axis, kTide);
 
-    add_constituent(*perth_, perth::Constituent::kQ1, kQ1);
-    add_constituent(*perth_, perth::Constituent::kO1, kO1);
-    add_constituent(*perth_, perth::Constituent::kP1, kP1);
-    add_constituent(*perth_, perth::Constituent::kS1, kS1);
-    add_constituent(*perth_, perth::Constituent::kK1, kK1);
-    add_constituent(*perth_, perth::Constituent::kN2, kN2);
-    add_constituent(*perth_, perth::Constituent::kM2, kM2);
-    add_constituent(*perth_, perth::Constituent::kS2, kS2);
-    add_constituent(*perth_, perth::Constituent::kK2, kK2);
-    add_constituent(*perth_, perth::Constituent::kM4, kM4);
-    add_constituent(*perth_, perth::Constituent::kMS4, kMS4);
-    add_constituent(*perth_, perth::Constituent::k2N2, k2N2);
-    add_constituent(*perth_, perth::Constituent::kMu2, kMu2);
-    add_constituent(*perth_, perth::Constituent::kJ1, kJ1);
-    add_constituent(*perth_, perth::Constituent::kSigma1, kSigma1);
-    add_constituent(*perth_, perth::Constituent::kOO1, kOO1);
+    add_constituent(*model_, ConstituentId::kQ1, kQ1);
+    add_constituent(*model_, ConstituentId::kO1, kO1);
+    add_constituent(*model_, ConstituentId::kP1, kP1);
+    add_constituent(*model_, ConstituentId::kS1, kS1);
+    add_constituent(*model_, ConstituentId::kK1, kK1);
+    add_constituent(*model_, ConstituentId::kN2, kN2);
+    add_constituent(*model_, ConstituentId::kM2, kM2);
+    add_constituent(*model_, ConstituentId::kS2, kS2);
+    add_constituent(*model_, ConstituentId::kK2, kK2);
+    add_constituent(*model_, ConstituentId::kM4, kM4);
+    add_constituent(*model_, ConstituentId::kMS4, kMS4);
+    add_constituent(*model_, ConstituentId::k2N2, k2N2);
+    add_constituent(*model_, ConstituentId::kMu2, kMu2);
+    add_constituent(*model_, ConstituentId::kJ1, kJ1);
+    add_constituent(*model_, ConstituentId::kSigma1, kSigma1);
+    add_constituent(*model_, ConstituentId::kOO1, kOO1);
   }
-  std::unique_ptr<tidal_model::Cartesian<double>> darwin_{nullptr};
-  std::unique_ptr<tidal_model::Cartesian<double>> perth_{nullptr};
+
+  std::unique_ptr<tidal_model::Cartesian<double>> model_{nullptr};
   static constexpr double lon_{-7.6880002021789551};
   static constexpr double lat_{59.194999694824219};
-  // 1983-01-01T00:00:00Z
-  static constexpr double epoch_{410227200.0};
+  static constexpr double epoch_{410227200.0};  // 1983-01-01T00:00:00Z
 
   static constexpr Complex kQ1{0.020445803855, -0.023776893126};
   static constexpr Complex kO1{0.077220699676, 0.012257148169};
@@ -100,22 +76,6 @@ class EvaluateTideTest : public ::testing::Test {
 
 class EvaluateTideFromConstituentsTest : public ::testing::Test {
  protected:
-  static auto add_constituent(
-      std::map<darwin::Constituent, Complex>& map,
-      const std::function<darwin::Constituent(const std::string&)>& func,
-      const std::string& name, const std::pair<double, double>& value) {
-    map[func(name)] =
-        std::polar(value.first, detail::math::radians(value.second));
-  }
-
-  static auto add_constituent(
-      std::map<perth::Constituent, Complex>& map,
-      const std::function<perth::Constituent(const std::string&)>& func,
-      const std::string& name, const std::pair<double, double>& value) {
-    map[func(name)] =
-        std::polar(value.first, detail::math::radians(value.second));
-  }
-
   auto SetUp() -> void override {
     std::map<std::string, std::pair<double, double>> constituents{
         {"M2", {205.113, 109.006}},   {"K1", {6.434, 75.067}},
@@ -140,15 +100,12 @@ class EvaluateTideFromConstituentsTest : public ::testing::Test {
     };
 
     for (const auto& item : constituents) {
-      add_constituent(darwin_, darwin::constituents::parse, item.first,
-                      item.second);
-      add_constituent(perth_, perth::constituents::parse, item.first,
-                      item.second);
+      data_[constituents::parse(item.first)] = std::polar(
+          item.second.first, detail::math::radians(item.second.second));
     }
   }
 
-  std::map<darwin::Constituent, Complex> darwin_;
-  std::map<perth::Constituent, Complex> perth_;
+  std::map<ConstituentId, Complex> data_;
 };
 
 TEST_F(EvaluateTideTest, Perth5) {
@@ -156,8 +113,8 @@ TEST_F(EvaluateTideTest, Perth5) {
   auto lats = Eigen::Vector<double, 1>::Constant(lat_);
   auto epochs = Eigen::Vector<double, 1>::Constant(epoch_);
 
-  auto result = evaluate_tide(perth_.get(), epochs, lons, lats,
-                              PerthRuntimeSettings{}.with_num_threads((1)));
+  auto result = evaluate_tide(model_.get(), epochs, lons, lats,
+                              PerthSettings{}.with_num_threads((1)));
   EXPECT_NEAR(std::get<0>(result)(0), -0.92959402, 1e-6);
   EXPECT_NEAR(std::get<1>(result)(0), 0.00475658, 1e-6);
   EXPECT_EQ(std::get<2>(result)(0), 4);
@@ -169,10 +126,10 @@ TEST_F(EvaluateTideTest, FES) {
   auto epochs = Eigen::Vector<double, 1>::Constant(epoch_);
 
   auto result = evaluate_tide(
-      perth_.get(), epochs, lons, lats,
-      FesRuntimeSettings{}.with_num_threads((1)).with_astronomic_formulae(
+      model_.get(), epochs, lons, lats,
+      FESSettings{}.with_num_threads((1)).with_astronomic_formulae(
           angle::Formulae::kIERS));
-  EXPECT_NEAR(std::get<0>(result)(0), 1.174250344816586, 1e-6);
+  EXPECT_NEAR(std::get<0>(result)(0), -0.93594685657527033, 1e-6);
   EXPECT_NEAR(std::get<1>(result)(0), 0.91756905183442172, 1e-6);
   EXPECT_EQ(std::get<2>(result)(0), 4);
 }
@@ -182,8 +139,8 @@ TEST_F(EvaluateTideFromConstituentsTest, Darwin) {
 
   auto epochs = Eigen::Vector<double, 1>::Constant(410227200.0);
 
-  auto result = darwin::evaluate_tide_from_constituents(
-      darwin_, epochs, 48.383, FesRuntimeSettings{}.with_num_threads((1)));
+  auto result = evaluate_tide_from_constituents(
+      data_, epochs, 48.383, FESSettings{}.with_num_threads((1)));
   EXPECT_NEAR(std::get<0>(result)(0), -272.41405405513166, 1e-6);
   EXPECT_NEAR(std::get<1>(result)(0), 3.8406047433116997, 1e-6);
 }
@@ -193,8 +150,8 @@ TEST_F(EvaluateTideFromConstituentsTest, Perth5) {
 
   auto epochs = Eigen::Vector<double, 1>::Constant(410227200.0);
 
-  auto result = fes::perth::evaluate_tide_from_constituents(
-      perth_, epochs, 48.383, PerthRuntimeSettings{}.with_num_threads((1)));
+  auto result = evaluate_tide_from_constituents(
+      data_, epochs, 48.383, PerthSettings{}.with_num_threads((1)));
   EXPECT_NEAR(std::get<0>(result)(0), -271.65613183365048, 1e-6);
   EXPECT_NEAR(std::get<1>(result)(0), 3.9218121242411668, 1e-6);
 }

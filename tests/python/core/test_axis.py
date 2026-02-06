@@ -1,4 +1,4 @@
-# Copyright (c) 2025 CNES
+# Copyright (c) 2026 CNES
 #
 # All rights reserved. Use of this source code is governed by a
 # BSD-style license that can be found in the LICENSE file.
@@ -18,7 +18,7 @@ def test_axis() -> None:
     assert x.start == points[0]
     assert x.step == points[1] - points[0]
     assert x.is_ascending
-    assert not x.is_circular
+    assert not x.is_periodic
     assert x.end() == points[-1]
     assert x == x
     assert x.find_index(points[0]) == 0

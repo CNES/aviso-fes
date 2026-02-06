@@ -9,24 +9,22 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
-#include "fes/darwin/constituent.hpp"
-#include "fes/darwin/tide.hpp"
-#include "fes/detail/math.hpp"
-#include "fes/perth/constituent.hpp"
-#include "fes/perth/tide.hpp"
+#include "fes/interface/tidal_model.hpp"
 #include "fes/python/datetime64.hpp"
+#include "fes/python/optional.hpp"  // IWYU pragma: keep
 #include "fes/settings.hpp"
+#include "fes/tide.hpp"
 
 namespace py = pybind11;
 
 namespace fes {
 
 template <typename T>
-auto py_evaluate_tide(const fes::AbstractTidalModel<T>* const tidal_model,
+auto py_evaluate_tide(const TidalModelInterface<T>* const tidal_model,
                       py::array& dates,
                       const Eigen::Ref<const Eigen::VectorXd>& longitudes,
                       const Eigen::Ref<const Eigen::VectorXd>& latitudes,
-                      const fes::Settings& settings)
+                      const boost::optional<Settings>& settings)
     -> std::tuple<Eigen::VectorXd, Eigen::VectorXd, fes::Vector<fes::Quality>> {
   if (dates.size() != longitudes.size() || dates.size() != latitudes.size()) {
     throw std::invalid_argument(
@@ -41,36 +39,23 @@ auto py_evaluate_tide(const fes::AbstractTidalModel<T>* const tidal_model,
 
 auto py_evaluate_tide_from_constituents(
     const std::map<std::string, std::pair<double, double>>& constituents,
-    py::array& dates, const double latitude, const fes::Settings& settings)
+    py::array& dates, const double latitude,
+    const boost::optional<Settings>& settings)
     -> std::tuple<Eigen::VectorXd, Eigen::VectorXd> {
   auto epoch = python::npdatetime64_to_epoch(dates);
   {
     py::gil_scoped_release gil;
 
-    if (settings.engine_type() == EngineType::kFES) {
-      // Convert to Darwin constituents
-      std::map<darwin::Constituent, std::complex<double>> complex_constituents;
-      for (const auto& item : constituents) {
-        auto constituent = darwin::constituents::parse(item.first);
-        complex_constituents[constituent] = std::polar(
-            item.second.first, detail::math::radians(item.second.second));
-      }
-      return darwin::evaluate_tide_from_constituents(complex_constituents,
-                                                     epoch, latitude, settings);
+    auto constituents_parsed = std::map<ConstituentId, Complex>{};
+    for (const auto& item : constituents) {
+      constituents_parsed.emplace(
+          constituents::parse(item.first),
+          std::polar(item.second.first,
+                     detail::math::radians(item.second.second)));
     }
-    if (settings.engine_type() == EngineType::kPERTH5) {
-      // Convert to Perth constituents
-      std::map<perth::Constituent, std::complex<double>> complex_constituents;
-      for (const auto& item : constituents) {
-        auto constituent = perth::constituents::parse(item.first);
-        complex_constituents[constituent] = std::polar(
-            item.second.first, detail::math::radians(item.second.second));
-      }
-      return perth::evaluate_tide_from_constituents(complex_constituents, epoch,
-                                                    latitude, settings);
-    }
-    throw std::invalid_argument(
-        "Unsupported engine type for tidal evaluation from constituents.");
+
+    return evaluate_tide_from_constituents(constituents_parsed, epoch, latitude,
+                                           settings);
   }
 }
 
@@ -78,23 +63,22 @@ template <typename T>
 void init_evaluate_tide(py::module& m) {
   m.def(
       "evaluate_tide",
-      [](const fes::AbstractTidalModel<T>* const tidal_model, py::array& date,
+      [](const TidalModelInterface<T>* const tidal_model, py::array& date,
          const Eigen::Ref<const Eigen::VectorXd>& longitude,
          const Eigen::Ref<const Eigen::VectorXd>& latitude,
-         const fes::Settings& settings)
+         const boost::optional<Settings>& settings)
           -> std::tuple<Eigen::VectorXd, Eigen::VectorXd,
                         fes::Vector<fes::Quality>> {
         return py_evaluate_tide<T>(tidal_model, date, longitude, latitude,
                                    settings);
       },
       py::arg("tidal_model"), py::arg("date"), py::arg("longitude"),
-      py::arg("latitude"), py::arg("settings"),
+      py::arg("latitude"), py::arg("settings") = boost::none,
       R"__doc(
 Ocean tide calculation.
 
 This function computes ocean tides by interpolating tidal constituents from
-a tidal model at the specified positions and times. The computation engine
-(FES or PERTH5) is determined by the settings object.
+a tidal model at the specified positions and times.
 
 Args:
   tidal_model: Tidal model used to interpolate the modelized waves.
@@ -103,8 +87,7 @@ Args:
     calculated.
   latitude: Latitude in degrees for the positions at which the tide is
     calculated.
-  settings: Settings for the tide computation. Use FesRuntimeSettings for
-    the FES/Darwin engine or PerthRuntimeSettings for the PERTH5 engine.
+  settings: Settings for the tide computation.
 
 Returns:
   A tuple containing:
@@ -128,9 +111,8 @@ Note:
 void init_evaluate_tide_from_constituents(py::module& m) {
   m.def("evaluate_tide_from_constituents", &py_evaluate_tide_from_constituents,
         py::arg("constituents"), py::arg("date"), py::arg("latitude"),
-        py::arg("settings"),
-        R"__doc(
-Ocean tide calculation from known constituents.
+        py::arg("settings") = boost::none,
+        R"__doc(Ocean tide calculation from known constituents.
 
 Unlike evaluate_tide() which interpolates constituents from a tidal model,
 this function computes the tidal prediction directly from a list of tidal
@@ -145,8 +127,7 @@ Args:
   date: Date of the tide calculation (numpy.datetime64 array).
   latitude: Latitude in degrees for the position at which the tide is
     calculated.
-  settings: Settings for the tide computation. Use FesRuntimeSettings for
-    the FES/Darwin engine or PerthRuntimeSettings for the PERTH5 engine.
+  settings: Settings for the tide computation.
 
 Returns:
   A tuple containing:

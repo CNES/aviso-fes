@@ -1,0 +1,38 @@
+// Copyright (c) 2026 CNES
+//
+// All rights reserved. Use of this source code is governed by a
+// BSD-style license that can be found in the LICENSE file.
+#include "fes/detail/parallel_for.hpp"
+
+#include <gtest/gtest.h>
+
+namespace fes {
+namespace detail {
+
+TEST(Thread, ParallelFor) {
+  auto data = std::vector<size_t>(100);
+  auto callable = [&data](const size_t start, const size_t end) -> void {
+    for (auto i = start; i < end; ++i) {
+      data[i] = i;
+    }
+  };
+  parallel_for(callable, 100, 15);
+  for (auto i = 0; i < 100; ++i) {
+    EXPECT_EQ(data[i], i);
+  }
+}
+
+TEST(Thread, ParallelForCatchException) {
+  auto data = std::vector<size_t>(100);
+  auto callable = [&data](const size_t start, const size_t end) -> void {
+    for (auto i = start; i < end; ++i) {
+      data[i] = i;
+    }
+    throw std::runtime_error("An error occurred");
+  };
+  EXPECT_THROW(parallel_for(callable, 100, 15), std::runtime_error);
+  EXPECT_THROW(parallel_for(callable, 100, 1), std::runtime_error);
+}
+
+}  // namespace detail
+}  // namespace fes

@@ -1,4 +1,4 @@
-# Copyright (c) 2025 CNES
+# Copyright (c) 2026 CNES
 #
 # All rights reserved. Use of this source code is governed by a
 # BSD-style license that can be found in the LICENSE file.
@@ -86,18 +86,16 @@ def load_model(
 ) -> core.tidal_model.CartesianComplex64:
     """Load a tidal model from netCDF files."""
     model = None
-    constituent_map = core.darwin.constituents()
     for key, value in configuration.items():
         with netCDF4.Dataset(value) as ds:
             if model is None:
                 lon = ds.variables['lon'][:]
                 lat = ds.variables['lat'][:]
-                x_axis = core.Axis(lon, is_circular=True)
+                x_axis = core.Axis(lon, is_periodic=True)
                 y_axis = core.Axis(lat)
                 model = core.tidal_model.CartesianComplex64(
                     x_axis,
                     y_axis,
-                    constituent_map=constituent_map,
                     tide_type=tide_type,
                     longitude_major=False,
                 )
@@ -287,10 +285,13 @@ def test_evaluate_tide_from_constituents() -> None:
         constituents,
         dates,
         BREST_LOCATION[1],
-        core.FesRuntimeSettings().with_num_threads(1),
+        core.FesRuntimeSettings()
+        .with_num_threads(1)
+        .with_compute_long_period_equilibrium(True),
     )
     assert len(tide) == len(dates)
     assert len(long_period) == len(dates)
+
     # Simple checks on the output ranges
     assert -250 < tide.min() < 0
     assert 0 < tide.max() < 250

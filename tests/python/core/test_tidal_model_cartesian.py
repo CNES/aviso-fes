@@ -1,4 +1,4 @@
-# Copyright (c) 2025 CNES
+# Copyright (c) 2026 CNES
 #
 # All rights reserved. Use of this source code is governed by a
 # BSD-style license that can be found in the LICENSE file.
@@ -25,7 +25,7 @@ def test_interpolate() -> None:
         )
 
     # Create a tidal model
-    x_axis = core.Axis(lon, is_circular=True)
+    x_axis = core.Axis(lon, is_periodic=True)
     y_axis = core.Axis(lat)
 
     amp = amp.astype(numpy.float64)
@@ -34,7 +34,7 @@ def test_interpolate() -> None:
     wave = amp * numpy.cos(pha) + 1j * amp * numpy.sin(pha)
 
     model = core.tidal_model.CartesianComplex128(
-        x_axis, y_axis, core.darwin.constituents(), longitude_major=False
+        x_axis, y_axis, longitude_major=False
     )
     assert len(model) == 0
     assert bool(model) is False

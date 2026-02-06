@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright (c) 2025 CNES
+# Copyright (c) 2026 CNES
 #
 # All rights reserved. Use of this source code is governed by a
 # BSD-style license that can be found in the LICENSE file.
@@ -30,7 +30,7 @@ PY_VERSION = WORKING_DIRECTORY / 'src' / 'pyfes' / 'version.py'
 CXX_VERSION = WORKING_DIRECTORY / 'include' / 'fes' / 'version.hpp'
 
 # Python version file content
-PY_VERSION_TEMPLATE = """# Copyright (c) 2025 CNES
+PY_VERSION_TEMPLATE = """# Copyright (c) 2026 CNES
 #
 # All rights reserved. Use of this source code is governed by a
 # BSD-style license that can be found in the LICENSE file.

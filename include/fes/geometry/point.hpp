@@ -18,22 +18,21 @@ namespace fes {
 namespace geometry {
 
 /// Base class for the Point point.
-using point_t = boost::geometry::model::point<
+using GeographicPoint2D = boost::geometry::model::point<
     double, 2, boost::geometry::cs::geographic<boost::geometry::degree>>;
 
 /// @brief Geographic point.
-class Point : public point_t {
+class Point : public GeographicPoint2D {
  public:
   /// Default constructor.
   Point() = default;
 
   /// Build a Point point from a latitude and longitude expressed in
   /// degrees.
-  constexpr Point(double lon, double lat) : point_t(lon, lat) {}
+  constexpr Point(double lon, double lat) : GeographicPoint2D(lon, lat) {}
 
   /// Convert the point to an ECEF point.
-  FES_MATH_CONSTEXPR explicit operator geometry::EarthCenteredEarthFixed()
-      const;
+  FES_MATH_CONSTEXPR explicit operator EarthCenteredEarthFixed() const;
 
   /// Write the geographic point to a stream.
   friend auto operator<<(std::ostream& os, const Point& point) -> std::ostream&;
@@ -141,7 +140,7 @@ inline auto operator<<(std::ostream& os, const Point& point) -> std::ostream& {
   return os;
 }
 
-FES_MATH_CONSTEXPR Point::operator geometry::EarthCenteredEarthFixed() const {
+FES_MATH_CONSTEXPR Point::operator EarthCenteredEarthFixed() const {
   // Global variables of Earth's geometric constants (WGS84)
   // Equatorial Radius [m]
   constexpr const double A = 6378137.0;

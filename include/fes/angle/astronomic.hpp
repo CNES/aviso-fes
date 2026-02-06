@@ -5,10 +5,13 @@
 /// @file include/fes/angle/astronomic.hpp
 /// @brief Astronomic angle.
 #pragma once
+#include <sys/stat.h>
+
+#include <cassert>
 #include <cmath>
 #include <limits>
 
-#include "fes/delta_t.hpp"
+#include "fes/delta_time.hpp"
 #include "fes/detail/math.hpp"
 #include "fes/numbers.hpp"
 
@@ -16,7 +19,7 @@ namespace fes {
 namespace angle {
 
 /// @brief Astronomic formulae used to calculate the astronomic angles.
-enum class Formulae {
+enum class Formulae : uint8_t {
   /// Schureman order 1
   kSchuremanOrder1,
   /// Schureman order 3
@@ -46,7 +49,8 @@ class Astronomic {
   /// @param[in] formulae Astronomic formulae used to calculate the astronomic
   /// angles.
   ///
-  constexpr Astronomic(const Formulae formulae = Formulae::kSchuremanOrder1)
+  explicit constexpr Astronomic(
+      const Formulae formulae = Formulae::kSchuremanOrder1)
       : update_(nullptr) {
     switch (formulae) {
       case Formulae::kSchuremanOrder1:
@@ -62,7 +66,9 @@ class Astronomic {
         update_ = &Astronomic::iers;
         break;
       default:
-        throw std::runtime_error("unknown formulae");
+        assert(false && "unknown formulae, falling back to SchuremanOrder1");
+        update_ = &Astronomic::schureman_order1;
+        break;
     }
   };
 
@@ -653,11 +659,11 @@ auto FES_MATH_CONSTEXPR Astronomic::update(const double epoch) noexcept
 
   // Normalize angles to [0, 2π)
   t_ = detail::math::radians(t_);
-  n_ = detail::math::radians(detail::math::normalize_angle(n_, 0.0));
-  s_ = detail::math::radians(detail::math::normalize_angle(s_, 0.0));
-  h_ = detail::math::radians(detail::math::normalize_angle(h_, 0.0));
-  p_ = detail::math::radians(detail::math::normalize_angle(p_, 0.0));
-  p1_ = detail::math::radians(detail::math::normalize_angle(p1_, 0.0));
+  n_ = detail::math::radians(detail::math::normalize_angle(n_));
+  s_ = detail::math::radians(detail::math::normalize_angle(s_));
+  h_ = detail::math::radians(detail::math::normalize_angle(h_));
+  p_ = detail::math::radians(detail::math::normalize_angle(p_));
+  p1_ = detail::math::radians(detail::math::normalize_angle(p1_));
 
   // SCHUREMAN FORMULAE P. 156
   auto u = numbers::kCosICosW - numbers::kSinISinW * std::cos(n_);

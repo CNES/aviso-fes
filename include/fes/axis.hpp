@@ -7,7 +7,6 @@
 #pragma once
 #include <Eigen/Core>
 #include <boost/optional.hpp>
-#include <limits>
 #include <memory>
 #include <sstream>
 #include <tuple>
@@ -27,53 +26,30 @@ class Axis {
   ///
   /// @param[in] points The axis points.
   /// @param[in] epsilon The tolerance used to determine if the axis is
-  /// circular.
-  /// @param[in] is_circular True if the axis is circular. For example,
-  /// longitude is circular.
+  /// a longitude axis.
+  /// @param[in] is_longitude True if the axis represents longitude in degrees.
   explicit Axis(const Eigen::Ref<const Eigen::VectorXd>& points,
-                const double epsilon = 1e-6, const bool is_circular = false)
-      : is_circular_(is_circular),
-        circle_(is_circular ? detail::math::circle_degrees<double>() : 0.0) {
-    if (points.size() > std::numeric_limits<int64_t>::max()) {
-      throw std::invalid_argument(
-          "the size of the axis must not contain more than " +
-          std::to_string(std::numeric_limits<int64_t>::max()) + "elements.");
-    }
-
-    if (points.size() < 2) {
-      throw std::invalid_argument(
-          "the size of the axis must contain at least 2 elements.");
-    }
-    // If this is a circular axis, normalize the points.
-    if (is_circular_) {
-      auto normalized_values = Axis::normalize_longitude(points);
-      normalized_values ? initialize(*normalized_values, epsilon)
-                        : initialize(points, epsilon);
-    } else {
-      initialize(points);
-    }
-  }
+                const double epsilon = 1e-6, const bool is_longitude = false);
 
   /// Build an axis from start, end and step.
   ///
   /// @param[in] start The first value of the axis.
   /// @param[in] end The last value of the axis.
   /// @param[in] step The step of the axis.
-  /// @param[in] is_circular True if the axis is circular. For example,
-  /// longitude is circular.
+  /// @param[in] is_longitude True if the axis represents longitude in degrees.
   Axis(const double start, const double end, const double step,
-       const bool is_circular = false)
+       const bool is_longitude = false)
       : Axis(Eigen::VectorXd::LinSpaced(
                  static_cast<int64_t>(std::round((end - start) / step)) + 1,
                  start, end),
-             1e-6, is_circular) {}
+             1e-6, is_longitude) {}
 
   /// Compare two axes for equality.
   ///
   /// @param[in] other The other axis.
   /// @return True if the axes are equal.
   constexpr auto operator==(const Axis& other) const -> bool {
-    return is_circular_ == other.is_circular_ && circle_ == other.circle_ &&
+    return is_longitude_ == other.is_longitude_ && period_ == other.period_ &&
            is_ascending_ == other.is_ascending_ && size_ == other.size_ &&
            start_ == other.start_ && step_ == other.step_;
   }
@@ -103,12 +79,12 @@ class Axis {
   /// True if the axis is ascending.
   constexpr auto is_ascending() const -> bool { return is_ascending_; }
 
-  /// True if the axis is circular.
-  constexpr auto is_circular() const -> bool { return is_circular_; }
+  /// True if the axis represents longitude in degrees.
+  constexpr auto is_longitude() const -> bool { return is_longitude_; }
 
-  /// Return true if the axis is a longitude axis.
-  constexpr auto is_angle() const -> double {
-    return circle_ == detail::math::circle_degrees<double>();
+  /// Return true if tis instance represents a periodic longitude axis.
+  constexpr auto is_periodic() const -> double {
+    return period_ == detail::math::circle_degrees<double>();
   }
 
   /// Return the value at the given index.
@@ -160,11 +136,11 @@ class Axis {
   /// @brief Get a string representation of this axis.
   ///
   /// @return String representation of this axis
-  operator std::string() const {
+  explicit operator std::string() const {
     std::stringstream ss;
     ss << "Axis(";
-    if (is_circular()) {
-      ss << "circular, period=" << circle_ << ", ";
+    if (is_longitude()) {
+      ss << "longitude, period=" << period_ << ", ";
     }
     ss << "range=[" << min_value() << ", " << max_value() << "], ";
     ss << "step=" << step() << ", ";
@@ -173,10 +149,10 @@ class Axis {
   }
 
  private:
-  /// True if the axis is circular.
-  bool is_circular_{};
-  /// The value of the circle (360)
-  double circle_{};
+  /// True if the axis represents longitude in degrees.
+  bool is_longitude_{};
+  /// Period value for longitude axes (360°), or 0 for non-periodic axes.
+  double period_{};
   /// True if the axis is ascending.
   bool is_ascending_{};
   /// The size of the axis.
@@ -194,7 +170,7 @@ class Axis {
   static auto is_evenly_spaced(const Eigen::Ref<const Eigen::VectorXd>& points)
       -> boost::optional<double>;
 
-  /// Put longitude into the range [0, circle_] degrees.
+  /// Put longitude into the range [0, period_] degrees.
   static auto normalize_longitude(const Eigen::VectorXd& points)
       -> std::unique_ptr<Eigen::VectorXd>;
 
@@ -209,7 +185,7 @@ class Axis {
   /// @return The normalized value of the coordinate.
   constexpr auto normalize_coordinate(const double coordinate) const noexcept
       -> double {
-    if (is_angle() &&
+    if (is_periodic() &&
         (coordinate >= min_value() + detail::math::circle_degrees<double>() ||
          coordinate < min_value())) {
       return detail::math::normalize_angle(

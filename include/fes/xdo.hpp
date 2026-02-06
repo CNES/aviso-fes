@@ -49,17 +49,18 @@ inline auto xdo_numerical(const Eigen::Ref<const Vector7b>& doodson)
 /// @return XDO alphabetical representation
 inline auto xdo_alphabetical(const Eigen::Ref<const Vector7b>& doodson)
     -> std::string {
-  constexpr auto xdo = std::array<char, 25>{
+  constexpr int kSize = 25;
+  constexpr auto kXDO = std::array<char, kSize>{
       'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'A', 'B', 'C', 'D',
       'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P'};
   auto result = std::string();
   result.reserve(7);
   for (const auto& value : doodson) {
-    size_t ix = value + 8;
-    if (ix >= xdo.size()) {
+    int ix = value + 8;
+    if (ix < 0 || ix >= kSize) {
       throw std::out_of_range("Doodson number out of range for XDO code");
     }
-    result.push_back(xdo[ix]);
+    result.push_back(kXDO[ix]);
   }
   return result;
 }

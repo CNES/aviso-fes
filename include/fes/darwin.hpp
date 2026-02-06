@@ -27,7 +27,7 @@ struct Darwin {
   int8_t nusec;   //!< Coefficient for the term in argument of lunisolar
                   //!< constituent K2
 
-  /// Default constructor
+  /// @brief Default constructor
   /// @param[in] t Mean solar angle relative to Greenwich
   /// @param[in] s moon's mean longitude
   /// @param[in] h sun's mean longitude
@@ -161,13 +161,11 @@ struct Darwin {
       return *this;
     }
 
-    /// @brief Builds the Darwin parameters.
-    /// @return A Darwin object initialized with the parameters set in the
-    /// Builder.
-    /// @note This method is constexpr to allow compile-time construction.
-    constexpr auto build() const noexcept -> Darwin {
-      return Darwin(t_, s_, h_, p_, n_, p1_, shift_, eps_, nu_, nuprim_,
-                    nusec_);
+    /// @brief Implicit conversion to Darwin.
+    // In order to simplify the definition of waves, we want an implicit
+    // conversion - NOLINTNEXTLINE(google-explicit-constructor)
+    constexpr operator Darwin() const noexcept {
+      return {t_, s_, h_, p_, n_, p1_, shift_, eps_, nu_, nuprim_, nusec_};
     }
 
    private:

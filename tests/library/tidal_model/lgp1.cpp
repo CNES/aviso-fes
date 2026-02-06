@@ -76,13 +76,12 @@ TEST(InterpolatorLGP1, Constructor) {
 
   auto index = std::make_shared<mesh::Index>(lon, lat, triangles);
 
-  tidal_model::LGP1<double> lgp1(std::move(index), std::move(codes),
-                                 darwin::constituents::map(), kTide);
-  lgp1.add_constituent(darwin::kS2, values);
+  tidal_model::LGP1<double> lgp1(std::move(index), std::move(codes), kTide);
+  lgp1.add_constituent(kS2, values);
   auto acc = std::unique_ptr<Accelerator>(
       lgp1.accelerator(angle::Formulae::kMeeus, 0.0));
   Quality quality = 0;
-  auto x = lgp1.interpolate({0.0, 0.0}, quality, acc.get());
+  auto x = lgp1.interpolate({0.0, 0.0}, quality, *acc);
   EXPECT_EQ(x.size(), 1);
 }
 

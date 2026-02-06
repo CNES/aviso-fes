@@ -10,17 +10,8 @@
 
 namespace fes {
 
-/// @brief Integer type used for tidal constituents identifiers.
-using ConstituentId = uint8_t;
-
 /// @brief Complex number type used for tidal constituents.
 using Complex = std::complex<double>;
-
-/// @brief Possible type of tidal wave.
-enum TidalType : uint8_t {
-  kLongPeriod = 0,  //!< Long period tidal waves
-  kShortPeriod      //!< Short period tidal waves
-};
 
 /// @brief Check if a matrix is a vector.
 ///

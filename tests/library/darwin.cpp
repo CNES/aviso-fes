@@ -82,7 +82,7 @@ TEST(DarwinBuilder, DefaultConstructor) {
   constexpr Darwin::Builder builder;
 
   // Build with default values (all zeros)
-  constexpr Darwin darwin = builder.build();
+  constexpr Darwin darwin = builder;
 
   EXPECT_EQ(darwin.t, 0);
   EXPECT_EQ(darwin.s, 0);
@@ -99,7 +99,7 @@ TEST(DarwinBuilder, DefaultConstructor) {
 
 // Test Builder T method
 TEST(DarwinBuilder, T) {
-  constexpr Darwin darwin = Darwin::Builder().T(42).build();
+  constexpr Darwin darwin = Darwin::Builder().T(42);
 
   EXPECT_EQ(darwin.t, 42);
   EXPECT_EQ(darwin.s, 0);
@@ -116,7 +116,7 @@ TEST(DarwinBuilder, T) {
 
 // Test Builder s method
 TEST(DarwinBuilder, s) {
-  constexpr Darwin darwin = Darwin::Builder().s(-15).build();
+  constexpr Darwin darwin = Darwin::Builder().s(-15);
 
   EXPECT_EQ(darwin.t, 0);
   EXPECT_EQ(darwin.s, -15);
@@ -133,7 +133,7 @@ TEST(DarwinBuilder, s) {
 
 // Test Builder h method
 TEST(DarwinBuilder, h) {
-  constexpr Darwin darwin = Darwin::Builder().h(7).build();
+  constexpr Darwin darwin = Darwin::Builder().h(7);
 
   EXPECT_EQ(darwin.t, 0);
   EXPECT_EQ(darwin.s, 0);
@@ -150,7 +150,7 @@ TEST(DarwinBuilder, h) {
 
 // Test Builder p method
 TEST(DarwinBuilder, p) {
-  constexpr Darwin darwin = Darwin::Builder().p(3).build();
+  constexpr Darwin darwin = Darwin::Builder().p(3);
 
   EXPECT_EQ(darwin.t, 0);
   EXPECT_EQ(darwin.s, 0);
@@ -167,7 +167,7 @@ TEST(DarwinBuilder, p) {
 
 // Test Builder n method
 TEST(DarwinBuilder, n) {
-  constexpr Darwin darwin = Darwin::Builder().n(-2).build();
+  constexpr Darwin darwin = Darwin::Builder().n(-2);
 
   EXPECT_EQ(darwin.t, 0);
   EXPECT_EQ(darwin.s, 0);
@@ -184,7 +184,7 @@ TEST(DarwinBuilder, n) {
 
 // Test Builder p1 method
 TEST(DarwinBuilder, p1) {
-  constexpr Darwin darwin = Darwin::Builder().p1(1).build();
+  constexpr Darwin darwin = Darwin::Builder().p1(1);
 
   EXPECT_EQ(darwin.t, 0);
   EXPECT_EQ(darwin.s, 0);
@@ -201,7 +201,7 @@ TEST(DarwinBuilder, p1) {
 
 // Test Builder shift method
 TEST(DarwinBuilder, shift) {
-  constexpr Darwin darwin = Darwin::Builder().shift(5).build();
+  constexpr Darwin darwin = Darwin::Builder().shift(5);
 
   EXPECT_EQ(darwin.t, 0);
   EXPECT_EQ(darwin.s, 0);
@@ -218,7 +218,7 @@ TEST(DarwinBuilder, shift) {
 
 // Test Builder xi method (sets eps)
 TEST(DarwinBuilder, xi) {
-  constexpr Darwin darwin = Darwin::Builder().xi(-3).build();
+  constexpr Darwin darwin = Darwin::Builder().xi(-3);
 
   EXPECT_EQ(darwin.t, 0);
   EXPECT_EQ(darwin.s, 0);
@@ -235,7 +235,7 @@ TEST(DarwinBuilder, xi) {
 
 // Test Builder nu method
 TEST(DarwinBuilder, nu) {
-  constexpr Darwin darwin = Darwin::Builder().nu(4).build();
+  constexpr Darwin darwin = Darwin::Builder().nu(4);
 
   EXPECT_EQ(darwin.t, 0);
   EXPECT_EQ(darwin.s, 0);
@@ -252,7 +252,7 @@ TEST(DarwinBuilder, nu) {
 
 // Test Builder nuprim method
 TEST(DarwinBuilder, nuprim) {
-  constexpr Darwin darwin = Darwin::Builder().nuprim(-1).build();
+  constexpr Darwin darwin = Darwin::Builder().nuprim(-1);
 
   EXPECT_EQ(darwin.t, 0);
   EXPECT_EQ(darwin.s, 0);
@@ -269,7 +269,7 @@ TEST(DarwinBuilder, nuprim) {
 
 // Test Builder nusec method
 TEST(DarwinBuilder, nusec) {
-  constexpr Darwin darwin = Darwin::Builder().nusec(2).build();
+  constexpr Darwin darwin = Darwin::Builder().nusec(2);
 
   EXPECT_EQ(darwin.t, 0);
   EXPECT_EQ(darwin.s, 0);
@@ -297,8 +297,7 @@ TEST(DarwinBuilder, MethodChaining) {
                                 .xi(8)
                                 .nu(9)
                                 .nuprim(10)
-                                .nusec(11)
-                                .build();
+                                .nusec(11);
 
   EXPECT_EQ(darwin.t, 1);
   EXPECT_EQ(darwin.s, 2);
@@ -315,8 +314,7 @@ TEST(DarwinBuilder, MethodChaining) {
 
 // Test Builder partial configuration
 TEST(DarwinBuilder, PartialConfiguration) {
-  constexpr Darwin darwin =
-      Darwin::Builder().T(2).s(-2).h(2).xi(2).nu(-2).build();
+  constexpr Darwin darwin = Darwin::Builder().T(2).s(-2).h(2).xi(2).nu(-2);
 
   EXPECT_EQ(darwin.t, 2);
   EXPECT_EQ(darwin.s, -2);
@@ -333,7 +331,7 @@ TEST(DarwinBuilder, PartialConfiguration) {
 
 // Test Builder with K2 constituent parameters
 TEST(DarwinBuilder, K2Constituent) {
-  constexpr Darwin darwin = Darwin::Builder().T(2).h(2).nusec(-2).build();
+  constexpr Darwin darwin = Darwin::Builder().T(2).h(2).nusec(-2);
 
   EXPECT_EQ(darwin.t, 2);
   EXPECT_EQ(darwin.s, 0);
@@ -350,7 +348,7 @@ TEST(DarwinBuilder, K2Constituent) {
 
 // Test Builder with S2 constituent parameters
 TEST(DarwinBuilder, S2Constituent) {
-  constexpr Darwin darwin = Darwin::Builder().T(2).build();
+  constexpr Darwin darwin = Darwin::Builder().T(2);
 
   EXPECT_EQ(darwin.t, 2);
   EXPECT_EQ(darwin.s, 0);
@@ -371,14 +369,14 @@ TEST(DarwinBuilder, Reusability) {
 
   // First build
   builder.T(1).s(2);
-  Darwin darwin1 = builder.build();
+  Darwin darwin1 = builder;
 
   EXPECT_EQ(darwin1.t, 1);
   EXPECT_EQ(darwin1.s, 2);
 
   // Modify and build again
   builder.h(3).p(4);
-  Darwin darwin2 = builder.build();
+  Darwin darwin2 = builder;
 
   EXPECT_EQ(darwin2.t, 1);
   EXPECT_EQ(darwin2.s, 2);
@@ -399,7 +397,7 @@ TEST(DarwinBuilder, ReturnReference) {
   EXPECT_EQ(&ref2, &builder);
   EXPECT_EQ(&ref3, &builder);
 
-  Darwin darwin = builder.build();
+  Darwin darwin = builder;
   EXPECT_EQ(darwin.t, 1);
   EXPECT_EQ(darwin.s, 2);
   EXPECT_EQ(darwin.h, 3);
@@ -419,8 +417,7 @@ TEST(Darwin, ConstexprEvaluation) {
                                 .xi(2)
                                 .nu(-3)
                                 .nuprim(1)
-                                .nusec(-2)
-                                .build();
+                                .nusec(-2);
 
   static_assert(darwin.t == 1, "t should be 1");
   static_assert(darwin.s == -1, "s should be -1");

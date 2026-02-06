@@ -5,99 +5,83 @@
 /// @file include/fes/darwin/wave.hpp
 /// @brief Tidal constituent properties
 #pragma once
+
 #include <array>
-#include <cstdint>
-#include <limits>
 #include <memory>
 #include <string>
 
-#include "fes/angle/astronomic.hpp"
+#include "fes/constituent.hpp"
 #include "fes/darwin.hpp"
-#include "fes/darwin/constituent.hpp"
 #include "fes/detail/angle/astronomic/frequency.hpp"
-#include "fes/types.hpp"
+#include "fes/detail/math.hpp"
+#include "fes/interface/wave.hpp"
+#include "fes/numbers.hpp"
+#include "fes/xdo.hpp"
 
 namespace fes {
 namespace darwin {
 
-/// @brief Tide constituent parameters.
-class Wave : public std::enable_shared_from_this<Wave> {
+class Wave : public WaveInterface {
  public:
   /// Typename to a function pointer for calculate the nodal factor
   using nodal_factor_t = double (angle::Astronomic::*)() const;
-
-  /// Initializes the properties of the wave (frequency, doodson's coefficients,
-  /// etc.).
-  ///
-  /// @param[in] ident Tidal constituent identifier.
-  /// @param[in] type Type of tidal wave
-  /// @param[in] admittance True if wave is computed by admittance
-  /// @param[in] t Mean solar angle relative to Greenwich
-  /// @param[in] s moon's mean longitude
-  /// @param[in] h sun's mean longitude
-  /// @param[in] p longitude of the moon's perigee
-  /// @param[in] n longitude of moon's ascending node
-  /// @param[in] p1 longitude of sun's perigee
-  /// @param[in] shift Shift value
-  /// @param[in] eps Coefficient for the longitude in moon's orbit of lunar
-  ///   intersection
-  /// @param[in] nu Coefficient for the right ascension of lunar intersection
-  /// @param[in] nuprim Coefficient for the term in argument of lunisolar
-  ///   constituent @f$K_1@f$
-  /// @param[in] nusec Coefficient for the term in argument of lunisolar
-  /// constituent @f$K_2@f$
-  /// @param[in] calculate_node_factor Function used to calculate the nodal
-  /// factor
-  constexpr Wave(const Constituent ident, TidalType type, const bool admittance,
-                 const int8_t t, const int8_t s, const int8_t h, const int8_t p,
-                 const int8_t n, const int8_t p1, const int8_t shift,
-                 const int8_t eps, const int8_t nu, const int8_t nuprim,
-                 const int8_t nusec,
-                 nodal_factor_t calculate_node_factor) noexcept
-      : ident_(ident),
-        type_(type),
-        calculate_node_factor_(calculate_node_factor),
-        admittance_(admittance),
-        freq_(detail::math::radians(frequency(t, s, h, p, n, p1))),
-        argument_({t, s, h, p, n, p1, shift, eps, nu, nuprim, nusec}) {}
 
   /// @brief  Initializes the properties of the wave (frequency, doodson's
   /// coefficients, etc.).
   /// @param[in] ident Tidal constituent identifier.
   /// @param[in] type Type of tidal wave
-  /// @param[in] admittance True if wave is computed by admittance
   /// @param[in] darwin Darwin parameters for the wave
   /// @param[in] calculate_node_factor Function used to calculate the nodal
   /// factor
-  constexpr Wave(const Constituent ident, TidalType type, const bool admittance,
-                 const Darwin& darwin,
-                 nodal_factor_t calculate_node_factor) noexcept
-      : Wave(ident, type, admittance, darwin.t, darwin.s, darwin.h, darwin.p,
-             darwin.n, darwin.p1, darwin.shift, darwin.eps, darwin.nu,
-             darwin.nuprim, darwin.nusec, calculate_node_factor) {}
+  Wave(const ConstituentId ident, WaveType type, const Darwin& darwin,
+       nodal_factor_t calculate_node_factor) noexcept
+      : WaveInterface(ident, type),
+        calculate_node_factor_(calculate_node_factor),
+        argument_({darwin.t, darwin.s, darwin.h, darwin.p, darwin.n, darwin.p1,
+                   darwin.shift, darwin.eps, darwin.nu, darwin.nuprim,
+                   darwin.nusec}),
+        freq_(detail::math::radians(frequency(
+            darwin.t, darwin.s, darwin.h, darwin.p, darwin.n, darwin.p1))) {}
 
-  /// Default destructor
-  virtual ~Wave() = default;
+  /// @brief Gets the frequency in radians per hour.
+  /// @return The frequency in radians per hour.
+  auto frequency() const noexcept -> double final { return freq_; }
 
-  /// Default copy constructor
-  Wave(const Wave&) = default;
-
-  /// Default copy assignment operator
-  auto operator=(const Wave&) -> Wave& = default;
-
-  /// Move constructor
-  Wave(Wave&&) noexcept = default;
-
-  /// Move assignment operator
-  auto operator=(Wave&&) noexcept -> Wave& = default;
-
-  /// Compute nodal corrections from SCHUREMAN (1958).
-  ///
-  /// @param[in] a Astronomic angle
-  constexpr void nodal_a(const angle::Astronomic& a) {
-    f_ = (a.*calculate_node_factor_)();
+  /// @brief Clones the wave.
+  /// @return A unique pointer to the cloned wave.
+  inline auto clone() const -> std::unique_ptr<WaveInterface> final {
+    return std::make_unique<Wave>(*this);
   }
 
+  /// @brief Computes the nodal corrections for the wave.
+  /// @param[in] angles Astronomical angles used to compute nodal corrections.
+  /// @param[in] group_modulations If true, applies group modulations to nodal
+  /// corrections.
+  inline auto compute_nodal_corrections(const angle::Astronomic& angles,
+                                        const bool group_modulations)
+      -> void final {
+    nodal_a(angles);
+    nodal_g(angles);
+  }
+
+  /// Gets the XDO numerical representation of the wave
+  auto xdo_numerical() const -> std::string final {
+    return fes::xdo_numerical(doodson_numbers());
+  }
+
+  /// Gets the XDO alphabetical representation of the wave
+  auto xdo_alphabetical() const -> std::string final {
+    return fes::xdo_alphabetical(doodson_numbers());
+  }
+
+  /// Gets the Doodson number of the wave
+  /// @note The 7th number follows the convention established in Doodson &
+  /// Warburg's 1941 book. This number can be 0, 1, 2, or -1, representing
+  /// multiples of 90 degrees added to the tidal argument when using cosine
+  /// functions
+  auto doodson_numbers() const -> Vector7b final;
+
+ protected:
   /// Compute nodal corrections from SCHUREMAN (1958).
   ///
   /// @param[in] a Astronomic angle
@@ -109,103 +93,16 @@ class Wave : public std::enable_shared_from_this<Wave> {
          argument_[9] * a.nuprim() + argument_[10] * a.nusec();
   }
 
-  /// Returns the tide value
-  constexpr auto tide() const noexcept -> const Complex& { return c_; }
-
-  /// Sets the tide value
-  auto tide(const Complex& tide) noexcept -> void { c_ = tide; }
-
-  /// Gets the wave ident
-  constexpr auto ident() const noexcept -> Constituent { return ident_; }
-
-  /// Returns true if wave is computed by admittance
-  constexpr auto admittance() const noexcept -> bool { return admittance_; }
-
-  /// Determines if the wave is calculated by admittance.
-  auto admittance(const bool value) noexcept -> void { admittance_ = value; }
-
-  /// Returns true if wave is computed dynamically
-  constexpr auto dynamic() const noexcept -> bool { return dynamic_; }
-
-  /// Determines if the wave is calculated dynamically.
-  auto dynamic(const bool value) -> void { dynamic_ = value; }
-
-  /// Gets the wave frequency (radians per hours)
-  constexpr auto freq() const noexcept -> double { return freq_; }
-
-  /// Gets the wave type
-  constexpr auto type() const noexcept -> TidalType { return type_; }
-
-  /// Gets v (greenwich argument) + u (nodal correction for phase)
-  inline auto vu() const noexcept -> double {
-    return std::fmod(v_ + u_, detail::math::two_pi<double>());
-  }
-
-  /// Gets v0 (greenwich argument)
-  constexpr auto v() const noexcept -> double { return v_; }
-
-  /// Gets the nodal correction for amplitude
-  constexpr auto f() const noexcept -> double { return f_; }
-
-  /// Gets the nodal correction for phase
-  constexpr auto u() const noexcept -> double { return u_; }
-
-  /// Gets the period of the wave (hours)
-  constexpr auto period() const noexcept -> double {
-    return detail::math::two_pi<double>() / freq_;
-  }
-
-  /// Gets the wave name
-  inline auto name() const -> const char* { return constituents::name(ident_); }
-
-  /// Gets the XDO numerical representation of the wave
-  auto xdo_numerical() const -> std::string;
-
-  /// Gets the XDO alphabetical representation of the wave
-  auto xdo_alphabetical() const -> std::string;
-
-  /// Gets the Doodson number of the wave
-  /// @note The 7th number follows the convention established in Doodson &
-  /// Warburg's 1941 book. This number can be 0, 1, 2, or -1, representing
-  /// multiples of 90 degrees added to the tidal argument when using cosine
-  /// functions
-  auto doodson_numbers() const -> std::array<int8_t, 7>;
-
- protected:
-  /// nodal correction for phase
-  double u_{std::numeric_limits<double>::quiet_NaN()};
-
  private:
-  /// Tidal constituent identifier
-  Constituent ident_;
-
-  /// Type of tide.
-  TidalType type_;
-
   /// Function to call for computing the node factor
   nodal_factor_t calculate_node_factor_;
-
-  /// True if wave is computed by admittance.
-  bool admittance_;
-
-  /// True if wave is computed dynamically.
-  bool dynamic_{false};
-
-  /// Wave frequency.
-  double freq_;
-
-  /// greenwich argument
-  double v_{std::numeric_limits<double>::quiet_NaN()};
-
-  /// Nodal correction for amplitude.
-  double f_{std::numeric_limits<double>::quiet_NaN()};
-
-  /// Tide value.
-  Complex c_;
 
   /// Harmonic constituents
   /// \f$(T, s, h, p, N', p_1, shift, \xi, \nu, \nu', \nu'')\f$
   std::array<int8_t, 11> argument_;
+
+  /// Wave frequency in radians per hour
+  double freq_;
 
   /// Computes the wave frequency from the doodson arguments
   ///
@@ -225,6 +122,13 @@ class Wave : public std::enable_shared_from_this<Wave> {
             frequency::s() * s + frequency::h() * h + frequency::p() * p +
             frequency::n() * n + frequency::p1() * p1) *
            360;
+  }
+
+  /// Compute nodal corrections from SCHUREMAN (1958).
+  ///
+  /// @param[in] a Astronomic angle
+  constexpr void nodal_a(const angle::Astronomic& a) {
+    f_ = (a.*calculate_node_factor_)();
   }
 };
 
@@ -417,7 +321,8 @@ class M1 : public Wave {
   inline void nodal_g(const angle::Astronomic& a) final {
     Wave::nodal_g(a);
     u_ -= detail::math::radians(
-        1.0 / std::sqrt(2.310 + 1.435 * std::cos(2 * (a.p() - a.xi()))));
+        1.0 / std::sqrt(numbers::k197_1 +
+                        numbers::k197_2 * std::cos(2 * (a.p() - a.xi()))));
   }
 };
 

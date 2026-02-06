@@ -1,51 +1,104 @@
-import numpy
-import numpy.typing
 import typing
-from typing import ClassVar
 
-from . import Formulae, Axis, mesh, TideType, ConstituentMap
-from ..type_hints import (
-    VectorFloat64,
-    MatrixInt32,
-    VectorInt64,
-    VectorInt8,
-    VectorComplex128,
-    VectorComplex64,
+from ..type_hints import MatrixInt32, VectorInt64
+from . import (
+    TidalModelInterfaceComplex128,
+    TidalModelInterfaceComplex64,
+    Axis,
+    TideType,
 )
-from . import AbstractTidalModelComplex128, AbstractTidalModelComplex64
+from .mesh import Index
 
-import core
-import core.mesh
-import numpy
-import numpy.typing
-import typing
-
-class CartesianComplex128(AbstractTidalModelComplex128):
-    def __init__(self, lon: Axis, lat: Axis, constituent_map: ConstituentMap, tide_type: TideType = ..., longitude_major: bool = ...) -> None: ...
+class CartesianComplex128(TidalModelInterfaceComplex128):
+    def __init__(
+        self,
+        lon: Axis,
+        lat: Axis,
+        tide_type: TideType = ...,
+        longitude_major: bool = ...,
+    ) -> None: ...
     def lat(self) -> Axis: ...
     def lon(self) -> Axis: ...
 
-class CartesianComplex64(AbstractTidalModelComplex64):
-    def __init__(self, lon: Axis, lat: Axis, constituent_map: ConstituentMap, tide_type: TideType = ..., longitude_major: bool = ...) -> None: ...
+class CartesianComplex64(TidalModelInterfaceComplex64):
+    def __init__(
+        self,
+        lon: Axis,
+        lat: Axis,
+        tide_type: TideType = ...,
+        longitude_major: bool = ...,
+    ) -> None: ...
     def lat(self) -> Axis: ...
     def lon(self) -> Axis: ...
 
-class LGP1Complex128(AbstractTidalModelComplex128):
-    def __init__(self, index: mesh.Index, codes: MatrixInt32, constituent_map: ConstituentMap, tide_type: TideType = ..., max_distance: typing.SupportsFloat = ..., bbox: tuple[typing.SupportsFloat, typing.SupportsFloat, typing.SupportsFloat, typing.SupportsFloat] | None = ...) -> None: ...
-    def index(self) -> mesh.Index: ...
+class LGP1Complex128(TidalModelInterfaceComplex128):
+    def __init__(
+        self,
+        index: Index,
+        codes: MatrixInt32,
+        tide_type: TideType = ...,
+        max_distance: typing.SupportsFloat = ...,
+        bbox: tuple[
+            typing.SupportsFloat,
+            typing.SupportsFloat,
+            typing.SupportsFloat,
+            typing.SupportsFloat,
+        ]
+        | None = ...,
+    ) -> None: ...
+    def index(self) -> Index: ...
     def selected_indices(self) -> VectorInt64: ...
 
-class LGP1Complex64(AbstractTidalModelComplex64):
-    def __init__(self, index: mesh.Index, codes: MatrixInt32, constituent_map: ConstituentMap, tide_type: TideType = ..., max_distance: typing.SupportsFloat = ..., bbox: tuple[typing.SupportsFloat, typing.SupportsFloat, typing.SupportsFloat, typing.SupportsFloat] | None = ...) -> None: ...
-    def index(self) -> mesh.Index: ...
+class LGP1Complex64(TidalModelInterfaceComplex64):
+    def __init__(
+        self,
+        index: Index,
+        codes: MatrixInt32,
+        tide_type: TideType = ...,
+        max_distance: typing.SupportsFloat = ...,
+        bbox: tuple[
+            typing.SupportsFloat,
+            typing.SupportsFloat,
+            typing.SupportsFloat,
+            typing.SupportsFloat,
+        ]
+        | None = ...,
+    ) -> None: ...
+    def index(self) -> Index: ...
     def selected_indices(self) -> VectorInt64: ...
 
-class LGP2Complex128(AbstractTidalModelComplex128):
-    def __init__(self, index: mesh.Index, codes: MatrixInt32, constituent_map: ConstituentMap, tide_type: TideType = ..., max_distance: typing.SupportsFloat = ..., bbox: tuple[typing.SupportsFloat, typing.SupportsFloat, typing.SupportsFloat, typing.SupportsFloat] | None = ...) -> None: ...
-    def index(self) -> mesh.Index: ...
+class LGP2Complex128(TidalModelInterfaceComplex128):
+    def __init__(
+        self,
+        index: Index,
+        codes: MatrixInt32,
+        tide_type: TideType = ...,
+        max_distance: typing.SupportsFloat = ...,
+        bbox: tuple[
+            typing.SupportsFloat,
+            typing.SupportsFloat,
+            typing.SupportsFloat,
+            typing.SupportsFloat,
+        ]
+        | None = ...,
+    ) -> None: ...
+    def index(self) -> Index: ...
     def selected_indices(self) -> VectorInt64: ...
 
-class LGP2Complex64(AbstractTidalModelComplex64):
-    def __init__(self, index: mesh.Index, codes: MatrixInt32, constituent_map: ConstituentMap, tide_type: TideType = ..., max_distance: typing.SupportsFloat = ..., bbox: tuple[typing.SupportsFloat, typing.SupportsFloat, typing.SupportsFloat, typing.SupportsFloat] | None = ...) -> None: ...
-    def index(self) -> mesh.Index: ...
+class LGP2Complex64(TidalModelInterfaceComplex64):
+    def __init__(
+        self,
+        index: Index,
+        codes: MatrixInt32,
+        tide_type: TideType = ...,
+        max_distance: typing.SupportsFloat = ...,
+        bbox: tuple[
+            typing.SupportsFloat,
+            typing.SupportsFloat,
+            typing.SupportsFloat,
+            typing.SupportsFloat,
+        ]
+        | None = ...,
+    ) -> None: ...
+    def index(self) -> Index: ...
     def selected_indices(self) -> VectorInt64: ...

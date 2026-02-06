@@ -15,11 +15,11 @@ namespace fes {
 namespace geometry {
 
 /// Base class for the Earth Centered Earth Fixed (ECEF) point.
-using ecef_t =
+using CartesianPoint3D =
     boost::geometry::model::point<double, 3, boost::geometry::cs::cartesian>;
 
 /// Earth Centered Earth Fixed (ECEF) point.
-class EarthCenteredEarthFixed : public ecef_t {
+class EarthCenteredEarthFixed : public CartesianPoint3D {
  public:
   /// Default constructor.
   EarthCenteredEarthFixed() = default;
@@ -30,7 +30,7 @@ class EarthCenteredEarthFixed : public ecef_t {
   /// @param[in] y The y coordinate.
   /// @param[in] z The z coordinate.
   constexpr EarthCenteredEarthFixed(double x, double y, double z)
-      : ecef_t(x, y, z) {}
+      : CartesianPoint3D(x, y, z) {}
 
   /// Get the x coordinate.
   constexpr auto x() const { return get<0>(); }

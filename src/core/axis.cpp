@@ -14,22 +14,22 @@ namespace py = pybind11;
 
 namespace fes {
 inline void init_axis(py::module& m) {
-  py::class_<Axis, std::shared_ptr<Axis>>(m, "Axis",
-                                          R"__doc__(
+  py::class_<Axis>(m, "Axis",
+                   R"__doc__(
 A coordinate axis a variable that specifies one of the coordinates
 of a variable's values.
 )__doc__")
       .def(py::init<const Eigen::Ref<const Eigen::VectorXd>&, double, bool>(),
            py::arg("points"), py::arg("epsilon") = 1e-6,
-           py::arg("is_circular") = false,
+           py::arg("is_periodic") = false,
            R"__doc__(
 Default constructor.
 
 Args:
      points: The axis points.
-     epsilon: The tolerance used to determine if the axis is circular.
-     is_circular: True if the axis is circular. For example,
-          longitude is circular.
+     epsilon: The tolerance used to determine if the axis is periodic.
+     is_periodic: True if the axis is periodic. For example,
+          longitude is periodic.
 )__doc__")
       .def(
           "__str__",
@@ -51,8 +51,8 @@ Returns:
                              "Return the step of the axis.")
       .def_property_readonly("is_ascending", &fes::Axis::is_ascending,
                              "Return true if the axis is ascending.")
-      .def_property_readonly("is_circular", &fes::Axis::is_circular,
-                             "Return true if the axis is circular.")
+      .def_property_readonly("is_periodic", &fes::Axis::is_periodic,
+                             "Return true if the axis is periodic")
       .def("end", &fes::Axis::end, "Return the last value of the axis.")
       .def("min_value", &fes::Axis::min_value,
            "Return the minimum value of the axis.")

@@ -8,9 +8,10 @@
 #include <limits>
 #include <utility>
 
-#include "fes/abstract_tidal_model.hpp"
 #include "fes/axis.hpp"
+#include "fes/constituent.hpp"
 #include "fes/detail/grid.hpp"
+#include "fes/interface/tidal_model.hpp"
 
 namespace fes {
 namespace tidal_model {
@@ -19,19 +20,17 @@ namespace tidal_model {
 ///
 /// @tparam T The type of the tidal model.
 template <typename T>
-class Cartesian : public AbstractTidalModel<T> {
+class Cartesian : public TidalModelInterface<T> {
  public:
   /// Build a Cartesian tidal model from its grid properties.
   ///
   /// @param[in] lon The longitude axis.
   /// @param[in] lat The latitude axis.
-  /// @param[in] constituent_map The enum mapper that converts between tidal
-  /// constituent names and their identifiers.
   /// @param[in] tide_type The tide type handled by the model.
   /// @param[in] row_major Whether the data is stored in longitude-major order.
-  Cartesian(Axis lon, Axis lat, ConstituentMap constituent_map,
-            const TideType tide_type, const bool row_major = true)
-      : AbstractTidalModel<T>(std::move(constituent_map), tide_type),
+  Cartesian(const Axis& lon, const Axis& lat, const TideType tide_type,
+            const bool row_major = true)
+      : TidalModelInterface<T>(tide_type),
         row_major_(row_major),
         lon_(lon),
         lat_(lat) {}
@@ -69,7 +68,7 @@ class Cartesian : public AbstractTidalModel<T> {
   /// @param[inout] acc The accelerator to use.
   /// @return The interpolated tidal model.
   auto interpolate(const geometry::Point& point, Quality& quality,
-                   Accelerator* acc) const -> const ConstituentValues& override;
+                   Accelerator& acc) const -> const ConstituentValues& override;
 
   /// Get the longitude axis.
   ///
@@ -90,13 +89,16 @@ class Cartesian : public AbstractTidalModel<T> {
   Axis lat_;
 };
 
-// /////////////////////////////////////////////////////////////////////////////
+// ===========================================================================
+// Implementation
+// ===========================================================================
+
 template <typename T>
 auto Cartesian<T>::interpolate(const geometry::Point& point, Quality& quality,
-                               Accelerator* acc) const
+                               Accelerator& acc) const
     -> const ConstituentValues& {
   // Remove all previous values interpolated.
-  acc->clear();
+  acc.clear();
   // Find the nearest point in the grid
   auto lon_index = lon_.find_indices(point.lon());
   auto lat_index = lat_.find_indices(point.lat());
@@ -107,10 +109,10 @@ auto Cartesian<T>::interpolate(const geometry::Point& point, Quality& quality,
                 std::numeric_limits<double>::quiet_NaN());
 
     for (const auto& item : this->data_) {
-      acc->emplace_back(item.first, undefined_value);
+      acc.emplace_back(item.first, undefined_value);
     }
     quality = kUndefined;
-    return acc->values();
+    return acc.values();
   };
 
   if (!lon_index || !lat_index) {
@@ -146,12 +148,12 @@ auto Cartesian<T>::interpolate(const geometry::Point& point, Quality& quality,
     if (std::isnan(value.real()) || std::isnan(value.imag())) {
       return reset_values_to_undefined();
     }
-    acc->emplace_back(item.first, value);
+    acc.emplace_back(item.first, value);
   }
   // n represents the number of valid grid corners used in the bilinear
   // interpolation (0, 1, 2, or 4).
   quality = static_cast<Quality>(n);
-  return acc->values();
+  return acc.values();
 }
 
 }  // namespace tidal_model

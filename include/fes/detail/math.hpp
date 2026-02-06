@@ -294,7 +294,7 @@ constexpr auto remainder(const T& x, const T& y) noexcept -> T {
 /// @param[in] circle Circle value
 /// @return the angle reduced to the range [min, circle + min[
 template <typename T>
-constexpr auto normalize_angle(const T& x, const T& min = T(-180),
+constexpr auto normalize_angle(const T& x, const T& min = T(0),
                                const T& circle = T(360)) noexcept -> T {
   return remainder(x - min, circle) + min;
 }

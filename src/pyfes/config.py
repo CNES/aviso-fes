@@ -1,4 +1,4 @@
-# Copyright (c) 2025 CNES
+# Copyright (c) 2026 CNES
 #
 # All rights reserved. Use of this source code is governed by a
 # BSD-style license that can be found in the LICENSE file.
@@ -12,7 +12,6 @@ by the numerical model.
 from __future__ import annotations
 
 from typing import cast
-from functools import cached_property
 from typing import TYPE_CHECKING, Any, Literal, NamedTuple, Union
 import dataclasses
 import enum
@@ -26,22 +25,18 @@ import yaml
 
 
 from .core import (
-    AbstractTidalModelComplex64,
-    AbstractTidalModelComplex128,
+    parse_constituent,
+    TidalModelInterfaceComplex64,
+    TidalModelInterfaceComplex128,
     RADIAL as _RADIAL,
     TIDE as _TIDE,
-)
-from .core import (
     Axis,
-    ConstituentMap,
     FesRuntimeSettings,
     mesh,
     PerthRuntimeSettings,
     Settings,
     tidal_model,
 )
-from .core.darwin import constituents as darwin_constituents
-from .core.perth import constituents as perth_constituents
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -50,7 +45,7 @@ if TYPE_CHECKING:
     from .type_hints import Matrix, Vector
 
 #: Alias for a tidal type.
-TidalModel = Union[AbstractTidalModelComplex64, AbstractTidalModelComplex128]
+TidalModel = Union[TidalModelInterfaceComplex64, TidalModelInterfaceComplex128]
 
 #: Pattern to search for an environment variable.
 PATTERN: Callable[[str], Match | None] = re.compile(r'\${(\w+)}').search
@@ -246,7 +241,7 @@ def load_cartesian_model(
         pha: Matrix
 
         if bbox is not None:
-            x_axis = Axis(lon, epsilon=epsilon, is_circular=True)
+            x_axis = Axis(lon, epsilon=epsilon, is_periodic=True)
             y_axis = Axis(lat)
             x0 = x_axis.find_index(bbox[0], bounded=True)
             x1 = x_axis.find_index(bbox[2], bounded=True)
@@ -302,14 +297,16 @@ class Engine(enum.Enum):
 
     The library supports two tidal prediction engines:
 
-    - **FES**: Based on Schureman/Darwin formulation. Uses nodal corrections
-      and admittance calculations following the classical approach.
-    - **PERTH5**: Based on Doodson numbers. Supports additional features like
-      group modulations and different inference interpolation types.
+    - **DARWIN**: Based on Schureman/Darwin formulation. Uses nodal corrections
+      and admittance calculations following the classical approach. Used by FES
+      models.
+    - **PERTH**: Based on Doodson numbers. Supports additional features like
+      group modulations and different inference interpolation types. Used by
+      GOT models.
     """
 
-    FES = 'fes'
-    PERTH5 = 'perth5'
+    DARWIN = 'darwin'
+    PERTH = 'perth'
 
 
 @dataclasses.dataclass(frozen=True)
@@ -322,19 +319,19 @@ class Common:
     longitude: str = 'lon'
     #: Tidal type.
     tidal_type: str = 'tide'
-    #: The list of the waves to be considered as part of the given altlas
+    #: The list of the waves to be considered as part of the given atlas
     #: (evaluated dynamically from the model). The wave declared in this list
     #: will be considered as part of the model components and will be disabled
-    #: from the admittance calculation and and in the long-period equilibrium
+    #: from the admittance calculation and in the long-period equilibrium
     #: wave calculation routine (``lpe_minus_n_waves``).
     dynamic: list[str] = dataclasses.field(default_factory=list)
     #: Bounding box to consider when loading the tidal model. It is represented
     #: as a tuple of four floats: (min_lon, min_lat, max_lon, max_lat). Default
     #: is None, which means the whole grid is loaded.
     bbox: tuple[float, float, float, float] | None = None
-    #: The tidal prediction engine to use. Either 'fes' for the FES/Darwin
-    #: engine or 'perth5' for the PERTH5 engine.
-    engine: Engine = Engine.FES
+    #: The tidal prediction engine to use. Either 'darwin' for the
+    #: Darwin/FES engine or 'perth' for the Perth/GOT engine.
+    engine: Engine = Engine.DARWIN
 
     def __post_init__(self) -> None:
         """Validate the configuration."""
@@ -344,19 +341,14 @@ class Common:
             raise ValueError('longitude cannot be empty.')
         if not self.latitude:
             raise ValueError('latitude cannot be empty.')
-        known_constituents = tuple(map(str.upper, self.constituent_map.keys()))
         for item in self.dynamic:
-            if item.upper() not in known_constituents:
-                raise ValueError(f'Unknown wave: {item!r}.')
+            try:
+                parse_constituent(item)
+            except ValueError as exc:
+                raise ValueError(f'Unknown wave: {item!r}.') from exc
 
-    @cached_property
-    def constituent_map(self) -> ConstituentMap:
-        """Return the constituent map for the selected engine."""
-        if self.engine == Engine.FES:
-            return darwin_constituents()
-        return perth_constituents()
-
-    def validate_constituents(self, names: Iterable[str]) -> None:
+    @staticmethod
+    def validate_constituents(names: Iterable[str]) -> None:
         """Validate that the given constituents are known.
 
         Args:
@@ -366,12 +358,11 @@ class Common:
             ValueError: If one of the constituents is unknown.
 
         """
-        constituent_map = self.constituent_map
         unknown: list[str] = []
         for item in names:
             try:
-                constituent_map[item]
-            except KeyError:
+                parse_constituent(item)
+            except ValueError:
                 unknown.append(item)
         if unknown:
             raise ValueError(f'Unknown constituents: {", ".join(unknown)!r}.')
@@ -487,9 +478,8 @@ class Cartesian(Common):
 
                 # Create the tidal model instance.
                 instance: TidalModel = type_name(
-                    Axis(lon, epsilon=self.epsilon, is_circular=True),
+                    Axis(lon, epsilon=self.epsilon, is_periodic=True),
                     Axis(lat),
-                    self.constituent_map,
                     tide_type=TideType[self.tidal_type.upper()].value,
                     longitude_major=longitude_major,
                 )
@@ -603,8 +593,10 @@ class LGP(Common):
             selected_indices: Vector | None = None
 
             for item in self.constituents:
-                if item not in self.constituent_map:
-                    raise ValueError(f'Unknown constituent: {item!r}.')
+                try:
+                    parse_constituent(item)
+                except ValueError as exc:
+                    raise ValueError(f'Unknown constituent: {item!r}.') from exc
                 amp_name: str = self.amplitude.format(constituent=item)
                 if amp_name not in ds.variables:
                     raise ValueError(f'Variable not found: {amp_name!r}.')
@@ -620,7 +612,6 @@ class LGP(Common):
                     instance = type_name(
                         mesh.Index(lon, lat, triangles),
                         codes=codes,
-                        constituent_map=self.constituent_map,
                         tide_type=TideType[self.tidal_type.upper()].value,
                         max_distance=self.max_distance,
                         bbox=self.bbox,
@@ -739,7 +730,7 @@ def create_settings(engine: Engine) -> Settings:
         Runtime settings appropriate for the engine.
 
     """
-    if engine == Engine.FES:
+    if engine == Engine.DARWIN:
         return FesRuntimeSettings()
     return PerthRuntimeSettings()
 
@@ -764,12 +755,12 @@ def load(
           (FesRuntimeSettings or PerthRuntimeSettings).
 
     Example:
-        >>> config = load('ocean_tide.yaml')
+        >>> import pyfes
+        >>> config = pyfes.load('ocean_tide.yaml')
         >>> # Access the tide model
         >>> tide_model = config.models['tide']
         >>> # Use the settings for evaluation
-        >>> from pyfes import core
-        >>> result = core.evaluate_tide(
+        >>> result = pyfes.core.evaluate_tide(
         ...     tide_model, dates, lon, lat, config.settings
         ... )
 
@@ -780,8 +771,8 @@ def load(
     if user_settings is None or len(user_settings) == 0:
         raise ValueError(f'Configuration file {path!r} is empty.')
 
-    # Extract engine from top-level configuration (default to FES)
-    engine_str: str = user_settings.pop('engine', 'fes')
+    # Extract engine from top-level configuration (default to Darwin)
+    engine_str: str = user_settings.pop('engine', 'darwin')
     try:
         engine = Engine(engine_str)
     except ValueError as err:

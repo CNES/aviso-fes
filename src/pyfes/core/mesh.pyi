@@ -1,7 +1,4 @@
-from ..type_hints import (
-    VectorFloat64,
-    MatrixInt32,
-)
+from ..type_hints import VectorFloat64, MatrixInt32
 
 class Index:
     def __init__(
