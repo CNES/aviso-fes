@@ -221,7 +221,7 @@ print(const)
 f65 = round_to_4_decimal(
     (2 / 3 - math.sin(const.w) ** 2) * (1 - 3 / 2 * math.sin(const.i) ** 2)
 )
-print(f'f65 = {f65:.4f}')
+print(f'f65 = {f65:.4f} (Schureman: 0.5021)')
 
 # %%
 # Formulae 66 & 74 (P. 24, 25)
@@ -239,7 +239,7 @@ print(f'f65 = {f65:.4f}')
 #
 #       f(Mf) = sin^2(I) / 0.1578
 f66 = round_to_4_decimal(math.sin(const.w) ** 2 * math.cos(0.5 * const.i) ** 4)
-print(f'f66 = {f66:.4f}')
+print(f'f66 = {f66:.4f} (Schureman: 0.1578)')
 
 # %%
 # Formulae 67 & 75 (P. 25)
@@ -261,7 +261,7 @@ f67 = round_to_4_decimal(
     * math.cos(0.5 * const.w) ** 2
     * math.cos(0.5 * const.i) ** 4
 )
-print(f'f67 = {f67:.4f}')
+print(f'f67 = {f67:.4f} (Schureman: 0.3800)')
 
 # %%
 # Formulae 68 & 76 (P. 25)
@@ -281,7 +281,7 @@ print(f'f67 = {f67:.4f}')
 f68 = round_to_4_decimal(
     math.sin(2 * const.w) * (1 - 3 / 2 * math.sin(const.i) ** 2)
 )
-print(f'f68 = {f68:.4f}')
+print(f'f68 = {f68:.4f} (Schureman: 0.7214)')
 
 # %%
 # Formulae 69 & 77 (P. 25)
@@ -298,6 +298,12 @@ print(f'f68 = {f68:.4f}')
 # .. math::
 #
 #   f(OO_1) = sin(I) \times sin^2(\frac{1}{2}I) / 0.0164
+f69 = round_to_4_decimal(
+    math.sin(const.w)
+    * math.sin(0.5 * const.w) ** 2
+    * math.cos(0.5 * const.i) ** 4
+)
+print(f'f69 = {f69:.4f} (Schureman: 0.0164)')
 f69 = round_to_4_decimal(
     math.sin(const.w)
     * math.sin(0.5 * const.w) ** 2

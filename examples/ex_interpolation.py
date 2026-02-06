@@ -5,6 +5,13 @@ Mesh Interpolation
 This example demonstrates how to interpolate a tidal model stored in a mesh
 using LGP2 discretization.
 
+.. note::
+
+   This is a low-level example that demonstrates direct interaction with the
+   C++ core classes for model interpolation. For standard use cases, it is
+   recommended to use the high-level :func:`pyfes.evaluate_tide` function
+   with a configuration file, as shown in :doc:`ex_prediction`.
+
 First, we import the required modules.
 """
 

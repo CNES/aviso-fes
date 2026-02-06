@@ -51,6 +51,11 @@ print(pyfes.known_constituents())
 # If you want to restrict the analysis to only a few components, you must
 # provide a list to the constructor in order to specify the waves to be
 # analyzed.
+#
+# In this example, we overwrite the previous WaveTable with a new one that
+# includes a specific list of constituents tailored for this dataset. This
+# ensures the analysis focuses on the relevant tidal components present in
+# the signal.
 wt = pyfes.darwin.WaveTable(
     [
         'Mm',

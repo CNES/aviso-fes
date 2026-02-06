@@ -139,6 +139,8 @@ load, load_lp, _ = pyfes.evaluate_tide(
 
 # %%
 # Print the results
+# Calculate CNES Julian Days (days since 1950-01-01).
+# This is the standard time reference used in CNES altimetry products.
 cnes_julian_days = (dates - numpy.datetime64('1950-01-01T00:00:00')).astype(
     'M8[s]'
 ).astype(float) / 86400
