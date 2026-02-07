@@ -1,44 +1,8 @@
-.. currentmodule:: pyfes.core
-
-DOODSON Constituents
-====================
+DOODSON
+=======
 
 This page documents all tidal constituents supported by the DOODSON
 prediction engine.
-
-Accessing Constituents Programmatically
----------------------------------------
-
-To retrieve the wave properties of the constituents supported by the
-DOODSON engine, you can use the :func:`pyfes.perth.WaveTable`
-class, which provides a mapping of constituent names to their corresponding
-properties.
-
-.. code-block:: python
-
-    import pyfes
-
-    # Get the constituent map for the DOODSON engine
-    wt = pyfes.perth.WaveTable()
-
-    # Access a specific constituent by name
-    m2 = wt['M2']
-    # Print the name and frequency of the M2 constituent
-    print(f"Name: {m2.name}, Frequency: {m2.frequency()}")
-
-    # Iterate over all constituents
-    for wave in wt:
-        print(f"Constituent: {wave.name}, Frequency: {wave.frequency()}")
-
-    # Display the wave table as a formatted markdown table
-    print(wt.generate_markdown_table())
-
-.. _doodson_constituents:
-
-Available Constituents
-----------------------
-
-The DOODSON engine supports the following tidal constituents:
 
 ============================  =============  =========
 Name                          Speed (deg/h)  XDO
@@ -125,15 +89,9 @@ S6                            90.0000000     F FTZ ZZZ
 M8                            115.9364169    H ZZZ ZZZ
 ============================  =============  =========
 
-Class Documentation
--------------------
+.. note::
 
-.. autoclass:: pyfes.perth.WaveTable
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. autoclass:: pyfes.perth.Wave
-    :members:
-    :undoc-members:
-    :show-inheritance:
+    For cross-validation, the table above is compared with the `official list
+    of tidal constituents
+    <https://iho.int/mtg_docs/com_wg/IHOTC/IHOTC_Misc/TWCWG_Constituent_list.pdf>`_,
+    which contains the same information.

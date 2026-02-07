@@ -8,16 +8,16 @@ Changelog
 
 .. important::
 
-   **Major API Changes**: This release introduces the PERTH5/Doodson prediction
+   **Major API Changes**: This release introduces the PERTH/Doodson prediction
    engine and significantly restructures the Python API. Existing code will
    require updates. See the Migration Guide below for details.
 
 New Features
 ------------
-* **Added PERTH5/Doodson prediction engine**: Introduced support for the PERTH5
+* **Added PERTH/Doodson prediction engine**: Introduced support for the PERTH
   tidal prediction engine, which uses Doodson number classification with group
   modulations. This engine is compatible with GOT (Goddard Ocean Tide) models
-  including GOT4.10, GOT5.5, and GOT5.6. The PERTH5 engine was developed by
+  including GOT4.10, GOT5.5, and GOT5.6. The PERTH engine was developed by
   Dr. Richard Ray at NASA GSFC and supports 123 tidal constituents.
 
 * **Dual prediction engine support**: The library now supports two prediction
@@ -25,7 +25,7 @@ New Features
 
   * **FES/Darwin Engine**: Classical Darwin notation with Schureman nodal
     corrections (142 constituents). Compatible with FES2014 and FES2022 atlases.
-  * **PERTH5/Doodson Engine**: Doodson number classification with group
+  * **PERTH/Doodson Engine**: Doodson number classification with group
     modulations (123 constituents). Compatible with GOT atlases.
 
 * **Automatic UTC to TT conversion**: The ``evaluate_tide()`` function no longer
@@ -41,7 +41,7 @@ Breaking Changes
   * ``pyfes.darwin`` and ``pyfes.perth`` submodules have been introduced for
     engine-specific constituents
   * ``pyfes.FesRuntimeSettings`` for FES/Darwin engine configuration
-  * ``pyfes.PerthRuntimeSettings`` for PERTH5/Doodson engine configuration
+  * ``pyfes.PerthRuntimeSettings`` for PERTH/Doodson engine configuration
   * The generic ``pyfes.Settings`` class has been removed
 
 * **Changed** ``pyfes.config.load()`` **return type**: Now returns a
@@ -138,7 +138,7 @@ Migration Guide
        .with_num_threads(0)
    )
 
-   # PERTH5/Doodson engine
+   # PERTH/Doodson engine
    settings = (
        pyfes.PerthRuntimeSettings()
        .with_group_modulations(True)
@@ -150,7 +150,7 @@ Migration Guide
 Documentation
 -------------
 * Added comprehensive prediction engines documentation comparing FES/Darwin and
-  PERTH5/Doodson engines.
+  PERTH/Doodson engines.
 * Added C++ API documentation with examples for both prediction engines.
 * Added constituent reference tables with speeds and Doodson numbers.
 

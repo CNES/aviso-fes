@@ -24,12 +24,15 @@ from .core import (
 )
 from .core import (
     AstronomicAngle as AstronomicAngle,
+    EngineType as EngineType,
     FesRuntimeSettings,
     Formulae as Formulae,
+    FrequencyUnit as FrequencyUnit,
     InferenceType as InferenceType,
     PerthRuntimeSettings,
     Settings as Settings,
     TideType as TideType,
+    WaveType as WaveType,
     generate_markdown_table as generate_markdown_table,
     known_constituents as known_constituents,
     parse_constituent as parse_constituent,
@@ -58,14 +61,17 @@ __all__ = [
     'ZERO',
     'AstronomicAngle',
     'Axis',
+    'EngineType',
     'FesRuntimeSettings',
     'Formulae',
+    'FrequencyUnit',
     'InferenceType',
     'PerthRuntimeSettings',
     'Settings',
     'TideType',
     'WaveInterface',
     'WaveTableInterface',
+    'WaveType',
     'config',
     'darwin',
     'evaluate_equilibrium_long_period',
@@ -102,9 +108,9 @@ def evaluate_tide(
 
     Returns:
         * The height of the diurnal and semi-diurnal constituents of the
-          tidal spectrum (cm)
+          tidal spectrum (same unit as the tidal model, typically cm)
         * The height of the long period wave constituents of the tidal
-          spectrum (cm)
+          spectrum (same unit as the tidal model, typically cm)
         * The quality flag indicating the reliability of the tide
           calculation at the given position:
 
@@ -116,6 +122,19 @@ def evaluate_tide(
           - **Negative values**: the tide is extrapolated at the given
             position using ``-N`` data points (where ``N`` is the
             number of data points used for the extrapolation).
+
+    Example:
+        >>> import pyfes
+        >>> import numpy as np
+        >>> # 1. Load the model (requires a config file)
+        >>> model = pyfes.config.load("path/to/config.yaml")
+        >>> # 2. Define space and time
+        >>> dates = np.array(['2025-01-01T12:00:00'], dtype='datetime64[us]')
+        >>> lons = np.array([0.0])
+        >>> lats = np.array([45.0])
+        >>> # 3. Compute tide
+        >>> tide, lp, flags = pyfes.evaluate_tide(model, dates, lons, lats)
+        >>> total_height = tide + lp
 
     Note:
       Computed height of the diurnal and semi-diurnal constituents is set
@@ -208,21 +227,15 @@ def evaluate_equilibrium_long_period(
     constituents: list[str] | None = None,
     settings: FesRuntimeSettings | None = None,
 ) -> VectorFloat64:
-    """Compute the long period ocean tides.
+    """Compute the long-period equilibrium ocean tides.
 
-    The complete tidal spectral lines from the Cartwright-Tayler-Edden
-    tables are summed over to compute the long-period tide.
+    This calculates the geometric tidal potential (the "theoretical" tide)
+    created by the attraction of the Moon and Sun over long periods
+    (fortnightly, monthly, semi-annual, etc.). It sums the spectral lines from
+    the Cartwright-Tayler-Edden tables.
 
-    Order 2 and order 3 of the tidal potential for the long period waves is
-    now taken into account.
-
-    The decomposition was validated compared to the potential proposed by
-    Tamura.
-
-    Technical references:
-    - Cartwright & Tayler, Geophys. J. R.A.S., 23, 45, 1971.
-    - Cartwright & Edden, Geophys. J. R.A.S., 33, 253, 1973.
-    - Tamura Y., Bull. d'information des marees terrestres, Vol. 99, 1987.
+    Use this function if you need the purely astronomic long-period component
+    independent of a specific tidal atlas.
 
     Args:
         date: Date of the tide calculation.
@@ -237,6 +250,19 @@ def evaluate_equilibrium_long_period(
     Returns:
         The height of the long period wave constituents of the tidal spectrum
         (cm).
+
+    Example:
+        >>> import pyfes
+        >>> import numpy as np
+        >>> dates = np.array(['2025-01-01'], dtype='datetime64[us]')
+        >>> lats = np.array([45.0])
+        >>> # Calculate full LP tide
+        >>> lp_tide = pyfes.evaluate_equilibrium_long_period(dates, lats)
+
+    References:
+        - Cartwright & Tayler, Geophys. J. R.A.S., 23, 45, 1971.
+        - Cartwright & Edden, Geophys. J. R.A.S., 33, 253, 1973.
+        - Tamura Y., Bull. d'information des marees terrestres, Vol. 99, 1987.
 
     """
     return core.evaluate_equilibrium_long_period(

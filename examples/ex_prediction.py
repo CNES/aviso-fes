@@ -22,6 +22,8 @@ import os
 import pathlib
 
 import numpy
+from IPython.display import Markdown, display
+
 import pyfes
 
 # %%
@@ -65,8 +67,8 @@ print(config)
 # * Supports 142 tidal constituents
 # * Uses traditional admittance for minor constituents
 #
-# To use the **PERTH5/Doodson engine** instead (for GOT tidal models), set
-# ``engine: perth5`` in your YAML configuration. The PERTH5 engine uses Doodson
+# To use the **PERTH/Doodson engine** instead (for GOT tidal models), set
+# ``engine: perth`` in your YAML configuration. The PERTH engine uses Doodson
 # number classification and group modulations. See the
 # `engine comparison example <ex_engine_comparison.html>`_ for details on
 # choosing between engines.
@@ -85,9 +87,11 @@ print(f'Time tolerance: {config.settings.time_tolerance} seconds')
 # :func:`pyfes.core.generate_markdown_table`. Pass the settings and the list
 # of modeled constituents to see which ones are provided by the atlas and which
 # ones will be inferred.
-print(
-    pyfes.core.generate_markdown_table(
-        config.settings, config.models['tide'].identifiers()
+display(
+    Markdown(
+        pyfes.core.generate_markdown_table(
+            config.settings, config.models['tide'].identifiers()
+        )
     )
 )
 
@@ -99,7 +103,7 @@ print(
 # :py:class:`~pyfes.WaveTableInterface` instance. This shows the detailed
 # properties of each constituent (name, frequency, Doodson number, etc.).
 wt = config.models['tide'].wave_table(config.settings.engine_type)
-print(wt.generate_markdown_table())
+display(Markdown(wt.generate_markdown_table()))
 
 # %%
 # .. hint::

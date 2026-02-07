@@ -105,81 +105,25 @@ def create_constituent_rst(
 
 def generate_constituent_rst_content(
     engine_name: str,
-    module_name: str,
     wave_table: object,
-    include_details: bool = True,
 ) -> str:
     """Generate RST content for tidal constituents."""
-    ref_label = engine_name.lower().replace(' ', '_')
-
-    title = f'{engine_name} Constituents'
-    content = f""".. currentmodule:: pyfes.core
-
-{title}
+    title = f'{engine_name}'
+    content = f"""{title}
 {'=' * len(title)}
 
 This page documents all tidal constituents supported by the {engine_name}
 prediction engine.
 
-Accessing Constituents Programmatically
----------------------------------------
-
-To retrieve the wave properties of the constituents supported by the
-{engine_name} engine, you can use the :func:`pyfes.{module_name}.WaveTable`
-class, which provides a mapping of constituent names to their corresponding
-properties.
-
-.. code-block:: python
-
-    import pyfes
-
-    # Get the constituent map for the {engine_name} engine
-    wt = pyfes.{module_name}.WaveTable()
-
-    # Access a specific constituent by name
-    m2 = wt['M2']
-    # Print the name and frequency of the M2 constituent
-    print(f"Name: {{m2.name}}, Frequency: {{m2.frequency()}}")
-
-    # Iterate over all constituents
-    for wave in wt:
-        print(f"Constituent: {{wave.name}}, Frequency: {{wave.frequency()}}")
-
-    # Display the wave table as a formatted markdown table
-    print(wt.generate_markdown_table())
-
-.. _{ref_label}_constituents:
-
-Available Constituents
-----------------------
-
-The {engine_name} engine supports the following tidal constituents:
-
 {create_constituent_rst(wave_table)}
+
+.. note::
+
+    For cross-validation, the table above is compared with the `official list
+    of tidal constituents
+    <https://iho.int/mtg_docs/com_wg/IHOTC/IHOTC_Misc/TWCWG_Constituent_list.pdf>`_,
+    which contains the same information.
 """
-
-    if include_details and engine_name == 'DARWIN':
-        content += """
-For detailed information about each constituent's mathematical formulation, and
-reference, see the :ref:`DARWIN constituent implementation details
-<schureman_reference>` page.
-"""
-
-    content += f"""
-Class Documentation
--------------------
-
-.. autoclass:: pyfes.{module_name}.WaveTable
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. autoclass:: pyfes.{module_name}.Wave
-    :members:
-    :undoc-members:
-    :show-inheritance:
-"""
-
     return content
 
 
@@ -198,24 +142,22 @@ def write_rst_if_changed(file_path: pathlib.Path, content: str) -> bool:
 
 def fes_constituent_rst() -> None:
     """Generate and write the RST table for the FES tidal constituents."""
-    rst_path = HERE / 'core' / 'darwin' / 'constituents.rst'
+    rst_path = HERE / 'constituents' / 'darwin.rst'
+    rst_path.parent.mkdir(parents=True, exist_ok=True)
     content = generate_constituent_rst_content(
         engine_name='DARWIN',
-        module_name='darwin',
         wave_table=pyfes.darwin.WaveTable(),
-        include_details=True,
     )
     write_rst_if_changed(rst_path, content)
 
 
 def perth_constituent_rst() -> None:
     """Generate and write the RST table for the PERTH tidal constituents."""
-    rst_path = HERE / 'core' / 'perth' / 'constituents.rst'
+    rst_path = HERE / 'constituents' / 'perth.rst'
+    rst_path.parent.mkdir(parents=True, exist_ok=True)
     content = generate_constituent_rst_content(
         engine_name='DOODSON',
-        module_name='perth',
         wave_table=pyfes.perth.WaveTable(),
-        include_details=False,
     )
     write_rst_if_changed(rst_path, content)
 

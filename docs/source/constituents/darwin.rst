@@ -1,44 +1,8 @@
-.. currentmodule:: pyfes.core
-
-DARWIN Constituents
-===================
+DARWIN
+======
 
 This page documents all tidal constituents supported by the DARWIN
 prediction engine.
-
-Accessing Constituents Programmatically
----------------------------------------
-
-To retrieve the wave properties of the constituents supported by the
-DARWIN engine, you can use the :func:`pyfes.darwin.WaveTable`
-class, which provides a mapping of constituent names to their corresponding
-properties.
-
-.. code-block:: python
-
-    import pyfes
-
-    # Get the constituent map for the DARWIN engine
-    wt = pyfes.darwin.WaveTable()
-
-    # Access a specific constituent by name
-    m2 = wt['M2']
-    # Print the name and frequency of the M2 constituent
-    print(f"Name: {m2.name}, Frequency: {m2.frequency()}")
-
-    # Iterate over all constituents
-    for wave in wt:
-        print(f"Constituent: {wave.name}, Frequency: {wave.frequency()}")
-
-    # Display the wave table as a formatted markdown table
-    print(wt.generate_markdown_table())
-
-.. _darwin_constituents:
-
-Available Constituents
-----------------------
-
-The DARWIN engine supports the following tidal constituents:
 
 ============================  =============  =========
 Name                          Speed (deg/h)  XDO
@@ -144,19 +108,9 @@ M8                            115.9364170    H ZZZ ZZZ
 3MS8                          116.9523127    H BXZ ZZZ
 ============================  =============  =========
 
-For detailed information about each constituent's mathematical formulation, and
-reference, see the :ref:`DARWIN constituent implementation details
-<schureman_reference>` page.
+.. note::
 
-Class Documentation
--------------------
-
-.. autoclass:: pyfes.darwin.WaveTable
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. autoclass:: pyfes.darwin.Wave
-    :members:
-    :undoc-members:
-    :show-inheritance:
+    For cross-validation, the table above is compared with the `official list
+    of tidal constituents
+    <https://iho.int/mtg_docs/com_wg/IHOTC/IHOTC_Misc/TWCWG_Constituent_list.pdf>`_,
+    which contains the same information.

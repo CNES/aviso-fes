@@ -12,12 +12,18 @@ namespace py = pybind11;
 namespace fes {
 
 inline auto init_inference_type(py::module& m) -> void {
-  py::enum_<InferenceType>(m, "InferenceType",
-                           "Inference (admittance) interpolation type.")
+  py::enum_<InferenceType>(
+      m, "InferenceType",
+      "This Enum class represents the different inference types available in "
+      "PyFES for handling minor tidal constituents not explicitly provided in "
+      "the tidal atlas. Each inference type corresponds to a specific method "
+      "of estimating the contributions of these minor constituents based on "
+      "the provided data and settings.")
       .value("SPLINE", InferenceType::kSpline,
              "Spline interpolation of admittances.")
       .value("ZERO", InferenceType::kZero,
-             "No interpolation of admittances (zero admittance).")
+             "No inference performed; use only explicitly provided "
+             "constituents.")
       .value("LINEAR", InferenceType::kLinear,
              "Piecewise linear interpolation of admittances.")
       .value("FOURIER", InferenceType::kFourier,

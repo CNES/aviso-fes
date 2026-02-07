@@ -1,120 +1,297 @@
-.. currentmodule:: pyfes
+.. _api_reference:
 
-API
-===
+=============
+API Reference
+=============
 
-Tide evaluation
----------------
+This page provides the complete API reference for the ``pyfes`` package,
+auto-generated from the source code docstrings.
 
-This function evaluates the tidal height at a given time and location. The
-location is specified by longitude and latitude in degrees. The time is
-given as a numpy datetime64 array. The function returns a tuple of three numpy
-arrays: the short-period tide heights, the long-period tide heights, and the
-quality flags. The tidal heights are given in the same units as the tidal model.
+Prediction Functions
+====================
 
 .. autofunction:: pyfes.evaluate_tide
 
-Tide evaluation from constituents
----------------------------------
-
-This function evaluates the tidal height at a given time and location using
-the provided tidal constituents. The location is given as latitude in degrees.
-The time is given as a numpy datetime64 array. The tidal height is returned as
-a tuple of two numpy arrays: the first array contains the short-period tide
-heights, and the second array contains the long-period tide heights. Both
-arrays have the same length as the time array. The tidal heights are given in
-the same units as the tidal model.
-
 .. autofunction:: pyfes.evaluate_tide_from_constituents
-
-Equilibrium long period tide evaluation
----------------------------------------
-
-This function calculates equilibrium ocean tides over long periods using the
-Cartwright-Tayler-Edden spectral line summation method. It incorporates both 2nd
-and 3rd order tidal potential components, with validation against Tamura's
-potential model. The function accepts multiple key inputs: time as numpy
-datetime64 array, latitude in degrees (positive northward), optional list of
-constituents to exclude, and optional computation settings (which include thread
-count configuration via ``with_num_threads()``).
-When the thread count is set to 0, the function automatically determines the
-optimal thread count. Returns a
-numpy array of computed tide heights. This implementation is based on established
-research by Cartwright & Tayler (1971), Cartwright & Edden (1973),
-and Tamura (1987).
 
 .. autofunction:: pyfes.evaluate_equilibrium_long_period
 
-Configuration file
-------------------
-
-This function provides a way to load the tidal model from a configuration
-file. For more information on the configuration file format, see the
-:ref:`configuration file format <configuration_file>` section.
-
-.. currentmodule:: pyfes
-
-.. autofunction:: pyfes.config.load
-
-Configuration classes
----------------------
-
-The configuration classes are used to store the configuration of the tidal
-model.
-
-.. autoclass:: pyfes.config.Configuration
-   :members:
-   :show-inheritance:
-
-.. autoclass:: pyfes.config.Common
-   :members:
-   :show-inheritance:
-
-.. autoclass:: pyfes.config.Cartesian
-   :members:
-   :show-inheritance:
-
-.. autoclass:: pyfes.config.LGP
-   :members:
-   :show-inheritance:
-
-
 Settings
---------
-
-The settings are used to control the behavior of the tidal evaluation.
-
-.. currentmodule:: pyfes
+========
 
 .. autoclass:: pyfes.Settings
    :members:
    :undoc-members:
-   :show-inheritance:
 
 .. autoclass:: pyfes.FesRuntimeSettings
-   :show-inheritance:
-
-   .. automethod:: __init__
-
-.. autoclass:: pyfes.PerthRuntimeSettings
-   :members:
-   :show-inheritance:
-
-   .. automethod:: __init__
-
-Astronomic angles
------------------
-
-.. currentmodule:: pyfes.astronomic_angle
-
-.. autoclass:: pyfes.astronomic_angle.AstronomicAngle
    :members:
    :undoc-members:
    :show-inheritance:
 
-Type hints
-----------
+.. autoclass:: pyfes.PerthRuntimeSettings
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
-.. currentmodule:: pyfes.type_hints
+Enumerations
+============
 
-.. automodule:: pyfes.type_hints
+.. class:: pyfes.EngineType
+
+   Enum class for tidal prediction engines.
+
+   .. autoattribute:: DOODSON
+
+      Uses Darwin notation with Schureman's nodal corrections. This is the
+      classical approach developed for FES tidal atlases.
+
+   .. autoattribute:: DARWIN
+
+      Uses Doodson number classification with group modulations. Developed by
+      Dr. Richard Ray at NASA Goddard Space Flight Center, this engine is
+      designed for GOT (Goddard Ocean Tide) models.
+
+   .. property:: name
+
+      Returns the name of the engine type.
+
+   .. property:: value
+
+      Returns the value associated with the engine type.
+
+.. class:: pyfes.FrequencyUnit
+
+   Enum class for frequency units.
+
+   .. autoattribute:: DEGREE_PER_HOUR
+
+      Frequency in degrees per hour (°/h).
+
+   .. autoattribute:: RADIAN_PER_HOUR
+
+      Frequency in radians per second (rad/s).
+   
+   .. property:: name
+
+      Returns the name of the frequency unit.
+
+   .. property:: value
+
+      Returns the value associated with the frequency unit.
+
+.. class:: pyfes.Formulae
+
+   This Enum class encapsulates the various astronomical formulae required for
+   computing astronomical angles.
+
+   .. autoattribute:: SCHUREMAN_ORDER_1
+
+      First-order polynomial expressions from Schureman (1940), Table 1, p.
+      162. Uses the J1900.0 epoch and UTC time scale. This is the simplest and
+      most traditional formula set, suitable for predictions within a few
+      decades of the reference epoch.
+
+   .. autoattribute:: SCHUREMAN_ORDER_3
+
+      Third-order polynomial expressions extending Schureman's formulae with
+      quadratic and cubic correction terms. Same J1900.0 epoch and UTC time
+      scale, but with improved accuracy for dates further from the reference
+      epoch.
+
+   .. autoattribute:: MEEUS
+
+      Expressions from Jean Meeus, *Astronomical Algorithms* (2nd ed., 1998).
+      Uses the J2000.0 epoch and Terrestrial Dynamical Time (TDT), with
+      fourth-order polynomials derived from modern ephemerides. PyFES
+      automatically applies the UTC-to-TDT correction when this formula set is
+      selected.
+
+   .. autoattribute:: IERS
+
+      Expressions from the IERS Conventions (2010), based on Simon et al.
+      (1994). Uses the J2000.0 epoch and TDT, computing the five lunisolar
+      fundamental arguments (:math:`l, l', F, D, \Omega`) and converting them
+      to the traditional Doodson variables.
+
+   .. property:: name
+
+      Returns the name of the formula.
+
+   .. property:: value
+
+      Returns the value of the formula.
+
+.. class:: pyfes.InferenceType
+   
+   This Enum class represents the different inference types available in PyFES
+   for handling minor tidal constituents not explicitly provided in the tidal
+   atlas. Each inference type corresponds to a specific method of estimating
+   the contributions of these minor constituents based on the provided data
+   and settings.
+
+   .. autoattribute:: FOURIER
+
+      Munk-Cartwright Fourier series interpolation of admittances.
+
+   .. autoattribute:: LINEAR
+
+      Piecewise linear interpolation of admittances, default method for the
+      DOODSON engine.
+
+   .. autoattribute:: SPLINE
+
+      Spline interpolation of admittance, default method for the DARWIN
+      engine.
+
+   .. autoattribute:: ZERO
+
+      No inference performed; use only explicitly provided constituents.
+
+   .. property:: name
+
+      Returns the name of the inference type.
+
+   .. property:: value
+
+      Returns the value associated with the inference type.
+
+
+.. class:: pyfes.TideType
+
+   Enum class for tide types.
+
+   .. autoattribute:: TIDE
+
+      Ocean tide
+
+   .. autoattribute:: RADIAL
+
+      Radial tide
+
+   .. property:: name
+
+      Returns the name of the tide type.
+
+   .. property:: value
+
+      Returns the value of the tide type.
+
+.. class:: pyfes.WaveType
+
+   Enum class for wave types.
+
+   .. autoattribute:: SHORT_PERIOD
+
+      Short-period waves (diurnal and semidiurnal species)
+
+   .. autoattribute:: LONG_PERIOD
+
+      Long-period waves (long-period species)
+
+   .. property:: name
+
+      Returns the name of the wave type.
+
+   .. property:: value
+
+      Returns the value associated with the wave type.
+
+Astronomical Angles
+===================
+
+.. autoclass:: pyfes.AstronomicAngle
+   :members:
+   :undoc-members:
+
+Wave System
+===========
+
+.. autoclass:: pyfes.WaveInterface
+   :members:
+   :undoc-members:
+
+.. autoclass:: pyfes.WaveTableInterface
+   :members:
+   :undoc-members:
+
+Tidal Models
+============
+
+.. autoclass:: pyfes.core.tidal_model.CartesianComplex128
+   :members:
+   :undoc-members:
+
+.. autoclass:: pyfes.core.tidal_model.CartesianComplex64
+   :members:
+   :undoc-members:
+
+.. autoclass:: pyfes.core.tidal_model.LGP1Complex128
+   :members:
+   :undoc-members:
+
+.. autoclass:: pyfes.core.tidal_model.LGP1Complex64
+   :members:
+   :undoc-members:
+
+.. autoclass:: pyfes.core.tidal_model.LGP2Complex128
+   :members:
+   :undoc-members:
+
+.. autoclass:: pyfes.core.tidal_model.LGP2Complex64
+   :members:
+   :undoc-members:
+
+Engine-Specific Modules
+========================
+
+Darwin
+------
+
+.. autoclass:: pyfes.darwin.WaveTable
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. autoclass:: pyfes.darwin.Wave
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+PERTH/Doodson
+-------------
+
+.. autoclass:: pyfes.perth.WaveTable
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. autoclass:: pyfes.perth.Wave
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Configuration
+=============
+
+.. autofunction:: pyfes.config.load
+
+.. autoclass:: pyfes.config.Configuration
+   :members:
+   :undoc-members:
+
+.. autoclass:: pyfes.config.Cartesian
+   :members:
+   :undoc-members:
+
+.. autoclass:: pyfes.config.LGP
+   :members:
+   :undoc-members:
+
+Utility Functions
+=================
+
+.. autofunction:: pyfes.known_constituents
+
+.. autofunction:: pyfes.parse_constituent
+
+.. autofunction:: pyfes.generate_markdown_table
