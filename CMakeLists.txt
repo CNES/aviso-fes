@@ -98,7 +98,7 @@ include(CheckCXXCompilerFlag)
 if(NOT WIN32)
   check_cxx_compiler_flag("-std=c++14" HAS_CPP14_FLAG)
 else()
-  check_cxx_compiler_flag("/std=c++14" HAS_CPP14_FLAG)
+  check_cxx_compiler_flag("/std:c++14" HAS_CPP14_FLAG)
 endif()
 
 if(NOT HAS_CPP14_FLAG)
