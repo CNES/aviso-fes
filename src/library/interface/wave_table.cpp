@@ -254,8 +254,8 @@ auto WaveTableInterface::compute_nodal_modulations(
 auto WaveTableInterface::generate_markdown_table() const -> std::string {
   detail::MarkdownTable constituents_table(
       {"Constituent", "Speed (Deg/hr)", "XDO"});
-  for (const auto& item : *this) {
-    const auto& wave = item.value();
+  for (const auto& item : this->sort_by_frequency()) {
+    const auto& wave = (*this)[item];
 
     constituents_table.add_row(
         {wave->latex_name(), std::to_string(wave->frequency<kDegreePerHour>()),

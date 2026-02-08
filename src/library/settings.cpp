@@ -102,8 +102,8 @@ auto generate_markdown_table(
   // Constituents table
   detail::MarkdownTable constituents_table(
       {"Constituent", "Speed (Deg/hr)", "XDO", "Modeled", "Inferred"});
-  for (const auto& item : *wt) {
-    const auto& wave = item.value();
+  for (const auto& item : wt->sort_by_frequency()) {
+    const auto& wave = (*wt)[item];
     auto is_modeled = wave->is_modeled();
     auto is_inferred =
         check_if_is_inferred(wave->ident(), is_modeled, inferred_constituents);
