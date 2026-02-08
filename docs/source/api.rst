@@ -40,12 +40,12 @@ Enumerations
 
    Enum class for tidal prediction engines.
 
-   .. autoattribute:: DOODSON
+   .. attribute:: DOODSON
 
       Uses Darwin notation with Schureman's nodal corrections. This is the
       classical approach developed for FES tidal atlases.
 
-   .. autoattribute:: DARWIN
+   .. attribute:: DARWIN
 
       Uses Doodson number classification with group modulations. Developed by
       Dr. Richard Ray at NASA Goddard Space Flight Center, this engine is
@@ -63,11 +63,11 @@ Enumerations
 
    Enum class for frequency units.
 
-   .. autoattribute:: DEGREE_PER_HOUR
+   .. attribute:: DEGREE_PER_HOUR
 
       Frequency in degrees per hour (°/h).
 
-   .. autoattribute:: RADIAN_PER_HOUR
+   .. attribute:: RADIAN_PER_HOUR
 
       Frequency in radians per second (rad/s).
 
@@ -84,21 +84,21 @@ Enumerations
    This Enum class encapsulates the various astronomical formulae required for
    computing astronomical angles.
 
-   .. autoattribute:: SCHUREMAN_ORDER_1
+   .. attribute:: SCHUREMAN_ORDER_1
 
       First-order polynomial expressions from Schureman (1940), Table 1, p.
       162. Uses the J1900.0 epoch and UTC time scale. This is the simplest and
       most traditional formula set, suitable for predictions within a few
       decades of the reference epoch.
 
-   .. autoattribute:: SCHUREMAN_ORDER_3
+   .. attribute:: SCHUREMAN_ORDER_3
 
       Third-order polynomial expressions extending Schureman's formulae with
       quadratic and cubic correction terms. Same J1900.0 epoch and UTC time
       scale, but with improved accuracy for dates further from the reference
       epoch.
 
-   .. autoattribute:: MEEUS
+   .. attribute:: MEEUS
 
       Expressions from Jean Meeus, *Astronomical Algorithms* (2nd ed., 1998).
       Uses the J2000.0 epoch and Terrestrial Dynamical Time (TDT), with
@@ -106,7 +106,7 @@ Enumerations
       automatically applies the UTC-to-TDT correction when this formula set is
       selected.
 
-   .. autoattribute:: IERS
+   .. attribute:: IERS
 
       Expressions from the IERS Conventions (2010), based on Simon et al.
       (1994). Uses the J2000.0 epoch and TDT, computing the five lunisolar
@@ -129,21 +129,21 @@ Enumerations
    the contributions of these minor constituents based on the provided data
    and settings.
 
-   .. autoattribute:: FOURIER
+   .. attribute:: FOURIER
 
       Munk-Cartwright Fourier series interpolation of admittances.
 
-   .. autoattribute:: LINEAR
+   .. attribute:: LINEAR
 
       Piecewise linear interpolation of admittances, default method for the
       DOODSON engine.
 
-   .. autoattribute:: SPLINE
+   .. attribute:: SPLINE
 
       Spline interpolation of admittance, default method for the DARWIN
       engine.
 
-   .. autoattribute:: ZERO
+   .. attribute:: ZERO
 
       No inference performed; use only explicitly provided constituents.
 
@@ -160,11 +160,11 @@ Enumerations
 
    Enum class for tide types.
 
-   .. autoattribute:: TIDE
+   .. attribute:: TIDE
 
       Ocean tide
 
-   .. autoattribute:: RADIAL
+   .. attribute:: RADIAL
 
       Radial tide
 
@@ -180,11 +180,11 @@ Enumerations
 
    Enum class for wave types.
 
-   .. autoattribute:: SHORT_PERIOD
+   .. attribute:: SHORT_PERIOD
 
       Short-period waves (diurnal and semidiurnal species)
 
-   .. autoattribute:: LONG_PERIOD
+   .. attribute:: LONG_PERIOD
 
       Long-period waves (long-period species)
 

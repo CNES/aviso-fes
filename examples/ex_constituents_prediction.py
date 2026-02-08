@@ -156,10 +156,9 @@ print(f"""Prediction Settings:
 # <pyfes.evaluate_tide_from_constituents>` to compute the tide at Brest using
 # the observed tidal constituents.
 #
-# We use :py:class:`FesRuntimeSettings <pyfes.FesRuntimeSettings>` to select
-# the DARWIN prediction engine with its default FES runtime parameters. This is
-# a user choice; switch to :py:class:`PerthRuntimeSettings
-# <pyfes.PerthRuntimeSettings>` to run the DOODSON engine instead:
+# We use :py:class:`~pyfes.FesRuntimeSettings` to select the DARWIN prediction
+# engine with its default FES runtime parameters. This is a user choice; switch
+# to :py:class:`~pyfes.PerthRuntimeSettings` to run the DOODSON engine instead:
 #
 # .. code-block:: python
 #

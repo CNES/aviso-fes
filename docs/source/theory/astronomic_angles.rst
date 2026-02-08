@@ -8,7 +8,7 @@ The harmonic prediction equation requires knowing the values of the six
 :term:`fundamental variables` (:math:`\tau, s, h, p, N', p_1`) at any given
 time. These angles are computed from polynomial expressions in the Julian
 century :math:`T` measured from a reference epoch. PyFES provides four sets
-of formulae, selectable via the :class:`~pyfes.core.Formulae` enumeration.
+of formulae, selectable via the :class:`~pyfes.Formulae` enumeration.
 
 This section documents the mathematical expressions implemented in each
 formula set and the auxiliary angles derived from them.
@@ -191,9 +191,10 @@ Comparison of Formula Sets
 Derived Auxiliary Angles
 =========================
 
-After computing the six fundamental variables, PyFES derives several
-auxiliary angles required for the :doc:`nodal corrections <nodal_corrections>`.
-These are computed once per time step in the ``update()`` method.
+After computing the six fundamental variables, PyFES derives several auxiliary
+angles required for the :doc:`nodal corrections <nodal_corrections>`. These are
+computed once per time step in the :meth:`~pyfes.AstronomicAngle.update()`
+method.
 
 Obliquity of the Lunar Orbit (:math:`I`)
 ------------------------------------------
@@ -279,7 +280,7 @@ These are derived from Schureman formulas 213--214 (p. 44).
 Connection to the AstronomicAngle Class
 =========================================
 
-The :class:`~pyfes.astronomic_angle.AstronomicAngle` Python class exposes all
+The :class:`~pyfes.AstronomicAngle` Python class exposes all
 the angles described above:
 
 .. list-table::

@@ -127,8 +127,8 @@ record length increases, more constituent pairs become separable. For example:
 - A **year-long** record resolves the vast majority of significant
   constituents.
 
-The ``select_waves_for_analysis()`` method on
-:class:`~pyfes.core.WaveTableInterface` automatically applies this criterion
+The :meth:`~pyfes.WaveTableInterface.select_waves_for_analysis()` method on
+:class:`~pyfes.WaveTableInterface` automatically applies this criterion
 to select the constituents resolvable for a given record duration.
 
 Role of Nodal Corrections in Analysis

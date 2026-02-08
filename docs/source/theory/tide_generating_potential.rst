@@ -138,18 +138,18 @@ equator and vanishes at the poles.
 Connection to PyFES
 ====================
 
-The tidal constituents stored in ``pyfes.darwin.WaveTable()`` and
-``pyfes.perth.WaveTable()`` are the individual spectral lines obtained by
+The tidal constituents stored in :class:`pyfes.darwin.WaveTable` and
+:class:`pyfes.perth.WaveTable` are the individual spectral lines obtained by
 further expanding each species into its harmonic components (see
 :doc:`harmonic_development`). Each constituent's frequency is determined by
 the rates of change of the astronomical angles appearing in the expansion,
 and its theoretical amplitude derives from the coefficients of the potential
 development.
 
-The :class:`~pyfes.WaveInterface` property ``type`` distinguishes between
-:attr:`~pyfes.WaveType.SHORT_PERIOD` (diurnal and semidiurnal species) and
-:attr:`~pyfes.WaveType.LONG_PERIOD` (long-period species), directly
-reflecting the Laplace species classification.
+The :class:`~pyfes.WaveInterface` property :attr:`~pyfes.WaveInterface.type`
+distinguishes between :attr:`~pyfes.WaveType.SHORT_PERIOD` (diurnal and
+semidiurnal species) and :attr:`~pyfes.WaveType.LONG_PERIOD` (long-period
+species), directly reflecting the Laplace species classification.
 
 References
 ==========

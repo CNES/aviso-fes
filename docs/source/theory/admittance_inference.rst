@@ -37,8 +37,8 @@ Inference Modes
 ================
 
 PyFES offers four inference modes, configurable via
-``with_inference_type()``. These are generic and can be used with either
-prediction engine.
+:meth:`~pyfes.Settings.with_inference_type()`. These are generic and can be
+used with either prediction engine.
 
 Zero Inference (``ZERO``)
 --------------------------
