@@ -147,6 +147,12 @@ def evaluate_tide(
       constituents is always computed because this value does not depend on
       model data.
 
+    Warning:
+      If :attr:`Settings.compute_long_period_equilibrium` returns true, the
+      tidal model must use centimeters. The long period equilibrium is computed
+      in centimeters and is added to the model tide; mixing units would make
+      the result inconsistent.
+
     """
     return core.evaluate_tide(
         tidal_model,
@@ -215,6 +221,12 @@ def evaluate_tide_from_constituents(
         :py:class:`pyfes.Constituent` to a tuple of (amplitude, phase). The
         amplitude and phase values are typically obtained from prior harmonic
         analysis of observed tide gauge data.
+
+    Warning:
+      If :attr:`Settings.compute_long_period_equilibrium` returns true, the
+      tidal model must use centimeters. The long period equilibrium is computed
+      in centimeters and is added to the model tide; mixing units would make
+      the result inconsistent.
 
     """
     return core.evaluate_tide_from_constituents(

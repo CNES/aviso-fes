@@ -105,6 +105,12 @@ Returns:
 Note:
   Computed height of the diurnal and semi-diurnal constituents is set
   to NaN if no data is available at the given position.
+
+Warning:
+  If :attr:`Settings.compute_long_period_equilibrium` returns true, the tidal
+  model must use centimeters. The long period equilibrium is computed in
+  centimeters and is added to the model tide; mixing units would make the
+  result inconsistent.
 )__doc");
 }
 
@@ -136,18 +142,11 @@ Returns:
     * The height of the long period wave constituents of the tidal
       spectrum (same units as the input constituents).
 
-Example:
-  >>> import numpy as np
-  >>> from pyfes import core
-  >>> constituents = {
-  ...     "M2": (1.5, 120.0),  # amplitude=1.5m, phase=120 degrees
-  ...     "S2": (0.5, 45.0),
-  ...     "K1": (0.3, 200.0),
-  ... }
-  >>> dates = np.array(['2024-01-01T00:00:00'], dtype='datetime64[ns]')
-  >>> tide, lp = core.evaluate_tide_from_constituents(
-  ...     constituents, dates, latitude=45.0,
-  ...     settings=core.FESSettings())
+Warning:
+  If :attr:`Settings.compute_long_period_equilibrium` returns true, the input
+  constituents must use centimeters. The long period equilibrium is computed in
+  centimeters and is added to the constituent tide; mixing units would make the
+  result inconsistent.
 )__doc");
 }
 
