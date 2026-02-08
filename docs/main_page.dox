@@ -1,0 +1,216 @@
+/**
+@mainpage FES C++ Library
+
+@section intro Overview
+
+The FES C++ library provides high-performance ocean tide prediction from
+global tidal atlases. It implements the classical harmonic method
+\f[
+  h(t) = H_0 + \sum_k f_k \, H_k \cos(\omega_k t + V_k + u_k - G_k)
+\f]
+with two interchangeable prediction engines — one for FES atlases (Darwin
+notation) and one for GOT atlases (Doodson notation).
+
+The full Python documentation, including theoretical background, is
+available at https://cnes.github.io/aviso-fes/.
+
+@section engines Prediction Engines
+
+| | FES / Darwin | PERTH / Doodson |
+| :--- | :---: | :---: |
+| Settings class | fes::FESSettings | fes::PerthSettings |
+| Constituents | 99 | 80 |
+| Default inference | `kSpline` | `kLinear` |
+| Default formulae | `kSchuremanOrder1` | `kIERS` |
+| Compatible atlases | FES2014, FES2022 | GOT4.10, GOT5.5, GOT5.6 |
+
+Both engines share the same evaluation function (fes::evaluate_tide) and
+the same base fes::Settings class. Switching engines only requires changing
+the settings object and the constituent namespace.
+
+@section api Public API
+
+@subsection api_prediction Prediction Functions
+
+- fes::evaluate_tide() — predict tides by interpolating from a tidal model
+- fes::evaluate_tide_from_constituents() — predict tides from known harmonic
+  constants (e.g. tide-gauge analysis)
+- fes::evaluate_equilibrium_long_period() — compute the long-period
+  equilibrium tide from the Cartwright–Tayler–Edden tables
+
+All three return Eigen vectors and accept an optional fes::Settings
+parameter.
+
+@subsection api_models Tidal Model Classes
+
+The tidal model is loaded once, then passed to @c evaluate_tide.
+
+| Class | Grid type | Use case |
+| :--- | :--- | :--- |
+| fes::tidal_model::Cartesian | Regular lat/lon grid | Load tide, radial tide |
+| fes::tidal_model::LGP1 | Unstructured mesh (P1) | Ocean tide |
+| fes::tidal_model::LGP2 | Unstructured mesh (P2) | Ocean tide (higher order) |
+
+All models are templated on the value type (`std::complex<double>` or
+`std::complex<float>`).
+
+@subsection api_settings Settings
+
+fes::Settings controls every tunable parameter. Two convenience subclasses
+provide sensible defaults:
+
+@code{.cpp}
+// FES atlas — uses Darwin notation, Schureman angles, spline inference
+auto fes = fes::FESSettings();
+
+// GOT atlas — uses Doodson notation, IERS angles, linear inference
+auto got = fes::PerthSettings();
+@endcode
+
+Both classes expose the same builder methods:
+
+| Method | Description |
+| :--- | :--- |
+| `with_inference_type()` | `kZero`, `kLinear`, `kSpline`, `kFourier` |
+| `with_astronomic_formulae()` | `kSchuremanOrder1`, `kSchuremanOrder3`, `kMeeus`, `kIERS` |
+| `with_time_tolerance()` | Seconds during which astronomical angles are cached (0 = recompute every step) |
+| `with_group_modulations()` | Enable group nodal corrections (PERTH engine only, disabled by default) |
+| `with_compute_long_period_equilibrium()` | Include LPE in the result (default: true for FES, false for PERTH) |
+| `with_num_threads()` | Number of threads (0 = auto-detect) |
+
+@subsection api_constituents Constituent Catalogues
+
+Each engine defines its constituents in a dedicated namespace:
+
+- @c fes::darwin — 99 constituents identified by Darwin names
+  (e.g. `fes::darwin::kM2`, `fes::darwin::kS2`)
+- @c fes::perth — 80 constituents identified by Doodson numbers
+  (e.g. `fes::perth::kM2`, `fes::perth::kS2`)
+
+Both namespaces use the unified fes::ConstituentId enum.
+
+@subsection api_wavetable Wave Tables
+
+fes::WaveTableInterface holds the full set of tidal waves for a given
+engine. It is created by the factory function:
+
+@code{.cpp}
+auto wt = fes::wave_table_factory(fes::EngineType::kDarwin);
+@endcode
+
+The wave table provides:
+- Access to individual waves by name or index
+- Nodal correction computation (fes::WaveTableInterface::compute_nodal_corrections)
+- Harmonic analysis (fes::WaveTableInterface::harmonic_analysis)
+- Rayleigh-criterion wave selection (fes::WaveTableInterface::select_waves_for_analysis)
+
+@section usage Usage Example
+
+The example below predicts ocean tides and the radial loading tide at a
+single location.
+
+@code{.cpp}
+#include <Eigen/Core>
+#include <iostream>
+
+#include "fes/darwin/constituent.hpp"
+#include "fes/settings.hpp"
+#include "fes/tidal_model/cartesian.hpp"
+#include "fes/tidal_model/lgp2.hpp"
+#include "fes/tide.hpp"
+
+int main() {
+  // --- 1. Load the ocean-tide model (LGP2 mesh) -------------------------
+  auto ocean = fes::tidal_model::LGP2<std::complex<double>>();
+  ocean.load("/path/to/fes2022b/ocean_tide.nc",
+             {fes::darwin::kM2, fes::darwin::kS2, fes::darwin::kN2,
+              fes::darwin::kK2, fes::darwin::kK1, fes::darwin::kO1,
+              fes::darwin::kP1, fes::darwin::kQ1});
+
+  // --- 2. Load the radial (loading) tide model (Cartesian grid) ----------
+  auto radial = fes::tidal_model::Cartesian<std::complex<double>>();
+  // ... add constituents from individual NetCDF files ...
+
+  // --- 3. Configure the engine -------------------------------------------
+  auto settings = fes::FESSettings()
+      .with_num_threads(0)                                       // auto
+      .with_inference_type(fes::InferenceType::kSpline)          // default
+      .with_time_tolerance(3600.0);                              // 1 h cache
+
+  // --- 4. Prepare coordinates --------------------------------------------
+  Eigen::VectorXd epoch(1), lon(1), lat(1);
+  epoch(0) = 1577836800.0;   // 2020-01-01T00:00:00Z
+  lon(0)   = -7.688;
+  lat(0)   = 59.195;
+
+  // --- 5. Evaluate -------------------------------------------------------
+  auto [tide, lp, quality] =
+      fes::evaluate_tide(&ocean, epoch, lon, lat, settings);
+
+  auto [load, load_lp, load_quality] =
+      fes::evaluate_tide(&radial, epoch, lon, lat, settings);
+
+  std::cout << "Ocean tide : " << tide(0) + lp(0) << '\n';
+  std::cout << "Radial tide: " << load(0) << '\n';
+  return 0;
+}
+@endcode
+
+@section build Building
+
+@subsection build_deps Prerequisites
+
+- C++14 compiler (GCC 10+, Clang 11+, MSVC 2019+)
+- Eigen 3
+- NetCDF-CXX4
+- Boost (header-only)
+- Tidal atlas data files (FES or GOT)
+
+@subsection build_cmake CMake Integration
+
+@code{.cmake}
+cmake_minimum_required(VERSION 3.20)
+project(tide_prediction LANGUAGES CXX)
+
+find_package(Eigen3 REQUIRED)
+find_package(Boost REQUIRED)
+
+# Find the FES library (installed or in-tree)
+find_library(FES_LIBRARY fes REQUIRED)
+find_path(FES_INCLUDE_DIR fes/tide.hpp REQUIRED)
+
+# Find NetCDF-CXX4
+find_package(PkgConfig)
+if(PkgConfig_FOUND)
+  pkg_check_modules(NETCDF_CXX netcdf-cxx4)
+endif()
+if(NOT NETCDF_CXX_FOUND AND DEFINED ENV{CONDA_PREFIX})
+  set(NETCDF_CXX_INCLUDE_DIRS "$ENV{CONDA_PREFIX}/include")
+  find_library(NETCDF_CXX_LIBRARIES
+    NAMES netcdf-cxx4 netcdf_c++4
+    HINTS "$ENV{CONDA_PREFIX}/lib" REQUIRED)
+endif()
+
+add_executable(tide_prediction main.cpp)
+target_link_libraries(tide_prediction
+  ${FES_LIBRARY} ${NETCDF_CXX_LIBRARIES} Eigen3::Eigen Boost::boost)
+target_include_directories(tide_prediction PRIVATE
+  ${FES_INCLUDE_DIR} ${NETCDF_CXX_INCLUDE_DIRS})
+@endcode
+
+@subsection build_cli Direct Compilation
+
+@code{.sh}
+g++ -O2 -std=c++17 main.cpp \
+    -I/path/to/include -I/path/to/eigen3 \
+    -L/path/to/lib -lfes -lnetcdf-cxx4 -lnetcdf \
+    -o tide_prediction
+@endcode
+
+@section seealso See Also
+
+- <a href="https://cnes.github.io/aviso-fes/">PyFES documentation</a> —
+  Python API, theoretical background, tidal constituent tables, and worked
+  examples.
+- <a href="https://github.com/CNES/aviso-fes">GitHub repository</a>
+*/

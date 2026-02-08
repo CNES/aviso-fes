@@ -172,6 +172,13 @@ The complete documentation is available on
 - [Examples](https://cnes.github.io/aviso-fes/auto_examples/index.html) --
   worked examples with plots
 
+## C++ API
+
+This library provides a C++ API for high-performance tide prediction. The C++
+part of the library is documented using Doxygen. You can generate the
+documentation by running `doxygen` in the `docs` directory after installing
+Doxygen.
+
 ## Legacy C Version
 
 For users requiring the original C implementation, the legacy version remains
