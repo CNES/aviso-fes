@@ -1,12 +1,12 @@
-"""***********************************************
-Comparing FES/Darwin and PERTH5/Doodson Engines
-***********************************************
+"""**********************************************
+Comparing FES/Darwin and PERTH/Doodson Engines
+**********************************************
 
 This example demonstrates the differences between PyFES's two prediction
 engines:
 
 1. **FES/Darwin Engine**: Uses Darwin notation with Schureman nodal corrections
-2. **PERTH5/Doodson Engine**: Uses Doodson numbers with group modulations
+2. **PERTH/Doodson Engine**: Uses Doodson numbers with group modulations
 
 The example shows how to:
 
@@ -24,7 +24,17 @@ The example shows how to:
 # %%
 from __future__ import annotations
 
+from IPython.display import HTML
+import markdown
+
 import pyfes
+
+
+def md_to_html(md_string: str) -> HTML:
+    """Convert a markdown string to HTML for display in Jupyter."""
+    html_string = markdown.markdown(md_string, extensions=['tables'])
+    return HTML(html_string)
+
 
 # %%
 # Understanding the Two Engines
@@ -110,8 +120,8 @@ print('  • FOURIER: Fourier-based (most accurate)')
 #
 # Each engine supports a different set of constituents. Let's compare them:
 
-darwin_constituents = pyfes.darwin.WaveTable()
-perth_constituents = pyfes.perth.WaveTable()
+darwin_constituents = pyfes.wave_table_factory(pyfes.DARWIN)
+perth_constituents = pyfes.wave_table_factory(pyfes.DOODSON)
 
 print('\n' + '=' * 70)
 print('Constituent Support Comparison')
@@ -149,12 +159,6 @@ major_constituents = [
     'Sa',
 ]
 
-print('\n' + '=' * 70)
-print('Major Constituents: Availability by Engine')
-print('=' * 70)
-print(f'\n{"Constituent":<12} {"Darwin":<10} {"PERTH5":<10} {"Type"}')
-print('-' * 70)
-
 descriptions = {
     'M2': 'Semidiurnal',
     'S2': 'Semidiurnal',
@@ -170,12 +174,18 @@ descriptions = {
     'Sa': 'Long-period',
 }
 
-for const in major_constituents:
-    in_darwin = '✓' if const in darwin_set else '✗'
-    in_perth = '✓' if const in perth_set else '✗'
-    desc = descriptions.get(const, '')
-    print(f'{const:<12} {in_darwin:<10} {in_perth:<10} {desc}')
+lines = ['| Constituent | Darwin | PERTH5 | Type |']
+lines.append('| :--- | :---: | :---: | :--- |')
 
+for const in major_constituents:
+    in_darwin = '\u2713' if const in darwin_set else '\u2717'
+    in_perth = '\u2713' if const in perth_set else '\u2717'
+    desc = descriptions.get(const, '')
+    lines.append(f'| {const} | {in_darwin} | {in_perth} | {desc} |')
+
+md_to_html('\n'.join(lines))
+
+# %%
 # Show some unique constituents
 if darwin_only:
     print(
@@ -328,25 +338,13 @@ print('  • Need IERS astronomical conventions')
 #
 # The PERTH5 engine offers three inference strategies:
 
-print('\n' + '=' * 70)
-print('PERTH5 Inference Types')
-print('=' * 70)
-
-inference_comparison = """
-┌────────────────┬───────────────┬────────────┬──────────────────┐
-│ Inference Type │ Accuracy      │ Speed      │ Use Case         │
-├────────────────┼───────────────┼────────────┼──────────────────┤
-│ ZERO           │ Lowest        │ Fastest    │ All constituents │
-│                │ (no inference)│            │ in atlas         │
-├────────────────┼───────────────┼────────────┼──────────────────┤
-│ LINEAR         │ Good          │ Fast       │ General use      │
-│                │ (balanced)    │            │ (recommended)    │
-├────────────────┼───────────────┼────────────┼──────────────────┤
-│ FOURIER        │ Highest       │ Slower     │ High-precision   │
-│                │ (best)        │            │ applications     │
-└────────────────┴───────────────┴────────────┴──────────────────┘
-"""
-print(inference_comparison)
+md_to_html(
+    '| Inference Type | Accuracy | Speed | Use Case |\n'
+    '| :--- | :--- | :--- | :--- |\n'
+    '| ZERO | Lowest (no inference) | Fastest | All constituents in atlas |\n'
+    '| LINEAR | Good (balanced) | Fast | General use (recommended) |\n'
+    '| FOURIER | Highest (best) | Slower | High-precision applications |'
+)
 
 print('\nCode Examples:')
 print('-' * 70)
@@ -407,7 +405,7 @@ print('✓ Settings are automatically created based on engine type')
 # PyFES provides two ways to display constituent information as markdown
 # tables:
 #
-# 1. :func:`pyfes.core.generate_markdown_table` generates a table from the
+# 1. :func:`pyfes.generate_markdown_table` generates a table from the
 #    engine settings and a list of modeled constituents, showing which
 #    constituents are provided by the model and which are inferred.
 #
@@ -417,19 +415,14 @@ print('✓ Settings are automatically created based on engine type')
 #    frequency, Doodson number, etc.).
 
 # Table for the Darwin engine settings
-print('\n' + '=' * 70)
-print('Markdown Table: FES/Darwin Configuration')
-print('=' * 70)
-print(
-    pyfes.core.generate_markdown_table(fes_settings, ['M2', 'S2', 'K1', 'O1'])
+md_to_html(
+    pyfes.generate_markdown_table(fes_settings, ['M2', 'S2', 'K1', 'O1'])
 )
 
+# %%
 # Table for the PERTH5 engine settings
-print('\n' + '=' * 70)
-print('Markdown Table: PERTH5/Doodson Configuration')
-print('=' * 70)
-print(
-    pyfes.core.generate_markdown_table(
+md_to_html(
+    pyfes.generate_markdown_table(
         perth_settings_linear, ['M2', 'S2', 'K1', 'O1']
     )
 )
@@ -437,13 +430,11 @@ print(
 # %%
 # You can also display the wave table itself to see the full list of
 # constituents and their properties.
-print('\n' + '=' * 70)
-print('Darwin Wave Table (first 10 constituents)')
-print('=' * 70)
-wt = pyfes.darwin.WaveTable(
-    ['M2', 'S2', 'N2', 'K2', 'K1', 'O1', 'P1', 'Q1', 'Mf', 'Mm']
+wt = pyfes.wave_table_factory(
+    pyfes.DARWIN,
+    ['M2', 'S2', 'N2', 'K2', 'K1', 'O1', 'P1', 'Q1', 'Mf', 'Mm'],
 )
-print(wt.generate_markdown_table())
+md_to_html(wt.generate_markdown_table())
 
 # %%
 # Summary

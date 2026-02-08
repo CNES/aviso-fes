@@ -101,7 +101,7 @@ structures (e.g., ``CartesianComplex128``, ``LGP1Complex128``).
 .. _rayleigh_criterion_theory:
 
 The Rayleigh Criterion
-=======================
+======================
 
 Two constituents of angular speeds :math:`\omega_1` and :math:`\omega_2` can
 be independently resolved from a record of duration :math:`T` only if:

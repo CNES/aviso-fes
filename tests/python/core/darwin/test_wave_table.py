@@ -11,10 +11,12 @@ import time
 
 import netCDF4
 import numpy
-from pyfes import core
 import pytest
 
+from pyfes import core
+
 from .. import is_free_threaded
+
 
 DATASET_DIR = pathlib.Path(__file__).parent.parent.parent / 'dataset'
 FES_TIDE_TIME_SERIES = DATASET_DIR / 'fes_tide_time_series.nc'
@@ -49,6 +51,42 @@ def test_wave() -> None:
     wave = wt['M2']
     assert wave.frequency() * 24 == pytest.approx(12.140833182614747, 1e-6)
     assert wave.type == core.SHORT_PERIOD
+
+
+def test_select_waves_for_analysis() -> None:
+    wt = core.wave_table_factory(core.DARWIN)
+    # For a 15-day record: M₂ and S₂ should both be selected
+    # (their separation period is ~14.77 days < 15 days)
+    selected_waves = wt.select_waves_for_analysis(15 * 86400)
+    print(selected_waves)
+    assert 'M2' in selected_waves
+    assert 'S2' in selected_waves
+    # For a 14-day record: only one of M2/S2 should survive
+    selected_waves = wt.select_waves_for_analysis(14 * 86400)
+    m2_selected = 'M2' in selected_waves
+    s2_selected = 'S2' in selected_waves
+    assert m2_selected != s2_selected, (
+        'M2 and S2 should not both be selected for a 14-day record'
+    )
+    # For a 30-day record: K1 and P1 should not both be selected
+    # (separation requires ~182 days)
+    selected_waves = wt.select_waves_for_analysis(30 * 86400)
+    k1_selected = 'K1' in selected_waves
+    p1_selected = 'P1' in selected_waves
+    assert k1_selected != p1_selected, (
+        'K1 and P1 should not both be selected for a 30-day record'
+    )
+    # Long-period waves (e.g., Mm, Mf) should be rejected for records shorter
+    # than their periods
+    mm_period = wt['Mm'].period
+    selected_waves = wt.select_waves_for_analysis(int(mm_period * 3600))
+    assert 'Mm' not in selected_waves, (
+        'Mm should not be selected for records shorter than its period'
+    )
+    selected_waves = wt.select_waves_for_analysis(int(mm_period * 3600 + 1))
+    assert 'Mm' in selected_waves, (
+        'Mm should be selected for records longer than its period'
+    )
 
 
 def test_harmonic_analysis() -> None:

@@ -148,18 +148,46 @@ Args:
 )__doc__")
       .def("select_waves_for_analysis",
            &WaveTableInterface::select_waves_for_analysis, py::arg("duration"),
-           py::arg("f") = 2.0,
+           py::arg("rayleigh_criterion") = 1.0,
            R"__doc__(
-Return the list of tidal waves such that their period is more than
-twice the duration of the time series analyzed.
+Select tidal waves that can be resolved from a record of a given duration
+based on the Rayleigh criterion.
+
+Converts the record duration to hours, computes the minimum angular separation
+:math:`2\pi C_R / T` then iterates over the wave table, rejecting waves too
+close to :math:`DC` or closer than the Rayleigh limit to any already - selected
+wave.
 
 Args:
   duration: Duration of the time series analyzed in seconds.
-  f: Number of times the period of the wave is greater than
-    the duration of the time series analyzed.
+  rayleigh_criterion: The Rayleigh criterion factor (C_R) to determine the
+    minimum frequency. Default is 1.0, which corresponds to the classical
+    Rayleigh criterion.
 
 Returns:
   List of selected tidal wave names.
+)__doc__")
+      .def(
+          "sort_by_frequency",
+          [](const WaveTableInterface& self, const bool ascending) {
+            auto sorted = self.sort_by_frequency(ascending);
+            auto result = std::vector<std::string>();
+            result.reserve(sorted.size());
+            for (const auto& ident : sorted) {
+              result.push_back(constituents::name(ident));
+            }
+            return result;
+          },
+          py::arg("ascending") = true,
+          R"__doc__(
+Returns the constituents sorted by frequency.
+
+Args:
+  ascending: If True (default), sort by ascending frequency;
+    otherwise, sort by descending frequency.
+
+Returns:
+  List of constituent names sorted by frequency.
 )__doc__")
       .def_static(
           "harmonic_analysis",

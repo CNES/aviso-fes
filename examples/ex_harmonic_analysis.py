@@ -16,7 +16,9 @@ import pathlib
 
 import matplotlib.pyplot
 import netCDF4
+
 import pyfes
+
 
 # %%
 # The distribution contains a time series fes_tide_time_series.nc that will be
@@ -39,7 +41,7 @@ with netCDF4.Dataset(SIGNAL, 'r') as ds:
 # Then, we will create an instance of a :py:class:`pyfes.WaveTableInterface`
 # object. This class handles and retrieves the properties of the tidal waves
 # supported by the prediction engine.
-wt = pyfes.darwin.WaveTable()
+wt = pyfes.wave_table_factory(pyfes.DARWIN)
 
 # %%
 # By default, all tidal components are loaded into memory. Use
@@ -48,15 +50,23 @@ wt = pyfes.darwin.WaveTable()
 print(pyfes.known_constituents())
 
 # %%
-# If you want to restrict the analysis to only a few components, you must
-# provide a list to the constructor in order to specify the waves to be
-# analyzed.
+#
+# If you want to restrict the analysis to only a few components, either pass a
+# list of waves to the constructor or call
+# :py:meth:`~pyfes.WaveTableInterface.select_waves_for_analysis` to
+# automatically choose them based on the time-series length.
+#
+# .. seealso::
+#
+#     :ref:`rayleigh_criterion_theory` for the physical explanation of how
+#     the Rayleigh Criterion separates tidal constituents.
 #
 # In this example, we overwrite the previous WaveTable with a new one that
 # includes a specific list of constituents tailored for this dataset. This
 # ensures the analysis focuses on the relevant tidal components present in
 # the signal.
-wt = pyfes.darwin.WaveTable(
+wt = pyfes.wave_table_factory(
+    pyfes.DARWIN,
     [
         'Mm',
         'Mf',
@@ -125,7 +135,7 @@ wt = pyfes.darwin.WaveTable(
         'MSf',
         'Ssa',
         'Sa',
-    ]
+    ],
 )
 
 # %%

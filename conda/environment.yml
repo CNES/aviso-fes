@@ -3,19 +3,20 @@ channels:
   - conda-forge
   - defaults
 dependencies:
+  - binutils # [not win]
+  - boost-cpp
+  - cartopy
   - cmake
+  - cxx-compiler
   - eigen
-  - setuptools_scm
+  - gtest
+  - make # [not win]
+  - markdown
+  - matplotlib
   - netcdf4
   - pytest
-  - boost-cpp
-  - cxx-compiler
-  - make # [not win]
-  - binutils # [not win]
   - pyyaml
-  - gtest
+  - setuptools_scm
   - sphinx
   - sphinx-book-theme
   - sphinx-gallery
-  - matplotlib
-  - cartopy

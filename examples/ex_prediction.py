@@ -21,10 +21,18 @@ from __future__ import annotations
 import os
 import pathlib
 
+from IPython.display import HTML
+import markdown
 import numpy
-from IPython.display import Markdown, display
 
 import pyfes
+
+
+def md_to_html(md_string: str) -> HTML:
+    """Convert a markdown string to HTML for display in Jupyter."""
+    html_string = markdown.markdown(md_string, extensions=['tables'])
+    return HTML(html_string)
+
 
 # %%
 # First we create an environment variable to store the path to the model file.
@@ -84,26 +92,14 @@ print(f'Time tolerance: {config.settings.time_tolerance} seconds')
 #
 # You can generate a markdown table summarizing the engine settings and the
 # constituent list (modeled vs. inferred) using
-# :func:`pyfes.core.generate_markdown_table`. Pass the settings and the list
+# :func:`pyfes.generate_markdown_table`. Pass the settings and the list
 # of modeled constituents to see which ones are provided by the atlas and which
 # ones will be inferred.
-display(
-    Markdown(
-        pyfes.core.generate_markdown_table(
-            config.settings, config.models['tide'].identifiers()
-        )
+md_to_html(
+    pyfes.generate_markdown_table(
+        config.settings, config.models['tide'].identifiers()
     )
 )
-
-# %%
-# Displaying the Wave Table
-# ==========================
-#
-# You can also display a markdown table for any
-# :py:class:`~pyfes.WaveTableInterface` instance. This shows the detailed
-# properties of each constituent (name, frequency, Doodson number, etc.).
-wt = config.models['tide'].wave_table(config.settings.engine_type)
-display(Markdown(wt.generate_markdown_table()))
 
 # %%
 # .. hint::

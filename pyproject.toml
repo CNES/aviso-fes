@@ -81,6 +81,7 @@ select = [
   "FA",     # flake8-future-annotations
   "FLY",    # flynt
   "G",      # flake8-logging-format
+  "I",      # isort
   "INT",    # flake8-gettext
   "NPY002", # numpy-legacy-random
   "PERF",   # Perflint

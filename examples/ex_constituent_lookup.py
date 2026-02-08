@@ -16,16 +16,28 @@ It demonstrates:
 # %%
 from __future__ import annotations
 
+from IPython.display import HTML
+import markdown
+
 import pyfes
+
+
+def md_to_html(md_string: str) -> HTML:
+    """Convert a markdown string to HTML for display in Jupyter."""
+    html_string = markdown.markdown(md_string, extensions=['tables'])
+    return HTML(html_string)
+
 
 # %%
 # Get Constituent Lists
 # =====================
 #
-# Each engine maintains its own list of supported constituents.
+# Each engine maintains its own list of supported constituents. Use
+# :py:func:`pyfes.wave_table_factory` to create wave table instances for each
+# engine.
 
-darwin_constituents = pyfes.darwin.WaveTable()
-perth_constituents = pyfes.perth.WaveTable()
+darwin_constituents = pyfes.wave_table_factory(pyfes.DARWIN)
+perth_constituents = pyfes.wave_table_factory(pyfes.DOODSON)
 
 print('=' * 70)
 print('PyFES Constituent Support by Engine')
@@ -38,10 +50,6 @@ print(f'PERTH5 Engine:  {len(perth_constituents):3d} constituents')
 # ====================================
 #
 # Let's compare support for the most important tidal constituents.
-
-print('\n' + '=' * 70)
-print('Major Tidal Constituents: Engine Comparison')
-print('=' * 70)
 
 major_constituents_info = [
     ('M2', 'Principal lunar semidiurnal'),
@@ -64,13 +72,15 @@ major_constituents_info = [
     ('Sa', 'Solar annual'),
 ]
 
-print(f'\n{"Constituent":<15} {"Darwin":<10} {"PERTH5":<10} {"Description"}')
-print('-' * 70)
+lines = ['| Constituent | Darwin | PERTH5 | Description |']
+lines.append('| :--- | :---: | :---: | :--- |')
 
 for const, desc in major_constituents_info:
-    in_darwin = '✓' if const in darwin_constituents else '✗'
-    in_perth = '✓' if const in perth_constituents else '✗'
-    print(f'{const:<15} {in_darwin:<10} {in_perth:<10} {desc}')
+    in_darwin = '\u2713' if const in darwin_constituents else '\u2717'
+    in_perth = '\u2713' if const in perth_constituents else '\u2717'
+    lines.append(f'| {const} | {in_darwin} | {in_perth} | {desc} |')
+
+md_to_html('\n'.join(lines))
 
 # %%
 # Common, Unique, and Engine-Specific Constituents
@@ -147,22 +157,22 @@ def check_constituent(name: str) -> None:
     in_darwin = name in darwin_constituents
     in_perth = name in perth_constituents
 
+    def status(supported: bool) -> str:
+        """Return a checkmark if supported, otherwise a cross."""
+        return '\u2713 Supported' if supported else '\u2717 Not supported'
+
     print(f'\nConstituent: {name}')
-    print(
-        f'  Darwin Engine:  {"✓ Supported" if in_darwin else "✗ Not supported"}'
-    )
-    print(
-        f'  PERTH5 Engine:  {"✓ Supported" if in_perth else "✗ Not supported"}'
-    )
+    print(f'  Darwin Engine:  {status(in_darwin)}')
+    print(f'  PERTH5 Engine:  {status(in_perth)}')
 
     if in_darwin and in_perth:
-        print('  → Available in BOTH engines')
+        print('  \u2192 Available in BOTH engines')
     elif in_darwin:
-        print('  → Only in Darwin engine (use FES atlases)')
+        print('  \u2192 Only in Darwin engine (use FES atlases)')
     elif in_perth:
-        print('  → Only in PERTH5 engine (use GOT atlases)')
+        print('  \u2192 Only in PERTH5 engine (use GOT atlases)')
     else:
-        print('  → NOT available in either engine')
+        print('  \u2192 NOT available in either engine')
 
 
 # %%
@@ -192,10 +202,6 @@ if perth_only:
 # ================================
 #
 # Group constituents by their tidal frequency type.
-
-print('\n' + '=' * 70)
-print('Constituent Classification by Type')
-print('=' * 70)
 
 # Common constituent name patterns for classification
 long_period_patterns = ['Sa', 'Ssa', 'Mm', 'Mf', 'Mt', 'Msqm', 'Mq']
@@ -246,17 +252,19 @@ for got_tidal_constituent in perth_constituents:
         perth_classified[tide_type] = []
     perth_classified[tide_type].append(got_tidal_constituent)
 
-# Print classification
-print(f'\n{"Type":<15} {"Darwin":<10} {"PERTH5":<10}')
-print('-' * 35)
-
+# Build markdown table for classification
 all_types = sorted(
     set(list(darwin_classified.keys()) + list(perth_classified.keys()))
 )
+
+lines = ['| Type | Darwin | PERTH5 |']
+lines.append('| :--- | ---: | ---: |')
 for tide_type in all_types:
     darwin_count = len(darwin_classified.get(tide_type, []))
     perth_count = len(perth_classified.get(tide_type, []))
-    print(f'{tide_type:<15} {darwin_count:<10} {perth_count:<10}')
+    lines.append(f'| {tide_type} | {darwin_count} | {perth_count} |')
+
+md_to_html('\n'.join(lines))
 
 # %%
 # Summary
@@ -267,23 +275,24 @@ print('Summary')
 print('=' * 70)
 print(f"""
 Constituent Support Summary:
-  • Darwin engine supports {len(darwin_constituents)} constituents
-  • PERTH5 engine supports {len(perth_constituents)} constituents
-  • {len(common)} constituents are common to both engines
-  • {len(darwin_only)} constituents are unique to Darwin
-  • {len(perth_only)} constituents are unique to PERTH5
+  \u2022 Darwin engine supports {len(darwin_constituents)} constituents
+  \u2022 PERTH5 engine supports {len(perth_constituents)} constituents
+  \u2022 {len(common)} constituents are common to both engines
+  \u2022 {len(darwin_only)} constituents are unique to Darwin
+  \u2022 {len(perth_only)} constituents are unique to PERTH5
 
 Most major tidal constituents (M2, S2, K1, O1, etc.) are available in both
 engines. The differences primarily lie in minor constituents and specific
 modeling choices for each engine.
 
 When working with tidal constituents:
-  • Use pyfes.darwin.WaveTable() or pyfes.perth.WaveTable() to list
-    each engine's supported constituents
-  • Use pyfes.known_constituents() for a combined list of all known names
-  • Match your constituent list to your tidal atlas format
-  • Use Darwin engine with FES atlases
-  • Use PERTH5 engine with GOT atlases
+  \u2022 Use pyfes.wave_table_factory(pyfes.DARWIN) or
+    pyfes.wave_table_factory(pyfes.DOODSON) to list each engine's
+    supported constituents
+  \u2022 Use pyfes.known_constituents() for a combined list of all known names
+  \u2022 Match your constituent list to your tidal atlas format
+  \u2022 Use Darwin engine with FES atlases
+  \u2022 Use PERTH5 engine with GOT atlases
 """)
 
 print('=' * 70)

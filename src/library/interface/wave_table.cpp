@@ -1,6 +1,7 @@
 #include "fes/interface/wave_table.hpp"
 
 #include <Eigen/Core>
+#include <algorithm>
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
@@ -8,24 +9,147 @@
 #include <stdexcept>
 #include <string>
 #include <tuple>
+#include <utility>
 #include <vector>
 
+#include "fes/constituent.hpp"
 #include "fes/detail/markdown_table.hpp"
 #include "fes/detail/parallel_for.hpp"
+#include "fes/inference.hpp"
 #include "fes/interface/wave.hpp"
 
 namespace fes {
 
-auto WaveTableInterface::select_waves_for_analysis(const double duration,
-                                                   const double f)
+// Returns the approximate theoretical equilibrium amplitude (scaled M2=100).
+// Values derived from the Schureman (1958) or Doodson (1921) potential.
+// This provides a "Scientific Ranking" for sorting.
+auto get_theoretical_amplitude(const ConstituentId ident) -> double {
+  switch (ident) {
+    // --- Semi-Diurnal (Species 2) ---
+    case kM2:
+      return 100.0;
+    case kS2:
+      return 46.6;
+    case kN2:
+      return 19.2;
+    case kK2:
+      return 12.7;
+    case k2N2:
+      return 2.5;
+    case kMu2:
+      return 2.4;
+    case kNu2:
+      return 3.6;
+    case kL2:
+      return 2.8;
+    case kT2:
+      return 2.7;
+    // --- Diurnal (Species 1) ---
+    case kK1:
+      return 58.4;
+    case kO1:
+      return 41.5;
+    case kP1:
+      return 19.3;
+    case kQ1:
+      return 7.9;
+    case kM1:
+      return 3.1;
+    case kJ1:
+      return 3.3;
+    case kOO1:
+      return 1.6;
+    case k2Q1:
+      return 1.0;
+    // --- Long Period (Species 0) ---
+    case kMf:
+      return 17.2;
+    case kMm:
+      return 9.1;
+    case kSsa:
+      return 8.0;
+    case kSa:
+      return 1.1;
+    // --- Shallow Water / Non-Linear (No theoretical potential) ---
+    // We assign them low "dummy" priorities based on typical observation.
+    case kM4:
+      return 0.5;
+    case kMS4:
+      return 0.4;
+    case kM6:
+      return 0.1;
+    default:
+      // Default for unknown or very minor constituents
+      return 0.0;
+  }
+}
+
+struct Candidate {
+  ConstituentId id;
+  double omega;
+  double rank;
+};
+
+auto WaveTableInterface::select_waves_for_analysis(
+    const double duration, const double rayleigh_criterion)
     -> std::vector<std::string> {
-  auto result = std::vector<std::string>();
-  for (auto& item : *this) {
-    auto& wave = item.value();
-    if (wave->period() < f * (duration / 3600.0)) {
-      result.emplace_back(wave->name());
+  auto candidates = std::vector<Candidate>();
+
+  // Convert duration from seconds to hours
+  const auto duration_hours = duration / 3600.0;
+  // Avoid division by zero for invalid durations
+  if (duration_hours <= 1e-6) {
+    return {};
+  }
+
+  // Calculate the frequency resolution limit (Rayleigh frequency)
+  // Formula: Delta_f >= C_R / T  (in cycles/hour)
+  // Angular: Delta_w >= 2 * pi * C_R / T (in radians/hour)
+  const auto min_separation =
+      detail::math::two_pi<double>() * rayleigh_criterion / duration_hours;
+
+  // 1. Filter candidates
+  for (const auto& item : *this) {
+    const auto& wave = item.value();
+    const auto omega = wave->frequency();
+
+    // Check separability from DC (Period check)
+    if (std::abs(omega) >= min_separation) {
+      candidates.push_back(
+          {wave->ident(), omega, get_theoretical_amplitude(wave->ident())});
     }
   }
+
+  // 2. Sort by Theoretical Amplitude (Descending)
+  //    This ensures M2 (100.0) is processed before 2MK2 (~0.0)
+  std::sort(candidates.begin(), candidates.end(),
+            [](const Candidate& a, const Candidate& b) {
+              if (std::abs(a.rank - b.rank) > 1e-6) {
+                return a.rank > b.rank;
+              }
+              // Fallback to frequency for stability
+              return a.omega < b.omega;
+            });
+
+  // 3. Greedy Selection (The "Rayleigh Loop")
+  auto result = std::vector<std::string>();
+  auto selected_frequencies = std::vector<double>();
+
+  for (const auto& item : candidates) {
+    bool separable = true;
+    for (const auto& selected_omega : selected_frequencies) {
+      if (std::abs(item.omega - selected_omega) < min_separation) {
+        separable = false;
+        break;
+      }
+    }
+
+    if (separable) {
+      result.emplace_back(constituents::name(item.id));
+      selected_frequencies.push_back(item.omega);
+    }
+  }
+
   return result;
 }
 
@@ -138,6 +262,25 @@ auto WaveTableInterface::generate_markdown_table() const -> std::string {
          wave->xdo_alphabetical()});
   }
   return constituents_table.to_string();
+}
+
+// ============================================================================
+
+auto WaveTableInterface::sort_by_frequency(const bool ascending) const
+    -> std::vector<ConstituentId> {
+  auto result = std::vector<ConstituentId>();
+  result.reserve(size());
+  for (const auto& item : *this) {
+    result.emplace_back(item.key());
+  }
+  std::sort(result.begin(), result.end(),
+            [&](const ConstituentId& a, const ConstituentId& b) {
+              auto frequency_a = (*this)[a]->frequency();
+              auto frequency_b = (*this)[b]->frequency();
+              return ascending ? frequency_a < frequency_b
+                               : frequency_a > frequency_b;
+            });
+  return result;
 }
 
 }  // namespace fes

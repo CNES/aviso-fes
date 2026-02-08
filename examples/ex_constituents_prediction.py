@@ -22,7 +22,9 @@ from __future__ import annotations
 
 import matplotlib.pyplot as plt
 import numpy as np
+
 import pyfes
+
 
 # %%
 # Load Real Tide Gauge Constituents from TICON-3
@@ -84,6 +86,17 @@ BREST_LAT = 48.383  # degrees North
 # We'll attempt to parse each constituent name and filter to only those
 # recognized by pyfes. This is the realistic workflow when working with
 # external harmonic analysis results.
+#
+# .. note::
+#
+#       ``pyfes.known_constituents()`` lists all known constituent names, but
+#       name matching is case-sensitive. For checking whether a constituent
+#       name is handled by the selected engine, prefer the wave table lookup,
+#       which is case-insensitive and treats Mf, mf, and MF as the same
+#       constituent. This matters because each engine supports a different
+#       set of tidal components, so membership for ``pyfes.DARWIN`` and
+#       ``pyfes.DOODSON`` can differ.
+
 
 constituents = {}
 skipped = []
@@ -94,14 +107,10 @@ print(
 )
 print('-' * 70)
 
-fes_constituents = pyfes.known_constituents()
-
-# Note: pyfes.known_constituents() returns the list of all constituent names
-# recognized by pyfes. You can also use pyfes.darwin.WaveTable() or
-# pyfes.perth.WaveTable() to check engine-specific support.
+wt = pyfes.wave_table_factory(pyfes.DARWIN)
 
 for name, (amplitude, phase) in BREST_TICON3_DATA.items():
-    if name in fes_constituents:
+    if name in wt:
         # Try to parse the constituent name - this will raise if unknown
         constituents[name] = (amplitude, phase)
         print(f'{name:<12} {amplitude:>15.3f} {phase:>13.3f}  ✓ included')
@@ -143,17 +152,18 @@ print(f"""Prediction Settings:
 # Predict Tides
 # =============
 #
-# Call :func:`evaluate_tide_from_constituents` to compute the tide at Brest
-# using the observed tidal constituents.
+# Call :py:func:`evaluate_tide_from_constituents
+# <pyfes.evaluate_tide_from_constituents>` to compute the tide at Brest using
+# the observed tidal constituents.
 #
-# We use **FesRuntimeSettings** because these constituents follow Darwin
-# notation (from TICON-3 harmonic analysis). If you're working with
-# constituents from a GOT-based atlas or using Doodson notation, use
-# **PerthRuntimeSettings** instead:
+# We use :py:class:`FesRuntimeSettings <pyfes.FesRuntimeSettings>` to select
+# the DARWIN prediction engine with its default FES runtime parameters. This is
+# a user choice; switch to :py:class:`PerthRuntimeSettings
+# <pyfes.PerthRuntimeSettings>` to run the DOODSON engine instead:
 #
 # .. code-block:: python
 #
-#     # For Doodson-based constituents
+#     # For DOODSON engine instead of DARWIN:
 #     tide, long_period = pyfes.evaluate_tide_from_constituents(
 #         constituents, dates, BREST_LAT, settings=pyfes.PerthRuntimeSettings()
 #     )

@@ -239,6 +239,7 @@ sphinx_gallery_conf = {
     'examples_dirs': [HERE.parent.parent.joinpath('examples')],
     'filename_pattern': r'[\\\/]ex_',
     'pypandoc': False,
+    'capture_repr': ('_repr_html_', '__repr__'),
     'binder': {
         'org': 'CNES',
         'repo': 'aviso-fes',

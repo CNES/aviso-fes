@@ -12,47 +12,47 @@ sea level.
 """
 
 from collections.abc import Mapping
+
+from . import config as config, core
 from .core import (
-    TidalModelInterfaceComplex128,
-    TidalModelInterfaceComplex64,
+    DARWIN as DARWIN,
+    DOODSON as DOODSON,
     FOURIER as FOURIER,
     LINEAR as LINEAR,
     RADIAL as RADIAL,
     SPLINE as SPLINE,
     TIDE as TIDE,
     ZERO as ZERO,
-)
-from .core import (
     AstronomicAngle as AstronomicAngle,
+    Axis as Axis,
     EngineType as EngineType,
-    FesRuntimeSettings,
+    FesRuntimeSettings as FesRuntimeSettings,
     Formulae as Formulae,
     FrequencyUnit as FrequencyUnit,
     InferenceType as InferenceType,
-    PerthRuntimeSettings,
+    PerthRuntimeSettings as PerthRuntimeSettings,
     Settings as Settings,
+    TidalModelInterfaceComplex64,
+    TidalModelInterfaceComplex128,
     TideType as TideType,
+    WaveInterface as WaveInterface,
+    WaveTableInterface as WaveTableInterface,
     WaveType as WaveType,
+    darwin as darwin,
     generate_markdown_table as generate_markdown_table,
     known_constituents as known_constituents,
     parse_constituent as parse_constituent,
-    tidal_model as tidal_model,
-    darwin as darwin,
     perth as perth,
-    Axis as Axis,
-    WaveInterface as WaveInterface,
-    WaveTableInterface as WaveTableInterface,
+    tidal_model as tidal_model,
+    wave_table_factory as wave_table_factory,
 )
-from . import core
-from .type_hints import (
-    VectorDateTime64,
-    VectorFloat64,
-    VectorInt8,
-)
-from . import config as config
+from .type_hints import VectorDateTime64, VectorFloat64, VectorInt8
 from .version import __version__  # noqa: F401
 
+
 __all__ = [
+    'DARWIN',
+    'DOODSON',
     'FOURIER',
     'LINEAR',
     'RADIAL',
@@ -82,6 +82,7 @@ __all__ = [
     'parse_constituent',
     'perth',
     'tidal_model',
+    'wave_table_factory',
 ]
 
 
@@ -127,7 +128,7 @@ def evaluate_tide(
         >>> import pyfes
         >>> import numpy as np
         >>> # 1. Load the model (requires a config file)
-        >>> model = pyfes.config.load("path/to/config.yaml")
+        >>> model = pyfes.config.load('path/to/config.yaml')
         >>> # 2. Define space and time
         >>> dates = np.array(['2025-01-01T12:00:00'], dtype='datetime64[us]')
         >>> lons = np.array([0.0])

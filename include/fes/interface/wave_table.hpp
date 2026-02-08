@@ -10,6 +10,7 @@
 #include <stdexcept>
 #include <string>
 #include <tuple>
+#include <utility>
 #include <vector>
 
 #include "fes/angle/astronomic.hpp"
@@ -225,14 +226,21 @@ class WaveTableInterface {
   /// @brief Returns the size of the table
   inline auto size() const noexcept -> size_t { return map_.size(); }
 
-  /// @brief Return the list of tidal waves such that their period is more than
-  /// twice the duration of the time series analyzed
+  /// @brief Selects the tidal constituents that can be resolved from a record
+  /// of a given duration using the Rayleigh criterion.
+  ///
+  /// Converts the record duration to hours, computes the minimum angular
+  /// separation @f$2\pi C_R / T@f$ then iterates over the wave table,
+  /// rejecting waves too close to @f$DC@f$ or closer than the Rayleigh limit
+  /// to any already - selected wave.
   ///
   /// @param[in] duration Duration of the time series analyzed in seconds
-  /// @param[in] f Number of times the period of the wave is greater than
-  /// the duration of the time series analyzed
+  /// @param[in] rayleigh_criterion The Rayleigh criterion factor (C_R) to
+  /// determine the minimum frequency. Default is 1.0, which corresponds to
+  /// the classical Rayleigh criterion.
   /// @return List of selected tidal waves.
-  auto select_waves_for_analysis(double duration, double f = 2.0)
+  auto select_waves_for_analysis(double duration,
+                                 double rayleigh_criterion = 1.0)
       -> std::vector<std::string>;
 
   /// @brief Calculate the tide of a given time series.
@@ -284,6 +292,13 @@ class WaveTableInterface {
   /// @brief Generate a markdown table summarizing the constituents handled by
   /// the wave table.
   auto generate_markdown_table() const -> std::string;
+
+  /// @brief Returns the constituents sorted by frequency.
+  /// @param ascending If true (default), sort by ascending frequency;
+  /// otherwise, sort by descending frequency.
+  /// @return A vector of constituent identifiers sorted by frequency.
+  auto sort_by_frequency(bool ascending = true) const
+      -> std::vector<ConstituentId>;
 
  protected:
   /// @brief Type for wave factory functions.

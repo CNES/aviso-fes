@@ -4,7 +4,12 @@ import numpy.typing
 import typing
 from typing import ClassVar, overload
 
-from . import darwin as darwin, perth as perth, tidal_model as tidal_model, mesh as mesh
+from . import (
+    darwin as darwin,
+    perth as perth,
+    tidal_model as tidal_model,
+    mesh as mesh,
+)
 
 from ..type_hints import (
     MatrixComplex128,
@@ -384,7 +389,9 @@ class WaveTableInterface:
         h: MatrixFloat64, f: MatrixFloat64, vu: MatrixFloat64
     ) -> VectorComplex128: ...
     def select_waves_for_analysis(
-        self, duration: typing.SupportsFloat, f: typing.SupportsFloat = ...
+        self,
+        duration: typing.SupportsFloat,
+        rayleigh_criterion: typing.SupportsFloat = ...,
     ) -> list[str]: ...
     def set_modeled_constituents(
         self, names: collections.abc.Sequence[str]
