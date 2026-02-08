@@ -10,6 +10,7 @@ dependencies:
   - cxx-compiler
   - eigen
   - gtest
+  - ipython
   - make # [not win]
   - markdown
   - matplotlib
