@@ -18,15 +18,15 @@ New Features
   tidal prediction engine, which uses Doodson number classification with group
   modulations. This engine is compatible with GOT (Goddard Ocean Tide) models
   including GOT4.10, GOT5.5, and GOT5.6. The PERTH engine was developed by
-  Dr. Richard Ray at NASA GSFC and supports 123 tidal constituents.
+  Dr. Richard Ray at NASA GSFC and supports 80 tidal constituents.
 
 * **Dual prediction engine support**: The library now supports two prediction
   engines:
 
   * **FES/Darwin Engine**: Classical Darwin notation with Schureman nodal
-    corrections (142 constituents). Compatible with FES2014 and FES2022 atlases.
+    corrections (99 constituents). Compatible with FES2014 and FES2022 atlases.
   * **PERTH/Doodson Engine**: Doodson number classification with group
-    modulations (123 constituents). Compatible with GOT atlases.
+    modulations (80 constituents). Compatible with GOT atlases.
 
 * **Automatic UTC to TT conversion**: The ``evaluate_tide()`` function no longer
   requires a ``leap_seconds`` parameter. The library now automatically converts

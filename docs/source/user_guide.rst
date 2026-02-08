@@ -162,10 +162,10 @@ in their default values:
      - ``LINEAR``
    * - ``astronomic_formulae``
      - ``SCHUREMAN_ORDER_1``
-     - ``MEEUS``
+     - ``IERS``
    * - ``group_modulations``
      - ``False``
-     - ``True``
+     - ``False``
    * - ``compute_long_period_equilibrium``
      - ``True``
      - ``True``

@@ -8,9 +8,9 @@ PyFES provides two catalogues of tidal constituents, one for each prediction
 engine. Every constituent is characterised by its name, angular speed (in
 degrees per hour), and :term:`XDO notation` encoding.
 
-- **Darwin catalogue** --- 142 constituents used by the FES/Darwin engine
+- **Darwin catalogue** --- 99 constituents used by the FES/Darwin engine
   (``engine: darwin``). See :doc:`darwin`.
-- **Doodson catalogue** --- 123 constituents used by the PERTH/Doodson engine
+- **Doodson catalogue** --- 80 constituents used by the PERTH/Doodson engine
   (``engine: perth``). See :doc:`perth`.
 
 For background on how constituent frequencies are derived from the six

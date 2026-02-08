@@ -16,10 +16,12 @@ from collections.abc import Mapping
 from . import config as config, core
 from .core import (
     DARWIN as DARWIN,
+    DEGREE_PER_HOUR as DEGREE_PER_HOUR,
     DOODSON as DOODSON,
     FOURIER as FOURIER,
     LINEAR as LINEAR,
     RADIAL as RADIAL,
+    RADIAN_PER_HOUR as RADIAN_PER_HOUR,
     SPLINE as SPLINE,
     TIDE as TIDE,
     ZERO as ZERO,
@@ -52,10 +54,12 @@ from .version import __version__  # noqa: F401
 
 __all__ = [
     'DARWIN',
+    'DEGREE_PER_HOUR',
     'DOODSON',
     'FOURIER',
     'LINEAR',
     'RADIAL',
+    'RADIAN_PER_HOUR',
     'SPLINE',
     'TIDE',
     'ZERO',

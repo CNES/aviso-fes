@@ -34,17 +34,17 @@ Engine Comparison
      - :term:`Darwin notation`
      - :term:`Doodson numbers <Doodson number>`
    * - **Constituents**
-     - 142
-     - 123
+     - 99
+     - 80
    * - **Nodal corrections**
      - Individual Schureman factors
-     - Group modulations (configurable)
+     - Individual (group modulations optional)
    * - **Default inference**
      - ``SPLINE``
      - ``LINEAR``
    * - **Default formulae**
      - ``SCHUREMAN_ORDER_1``
-     - ``MEEUS``
+     - ``IERS``
    * - **Compatible atlases**
      - FES2014, FES2022
      - GOT4.10, GOT5.5, GOT5.6
@@ -102,7 +102,7 @@ Default Settings
 Constituent List
 ----------------
 
-The Darwin engine supports 142 tidal constituents. See
+The Darwin engine supports 99 tidal constituents. See
 :doc:`constituents/darwin` for the complete list with frequencies and
 :term:`XDO notation`.
 
@@ -156,13 +156,13 @@ Default Settings
     settings = pyfes.PerthRuntimeSettings()
     # Defaults:
     #   inference_type = LINEAR
-    #   astronomic_formulae = MEEUS
-    #   group_modulations = True
+    #   astronomic_formulae = IERS
+    #   group_modulations = False
 
 Constituent List
 ----------------
 
-The PERTH/Doodson engine supports 123 tidal constituents. See
+The PERTH/Doodson engine supports 80 tidal constituents. See
 :doc:`constituents/perth` for the complete list with frequencies and
 :term:`XDO notation`.
 

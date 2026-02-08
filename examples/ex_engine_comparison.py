@@ -2,23 +2,24 @@
 Comparing FES/Darwin and PERTH/Doodson Engines
 **********************************************
 
-This example demonstrates the differences between PyFES's two prediction
-engines:
+PyFES implements two prediction engines that share the same harmonic method
+but differ in how they **name** their constituents and compute **nodal
+corrections**.
 
-1. **FES/Darwin Engine**: Uses Darwin notation with Schureman nodal corrections
-2. **PERTH/Doodson Engine**: Uses Doodson numbers with group modulations
+Both engines solve the same prediction equation:
 
-The example shows how to:
+.. math::
 
-* Configure each engine
-* Understand their differences in notation and constituent support
-* Choose the appropriate engine for your tidal atlas
+    h(t) = H_0 + \\sum_k f_k H_k \\cos(\\omega_k t + V_k + u_k - G_k)
+
+What changes between engines is how constituents are catalogued and how
+the nodal factors :math:`f_k` and :math:`u_k` are obtained.
 
 .. note::
 
-   This example demonstrates engine configuration and constituent comparison.
-   To run actual predictions, you need tidal atlas files downloaded from AVISO
-   (for FES) or NASA GSFC (for GOT models).
+   To run actual predictions you need tidal atlas files downloaded from AVISO
+   (for FES) or NASA GSFC (for GOT models). This example only inspects the
+   constituent catalogues and settings; it does not require any data files.
 """
 
 # %%
@@ -26,410 +27,234 @@ from __future__ import annotations
 
 from IPython.display import HTML
 import markdown
+import numpy as np
 
 import pyfes
 
 
 def md_to_html(md_string: str) -> HTML:
     """Convert a markdown string to HTML for display in Jupyter."""
-    html_string = markdown.markdown(md_string, extensions=['tables'])
-    return HTML(html_string)
+    return HTML(markdown.markdown(md_string, extensions=['tables']))
 
 
 # %%
-# Understanding the Two Engines
-# ==============================
-#
-# PyFES implements two distinct harmonic prediction approaches that differ in
-# their mathematical formulation, constituent notation, and target applications.
-
-print('=' * 70)
-print('PyFES Prediction Engines Overview')
-print('=' * 70)
-
-print('\n1. FES/Darwin Engine (engine: fes)')
-print('   ' + '-' * 45)
-print("   • Uses Darwin's astronomical argument notation")
-print("   • Applies Schureman's nodal corrections")
-print('   • 142 supported constituents')
-print('   • Compatible with: FES2014, FES2022')
-print('   • Default formulae: SCHUREMAN_ORDER_1')
-print('   • Developed for: FES tidal atlases')
-
-print('\n2. PERTH5/Doodson Engine (engine: perth5)')
-print('   ' + '-' * 45)
-print('   • Uses Doodson number classification')
-print('   • Applies group modulation nodal corrections')
-print('   • 123 supported constituents')
-print('   • Compatible with: GOT4.10, GOT5.5, GOT5.6')
-print('   • Default formulae: IERS')
-print('   • Developer: Dr. Richard Ray (NASA GSFC)')
-print('   • Includes configurable inference modes')
-
-# %%
-# Darwin Notation Example
-# =======================
-#
-# The Darwin engine represents tidal constituents using fundamental astronomical
-# arguments. Here's how the M₂ constituent is expressed:
-
-print('\n' + '=' * 70)
-print('Darwin Notation: M₂ Constituent')
-print('=' * 70)
-print('\nAstronomical Argument:')
-print('  V(M₂) = 2(τ + h - s + p)')
-print('\nFundamental Variables:')
-print("  τ = Greenwich hour angle (Earth's rotation)")
-print('  h = mean longitude of sun')
-print('  s = mean longitude of moon')
-print("  p = longitude of moon's perigee")
-print('\nNodal Corrections:')
-print('  f(M₂) = amplitude modulation factor (varies over 18.6-year cycle)')
-print('  u(M₂) = phase correction angle (varies over 18.6-year cycle)')
-print('\nPrediction Formula:')
-print('  h(t) = f · H · cos(V(t) + κ - u)')
-print('    where H and κ come from the FES tidal atlas')
-
-# %%
-# Doodson Number Example
+# Constituent catalogues
 # ======================
 #
-# The PERTH5 engine uses Doodson numbers for systematic constituent
-# classification. Here's how M₂ is represented:
+# Each engine defines its own catalogue of tidal constituents. Let's
+# retrieve them and see how they compare.
 
-print('\n' + '=' * 70)
-print('Doodson Notation: M₂ Constituent')
-print('=' * 70)
-print('\nDoodson Number: 255.555')
-print('\nEncoding:')
-print('  Each digit encodes a coefficient (with 5 added)')
-print('  Decoding 255.555: (2-5, 5-5, 5-5, 5-5, 5-5, 5-5)')
-print('                   = (-3, 0, 0, 0, 0, 0)')
-print('  But for M₂: actually represents 2τ + 2h - 2s + 2p')
-print('\nNodal Corrections:')
-print('  Applied via group modulations (constituents grouped together)')
-print('  More computationally efficient than individual corrections')
-print('\nInference Modes:')
-print('  • ZERO: No inference')
-print('  • LINEAR: Linear interpolation (default)')
-print('  • FOURIER: Fourier-based (most accurate)')
+darwin_wt = pyfes.wave_table_factory(pyfes.DARWIN)
+perth_wt = pyfes.wave_table_factory(pyfes.DOODSON)
+
+darwin_names = {w.name for w in darwin_wt}
+perth_names = {w.name for w in perth_wt}
+common = sorted(darwin_names & perth_names)
+darwin_only = sorted(darwin_names - perth_names)
+perth_only = sorted(perth_names - darwin_names)
+
+print(f'Darwin catalogue :  {len(darwin_wt)} constituents')
+print(f'Doodson catalogue:  {len(perth_wt)} constituents')
+print(f'Common to both   :  {len(common)}')
+print(f'Darwin-only      :  {len(darwin_only)}')
+print(f'Doodson-only     :  {len(perth_only)}')
 
 # %%
-# Listing Constituents by Engine
-# ===============================
+# Both catalogues cover the same major constituents. The differences
+# are mostly in the higher-order compound tides.
+
+print('\nDarwin-only constituents:')
+print(', '.join(darwin_only))
+
+print('\nDoodson-only constituents:')
+print(', '.join(perth_only))
+
+# %%
+# Notation: Darwin vs Doodson
+# ============================
 #
-# Each engine supports a different set of constituents. Let's compare them:
+# Both notations encode the same six integer coefficients that define a
+# constituent's astronomical argument:
+#
+# .. math::
+#
+#     V_k = n_1 \tau + n_2 s + n_3 h + n_4 p + n_5 N' + n_6 p_1
+#
+# **Darwin notation** gives each constituent a traditional name (M₂, K₁, …)
+# and lists the six integers explicitly.
+#
+# **Doodson notation** packs them into a six-digit number with an offset
+# of +5 on every digit except the first:
+#
+# .. math::
+#
+#     \text{Doodson number} = n_1 \;
+#     (n_2{+}5)(n_3{+}5).(n_4{+}5)(n_5{+}5)(n_6{+}5)
+#
+# PyFES also exposes the XDO alphabetical encoding used internally.
+# Let's compare the representations for a few well-known constituents.
 
-darwin_constituents = pyfes.wave_table_factory(pyfes.DARWIN)
-perth_constituents = pyfes.wave_table_factory(pyfes.DOODSON)
+sample = ['M2', 'S2', 'K1', 'O1', 'Mf', 'M4']
 
-print('\n' + '=' * 70)
-print('Constituent Support Comparison')
-print('=' * 70)
-print(f'\nDarwin Engine:  {len(darwin_constituents):3d} constituents')
-print(f'PERTH5 Engine:  {len(perth_constituents):3d} constituents')
-
-# Find constituents unique to each engine
-darwin_set = {item.name for item in darwin_constituents}
-perth_set = {item.name for item in perth_constituents}
-common = darwin_set & perth_set
-darwin_only = darwin_set - perth_set
-perth_only = perth_set - darwin_set
-
-print(f'\nCommon to both:  {len(common):3d} constituents')
-print(f'Darwin-only:     {len(darwin_only):3d} constituents')
-print(f'PERTH5-only:     {len(perth_only):3d} constituents')
-
-# %%
-# Major Constituents Comparison
-# ==============================
-
-major_constituents = [
-    'M2',
-    'S2',
-    'N2',
-    'K2',
-    'K1',
-    'O1',
-    'P1',
-    'Q1',
-    'Mf',
-    'Mm',
-    'Ssa',
-    'Sa',
-]
-
-descriptions = {
-    'M2': 'Semidiurnal',
-    'S2': 'Semidiurnal',
-    'N2': 'Semidiurnal',
-    'K2': 'Semidiurnal',
-    'K1': 'Diurnal',
-    'O1': 'Diurnal',
-    'P1': 'Diurnal',
-    'Q1': 'Diurnal',
-    'Mf': 'Long-period',
-    'Mm': 'Long-period',
-    'Ssa': 'Long-period',
-    'Sa': 'Long-period',
-}
-
-lines = ['| Constituent | Darwin | PERTH5 | Type |']
-lines.append('| :--- | :---: | :---: | :--- |')
-
-for const in major_constituents:
-    in_darwin = '\u2713' if const in darwin_set else '\u2717'
-    in_perth = '\u2713' if const in perth_set else '\u2717'
-    desc = descriptions.get(const, '')
-    lines.append(f'| {const} | {in_darwin} | {in_perth} | {desc} |')
+lines = ['| Name | Speed (°/h) | Doodson | XDO |']
+lines.append('| :--- | ---: | :---: | :---: |')
+for name in sample:
+    w = darwin_wt[name]
+    lines.append(
+        f'| {name} '
+        f'| {w.frequency(pyfes.DEGREE_PER_HOUR):.7f} '
+        f'| {w.xdo_numerical()} '
+        f'| {w.xdo_alphabetical()} |'
+    )
 
 md_to_html('\n'.join(lines))
 
 # %%
-# Show some unique constituents
-if darwin_only:
-    print(
-        '\nExample Darwin-only constituents: '
-        f'{", ".join(list(darwin_only)[:5])}'
-    )
-if perth_only:
-    print(
-        f'Example PERTH5-only constituents: {", ".join(list(perth_only)[:5])}'
-    )
-
-# %%
-# Configuring Runtime Settings
-# =============================
+# Default settings for each engine
+# ==================================
 #
-# Each engine has its own runtime settings class with engine-specific options.
+# The two settings classes differ only in their defaults.
 
-print('\n' + '=' * 70)
-print('Runtime Settings Configuration')
-print('=' * 70)
+fes_settings = pyfes.FesRuntimeSettings()
+perth_settings = pyfes.PerthRuntimeSettings()
 
-# FES/Darwin settings
-fes_settings = (
-    pyfes.FesRuntimeSettings()
-    .with_astronomic_formulae(pyfes.Formulae.SCHUREMAN_ORDER_1)
-    .with_time_tolerance(3600.0)
-    .with_num_threads(0)
-)
+lines = [
+    '| Setting | FesRuntimeSettings | PerthRuntimeSettings |',
+    '| :--- | :---: | :---: |',
+    f'| Engine type | {fes_settings.engine_type.name} '
+    f'| {perth_settings.engine_type.name} |',
+    f'| Inference | {fes_settings.inference_type.name} '
+    f'| {perth_settings.inference_type.name} |',
+    f'| Formulae | {fes_settings.astronomic_formulae.name} '
+    f'| {perth_settings.astronomic_formulae.name} |',
+    f'| Group modulations | {fes_settings.group_modulations} '
+    f'| {perth_settings.group_modulations} |',
+    f'| Long-period equilibrium | '
+    f'{fes_settings.compute_long_period_equilibrium} '
+    f'| {perth_settings.compute_long_period_equilibrium} |',
+]
 
-print('\nFES/Darwin Settings:')
-print(f'  {fes_settings}')
-print('  • Astronomic formulae: SCHUREMAN_ORDER_1 (traditional FES)')
-print('  • Time tolerance: 3600 seconds (1 hour angle caching)')
-print('  • Threads: 0 (auto-detect)')
-print('  • Nodal corrections: Individual Schureman factors')
-
-# PERTH5/Doodson settings with different inference modes
-perth_settings_linear = (
-    pyfes.PerthRuntimeSettings()
-    .with_group_modulations(True)
-    .with_astronomic_formulae(pyfes.Formulae.IERS)
-    .with_inference_type(pyfes.LINEAR)
-    .with_num_threads(0)
-)
-
-perth_settings_fourier = (
-    pyfes.PerthRuntimeSettings()
-    .with_group_modulations(True)
-    .with_inference_type(pyfes.FOURIER)
-    .with_astronomic_formulae(pyfes.Formulae.IERS)
-)
-
-print('\nPERTH5/Doodson Settings (Linear Admittance):')
-print(f'  {perth_settings_linear}')
-print('  • Astronomic formulae: IERS (modern conventions)')
-print('  • Group modulations: Enabled (efficient)')
-print('  • Inference: LINEAR (balanced)')
-print('  • Threads: 0 (auto-detect)')
-
-print('\nPERTH5/Doodson Settings (Fourier Admittance):')
-print(f'  {perth_settings_fourier}')
-print('  • Astronomic formulae: IERS')
-print('  • Group modulations: Enabled')
-print('  • Inference: FOURIER (maximum accuracy)')
+md_to_html('\n'.join(lines))
 
 # %%
-# Configuration File Examples
+# Note that **group modulations are disabled by default** on both engines.
+# They can be enabled explicitly when needed:
+#
+# .. code-block:: python
+#
+#     settings = pyfes.PerthRuntimeSettings().with_group_modulations(True)
+#
+# Nodal corrections: individual vs group
+# ========================================
+#
+# Every constituent has a slowly varying amplitude factor *f* and phase
+# correction *u* that account for the 18.61-year lunar nodal cycle.
+#
+# * **Individual corrections** (both engines, default): each constituent
+#   gets its own *f* and *u* computed from Schureman's formulae. This is
+#   the classical approach.
+#
+# * **Group modulations** (optional, PERTH engine only): closely related
+#   constituents sharing the same first two Doodson digits are modulated
+#   together, summing over satellite frequencies within the group.
+#
+# Let's compute the individual nodal corrections for a sample date and
+# compare the two engines.
+
+date = np.datetime64('2024-07-01T00:00:00')
+
+f_darwin, vu_darwin = darwin_wt.compute_nodal_modulations(
+    np.array([date]),
+    formulae=pyfes.Formulae.SCHUREMAN_ORDER_1,
+)
+
+f_perth, vu_perth = perth_wt.compute_nodal_modulations(
+    np.array([date]),
+    formulae=pyfes.Formulae.IERS,
+)
+
+# %%
+# Display nodal factors for major shared constituents.
+
+lines = ['| Constituent | f (Darwin) | f (Doodson) |']
+lines.append('| :--- | ---: | ---: |')
+
+for name in ['M2', 'S2', 'K1', 'O1', 'N2', 'K2', 'Mf', 'Mm']:
+    idx_d = darwin_wt.constituents.index(name)
+    idx_p = perth_wt.constituents.index(name)
+    lines.append(
+        f'| {name} | {f_darwin[idx_d, 0]:.6f} | {f_perth[idx_p, 0]:.6f} |'
+    )
+
+md_to_html('\n'.join(lines))
+
+# %%
+# The amplitude factors are nearly identical because both engines implement
+# the same Schureman obliquity formulae; the small differences come from
+# the different astronomic angle polynomials (SCHUREMAN_ORDER_1 vs IERS).
+# Solar constituents like S₂ always have *f* = 1 regardless of engine.
+#
+# Enabling group modulations
 # ===========================
 #
-# How to specify each engine in YAML configuration files:
+# Group modulations are an optional feature of the PERTH engine. When
+# enabled, related constituents within the same tidal group are modulated
+# together instead of individually. Let's compare.
 
-print('\n' + '=' * 70)
-print('YAML Configuration Examples')
-print('=' * 70)
-
-fes_yaml = """
-# FES2022 Configuration (Darwin Engine)
-tide:
-  lgp:
-    engine: fes
-    path: ${FES_DATA}/fes2022b/ocean_tide.nc
-    codes: codes
-    constituents: [2N2, K1, K2, M2, N2, O1, P1, Q1, S1, S2]
-    amplitude: amp_{constituent}
-    phase: pha_{constituent}
-
-radial:
-  cartesian:
-    engine: fes
-    paths:
-      M2: ${FES_DATA}/fes2022b_load/m2.nc
-      S2: ${FES_DATA}/fes2022b_load/s2.nc
-      K1: ${FES_DATA}/fes2022b_load/k1.nc
-"""
-
-got_yaml = """
-# GOT5.6 Configuration (PERTH5 Engine)
-tide:
-  cartesian:
-    engine: perth5
-    paths:
-      M2: ${GOT_DATA}/got5.6_m2.nc
-      S2: ${GOT_DATA}/got5.6_s2.nc
-      K1: ${GOT_DATA}/got5.6_k1.nc
-      O1: ${GOT_DATA}/got5.6_o1.nc
-      N2: ${GOT_DATA}/got5.6_n2.nc
-
-radial:
-  cartesian:
-    engine: perth5
-    paths:
-      M2: ${GOT_DATA}/got5.6_load_m2.nc
-      S2: ${GOT_DATA}/got5.6_load_s2.nc
-"""
-
-print('\n--- FES2022 with Darwin Engine ---')
-print(fes_yaml)
-
-print('\n--- GOT5.6 with PERTH5 Engine ---')
-print(got_yaml)
-
-# %%
-# Choosing the Right Engine
-# ==========================
-#
-# The engine choice depends on your tidal atlas format:
-
-print('\n' + '=' * 70)
-print('Decision Guide: Which Engine Should You Use?')
-print('=' * 70)
-
-print('\n✓ Use FES/Darwin Engine when:')
-print('  • Your tidal atlas is FES2014 or FES2022')
-print('  • Following traditional oceanographic conventions')
-print('  • Replicating established FES predictions')
-print('  • Working with atlases using Darwin notation')
-print('  • Need compatibility with historical FES software')
-
-print('\n✓ Use PERTH5/Doodson Engine when:')
-print('  • Your tidal atlas is GOT4.10, GOT5.5, GOT5.6')
-print("  • Working with Richard Ray's tide models")
-print('  • Need group modulation capabilities')
-print('  • Require fine control over admittance interpolation')
-print('  • Working with atlases using Doodson notation')
-print('  • Need IERS astronomical conventions')
-
-# %%
-# Inference Types Comparison (PERTH5 Only)
-# =========================================
-#
-# The PERTH5 engine offers three inference strategies:
-
-md_to_html(
-    '| Inference Type | Accuracy | Speed | Use Case |\n'
-    '| :--- | :--- | :--- | :--- |\n'
-    '| ZERO | Lowest (no inference) | Fastest | All constituents in atlas |\n'
-    '| LINEAR | Good (balanced) | Fast | General use (recommended) |\n'
-    '| FOURIER | Highest (best) | Slower | High-precision applications |'
+f_perth_grp, vu_perth_grp = perth_wt.compute_nodal_modulations(
+    np.array([date]),
+    formulae=pyfes.Formulae.IERS,
+    group_modulations=True,
 )
 
-print('\nCode Examples:')
-print('-' * 70)
-print("""
-# No inference
-settings = pyfes.PerthRuntimeSettings().with_inference_type(pyfes.ZERO)
-
-# Balanced (default)
-settings = pyfes.PerthRuntimeSettings().with_inference_type(pyfes.LINEAR)
-
-# Maximum accuracy
-settings = pyfes.PerthRuntimeSettings().with_inference_type(pyfes.FOURIER)
-""")
-
-# %%
-# API Compatibility
-# =================
-#
-# Despite different internal formulations, both engines share the same API:
-
-print('\n' + '=' * 70)
-print('API Compatibility')
-print('=' * 70)
-
-example_code = """
-import pyfes
-import numpy as np
-
-# Load configuration - works with BOTH engines!
-config = pyfes.config.load('my_config.yaml')
-
-# Define prediction parameters
-dates = np.arange('2025-01-01', '2025-01-02', dtype='datetime64[h]')
-lons = np.array([-7.688, 0.0, 10.5])
-lats = np.array([59.195, 45.0, 30.0])
-
-# Evaluate tide - same code for BOTH engines!
-tide, lp, flags = pyfes.evaluate_tide(
-    config.models['tide'], dates, lons, lats, settings=config.settings
-)
-
-# The ONLY difference is in the YAML configuration file!
-# Engine selection is transparent to your prediction code.
-"""
-
-print('\nSame API for Both Engines:')
-print('-' * 70)
-print(example_code)
-
-print('✓ No code changes needed to switch engines')
-print('✓ Just update the YAML configuration file')
-print('✓ Settings are automatically created based on engine type')
-
-# %%
-# Generating Markdown Tables
-# ===========================
-#
-# PyFES provides two ways to display constituent information as markdown
-# tables:
-#
-# 1. :func:`pyfes.generate_markdown_table` generates a table from the
-#    engine settings and a list of modeled constituents, showing which
-#    constituents are provided by the model and which are inferred.
-#
-# 2. :meth:`WaveTableInterface.generate_markdown_table
-#    <pyfes.WaveTableInterface.generate_markdown_table>` generates a table
-#    listing the properties of each constituent in a wave table (name,
-#    frequency, Doodson number, etc.).
-
-# Table for the Darwin engine settings
-md_to_html(
-    pyfes.generate_markdown_table(fes_settings, ['M2', 'S2', 'K1', 'O1'])
-)
-
-# %%
-# Table for the PERTH5 engine settings
-md_to_html(
-    pyfes.generate_markdown_table(
-        perth_settings_linear, ['M2', 'S2', 'K1', 'O1']
+lines = ['| Constituent | f (individual) | f (group) |']
+lines.append('| :--- | ---: | ---: |')
+for name in ['M2', 'S2', 'K1', 'O1', 'N2', 'K2', 'Mf', 'Mm']:
+    idx = perth_wt.constituents.index(name)
+    lines.append(
+        f'| {name} | {f_perth[idx, 0]:.6f} | {f_perth_grp[idx, 0]:.6f} |'
     )
-)
+
+md_to_html('\n'.join(lines))
 
 # %%
-# You can also display the wave table itself to see the full list of
-# constituents and their properties.
+# Inference modes
+# ================
+#
+# Both engines support the same four inference modes for estimating minor
+# constituents that are absent from the atlas. The mode is set independently
+# of the engine choice.
+
+for mode in [pyfes.ZERO, pyfes.LINEAR, pyfes.SPLINE, pyfes.FOURIER]:
+    print(f'  {mode.name:8s}  -  available on both engines')
+
+# %%
+# The recommended defaults are:
+#
+# * **SPLINE** for FES atlases (default of ``FesRuntimeSettings``)
+# * **LINEAR** for GOT atlases (default of ``PerthRuntimeSettings``)
+
+# %%
+# Generating constituent summary tables
+# =======================================
+#
+# :func:`pyfes.generate_markdown_table` produces a complete summary
+# of the engine settings and shows which constituents are modeled
+# (provided by the atlas) versus inferred.
+
+modeled = ['M2', 'S2', 'N2', 'K2', 'K1', 'O1', 'P1', 'Q1']
+
+md_to_html(pyfes.generate_markdown_table(fes_settings, modeled))
+
+# %%
+# The same call with the PERTH engine settings:
+
+md_to_html(pyfes.generate_markdown_table(perth_settings, modeled))
+
+# %%
+# You can also inspect the wave table directly. The table lists every
+# constituent with its frequency, Doodson number and XDO encoding.
+
 wt = pyfes.wave_table_factory(
     pyfes.DARWIN,
     ['M2', 'S2', 'N2', 'K2', 'K1', 'O1', 'P1', 'Q1', 'Mf', 'Mm'],
@@ -437,36 +262,20 @@ wt = pyfes.wave_table_factory(
 md_to_html(wt.generate_markdown_table())
 
 # %%
-# Summary
-# =======
-
-print('\n' + '=' * 70)
-print('Key Takeaways')
-print('=' * 70)
-print("""
-1. PyFES supports two prediction engines with different notations:
-   • FES/Darwin: Traditional oceanographic conventions (142 constituents)
-   • PERTH5/Doodson: Modern Doodson classification (123 constituents)
-
-2. Engine choice depends on tidal atlas format:
-   • FES atlases → FES/Darwin engine
-   • GOT atlases → PERTH5/Doodson engine
-
-3. Both engines share the same high-level API
-   • Switch engines by changing YAML config only
-   • No code changes in prediction scripts
-
-4. Engine-specific features:
-   • Darwin: Schureman nodal corrections, traditional admittance
-   • PERTH5: Group modulations, configurable inference modes
-
-5. Runtime settings provide fine-tuning for each engine
-   • FesRuntimeSettings for Darwin engine
-   • PerthRuntimeSettings for PERTH5 engine
-
-For more details, see the PyFES documentation on prediction engines.
-""")
-
-print('=' * 70)
-print('End of Engine Comparison Example')
-print('=' * 70)
+# Choosing an engine
+# ===================
+#
+# The engine is determined by the tidal atlas you use. Set it once in
+# the YAML configuration file; the Python prediction code is identical.
+#
+# * ``engine: darwin`` → FES atlases (FES2014, FES2022)
+# * ``engine: perth``  → GOT atlases (GOT4.10, GOT5.5, GOT5.6)
+#
+# .. code-block:: python
+#
+#     # Exactly the same code regardless of engine
+#     config = pyfes.config.load('my_atlas.yaml')
+#     tide, lp, flags = pyfes.evaluate_tide(
+#         config.models['tide'], dates, lons, lats,
+#         settings=config.settings,
+#     )

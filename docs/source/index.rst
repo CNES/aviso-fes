@@ -74,13 +74,13 @@ mathematical formulation and constituent notation:
 
 * **FES/Darwin Engine** (``engine: darwin``): Uses :term:`Darwin notation` with
   Schureman's nodal corrections. This is the classical approach developed for
-  FES tidal atlases (FES2014, FES2022). It supports 142 tidal constituents and
+  FES tidal atlases (FES2014, FES2022). It supports 99 tidal constituents and
   follows traditional oceanographic conventions.
 
 * **PERTH/Doodson Engine** (``engine: perth``): Uses :term:`Doodson number`
   classification with group modulations. Developed by Dr. Richard Ray at NASA
   Goddard Space Flight Center, this engine is designed for GOT (Goddard Ocean
-  Tide) models. It supports 123 tidal constituents.
+  Tide) models. It supports 80 tidal constituents.
 
 Both engines support configurable inference modes (``ZERO``, ``LINEAR``,
 ``SPLINE``, ``FOURIER``) for handling minor constituents.

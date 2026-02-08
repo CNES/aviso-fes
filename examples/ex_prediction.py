@@ -23,11 +23,15 @@ import pathlib
 
 from IPython.display import HTML
 import markdown
+import matplotlib.pyplot as plt
 import numpy
 
 import pyfes
 
 
+# %%
+# To display properly formatted markdown tables in this notebook, we define a
+# helper function that converts markdown strings to HTML.
 def md_to_html(md_string: str) -> HTML:
     """Convert a markdown string to HTML for display in Jupyter."""
     html_string = markdown.markdown(md_string, extensions=['tables'])
@@ -35,6 +39,9 @@ def md_to_html(md_string: str) -> HTML:
 
 
 # %%
+# Loading the model configuration
+# ===============================
+#
 # First we create an environment variable to store the path to the model file.
 os.environ['DATASET_DIR'] = str(
     pathlib.Path().absolute().parent / 'tests' / 'python' / 'dataset'
@@ -55,6 +62,18 @@ os.environ['DATASET_DIR'] = str(
 config = pyfes.config.load(pathlib.Path().absolute() / 'fes_slev.yml')
 
 # %%
+# .. hint::
+#
+#     By default, the function :func:`pyfes.config.load` loads the entire
+#     numeric grid into memory. To predict the tide for a specific region, you
+#     can use the ``bbox`` keyword argument to specify the region's bounding
+#     box. This bounding box is a tuple of four elements: minimum longitude,
+#     minimum latitude, maximum longitude, and maximum latitude. Example:
+#
+#     .. code-block:: python
+#
+#         config = pyfes.config.load('fes_slev.yaml', bbox=(-10, 40, 10, 60))
+#
 # ``config`` is a :py:class:`~pyfes.config.Configuration` namedtuple that
 # contains the tidal models and the runtime settings loaded from the
 # configuration file.
@@ -62,7 +81,7 @@ print(config)
 
 # %%
 # Prediction Engine Information
-# ==============================
+# =============================
 #
 # This configuration uses the **FES/Darwin engine**, which employs Darwin's
 # harmonic notation with Schureman's nodal corrections. This is the classical
@@ -72,7 +91,7 @@ print(config)
 #
 # * Uses fundamental astronomical arguments (s, h, p, N, p₁)
 # * Applies individual Schureman nodal corrections to each constituent
-# * Supports 142 tidal constituents
+# * Supports 99 tidal constituents
 # * Uses traditional admittance for minor constituents
 #
 # To use the **PERTH/Doodson engine** instead (for GOT tidal models), set
@@ -102,20 +121,10 @@ md_to_html(
 )
 
 # %%
-# .. hint::
+# Generating the tide prediction
+# ==============================
 #
-#     By default, the function :func:`pyfes.config.load` loads the entire
-#     numeric grid into memory. To predict the tide for a specific region, you
-#     can use the ``bbox`` keyword argument to specify the region's bounding
-#     box. This bounding box is a tuple of four elements: minimum longitude,
-#     minimum latitude, maximum longitude, and maximum latitude. Example:
-#
-#     .. code-block:: python
-#
-#         config = pyfes.config.load('fes_slev.yaml', bbox=(-10, 40, 10, 60))
-#
-# Set up the longitude and latitude of the location where we want to calculate
-# the tide.
+# Set up the position and the dates where we want to calculate the tide.
 lon = -7.688
 lat = 59.195
 date = numpy.datetime64('1983-01-01T00:00:00')
@@ -138,7 +147,9 @@ load, load_lp, _ = pyfes.evaluate_tide(
 )
 
 # %%
-# Print the results
+# Displaying the results
+# ======================
+#
 # Calculate CNES Julian Days (days since 1950-01-01).
 # This is the standard time reference used in CNES altimetry products.
 cnes_julian_days = (dates - numpy.datetime64('1950-01-01T00:00:00')).astype(
@@ -157,3 +168,33 @@ for ix, jd in enumerate(cnes_julian_days):
         f'{tide[ix]:>10.3f} {lp[ix]:>10.3f} {tide[ix] + lp[ix]:>10.3f} '
         f'{tide[ix] + lp[ix] + load[ix]:>10.3f} {load[ix]:>10.3f}'
     )
+
+# %%
+# Plot the tide components shown in the table. We recompute the tide only to
+# generate smoother curves on the figure below.
+dates = numpy.arange(
+    date, date + numpy.timedelta64(1, 'D'), numpy.timedelta64(1, 'm')
+)
+lons = numpy.full(dates.shape, lon)
+lats = numpy.full(dates.shape, lat)
+tide, lp, _ = pyfes.evaluate_tide(
+    config.models['tide'], dates, lons, lats, settings=config.settings
+)
+load, load_lp, _ = pyfes.evaluate_tide(
+    config.models['radial'], dates, lons, lats, settings=config.settings
+)
+
+pure_tide = tide + lp
+geo_tide = pure_tide + load
+
+plt.figure(figsize=(10, 5))
+plt.plot(dates, tide, label='Short tide')
+plt.plot(dates, lp, label='LP tide')
+plt.plot(dates, pure_tide, label='Pure tide')
+plt.plot(dates, geo_tide, label='Geo tide')
+plt.plot(dates, load, label='Rad tide')
+plt.title('Tide Components at Lon/Lat')
+plt.xlabel('Time')
+plt.ylabel('Meters')
+plt.legend()
+plt.tight_layout()
