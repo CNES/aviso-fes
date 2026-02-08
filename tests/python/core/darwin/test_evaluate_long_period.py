@@ -6,7 +6,9 @@ import pathlib
 
 import netCDF4
 import numpy
+
 from pyfes import core
+
 
 DATASET_DIR = pathlib.Path(__file__).parent.parent.parent / 'dataset'
 LONG_PERIOD = DATASET_DIR / 'equilibrium_long_period.nc'

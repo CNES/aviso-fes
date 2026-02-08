@@ -24,7 +24,9 @@ import pathlib
 import cartopy.crs
 import matplotlib.pyplot
 import numpy
+
 import pyfes
+
 
 # %%
 # First we create an environment variable to store the path to the model file.

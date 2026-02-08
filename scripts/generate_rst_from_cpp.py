@@ -14,6 +14,7 @@ from pathlib import Path
 import re
 import sys
 
+
 #: Root directory of the project
 ROOT = Path(__file__).resolve().parent.parent
 

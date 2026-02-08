@@ -3,8 +3,9 @@
 # All rights reserved. Use of this source code is governed by a
 # BSD-style license that can be found in the LICENSE file.
 import numpy
-from pyfes import core
 import pytest
+
+from pyfes import core
 
 
 def test_axis() -> None:

@@ -64,8 +64,8 @@
 from typing import TYPE_CHECKING, Annotated, Any, Literal, TypeVar
 from types import GenericAlias
 
-
 import numpy
+
 
 if TYPE_CHECKING:
     from numpy.typing import NDArray

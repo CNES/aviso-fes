@@ -5,8 +5,9 @@
 """Comprehensive tests for the pyfes.core.perth.Wave class."""
 
 import numpy as np
-from pyfes import core
 import pytest
+
+from pyfes import core
 
 
 class TestPerthWave:

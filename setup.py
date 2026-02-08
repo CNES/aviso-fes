@@ -17,6 +17,7 @@ import warnings
 import setuptools
 import setuptools.command.build_ext
 
+
 # Working directory
 WORKING_DIRECTORY = pathlib.Path(__file__).parent.absolute()
 

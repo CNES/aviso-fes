@@ -4,8 +4,8 @@
 # BSD-style license that can be found in the LICENSE file.
 """Custom build backend for setuptools with custom options."""
 
-import argparse
 from collections.abc import Mapping
+import argparse
 import os
 import sys
 

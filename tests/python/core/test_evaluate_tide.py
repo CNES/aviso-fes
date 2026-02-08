@@ -9,8 +9,10 @@ import time
 
 import netCDF4
 import numpy
-from pyfes import core
 import pytest
+
+from pyfes import core
+
 
 #: Path to the directory containing the test datasets.
 DATASET = pathlib.Path(__file__).parent.parent / 'dataset'

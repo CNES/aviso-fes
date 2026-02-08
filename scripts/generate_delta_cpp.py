@@ -9,12 +9,13 @@ Sources:
         https://data.iana.org/time-zones/data/leap-seconds.list
 """
 
+from bisect import bisect_right
+from collections import defaultdict
 import datetime
 import pathlib
-import urllib.request
 import ssl
-from collections import defaultdict
-from bisect import bisect_right
+import urllib.request
+
 
 # Folder containing this script
 HERE = pathlib.Path(__file__).parent

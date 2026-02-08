@@ -5,8 +5,9 @@
 import datetime
 import threading
 
-from pyfes import core
 import pytest
+
+from pyfes import core
 
 
 def test_astronomic_angle() -> None:

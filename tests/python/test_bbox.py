@@ -5,8 +5,10 @@
 import pathlib
 
 import numpy
-import pyfes
 import pytest
+
+import pyfes
+
 
 DATASET = pathlib.Path(__file__).parent / 'dataset'
 

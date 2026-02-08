@@ -10,6 +10,7 @@ import os
 import netCDF4
 import numpy
 
+
 #: Map between wave names in the netCDF files and the names used by pytide
 WAVE_MAP = {
     'S4': 'S4',

@@ -70,7 +70,7 @@ Enumerations
    .. autoattribute:: RADIAN_PER_HOUR
 
       Frequency in radians per second (rad/s).
-   
+
    .. property:: name
 
       Returns the name of the frequency unit.
@@ -122,7 +122,7 @@ Enumerations
       Returns the value of the formula.
 
 .. class:: pyfes.InferenceType
-   
+
    This Enum class represents the different inference types available in PyFES
    for handling minor tidal constituents not explicitly provided in the tidal
    atlas. Each inference type corresponds to a specific method of estimating

@@ -11,8 +11,7 @@ by the numerical model.
 
 from __future__ import annotations
 
-from typing import cast
-from typing import TYPE_CHECKING, Any, Literal, NamedTuple, Union
+from typing import TYPE_CHECKING, Any, Literal, NamedTuple, Union, cast
 import dataclasses
 import enum
 import os
@@ -23,24 +22,23 @@ import netCDF4
 import numpy
 import yaml
 
-
 from .core import (
-    parse_constituent,
-    TidalModelInterfaceComplex64,
-    TidalModelInterfaceComplex128,
     RADIAL as _RADIAL,
     TIDE as _TIDE,
     Axis,
     FesRuntimeSettings,
-    mesh,
     PerthRuntimeSettings,
     Settings,
+    TidalModelInterfaceComplex64,
+    TidalModelInterfaceComplex128,
+    mesh,
+    parse_constituent,
     tidal_model,
 )
 
+
 if TYPE_CHECKING:
-    from collections.abc import Iterable
-    from collections.abc import Callable
+    from collections.abc import Callable, Iterable
 
     from .type_hints import Matrix, Vector
 

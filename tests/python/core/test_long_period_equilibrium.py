@@ -11,8 +11,9 @@ not the darwin submodule.
 import datetime
 
 import numpy as np
-from pyfes import core
 import pytest
+
+from pyfes import core
 
 
 class TestLongPeriodEquilibrium:
