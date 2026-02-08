@@ -30,7 +30,7 @@ radial:
         stream.write(settings)
     config = pyfes.config.load(settings_path)
     assert 'radial' in config.models
-    assert isinstance(config.settings, pyfes.FesRuntimeSettings)
+    assert isinstance(config.settings, pyfes.FESSettings)
 
 
 def test_config_lgp2(tmp_path) -> None:
@@ -58,4 +58,4 @@ tide:
         stream.write(settings)
     config = pyfes.config.load(settings_path)
     assert 'tide' in config.models
-    assert isinstance(config.settings, pyfes.FesRuntimeSettings)
+    assert isinstance(config.settings, pyfes.FESSettings)

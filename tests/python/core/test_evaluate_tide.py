@@ -185,14 +185,14 @@ def test_tide() -> None:
         dates,
         lons,
         lats,
-        core.FesRuntimeSettings().with_num_threads(1),
+        core.FESSettings().with_num_threads(1),
     )
     radial_waves = core.evaluate_tide(
         radial_model,
         dates,
         lons,
         lats,
-        core.FesRuntimeSettings().with_num_threads(1),
+        core.FESSettings().with_num_threads(1),
     )
     check_tide(tide, radial_waves)
 
@@ -214,7 +214,7 @@ def cpu_intensive_task(
             dates,
             lon,
             lat,
-            core.FesRuntimeSettings().with_num_threads(
+            core.FESSettings().with_num_threads(
                 1
             ),  # Force single thread per call for this test
         )
@@ -287,7 +287,7 @@ def test_evaluate_tide_from_constituents() -> None:
         constituents,
         dates,
         BREST_LOCATION[1],
-        core.FesRuntimeSettings().with_num_threads(1),
+        core.FESSettings().with_num_threads(1),
     )
     assert len(tide) == len(dates)
     assert len(long_period) == len(dates)

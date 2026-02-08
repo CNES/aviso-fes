@@ -28,11 +28,11 @@ from .core import (
     AstronomicAngle as AstronomicAngle,
     Axis as Axis,
     EngineType as EngineType,
-    FesRuntimeSettings as FesRuntimeSettings,
+    FESSettings as FESSettings,
     Formulae as Formulae,
     FrequencyUnit as FrequencyUnit,
     InferenceType as InferenceType,
-    PerthRuntimeSettings as PerthRuntimeSettings,
+    PerthSettings as PerthSettings,
     Settings as Settings,
     TidalModelInterfaceComplex64,
     TidalModelInterfaceComplex128,
@@ -66,11 +66,11 @@ __all__ = [
     'AstronomicAngle',
     'Axis',
     'EngineType',
-    'FesRuntimeSettings',
+    'FESSettings',
     'Formulae',
     'FrequencyUnit',
     'InferenceType',
-    'PerthRuntimeSettings',
+    'PerthSettings',
     'Settings',
     'TideType',
     'WaveInterface',
@@ -108,8 +108,8 @@ def evaluate_tide(
         latitude: Latitude in degrees for the position at which the tide is
             calculated.
         settings: Settings used for the tide calculation. Using
-          :py:class:`FesRuntimeSettings` runs the Darwin prediction engine
-          and :py:class:`PerthRuntimeSettings` runs the PERTH prediction engine.
+          :py:class:`FESSettings` runs the Darwin prediction engine
+          and :py:class:`PerthSettings` runs the PERTH prediction engine.
 
     Returns:
         * The height of the diurnal and semi-diurnal constituents of the
@@ -180,8 +180,8 @@ def evaluate_tide_from_constituents(
         date: Date of the tide calculation.
         latitude: Latitude in degrees for the position.
         settings: Settings used for the tide calculation. Using
-          :py:class:`FesRuntimeSettings` runs the Darwin prediction engine, and
-          :py:class:`PerthRuntimeSettings` runs the PERTH prediction
+          :py:class:`FESSettings` runs the Darwin prediction engine, and
+          :py:class:`PerthSettings` runs the PERTH prediction
           engine. The default value is None, which corresponds to the
           default settings for FES models.
 
@@ -230,7 +230,7 @@ def evaluate_equilibrium_long_period(
     latitude: VectorFloat64,
     *,
     constituents: list[str] | None = None,
-    settings: FesRuntimeSettings | None = None,
+    settings: FESSettings | None = None,
 ) -> VectorFloat64:
     """Compute the long-period equilibrium ocean tides.
 

@@ -126,16 +126,16 @@ The choice of inference mode should match the tidal atlas:
 .. code-block:: python
 
     # Recommended for FES atlases
-    settings = pyfes.FesRuntimeSettings().with_inference_type(pyfes.SPLINE)
+    settings = pyfes.FESSettings().with_inference_type(pyfes.SPLINE)
 
     # Recommended for GOT atlases
-    settings = pyfes.PerthRuntimeSettings().with_inference_type(pyfes.LINEAR)
+    settings = pyfes.PerthSettings().with_inference_type(pyfes.LINEAR)
 
     # No inference (diagnostic)
-    settings = pyfes.FesRuntimeSettings().with_inference_type(pyfes.ZERO)
+    settings = pyfes.FESSettings().with_inference_type(pyfes.ZERO)
 
     # Fourier inference
-    settings = pyfes.FesRuntimeSettings().with_inference_type(pyfes.FOURIER)
+    settings = pyfes.FESSettings().with_inference_type(pyfes.FOURIER)
 
 References
 ==========

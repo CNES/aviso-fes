@@ -115,11 +115,11 @@ md_to_html('\n'.join(lines))
 #
 # The two settings classes differ only in their defaults.
 
-fes_settings = pyfes.FesRuntimeSettings()
-perth_settings = pyfes.PerthRuntimeSettings()
+fes_settings = pyfes.FESSettings()
+perth_settings = pyfes.PerthSettings()
 
 lines = [
-    '| Setting | FesRuntimeSettings | PerthRuntimeSettings |',
+    '| Setting | FESSettings | PerthSettings |',
     '| :--- | :---: | :---: |',
     f'| Engine type | {fes_settings.engine_type.name} '
     f'| {perth_settings.engine_type.name} |',
@@ -142,7 +142,7 @@ md_to_html('\n'.join(lines))
 #
 # .. code-block:: python
 #
-#     settings = pyfes.PerthRuntimeSettings().with_group_modulations(True)
+#     settings = pyfes.PerthSettings().with_group_modulations(True)
 #
 # Nodal corrections: individual vs group
 # ========================================
@@ -231,8 +231,8 @@ for mode in [pyfes.ZERO, pyfes.LINEAR, pyfes.SPLINE, pyfes.FOURIER]:
 # %%
 # The recommended defaults are:
 #
-# * **SPLINE** for FES atlases (default of ``FesRuntimeSettings``)
-# * **LINEAR** for GOT atlases (default of ``PerthRuntimeSettings``)
+# * **SPLINE** for FES atlases (default of ``FESSettings``)
+# * **LINEAR** for GOT atlases (default of ``PerthSettings``)
 
 # %%
 # Generating constituent summary tables

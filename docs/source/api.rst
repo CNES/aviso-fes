@@ -23,12 +23,12 @@ Settings
    :members:
    :undoc-members:
 
-.. autoclass:: pyfes.FesRuntimeSettings
+.. autoclass:: pyfes.FESSettings
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. autoclass:: pyfes.PerthRuntimeSettings
+.. autoclass:: pyfes.PerthSettings
    :members:
    :undoc-members:
    :show-inheritance:

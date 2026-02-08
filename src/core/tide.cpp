@@ -147,7 +147,7 @@ Example:
   >>> dates = np.array(['2024-01-01T00:00:00'], dtype='datetime64[ns]')
   >>> tide, lp = core.evaluate_tide_from_constituents(
   ...     constituents, dates, latitude=45.0,
-  ...     settings=core.FesRuntimeSettings())
+  ...     settings=core.FESSettings())
 )__doc");
 }
 

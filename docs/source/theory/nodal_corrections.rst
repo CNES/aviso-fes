@@ -278,7 +278,7 @@ Group modulations are enabled via:
 
 .. code-block:: python
 
-    settings = pyfes.PerthRuntimeSettings().with_group_modulations(True)
+    settings = pyfes.PerthSettings().with_group_modulations(True)
 
 When group modulations are disabled, the PERTH engine falls back to
 individual nodal corrections computed from the same Schureman-derived

@@ -26,8 +26,8 @@ from .core import (
     RADIAL as _RADIAL,
     TIDE as _TIDE,
     Axis,
-    FesRuntimeSettings,
-    PerthRuntimeSettings,
+    FESSettings,
+    PerthSettings,
     Settings,
     TidalModelInterfaceComplex64,
     TidalModelInterfaceComplex128,
@@ -729,8 +729,8 @@ def create_settings(engine: Engine) -> Settings:
 
     """
     if engine == Engine.DARWIN:
-        return FesRuntimeSettings()
-    return PerthRuntimeSettings()
+        return FESSettings()
+    return PerthSettings()
 
 
 def load(
@@ -750,7 +750,7 @@ def load(
         - models: A dictionary mapping tidal type (e.g. ``tide``, ``radial``)
           to the corresponding tidal model.
         - settings: Runtime settings for the tidal prediction engine
-          (FesRuntimeSettings or PerthRuntimeSettings).
+          (FESSettings or PerthSettings).
 
     Example:
         >>> import pyfes

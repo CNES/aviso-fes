@@ -102,7 +102,7 @@ The :func:`~pyfes.config.load` function returns a
 - ``models``: a dictionary mapping ``'tide'`` (and optionally ``'radial'``)
   to tidal model objects.
 - ``settings``: the runtime settings appropriate for the chosen engine
-  (:class:`~pyfes.FesRuntimeSettings` or :class:`~pyfes.PerthRuntimeSettings`).
+  (:class:`~pyfes.FESSettings` or :class:`~pyfes.PerthSettings`).
 
 The actual prediction is performed by :func:`~pyfes.evaluate_tide`, which
 evaluates the configured model at the requested times and locations.

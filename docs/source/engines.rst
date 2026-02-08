@@ -28,8 +28,8 @@ Engine Comparison
      - ``engine: darwin``
      - ``engine: perth``
    * - **Settings class**
-     - :class:`~pyfes.FesRuntimeSettings`
-     - :class:`~pyfes.PerthRuntimeSettings`
+     - :class:`~pyfes.FESSettings`
+     - :class:`~pyfes.PerthSettings`
    * - **Notation**
      - :term:`Darwin notation`
      - :term:`Doodson numbers <Doodson number>`
@@ -93,7 +93,7 @@ Default Settings
 
 .. code-block:: python
 
-    settings = pyfes.FesRuntimeSettings()
+    settings = pyfes.FESSettings()
     # Defaults:
     #   inference_type = SPLINE
     #   astronomic_formulae = SCHUREMAN_ORDER_1
@@ -143,7 +143,7 @@ enabled or disabled through the settings:
 
 .. code-block:: python
 
-    settings = pyfes.PerthRuntimeSettings().with_group_modulations(True)
+    settings = pyfes.PerthSettings().with_group_modulations(True)
 
 When group modulations are disabled, the engine falls back to individual
 nodal corrections similar to the Darwin approach.
@@ -153,7 +153,7 @@ Default Settings
 
 .. code-block:: python
 
-    settings = pyfes.PerthRuntimeSettings()
+    settings = pyfes.PerthSettings()
     # Defaults:
     #   inference_type = LINEAR
     #   astronomic_formulae = IERS

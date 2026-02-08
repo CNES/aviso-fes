@@ -140,8 +140,8 @@ The returned :class:`~pyfes.config.Configuration` contains:
 
 - ``models``: dictionary mapping ``'tide'`` and optionally ``'radial'`` to
   tidal model objects.
-- ``settings``: runtime settings (:class:`~pyfes.FesRuntimeSettings` or
-  :class:`~pyfes.PerthRuntimeSettings`) appropriate for the selected engine.
+- ``settings``: runtime settings (:class:`~pyfes.FESSettings` or
+  :class:`~pyfes.PerthSettings`) appropriate for the selected engine.
 
 Runtime Settings
 ================
@@ -155,8 +155,8 @@ in their default values:
    :widths: 40 30 30
 
    * - Setting
-     - :class:`~pyfes.FesRuntimeSettings`
-     - :class:`~pyfes.PerthRuntimeSettings`
+     - :class:`~pyfes.FESSettings`
+     - :class:`~pyfes.PerthSettings`
    * - ``inference_type``
      - ``SPLINE``
      - ``LINEAR``
@@ -177,11 +177,11 @@ All settings can be overridden on either engine using the builder methods:
     import pyfes
 
     # Start from engine defaults
-    settings = pyfes.FesRuntimeSettings()
+    settings = pyfes.FESSettings()
 
     # Customise individual settings
     settings = (
-        pyfes.FesRuntimeSettings()
+        pyfes.FESSettings()
         .with_inference_type(pyfes.SPLINE)
         .with_astronomic_formulae(pyfes.Formulae.MEEUS)
         .with_num_threads(4)
@@ -189,7 +189,7 @@ All settings can be overridden on either engine using the builder methods:
 
     # Or with the PERTH engine
     settings = (
-        pyfes.PerthRuntimeSettings()
+        pyfes.PerthSettings()
         .with_inference_type(pyfes.LINEAR)
         .with_group_modulations(True)
     )
@@ -228,11 +228,11 @@ and PERTH engines.
 
 .. code-block:: python
 
-    settings = pyfes.FesRuntimeSettings().with_inference_type(pyfes.SPLINE)
-    settings = pyfes.PerthRuntimeSettings().with_inference_type(pyfes.LINEAR)
+    settings = pyfes.FESSettings().with_inference_type(pyfes.SPLINE)
+    settings = pyfes.PerthSettings().with_inference_type(pyfes.LINEAR)
 
     # Any mode can be used with any engine
-    settings = pyfes.PerthRuntimeSettings().with_inference_type(pyfes.SPLINE)
+    settings = pyfes.PerthSettings().with_inference_type(pyfes.SPLINE)
 
 For the mathematical details of each inference method, see
 :doc:`theory/admittance_inference`.
@@ -272,7 +272,7 @@ define tidal frequencies):
 
 .. code-block:: python
 
-    settings = pyfes.FesRuntimeSettings().with_astronomic_formulae(
+    settings = pyfes.FESSettings().with_astronomic_formulae(
         pyfes.Formulae.MEEUS
     )
 

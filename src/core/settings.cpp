@@ -196,7 +196,7 @@ Returns:
 }
 
 inline auto init_fes_settings(py::module& m) -> void {
-  py::class_<FESSettings, Settings>(m, "FesRuntimeSettings",
+  py::class_<FESSettings, Settings>(m, "FESSettings",
                                     R"__doc__(
 Default settings for FES models.
 
@@ -209,13 +209,13 @@ This class provides pre-configured settings optimized for FES tidal models:
 )__doc__")
       .def(py::init<>(), "Default constructor with FES model settings.")
       .def("__repr__", [](const FESSettings& self) -> std::string {
-        return "<FesRuntimeSettings num_threads=" +
+        return "<FESSettings num_threads=" +
                std::to_string(self.num_threads()) + ">";
       });
 }
 
 inline auto init_perth_settings(py::module& m) -> void {
-  py::class_<PerthSettings, Settings>(m, "PerthRuntimeSettings",
+  py::class_<PerthSettings, Settings>(m, "PerthSettings",
                                       R"__doc__(
 Default settings for GOT/Perth models.
 
@@ -228,7 +228,7 @@ This class provides pre-configured settings optimized for GOT tidal models:
 )__doc__")
       .def(py::init<>(), "Default constructor with Perth/GOT model settings.")
       .def("__repr__", [](const PerthSettings& self) -> std::string {
-        return "<PerthRuntimeSettings num_threads=" +
+        return "<PerthSettings num_threads=" +
                std::to_string(self.num_threads()) + ">";
       });
 }

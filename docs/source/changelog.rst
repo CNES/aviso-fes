@@ -40,8 +40,8 @@ Breaking Changes
 
   * ``pyfes.darwin`` and ``pyfes.perth`` submodules have been introduced for
     engine-specific constituents
-  * ``pyfes.FesRuntimeSettings`` for FES/Darwin engine configuration
-  * ``pyfes.PerthRuntimeSettings`` for PERTH/Doodson engine configuration
+  * ``pyfes.FESSettings`` for FES/Darwin engine configuration
+  * ``pyfes.PerthSettings`` for PERTH/Doodson engine configuration
   * The generic ``pyfes.Settings`` class has been removed
 
 * **Changed** ``pyfes.config.load()`` **return type**: Now returns a
@@ -132,7 +132,7 @@ Migration Guide
 
    # FES/Darwin engine
    settings = (
-       pyfes.FesRuntimeSettings()
+       pyfes.FESSettings()
        .with_astronomic_formulae(pyfes.Formulae.SCHUREMAN_ORDER_1)
        .with_time_tolerance(3600.0)
        .with_num_threads(0)
@@ -140,7 +140,7 @@ Migration Guide
 
    # PERTH/Doodson engine
    settings = (
-       pyfes.PerthRuntimeSettings()
+       pyfes.PerthSettings()
        .with_group_modulations(True)
        .with_inference_type(pyfes.InterpolationType.LINEAR_ADMITTANCE)
        .with_astronomic_formulae(pyfes.Formulae.IERS)

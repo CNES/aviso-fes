@@ -44,11 +44,11 @@ __all__ = [
     'AngleUnit',
     'AstronomicAngle',
     'Axis',
-    'FesRuntimeSettings',
+    'FESSettings',
     'Formulae',
     'FrequencyUnit',
     'InferenceType',
-    'PerthRuntimeSettings',
+    'PerthSettings',
     'Settings',
     'TidalModelInterfaceComplex64',
     'TidalModelInterfaceComplex128',
@@ -180,7 +180,7 @@ class EngineType:
     @property
     def value(self) -> int: ...
 
-class FesRuntimeSettings(Settings):
+class FESSettings(Settings):
     def __init__(self) -> None: ...
 
 class Formulae:
@@ -242,7 +242,7 @@ class InferenceType:
     @property
     def value(self) -> int: ...
 
-class PerthRuntimeSettings(Settings):
+class PerthSettings(Settings):
     def __init__(self) -> None: ...
 
 class Settings:

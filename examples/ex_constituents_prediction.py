@@ -156,22 +156,22 @@ print(f"""Prediction Settings:
 # <pyfes.evaluate_tide_from_constituents>` to compute the tide at Brest using
 # the observed tidal constituents.
 #
-# We use :py:class:`~pyfes.FesRuntimeSettings` to select the DARWIN prediction
+# We use :py:class:`~pyfes.FESSettings` to select the DARWIN prediction
 # engine with its default FES runtime parameters. This is a user choice; switch
-# to :py:class:`~pyfes.PerthRuntimeSettings` to run the DOODSON engine instead:
+# to :py:class:`~pyfes.PerthSettings` to run the DOODSON engine instead:
 #
 # .. code-block:: python
 #
 #     # For DOODSON engine instead of DARWIN:
 #     tide, long_period = pyfes.evaluate_tide_from_constituents(
-#         constituents, dates, BREST_LAT, settings=pyfes.PerthRuntimeSettings()
+#         constituents, dates, BREST_LAT, settings=pyfes.PerthSettings()
 #     )
 #
 # For more information on engine selection, see the
 # `engine comparison example <ex_engine_comparison.html>`_.
 
 tide, long_period = pyfes.evaluate_tide_from_constituents(
-    constituents, dates, BREST_LAT, settings=pyfes.FesRuntimeSettings()
+    constituents, dates, BREST_LAT, settings=pyfes.FESSettings()
 )
 
 # Total sea level from tides
