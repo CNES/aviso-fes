@@ -2,6 +2,8 @@
 //
 // All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
+/// @file fes/namespace.hpp
+/// @brief FES namespaces documentation.
 #pragma once
 
 // The purpose of this file is to group the documentation of the different C++

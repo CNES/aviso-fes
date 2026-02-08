@@ -15,12 +15,12 @@ namespace detail {
 class MarkdownTable {
  public:
   /// @brief Constructor
-  /// @param headers[in] The list of column headers for the table
+  /// @param[in] headers The list of column headers for the table
   MarkdownTable(std::initializer_list<std::string> headers)
       : headers_(headers) {}
 
   /// @brief Add a row to the table
-  /// @param values[in] The list of values for the row, must have the same
+  /// @param[in] values The list of values for the row, must have the same
   /// number of elements as the number of headers (no check is performed)
   auto add_row(std::initializer_list<std::string> values) -> void {
     rows_.emplace_back(values);

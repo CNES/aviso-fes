@@ -2,8 +2,8 @@
 //
 // All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
-/// @file include/fes/enum_map.hpp
-/// @brief Sparse mapping between enumeration values and associated values
+/// @file include/fes/harmonic_analysis.hpp
+/// @brief Harmonic analysis of the tide.
 #pragma once
 
 #include <Eigen/Core>

@@ -152,6 +152,7 @@ auto name(ConstituentId constituent) -> const char *;
 /// sensitive. So "Mm" and "mm" are equivalent.
 /// @tparam Size Size of the defined_constituent array.
 /// @param[in] name Tide constituent name.
+/// @param[in] defined_constituent Defined tidal constituents.
 /// @return Tidal constituent.
 template <size_t Size>
 auto parse(const std::string &name,
@@ -187,7 +188,6 @@ auto name(ConstituentId constituent,
 /// @brief Get the tidal constituent names handled by the library.
 /// @tparam Size Size of the defined_constituent array.
 /// @param[in] defined_constituent Defined tidal constituents.
-/// @param[in] _ Index sequence.
 /// @return Tidal constituent names.
 template <size_t Size, size_t... I>
 auto known(const std::array<ConstituentId, Size> &defined_constituent,

@@ -43,7 +43,7 @@ constexpr auto extract_key(const T& val) -> const T& {
 /// @brief Helper function to extract the key from a `std::pair<K, V>`
 /// @tparam K The type of the key in the pair
 /// @tparam V The type of the value in the pair
-/// @param val The value from which to extract the key
+/// @param p The pair from which to extract the key
 /// @return The key extracted from the value
 template <typename K, typename V>
 constexpr auto extract_key(const std::pair<K, V>& p) -> const K& {
@@ -119,8 +119,8 @@ class WaveTableInterface {
 
   /// @brief Set the tide for the provided constituents.
   /// @tparam Container Iterable of (ConstituentId, Complex) pairs.
-  /// @param[in] constituents The list of constituent identifiers and their
-  /// corresponding tide values to set in the wave table.
+  /// @param[in] tides The map of constituent identifiers and their
+  /// corresponding tide values to set.
   template <typename Container>
   inline auto set_tides(const Container& tides) -> void {
     for (const auto& item : tides) {
@@ -294,7 +294,7 @@ class WaveTableInterface {
   auto generate_markdown_table() const -> std::string;
 
   /// @brief Returns the constituents sorted by frequency.
-  /// @param ascending If true (default), sort by ascending frequency;
+  /// @param[in] ascending If true (default), sort by ascending frequency;
   /// otherwise, sort by descending frequency.
   /// @return A vector of constituent identifiers sorted by frequency.
   auto sort_by_frequency(bool ascending = true) const
@@ -307,8 +307,10 @@ class WaveTableInterface {
   /// @brief Populate the table with the given constituents using the provided
   /// wave factory function. Call this in derived class constructors after
   /// get_factory() is available.
-  /// @param constituents List of constituent identifiers to include in the
+  /// @param[in] constituents List of constituent identifiers to include in the
   /// table
+  /// @param[in] wave_factory Factory function to create wave instances for the
+  /// constituents
   void populate_map(const std::vector<ConstituentId>& constituents,
                     const WaveFactoryFunction& wave_factory) {
     for (const auto& ident : constituents) {
@@ -320,7 +322,7 @@ class WaveTableInterface {
   ConstituentMap map_;  ///< Map of constituents
 
   /// @brief Generates an out_of_range exception for a missing constituent.
-  /// @param ident The constituent identifier.
+  /// @param[in] ident The constituent identifier.
   /// @return The out_of_range exception.
   auto out_of_range(ConstituentId ident) const -> std::out_of_range {
     return std::out_of_range("Constituent ID#" +

@@ -55,6 +55,8 @@ class NodalCorrectionsArgs {
  public:
   /// @brief Constructor.
   /// @param[in] angles Astronomic angles used to compute the nodal corrections.
+  /// @param[in] group_modulations If true, applies group modulations to nodal
+  /// corrections.
   explicit constexpr NodalCorrectionsArgs(const angle::Astronomic& angles,
                                           bool group_modulations = false)
       : angles_(angles), group_modulations_(group_modulations) {}
@@ -124,7 +126,7 @@ class WaveInterface {
   virtual auto frequency() const noexcept -> double = 0;
 
   /// @brief Gets the frequency
-  /// @param unit The frequency unit.
+  /// @tparam U The frequency unit.
   /// @return The frequency in radians per hour or degrees per hour.
   template <FrequencyUnit U>
   constexpr auto frequency() const noexcept -> double {

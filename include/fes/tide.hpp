@@ -3,7 +3,35 @@
 // All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 /// @file include/fes/tide.hpp
-/// @brief Tide prediction.
+/// @brief Prediction of tides.
+///
+/// The height of the tidal at any time may be represented harmonically as
+/// follows:
+///
+/// \f[
+///   h = H_0 + \sum f H cos\left[\alpha t + (V_0 + u) -k\right]
+/// \f]
+///
+/// where:
+/// - \f$h\f$ height of tide at any time.
+/// - \f$H_0\f$ mean height of water levels above data used for prediction.
+/// - \f$H\f$ mean amplitude of constituent \f$A\f$.
+/// - \f$f\f$ factor for reducing mean amplitude H to the year of prediction.
+/// - \f$\alpha\f$ speed of constituent \f$A\f$.
+/// - \f$t\f$ time reckoned from some initial epoch such as the beginning of
+///   the year of prediction.
+/// - \f$(V_0 + u)\f$ value of equilibrium arguments of constituents \f$A\f$
+///   when \f$t=0\f$.
+/// - \f$k\f$ epoch of constituent \f$A\f$.
+///
+/// In the above formula, all quantities except \f$h\f$ and \f$t\f$ may be
+/// considered as constants for any particular year and place, and when these
+/// constants are known the value of \f$h\f$, or the predicted height of the
+/// tide, may be calculated for any time \f$t\f$. By comparing successive
+/// values of \f$h\f$ the heights of the high and low waters, together with
+/// the times of their occurrence, maybe approximately determined. The
+/// harmonic method of predicting tides, therefore, consists essentially of the
+/// above formula.
 #pragma once
 
 #include <Eigen/Core>
@@ -24,6 +52,10 @@
 namespace fes {
 namespace detail {
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+// Compute the tide from the waves provided by the tidal model. This function
+// is used internally by the evaluate_tide function after the interpolation of
+// the waves from the model.
 inline auto evaluate_tide_from_waves(const double epoch, const double latitude,
                                      const bool compute_long_period_equilibrium,
                                      const Settings& settings,
@@ -58,6 +90,8 @@ inline auto evaluate_tide_from_waves(const double epoch, const double latitude,
   return {h, h_long_period};
 }
 
+// Compute the tide at a given position and time, using the provided
+// tidal model
 template <typename T>
 inline auto evaluate_tide(const TidalModelInterface<T>& tidal_model,
                           const double epoch, const double longitude,
@@ -94,9 +128,45 @@ inline auto evaluate_tide(const TidalModelInterface<T>& tidal_model,
       inference, long_period, acc);
   return {std::get<0>(tides), std::get<1>(tides), quality};
 }
+#endif  // DOXYGEN_SHOULD_SKIP_THIS
 
 }  // namespace detail
 
+/// Ocean tide calculation
+///
+/// @param[in] tidal_model Tidal model used to interpolate the modelized waves
+/// @param[in] epoch Date of the tide calculation expressed in number of seconds
+/// elapsed since 1970-01-01T00:00:00Z
+/// @param[in] longitude Longitude in degrees for the position at which the tide
+/// is calculated
+/// @param[in] latitude Latitude in degrees for the position at which the tide
+/// is calculated
+/// @param[in] settings Settings for the tide computation.
+/// @return A tuple that contains:
+/// - The height of the the diurnal and semi-diurnal constituents of the
+///   tidal spectrum.
+/// - The height of the long period wave constituents of the tidal
+///   spectrum.
+/// - The quality flag indicating the reliability of the tide
+///   calculation at the given position:
+///   - <b>0</b>: the tide is undefined (no data available at the given
+///     position).
+///   - <b>Positive values</b>: the tide is interpolated at the given
+///     position using `N` data points (where `N` is the
+///     number of data points used for the interpolation).
+///   - <b>Negative values</b>: the tide is extrapolated at the given
+///     position using `-N` data points (where `N` is the
+///     number of data points used for the extrapolation).
+/// @note The units of the returned tide are the same as the units of the
+/// constituents loaded in the tidal model.
+/// @note Computed height of the diurnal and semi-diurnal constituents is set
+/// to nan if no data is available at the given position. the long period wave
+/// constituents is always computed because this value does not depend on
+/// model data.
+/// @warning If Settings::compute_long_period_equilibrium returns true, the
+/// tidal model must use centimeters. The long period equilibrium is computed
+/// in centimeters and is added to the model tide; mixing units would make the
+/// result inconsistent.
 template <typename T>
 auto evaluate_tide(const TidalModelInterface<T>* const tidal_model,
                    const Eigen::Ref<const Eigen::VectorXd>& epoch,
@@ -151,12 +221,70 @@ auto evaluate_tide(const TidalModelInterface<T>* const tidal_model,
   return {tide, long_period, quality};
 }
 
+/// @brief Compute the tide from a set of tidal constituents.
+///
+/// @brief Compute the ocean tide from a list of known tidal constituents.
+///
+/// Unlike the other evaluate_tide overload which interpolates constituents from
+/// a tidal model, this function computes the tidal prediction directly from a
+/// list of tidal constituents whose properties (amplitude and phase) are known.
+/// This is typically used for tide gauge analysis and prediction, where the
+/// constituents have been previously determined from harmonic analysis of
+/// observed sea level data.
+///
+/// @param[in] constituents A map of tidal constituents, where the key is the
+/// constituent identifier and the value is a complex number representing the
+/// amplitude (magnitude) and phase (argument) of the constituent.
+/// @param[in] epoch Date of the tide calculation expressed in number of seconds
+/// elapsed since 1970-01-01T00:00:00Z.
+/// @param[in] latitude Latitude in degrees for the position at which the tide
+/// is calculated. This is used to compute the long period equilibrium tide if
+/// the settings indicate that it should be included in the result.
+/// @param[in] settings Settings for the tide computation, including whether to
+/// compute the long period equilibrium tide and the astronomical formulae to
+/// use.
+/// @return A tuple that contains:
+/// - The height of the diurnal and semi-diurnal constituents of the tidal
+///   spectrum for each epoch.
+/// - The height of the long period wave constituents of the tidal spectrum
+///   for each epoch.
+/// @note The units of the returned tide are the same as the units of the input
+/// constituents.
+/// @warning If Settings::compute_long_period_equilibrium returns true, the
+/// input constituents must use centimeters. The long period equilibrium is
+/// computed in centimeters and is added to the constituent tide; mixing units
+/// would make the result inconsistent.
 auto evaluate_tide_from_constituents(
     const std::map<ConstituentId, Complex>& constituents,
     const Eigen::Ref<const Eigen::VectorXd>& epoch, const double latitude,
     const boost::optional<Settings>& settings = boost::none)
     -> std::tuple<Eigen::VectorXd, Eigen::VectorXd>;
 
+/// @brief Compute the long period equilibrium ocean tides.
+///
+/// The complete tidal spectral lines from the Cartwright-Tayler-Edden tables
+/// are summed over to compute the long-period tide.
+/// @n
+/// Order 2 and order 3 of the tidal potential for the long period waves is
+/// now taken into account.
+/// @n
+/// The decomposition was validated compared to the potential proposed by
+/// Tamura.
+/// @n
+/// @param[in] epoch The number of seconds since 1970-01-01T00:00:00Z.
+/// @param[in] latitude Latitude in degrees (positive north) for the position at
+/// which tide is computed.
+/// @param[in] constituents A list of tidal constituents to exclude from the
+/// long period equilibrium tide computation. This is typically used to exclude
+/// the tidal constituents that are already included in the model tide to avoid
+/// double counting. If empty, all constituents from the Cartwright-Tayler-Edden
+/// tables are included in the long period equilibrium tide computation.
+/// @param[in] settings Settings for the tide computation.
+/// @return The height of the long period equilibrium ocean tide at the given
+/// epoch and latitude in centimeters.
+/// @note Cartwright & Tayler, Geophys. J. R.A.S., 23, 45, 1971.
+/// @note Cartwright & Edden, Geoph. J. R.A.S., 33, 253, 1973.
+/// @note Tamura Y., Bull. d'information des marees terrestres, Vol. 99, 1987.
 auto evaluate_equilibrium_long_period(
     const Eigen::Ref<const Eigen::VectorXd>& epoch,
     const Eigen::Ref<const Eigen::VectorXd>& latitude,

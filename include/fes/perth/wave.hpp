@@ -18,8 +18,13 @@
 namespace fes {
 namespace perth {
 
+/// @brief Perth tidal wave interface, based on Doodson numbers.
 class Wave : public WaveInterface {
  public:
+  /// @brief Constructor.
+  /// @param[in] ident The constituent identifier.
+  /// @param[in] type The type of the wave (long or short period).
+  /// @param[in] doodson_numbers The Doodson numbers of the constituent.
   Wave(const ConstituentId ident, WaveType type,
        Vector7b doodson_numbers) noexcept
       : WaveInterface(ident, type),
@@ -43,17 +48,17 @@ class Wave : public WaveInterface {
   auto compute_nodal_corrections(const angle::Astronomic& angles,
                                  const bool group_modulations) -> void final;
 
-  /// Gets the XDO numerical representation of the wave
+  /// @brief Gets the XDO numerical representation of the wave
   auto xdo_numerical() const -> std::string final {
     return fes::xdo_numerical(doodson_numbers_);
   }
 
-  /// Gets the XDO alphabetical representation of the wave
+  /// @brief Gets the XDO alphabetical representation of the wave
   auto xdo_alphabetical() const -> std::string final {
     return fes::xdo_alphabetical(doodson_numbers_);
   }
 
-  /// Gets the Doodson number of the wave
+  /// @brief Gets the Doodson number of the wave
   /// @note The 7th number follows the convention established in Doodson &
   /// Warburg's 1941 book. This number can be 0, 1, 2, or -1, representing
   /// multiples of 90 degrees added to the tidal argument when using cosine

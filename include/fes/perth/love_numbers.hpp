@@ -20,7 +20,7 @@ namespace perth {
 ///
 /// @note The latitude dependence of Love numbers and anelasticity are ignored.
 ///
-/// @cite Mathews, P. M., and Buffet, B. A. and Shapiro, I., I., Love numbers
+/// @note Mathews, P. M., and Buffet, B. A. and Shapiro, I., I., Love numbers
 /// for a rotating spheroidal Earth: New definitions and numerical values,
 /// J. Geophys. Res., 22, 579-582, 1995.
 ///

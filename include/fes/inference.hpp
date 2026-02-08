@@ -2,7 +2,7 @@
 //
 // All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
-/// @file include/fes/darwin/inference.hpp
+/// @file include/fes/inference.hpp
 /// @brief Table of tidal constituents handled by FES models.
 #pragma once
 
@@ -14,7 +14,6 @@
 #include "fes/interface/wave.hpp"
 #include "fes/interface/wave_table.hpp"
 #include "fes/map.hpp"
-#include "fes/perth/doodson.hpp"
 #include "fes/perth/love_numbers.hpp"
 #include "fes/types.hpp"
 
@@ -267,6 +266,17 @@ inline auto SplineInference::inferred_constituents() const
 
 // ============================================================================
 
+/// @brief Populate the inferred constituents map and sort the keys by
+/// frequency.
+/// @tparam N The maximum number of constituents in the map.
+/// @param[out] mutable_inferred The map to populate with inferred constituents
+/// and their (frequency, amplitude) pairs.
+/// @param[out] keys The vector to populate with the keys of the inferred
+/// constituents, which will be sorted by frequency.
+/// @param[in] inferred The map of inferred constituents with their amplitudes,
+/// but without frequencies.
+/// @param[in] wave_table The wave table containing the waves for the
+/// constituents, used to look up frequencies for the inferred constituents.
 template <size_t N>
 auto populate_and_sort_inferred(
     Map<ConstituentId, std::pair<double, double>, N>& mutable_inferred,
@@ -316,13 +326,6 @@ inline auto linear_interpolation(double x1, const Complex& y1, double x2,
 }
 
 /// @brief Computes zero admittance interpolation, which always returns zero.
-/// @param[in] x1 Frequency for the first component.
-/// @param[in] y1 Complex admittance for the first component.
-/// @param[in] x2 Frequency for the second component.
-/// @param[in] y2 Complex admittance for the second component.
-/// @param[in] x3 Frequency for the third component.
-/// @param[in] y3 Complex admittance for the third component.
-/// @param[in] x Frequency at which to evaluate the interpolation.
 /// @return The interpolated complex admittance at frequency `x` (always zero).
 constexpr auto zero_admittance(double /*x1*/, const Complex& /*y1*/,
                                double /*x2*/, const Complex& /*y2*/,
@@ -337,11 +340,8 @@ constexpr auto zero_admittance(double /*x1*/, const Complex& /*y1*/,
 /// frequencies, using approach of Munk-Cartwright (low order Fourier series).
 /// The 3 frequencies must be either (Q1,O1,K1) or (N2,M2,S2).
 /// @tparam N Species number (1=diurnal; 2=semid'l).
-/// @param[in] x1 Frequency for the first component.
 /// @param[in] z1 Complex admittance for the first component.
-/// @param[in] x2 Frequency for the second component.
 /// @param[in] z2 Complex admittance for the second component.
-/// @param[in] x3 Frequency for the third component.
 /// @param[in] z3 Complex admittance for the third component.
 /// @param[in] x Frequency at which to evaluate the interpolation.
 /// @return The interpolated complex admittance at frequency `x`.
