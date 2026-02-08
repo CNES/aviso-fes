@@ -217,6 +217,10 @@ Wave System
 Tidal Models
 ============
 
+.. autoclass:: pyfes.core.Axis
+   :members:
+   :undoc-members:
+
 .. autoclass:: pyfes.core.tidal_model.CartesianComplex128
    :members:
    :undoc-members:
