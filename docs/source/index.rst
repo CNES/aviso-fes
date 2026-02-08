@@ -161,6 +161,6 @@ Contact
    constituents/index
    auto_examples/index.rst
    theory/index
-   api
+   api/index
    glossary
    changelog
