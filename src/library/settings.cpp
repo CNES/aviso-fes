@@ -72,7 +72,7 @@ inline auto yes_no(bool value) -> std::string { return value ? "Yes" : "No"; }
 }  // anonymous namespace
 
 auto generate_markdown_table(
-    const Settings& settings,
+    const Settings& settings, bool ascending,
     const std::vector<ConstituentId>& modeled_constituents) -> std::string {
   auto wt = wave_table_factory(settings.engine_type());
   wt->set_modeled_constituents(modeled_constituents);
@@ -102,7 +102,7 @@ auto generate_markdown_table(
   // Constituents table
   detail::MarkdownTable constituents_table(
       {"Constituent", "Speed (Deg/hr)", "XDO", "Modeled", "Inferred"});
-  for (const auto& item : wt->sort_by_frequency()) {
+  for (const auto& item : wt->sort_by_frequency(ascending)) {
     const auto& wave = (*wt)[item];
     auto is_modeled = wave->is_modeled();
     auto is_inferred =

@@ -291,7 +291,10 @@ class WaveTableInterface {
 
   /// @brief Generate a markdown table summarizing the constituents handled by
   /// the wave table.
-  auto generate_markdown_table() const -> std::string;
+  /// @param[in] ascending If true (default), sort the table by ascending
+  /// frequency; otherwise, sort by descending frequency.
+  /// @return A string containing the markdown table.
+  auto generate_markdown_table(bool ascending = true) const -> std::string;
 
   /// @brief Returns the constituents sorted by frequency.
   /// @param[in] ascending If true (default), sort by ascending frequency;

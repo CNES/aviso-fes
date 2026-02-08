@@ -236,16 +236,16 @@ This class provides pre-configured settings optimized for GOT tidal models:
 inline auto init_generate_markdown_table(py::module& m) -> void {
   m.def(
       "generate_markdown_table",
-      [](const Settings& settings,
+      [](const Settings& settings, bool ascending,
          const std::vector<std::string>& modeled_constituents) -> std::string {
         auto ids = std::vector<ConstituentId>();
         ids.reserve(modeled_constituents.size());
         for (const auto& name : modeled_constituents) {
           ids.push_back(constituents::parse(name));
         }
-        return generate_markdown_table(settings, ids);
+        return generate_markdown_table(settings, ascending, ids);
       },
-      py::arg("settings"),
+      py::arg("settings"), py::arg("ascending") = true,
       py::arg("modeled_constituents") = std::vector<std::string>{},
       R"__doc__(
 Generate a Markdown table describing the settings, the constituents
@@ -253,6 +253,8 @@ provided by the model and inferred.
 
 Args:
   settings: The settings for which to generate the table.
+  ascending: If true (default), sort the table by ascending frequency;
+    otherwise, sort by descending frequency.
   modeled_constituents: The list of constituent names provided by
     the model. Default is empty, in which case the table will only
     contain the inferred constituents.

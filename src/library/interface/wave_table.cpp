@@ -251,10 +251,11 @@ auto WaveTableInterface::compute_nodal_modulations(
 }
 
 // ============================================================================
-auto WaveTableInterface::generate_markdown_table() const -> std::string {
+auto WaveTableInterface::generate_markdown_table(bool ascending) const
+    -> std::string {
   detail::MarkdownTable constituents_table(
       {"Constituent", "Speed (Deg/hr)", "XDO"});
-  for (const auto& item : this->sort_by_frequency()) {
+  for (const auto& item : this->sort_by_frequency(ascending)) {
     const auto& wave = (*this)[item];
 
     constituents_table.add_row(

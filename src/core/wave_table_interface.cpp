@@ -334,8 +334,18 @@ Returns:
 )__doc__")
       .def("generate_markdown_table",
            &WaveTableInterface::generate_markdown_table,
-           "Generate a markdown table summarizing the constituents handled by "
-           "the wave table.")
+           py::arg("ascending") = true,
+           R"__doc__(
+Generate a markdown table summarizing the constituents handled by the wave
+table.
+
+Args:
+  ascending: If true (default), sort the table by ascending frequency;
+    otherwise, sort by descending frequency.
+
+Returns:
+  A string containing the markdown table.
+)__doc__")
       .def(
           "set_modeled_constituents",
           [](WaveTableInterface& self, const std::vector<std::string>& names) {

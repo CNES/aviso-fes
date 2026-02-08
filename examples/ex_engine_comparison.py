@@ -244,12 +244,22 @@ for mode in [pyfes.ZERO, pyfes.LINEAR, pyfes.SPLINE, pyfes.FOURIER]:
 
 modeled = ['M2', 'S2', 'N2', 'K2', 'K1', 'O1', 'P1', 'Q1']
 
-md_to_html(pyfes.generate_markdown_table(fes_settings, modeled))
+md_to_html(
+    pyfes.generate_markdown_table(
+        fes_settings,
+        modeled_constituents=modeled,
+    )
+)
 
 # %%
 # The same call with the PERTH engine settings:
 
-md_to_html(pyfes.generate_markdown_table(perth_settings, modeled))
+md_to_html(
+    pyfes.generate_markdown_table(
+        perth_settings,
+        modeled_constituents=modeled,
+    )
+)
 
 # %%
 # You can also inspect the wave table directly. The table lists every

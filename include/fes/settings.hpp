@@ -155,12 +155,14 @@ class PerthSettings : public Settings {
 /// @brief Generate a Markdown table describing the settings, the constiuents
 /// provided by the model and inferred.
 /// @param[in] settings The settings for which to generate the table.
+/// @param[in] ascending If true (default), sort the table by ascending
+/// frequency; otherwise, sort by descending frequency.
 /// @param[in] modeled_constituents The list of constituents provided by
 /// the model. Default is empty, in which case the table will only contain
 /// the inferred constituents.
 /// @return A string containing the Markdown table.
 auto generate_markdown_table(
-    const Settings& settings,
+    const Settings& settings, bool ascending = true,
     const std::vector<ConstituentId>& modeled_constituents = {}) -> std::string;
 
 }  // namespace fes

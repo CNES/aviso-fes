@@ -116,7 +116,8 @@ print(f'Time tolerance: {config.settings.time_tolerance} seconds')
 # ones will be inferred.
 md_to_html(
     pyfes.generate_markdown_table(
-        config.settings, config.models['tide'].identifiers()
+        config.settings,
+        modeled_constituents=config.models['tide'].identifiers(),
     )
 )
 
