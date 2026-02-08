@@ -217,7 +217,16 @@ equilibrium wave calculation routine (``lpe_minus_n_waves``).
           [](const TidalModelInterface<T>& self) -> bool {
             return !self.empty();
           },
-          "Return true if no wave models are loaded.");
+          "Return true if no wave models are loaded.")
+      .def(
+        "__repr__",
+        [](const TidalModelInterface<T>& self) -> std::string {
+          std::stringstream ss;
+          ss << "TidalModelInterface(" << self.size() << " constituents, tide_type="
+             << self.tide_type() << ")";
+          return ss.str();
+        },
+        "Return a string representation of the tidal model interface.");
 }
 
 }  // namespace fes
