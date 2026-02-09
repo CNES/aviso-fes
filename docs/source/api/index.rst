@@ -40,3 +40,4 @@ Doodson-specific internals.
    engine_modules
    configuration
    utilities
+   exceptions

@@ -340,10 +340,9 @@ class Common:
         if not self.latitude:
             raise ValueError('latitude cannot be empty.')
         for item in self.dynamic:
-            try:
-                parse_constituent(item)
-            except ValueError as exc:
-                raise ValueError(f'Unknown wave: {item!r}.') from exc
+            # Raise ConstituentValidationError if the constituent name is not
+            # known.
+            parse_constituent(item)
 
     @staticmethod
     def validate_constituents(names: Iterable[str]) -> None:
@@ -751,6 +750,20 @@ def load(
           to the corresponding tidal model.
         - settings: Runtime settings for the tidal prediction engine
           (FESSettings or PerthSettings).
+
+    Raises:
+        ConstituentValidationError: If an invalid constituent name is used in
+            the configuration.
+        InterpolationError: If an environment variable referenced in the
+            configuration file is not defined in the environment.
+        InterpolationDepthError: If interpolation of environment variables is
+            too deeply recursive, indicating a self-referential variable.
+        OSError: If the file cannot be opened.
+        TypeError: If the configuration file contains unknown sections or invalid
+            keys for the tidal model configuration.
+        ValueError: If the configuration file is invalid (e.g. missing required
+            sections, unknown tidal type, inconsistent grid properties, etc.).
+        yaml.YAMLError: If the YAML cannot be parsed.
 
     Example:
         >>> import pyfes

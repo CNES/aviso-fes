@@ -17,7 +17,7 @@
 namespace fes {
 
 /// @brief Exception thrown when a constituent name is not known.
-class ConstituentValidationError : std::invalid_argument {
+class ConstituentValidationError : public std::invalid_argument {
  public:
   /// @brief Constructor
   /// @param[in] message The error message.

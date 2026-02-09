@@ -4,8 +4,10 @@
 // BSD-style license that can be found in the LICENSE file.
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+#include <pyerrors.h>
 
 #include <cstdint>
+#include <stdexcept>
 
 #include "fes/constituent.hpp"
 #include "fes/python/optional.hpp"  // IWYU pragma: keep
@@ -15,6 +17,10 @@ namespace py = pybind11;
 namespace fes {
 
 inline void init_constituent(py::module& m) {
+  // Register the ConstituentValidationError exception
+  py::register_exception<ConstituentValidationError>(
+      m, "ConstituentValidationError", PyExc_ValueError);
+
   m.def(
       "parse_constituent",
       [](const std::string& name) -> int64_t {
