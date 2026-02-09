@@ -759,8 +759,8 @@ def load(
         InterpolationDepthError: If interpolation of environment variables is
             too deeply recursive, indicating a self-referential variable.
         OSError: If the file cannot be opened.
-        TypeError: If the configuration file contains unknown sections or invalid
-            keys for the tidal model configuration.
+        TypeError: If the configuration file contains unknown sections or
+            invalid keys for the tidal model configuration.
         ValueError: If the configuration file is invalid (e.g. missing required
             sections, unknown tidal type, inconsistent grid properties, etc.).
         yaml.YAMLError: If the YAML cannot be parsed.
