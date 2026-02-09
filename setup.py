@@ -40,7 +40,7 @@ __version__ = "{release}"
 """
 
 # C++ version file content
-CXX_VERSION_TEMPLATE = """/// @file perth/version.hpp
+CXX_VERSION_TEMPLATE = """/// @file fes/version.hpp
 /// @brief Version of the library
 #pragma once
 /// Major version of the library
