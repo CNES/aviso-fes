@@ -16,6 +16,15 @@
 
 namespace fes {
 
+/// @brief Exception thrown when a constituent name is not known.
+class ConstituentValidationError : std::invalid_argument {
+ public:
+  /// @brief Constructor
+  /// @param[in] message The error message.
+  explicit ConstituentValidationError(const std::string &message)
+      : std::invalid_argument(message) {}
+};
+
 /// @brief Known tidal constituents identifiers.
 enum ConstituentId : uint8_t {
   k2MK2,            //!< @f$2MK_2@f$
@@ -140,6 +149,7 @@ namespace constituents {
 /// @brief Parses the tidal constituent from a string. Parsing is case not
 /// sensitive. So "Mm" and "mm" are equivalent.
 /// @param[in] name Tide constituent name.
+/// @throws ConstituentValidationError if the constituent name is not known.
 /// @return Tidal constituent.
 auto parse(const std::string &name) -> ConstituentId;
 
@@ -153,6 +163,8 @@ auto name(ConstituentId constituent) -> const char *;
 /// @tparam Size Size of the defined_constituent array.
 /// @param[in] name Tide constituent name.
 /// @param[in] defined_constituent Defined tidal constituents.
+/// @throws ConstituentValidationError if the constituent name is not known or
+/// if the constituent is not part of the defined_constituent array.
 /// @return Tidal constituent.
 template <size_t Size>
 auto parse(const std::string &name,
@@ -162,7 +174,7 @@ auto parse(const std::string &name,
   auto it =
       std::find(defined_constituent.begin(), defined_constituent.end(), result);
   if (it == defined_constituent.end()) {
-    throw std::invalid_argument("unknown constituent name: " + name);
+    throw ConstituentValidationError("unknown constituent name: " + name);
   }
   return result;
 }
@@ -171,6 +183,8 @@ auto parse(const std::string &name,
 /// @tparam Size Size of the defined_constituent array.
 /// @param[in] constituent Tidal constituent.
 /// @param[in] defined_constituent Defined tidal constituents.
+/// @throws ConstituentValidationError if the constituent is not part of the
+/// defined_constituent array.
 /// @return Tidal constituent name.
 template <size_t Size>
 auto name(ConstituentId constituent,
@@ -179,8 +193,9 @@ auto name(ConstituentId constituent,
   auto it = std::find(defined_constituent.begin(), defined_constituent.end(),
                       constituent);
   if (it == defined_constituent.end()) {
-    throw std::invalid_argument("constituent ID not recognized: " +
-                                std::to_string(static_cast<int>(constituent)));
+    throw ConstituentValidationError(
+        "constituent ID not recognized: " +
+        std::to_string(static_cast<int>(constituent)));
   }
   return name(constituent);
 }

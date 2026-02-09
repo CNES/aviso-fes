@@ -11,6 +11,7 @@
 
 #include <boost/optional.hpp>
 
+#include "fes/constituent.hpp"
 #include "fes/harmonic_analysis.hpp"
 #include "fes/interface/wave_table.hpp"
 #include "fes/python/datemanip.hpp"
@@ -104,7 +105,7 @@ Returns:
             try {
               auto ident = constituents::parse(name);
               return self.contains(ident);
-            } catch (const std::invalid_argument&) {
+            } catch (const ConstituentValidationError&) {
               return false;
             }
           },

@@ -38,14 +38,16 @@ auto parse(const std::string& constituent_name) -> ConstituentId {
       return static_cast<ConstituentId>(ix);
     }
   }
-  throw std::invalid_argument("unknown constituent name: " + constituent_name);
+  throw ConstituentValidationError("unknown constituent name: " +
+                                   constituent_name);
 }
 
 auto name(ConstituentId constituent) -> const char* {
   const auto ix = static_cast<std::size_t>(constituent);
   if (ix >= kNumConstituents) {
-    throw std::invalid_argument("unknown constituent: " +
-                                std::to_string(static_cast<int>(constituent)));
+    throw ConstituentValidationError(
+        "unknown constituent: " +
+        std::to_string(static_cast<int>(constituent)));
   }
   return kConstituentNames[ix];
 }

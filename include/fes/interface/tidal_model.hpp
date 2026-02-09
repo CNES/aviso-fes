@@ -8,6 +8,7 @@
 
 #include <complex>
 #include <cstdint>
+#include <stdexcept>
 
 #include "fes/angle/astronomic.hpp"
 #include "fes/constituent.hpp"
@@ -180,8 +181,11 @@ class TidalModelInterface
                               Vector<std::complex<T>> wave) -> void {
     try {
       add_constituent(constituents::parse(name), std::move(wave));
-    } catch (const std::invalid_argument& e) {
+    } catch (const ConstituentValidationError&) {
       throw std::invalid_argument("constituent name not known: " + name);
+    } catch (const std::invalid_argument& e) {
+      throw std::invalid_argument("error adding constituent: " + name + ": " +
+                                  e.what());
     }
   }
 
