@@ -500,7 +500,7 @@ Astronomic::schureman_order1(const double epoch) noexcept -> void {
   s_ = detail::math::horner(
       jc, detail::math::dms_to_degrees(270.0, 26.0, 14.72),
       (1336 * 360 + detail::math::dms_to_degrees(0.0, 0.0, 1'108'411.20)));
-  // Longitude of solar perigee (p₁)
+  // Longitude of solar perigee (p_1)
   p1_ =
       detail::math::horner(jc, detail::math::dms_to_degrees(281.0, 13.0, 15.0),
                            detail::math::dms_to_degrees(0.0, 0.0, 6'189.03));
@@ -537,7 +537,7 @@ Astronomic::schureman_order3(const double epoch) noexcept -> void {
       (1336 * 360 + detail::math::dms_to_degrees(0.0, 0.0, 1'108'411.20)),
       detail::math::dms_to_degrees(0.0, 0.0, 9.09),
       detail::math::dms_to_degrees(0.0, 0.0, 0.006'8));
-  // Longitude of solar perigee (p₁)
+  // Longitude of solar perigee (p_1)
   p1_ =
       detail::math::horner(jc, detail::math::dms_to_degrees(281.0, 13.0, 15.0),
                            detail::math::dms_to_degrees(0.0, 0.0, 6'189.03),
@@ -585,7 +585,7 @@ FES_MATH_CONSTEXPR auto Astronomic::meeus(const double epoch) noexcept -> void {
   auto g = detail::math::horner(jc, 357.5291092, 35999.0502909, -0.0001536,
                                 1.0 / 24490000.0);
 
-  // Longitude of solar perigee (p₁)
+  // Longitude of solar perigee (p_1)
   p1_ = h_ - g;
 
   // Longitude of lunar perigee (p)
@@ -642,7 +642,7 @@ auto FES_MATH_CONSTEXPR Astronomic::iers(const double epoch) noexcept -> void {
   // longitude of lunear perigee (P)
   p_ = detail::math::degrees(f + omega - l);
 
-  // Longitude of solar perigee (p₁)
+  // Longitude of solar perigee (p_1)
   p1_ = detail::math::degrees(-lp + f - d + omega);
 
   // Longitude of the moon's node (N)
