@@ -1,6 +1,6 @@
 import typing
 
-from ..type_hints import MatrixInt32, VectorInt64
+from ..type_hints import MatrixInt32, VectorComplex128, VectorComplex64, VectorInt64
 from . import (
     TidalModelInterfaceComplex128,
     TidalModelInterfaceComplex64,
@@ -19,6 +19,14 @@ class CartesianComplex128(TidalModelInterfaceComplex128):
     ) -> None: ...
     def lat(self) -> Axis: ...
     def lon(self) -> Axis: ...
+    def resample(
+        self,
+        origin_lon: Axis,
+        origin_lat: Axis,
+        wave: VectorComplex128,
+        row_major: bool = ...,
+        num_threads: int = ...,
+    ) -> VectorComplex128: ...
 
 class CartesianComplex64(TidalModelInterfaceComplex64):
     def __init__(
@@ -30,6 +38,14 @@ class CartesianComplex64(TidalModelInterfaceComplex64):
     ) -> None: ...
     def lat(self) -> Axis: ...
     def lon(self) -> Axis: ...
+    def resample(
+        self,
+        origin_lon: Axis,
+        origin_lat: Axis,
+        wave: VectorComplex64,
+        row_major: bool = ...,
+        num_threads: int = ...,
+    ) -> VectorComplex64: ...
 
 class LGP1Complex128(TidalModelInterfaceComplex128):
     def __init__(

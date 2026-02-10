@@ -17,6 +17,7 @@ import enum
 import os
 import re
 from re import Match
+import warnings
 
 import netCDF4
 import numpy
@@ -385,11 +386,21 @@ class GridProperties(NamedTuple):
         if not isinstance(other, GridProperties):
             return NotImplemented
         return (
-            self.dtype != other.dtype
-            and self.shape != other.shape
-            and self.longitude_major != other.longitude_major
-            and not numpy.allclose(self.lon, other.lon)
-            and not numpy.allclose(self.lat, other.lat)
+            self.shape != other.shape
+            or self.dtype != other.dtype
+            or self.longitude_major != other.longitude_major
+            or not numpy.allclose(self.lon, other.lon)
+            or not numpy.allclose(self.lat, other.lat)
+        )
+
+    def __repr__(self) -> str:
+        """Return a string representation of the GridProperties."""
+        return (
+            f'GridProperties(dtype={self.dtype}, '
+            f'lon=[{self.lon[0]}, ..., {self.lon[-1]}], '
+            f'lat=[{self.lat[0]}, ..., {self.lat[-1]}], '
+            f'shape={self.shape}, '
+            f'longitude_major={self.longitude_major})'
         )
 
 
@@ -401,6 +412,29 @@ class TidalModelInstance(NamedTuple):
 
     instance: TidalModel
     properties: GridProperties
+
+    def resample(
+        self,
+        lon: Vector,
+        lat: Vector,
+        epsilon: float,
+        wave: Matrix,
+        longitude_major: bool,
+    ) -> Vector:
+        """Resample the tidal model to a new grid."""
+        if not isinstance(
+            self.instance,
+            (tidal_model.CartesianComplex64, tidal_model.CartesianComplex128),
+        ):
+            raise TypeError(
+                'Resampling is only supported for Cartesian tidal models.'
+            )
+        return self.instance.resample(
+            Axis(lon, epsilon=epsilon, is_periodic=True),
+            Axis(lat),
+            wave.ravel(),
+            longitude_major,
+        )
 
 
 @dataclasses.dataclass(frozen=True)
@@ -491,18 +525,39 @@ class Cartesian(Common):
                 )
 
                 model = TidalModelInstance(instance, properties)
-            # Check that the properties of the loaded grid match the first one.
-            elif model.properties != GridProperties(
-                wave.dtype,
-                lat,
-                lon,
-                wave.shape,
-                longitude_major,
-            ):
-                raise ValueError(f'Inconsistent tidal model: {path!r}.')
+
+            properties = GridProperties(
+                dtype=wave.dtype,
+                lon=lon,
+                lat=lat,
+                shape=wave.shape,
+                longitude_major=longitude_major,
+            )
+            resample = model.properties != properties
+            if resample:
+                warnings.warn(
+                    f'Constituent {constituent!r} has different grid '
+                    'properties than previously loaded constituents. The grid '
+                    'will be resampled to match. '
+                    f'Current: {properties!r} vs '
+                    f'Previous: {model.properties!r}',
+                    UserWarning,
+                    stacklevel=3,
+                )
 
             # Add the constituent to the tidal model.
-            model.instance.add_constituent(constituent, wave.ravel())
+            model.instance.add_constituent(
+                constituent,
+                model.resample(
+                    lon,
+                    lat,
+                    self.epsilon,
+                    wave,
+                    longitude_major,
+                )
+                if resample
+                else wave.ravel(),
+            )
 
         # Check that a tidal model was loaded.
         if model is None:

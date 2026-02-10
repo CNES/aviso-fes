@@ -73,6 +73,15 @@ NetCDF file:
           M2: /path/to/M2.nc
           S2: /path/to/S2.nc
 
+.. note::
+
+    During the loading process, PyFES checks that all constituents have
+    compatible grid properties (shape, resolution, longitude/latitude
+    ordering). If discrepancies are found, a warning is issued and the grid
+    will be resampled to match the first loaded constituent. See
+    :func:`~pyfes.tidal_model.CartesianTidalModel.resample` for details.
+
+
 LGP Unstructured Meshes
 ~~~~~~~~~~~~~~~~~~~~~~~~
 

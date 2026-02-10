@@ -46,6 +46,25 @@ Get the latitude axis.
 
 Returns:
      The latitude axis.
+)__doc__")
+      .def("resample", &tidal_model::Cartesian<T>::resample,
+           py::arg("origin_lon"), py::arg("origin_lat"), py::arg("wave"),
+           py::arg("row_major") = true, py::arg("num_threads") = 0,
+           py::call_guard<py::gil_scoped_release>(),
+           R"__doc__(
+Resample a tidal constituent wave to this model's grid using
+bilinear interpolation.
+
+Args:
+    origin_lon: The longitude axis of the original grid.
+    origin_lat: The latitude axis of the original grid.
+    wave: The wave to resample.
+    row_major: Whether the input wave is stored in longitude-major order.
+    num_threads: The number of threads to use. If 0, the number of threads
+        is determined by the number of cores.
+
+Returns:
+    A vector containing the resampled wave on this model's grid.
 )__doc__");
 }
 
