@@ -50,7 +50,7 @@ jobs:
       shell: bash -l {0}
       run: |
         python setup.py build
-        pytest -v -ra
+        pytest -q -ra
 
     - name: Generate Documentation
       shell: bash -l {0}
@@ -111,4 +111,4 @@ jobs:
       run: |
         python setup.py build_ext --generator="Visual Studio 17 2022"
         python setup.py build
-        pytest -v -ra
+        pytest -q -ra
