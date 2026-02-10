@@ -48,6 +48,11 @@ enum class InterpolationType : uint8_t {
   kFourierAdmittance,  ///< Munk-Cartwright Fourier series interpolation.
 };
 
+/// @brief Compute waves by inference from major constituents.
+/// @details Implements the Perth algorithm as developed by Richard Ray in his
+/// perth programs. The admittance interpolation method can be controlled via
+/// the interpolation type parameter, and long-period constituents can be
+/// optionally inferred.
 class PerthInference : public Inference<PerthInference> {
  public:
   /// @brief Constructor.
