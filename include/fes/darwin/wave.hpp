@@ -21,6 +21,7 @@
 namespace fes {
 namespace darwin {
 
+/// @brief Tidal wave properties built from Darwin parameters.
 class Wave : public WaveInterface {
  public:
   /// Typename to a function pointer for calculate the nodal factor
