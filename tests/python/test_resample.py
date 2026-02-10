@@ -130,9 +130,9 @@ class TestGridProperties:
         assert self.base != other
 
     def test_different_dtype_only(self) -> None:
-        """Dtype alone does not trigger inequality (excluded by design)."""
+        """Dtype alone must be detected as a mismatch."""
         other = self.base._replace(dtype=numpy.complex128)
-        assert not (self.base != other)
+        assert self.base != other
 
     def test_not_implemented(self) -> None:
         """Comparing with a non-GridProperties object returns NotImplemented."""
