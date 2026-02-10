@@ -538,7 +538,8 @@ class Cartesian(Common):
                 warnings.warn(
                     f'Constituent {constituent!r} has different grid '
                     'properties than previously loaded constituents. The grid '
-                    'will be resampled to match. '
+                    'shall be resampled to match same resolution as other '
+                    'constituents. '
                     f'Current: {properties!r} vs '
                     f'Previous: {model.properties!r}',
                     UserWarning,
