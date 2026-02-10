@@ -660,7 +660,7 @@ auto LGP<T, N>::interpolate(const geometry::Point& point, Quality& quality,
     return lgp_acc.values();
   }
 
-  // Calculate ξ and η for the given point
+  // Calculate xi and eta for the given point
   const auto xy =
       query_result.triangle.reference_right_angled(query_result.point);
 
