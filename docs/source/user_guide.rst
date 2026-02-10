@@ -79,7 +79,7 @@ NetCDF file:
     compatible grid properties (shape, resolution, longitude/latitude
     ordering). If discrepancies are found, a warning is issued and the grid
     will be resampled to match the first loaded constituent. See
-    :func:`~pyfes.tidal_model.CartesianTidalModel.resample` for details.
+    :func:`~pyfes.core.tidal_model.CartesianComplex128.resample` for details.
 
 
 LGP Unstructured Meshes
