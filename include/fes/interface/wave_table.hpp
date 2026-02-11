@@ -98,11 +98,11 @@ class WaveTableInterface {
   inline auto set_modeled_constituents(const Container& constituents) -> void {
     for (const auto& item : constituents) {
       const auto& ident = extract_key(item);
-      auto* ptr = map_.get(ident)->get();
+      auto* ptr = map_.get(ident);
       if (ptr == nullptr) {
         throw out_of_range(ident);
       }
-      ptr->set_is_modeled(true);
+      (*ptr)->set_is_modeled(true);
     }
   }
 
@@ -110,11 +110,11 @@ class WaveTableInterface {
   /// @param[in] ident The constituent identifier
   /// @param[out] value The tide value
   void set_tide(ConstituentId ident, const Complex& value) {
-    auto* ptr = map_.get(ident)->get();
+    auto* ptr = map_.get(ident);
     if (ptr == nullptr) {
       throw out_of_range(ident);
     }
-    ptr->set_tide(value);
+    (*ptr)->set_tide(value);
   }
 
   /// @brief Set the tide for the provided constituents.
