@@ -6,6 +6,7 @@
 /// @brief Wave table interface.
 #pragma once
 
+#include <cstddef>
 #include <memory>
 #include <stdexcept>
 #include <string>
@@ -328,9 +329,15 @@ class WaveTableInterface {
   /// @param[in] ident The constituent identifier.
   /// @return The out_of_range exception.
   auto out_of_range(ConstituentId ident) const -> std::out_of_range {
-    return std::out_of_range("Constituent ID#" +
-                             std::to_string(static_cast<uint8_t>(ident)) +
-                             " not found in the wave table.");
+    auto value = static_cast<size_t>(ident);
+    if (value >= kKnownConstituents) {
+      return std::out_of_range("Constituent ID#" + std::to_string(value) +
+                               " is out of range. Valid range is [0, " +
+                               std::to_string(kKnownConstituents - 1) + "].");
+    }
+    return std::out_of_range("Constituent ID '" +
+                             std::string(constituents::name(ident)) +
+                             "' not found in the wave table.");
   }
 };
 
