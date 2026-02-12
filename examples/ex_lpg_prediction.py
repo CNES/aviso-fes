@@ -46,6 +46,10 @@ os.environ['DATASET_DIR'] = str(
 config = pyfes.config.load(pathlib.Path().absolute() / 'fes_lpg.yml')
 
 # %%
+# Please note that loading a global model can take up a lot of memory.
+print(f'Model memory usage: {config.memory_usage() / 1e6:.2f} MB')
+
+# %%
 # ``config`` is a :py:class:`~pyfes.config.Configuration` namedtuple that
 # contains the tidal models and the runtime settings loaded from the
 # configuration file.
