@@ -772,6 +772,10 @@ class Configuration(NamedTuple):
     #: Runtime settings for the tidal prediction engine.
     settings: Settings
 
+    def memory_usage(self) -> int:
+        """Return the total memory usage of the configuration in bytes."""
+        return sum(model.memory_usage() for model in self.models.values())
+
 
 def create_settings(engine: Engine) -> Settings:
     """Create runtime settings for the specified engine.
