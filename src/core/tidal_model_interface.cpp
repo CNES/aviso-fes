@@ -210,6 +210,8 @@ equilibrium wave calculation routine (``lpe_minus_n_waves``).
           "Return the identifiers of the loaded wave models.")
       .def_property_readonly("tide_type", &TidalModelInterface<T>::tide_type,
                              "The tide type handled by the model.")
+      .def("memory_usage", &TidalModelInterface<T>::memory_usage,
+           "Return the memory usage of the tidal model in bytes.")
       .def("__len__", &TidalModelInterface<T>::size,
            "Return the number of loaded wave models.")
       .def(

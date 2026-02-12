@@ -47,7 +47,9 @@ Retrieve the triangles of the mesh.
 
 Returns:
     The triangles of the mesh.
-)__doc__");
+)__doc__")
+      .def("memory_usage", &Index::memory_usage,
+           "Return the memory usage of the mesh index in bytes.");
 }
 
 }  // namespace mesh

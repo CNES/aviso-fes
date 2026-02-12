@@ -272,6 +272,16 @@ class TidalModelInterface
   /// Get the tide type handled by the model.
   constexpr auto tide_type() const -> TideType { return tide_type_; }
 
+  /// Return the memory usage of the tidal model in bytes.
+  virtual auto memory_usage() const -> size_t {
+    size_t memory = 0;
+    for (const auto& item : data_) {
+      memory += sizeof(std::get<0>(item)) + sizeof(std::get<1>(item)) +
+                std::get<1>(item).size() * sizeof(std::complex<T>);
+    }
+    return memory;
+  }
+
  protected:
   /// Tidal constituents handled by the model.
   std::map<ConstituentId, Vector<std::complex<T>>> data_{};

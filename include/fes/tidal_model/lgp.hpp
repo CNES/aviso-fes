@@ -186,6 +186,15 @@ class LGP : public TidalModelInterface<T> {
     return result;
   }
 
+  /// Return the memory usage of the tidal model in bytes.
+  inline auto memory_usage() const -> size_t override {
+    auto memory = TidalModelInterface<T>::memory_usage();
+    memory += index_ ? index_->memory_usage() : 0;
+    memory += selected_indices_.size() * (sizeof(int64_t) + sizeof(int64_t));
+    memory += codes_.rows() * codes_.cols() * sizeof(int);
+    return memory;
+  }
+
  protected:
   /// @brief Calculate the coefficients of the Lagrange polynomials
   /// @param[in] x The x coordinate of the point to interpolate at.

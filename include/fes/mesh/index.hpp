@@ -130,6 +130,9 @@ class Index : public std::enable_shared_from_this<Index> {
   auto selected_triangles(const geometry::Box& bbox) const
       -> std::vector<int64_t>;
 
+  /// @brief Return the memory usage of the mesh index in bytes.
+  inline auto memory_usage() const -> size_t;
+
  private:
   /// Values stored in the R*Tree : Vertex of the triangle in ECEF coordinates,
   /// index of vertex (0, 1 or 2) and index of triangle.
@@ -178,6 +181,58 @@ class Index : public std::enable_shared_from_this<Index> {
       const double max_distance,
       std::vector<VertexAttribute>& nearest_vertices) const -> void;
 };
+
+auto Index::memory_usage() const -> size_t {
+  /// R*-tree maximum number of elements per node (rstar<16>)
+  constexpr size_t kMaxElementsPerNode = 16;
+
+  /// Size of pointer
+  constexpr size_t kPointerSize = sizeof(void*);
+
+  /// Total ValueType size
+  constexpr size_t kValueSize = sizeof(ValueType);
+
+  /// Size of a 3D bounding box
+  constexpr size_t kBoxSize = sizeof(geometry::Box);
+
+  /// Small structural overhead per node
+  /// (parent pointer, level, bookkeeping, alignment)
+  /// Approximation based on Boost implementation.
+  constexpr size_t kNodeHeaderSize = 64;
+
+  /// Leaf node payload:
+  /// each entry stores (Box + Value)
+  /// 48 + 32 = 80 bytes per entry
+  constexpr size_t kLeafEntrySize = kBoxSize + kValueSize;
+
+  /// Maximum leaf node size
+  constexpr size_t kLeafNodeSize =
+      kNodeHeaderSize + kMaxElementsPerNode * kLeafEntrySize;
+
+  /// Internal node payload:
+  /// each entry stores (Box + child pointer)
+  /// 48 + 8 = 56 bytes per entry
+  constexpr size_t kInternalEntrySize = kBoxSize + kPointerSize;
+
+  /// Maximum internal node size
+  constexpr size_t kInternalNodeSize =
+      kNodeHeaderSize + kMaxElementsPerNode * kInternalEntrySize;
+
+  // Rough estimation for rstar<16>
+  auto number_of_elements = rtree_.size();
+  size_t leaf_nodes = 0;
+  size_t internal_nodes = 0;
+  if (number_of_elements > 0) {
+    leaf_nodes =
+        (number_of_elements + kMaxElementsPerNode - 1) / kMaxElementsPerNode;
+    if (leaf_nodes > 1) {
+      internal_nodes =
+          (leaf_nodes + (kMaxElementsPerNode - 2)) / (kMaxElementsPerNode - 1);
+    }
+  }
+  return number_of_elements * kValueSize + leaf_nodes * kLeafNodeSize +
+         internal_nodes * kInternalNodeSize;
+}
 
 auto Index::nearest(const geometry::EarthCenteredEarthFixed& cartesian_point,
                     const size_t max_neighbors) const
