@@ -55,6 +55,18 @@ class Map {
   /// @brief Destructor.
   ~Map() = default;
 
+  /// @brief Copy constructor.
+  Map(const Map&) = delete;
+
+  /// @brief Move constructor.
+  Map(Map&&) = delete;
+
+  /// @brief Copy assignment operator.
+  auto operator=(const Map&) -> Map& = delete;
+
+  /// @brief Move assignment operator.
+  auto operator=(Map&&) -> Map& = delete;
+
   /// @brief Inserts a key-value pair if key not already present.
   /// @return true if inserted, false if duplicate or full.
   constexpr auto insert(KeyT key, ValueT value) noexcept -> bool {
