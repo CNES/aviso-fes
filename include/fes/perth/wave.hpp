@@ -37,7 +37,7 @@ class Wave : public WaveInterface {
 
   /// @brief Clones the wave.
   /// @return A unique pointer to the cloned wave.
-  inline auto clone() const -> std::unique_ptr<WaveInterface> final {
+  auto clone() const -> std::unique_ptr<WaveInterface> final {
     return std::make_unique<Wave>(*this);
   }
 
@@ -46,7 +46,7 @@ class Wave : public WaveInterface {
   /// @param[in] group_modulations If true, applies group modulations to nodal
   /// corrections.
   auto compute_nodal_corrections(const angle::Astronomic& angles,
-                                 const bool group_modulations) -> void final;
+                                 bool group_modulations) -> void final;
 
   /// @brief Gets the XDO numerical representation of the wave
   auto xdo_numerical() const -> std::string final {
