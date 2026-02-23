@@ -49,7 +49,7 @@ auto Axis::is_evenly_spaced(const Eigen::Ref<const Eigen::VectorXd>& points)
     return {};
   }
 
-  for (size_t ix = 1; ix < n; ++ix) {
+  for (int64_t ix = 1; ix < static_cast<int64_t>(n); ++ix) {
     if (!detail::math::is_same(points[ix] - points[ix - 1], increment, 1e-6)) {
       return {};
     }
@@ -103,13 +103,14 @@ auto Axis::initialize(const Eigen::Ref<const Eigen::VectorXd>& values,
 
   start_ = values[0];
   size_ = values.size();
-  step_ = size_ == 1 ? stop - start_ : (stop - start_) / (size_ - 1);
+  step_ = size_ == 1 ? stop - start_
+                     : (stop - start_) / static_cast<double>(size_ - 1);
 
   is_ascending_ = size_ < 2 ? true : (*this)(0) < (*this)(1);
 
   if (is_longitude_) {
     is_longitude_ =
-        detail::math::is_same(static_cast<double>(std::fabs(step_ * size_)),
+        detail::math::is_same(std::fabs(step_ * static_cast<double>(size_)),
                               detail::math::circle_degrees<double>(), epsilon);
   }
 }
