@@ -85,7 +85,7 @@ class Astronomic {
   /// @brief Updates astronomic angles for a given UTC time.
   ///
   /// @param[in] epoch Desired UTC time in seconds since 1970-01-01T00:00:00Z.
-  auto FES_MATH_CONSTEXPR update(const double epoch) noexcept -> void;
+  auto FES_MATH_CONSTEXPR update(double epoch) noexcept -> void;
 
   /// @brief @f$T@f$
   ///
@@ -174,6 +174,9 @@ class Astronomic {
   /// @brief Gets the unity node factor.
   ///
   /// @return 1
+  // f_1 is not declared static because it may be used as a pointer-to-member
+  // function, consistent with other node factor methods.
+  // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
   constexpr auto f_1() const noexcept -> double { return 1; }
 
   /// @brief Gets the node factor of @f$J_1@f$.
@@ -194,7 +197,7 @@ class Astronomic {
     // SCHUREMAN P.43 (207)
     // SCHUREMAN P.41 (197)
     return f_o1() * std::sqrt(numbers::k197_1 +
-                              numbers::k197_2 * std::cos(2.0 * (p_ - xi_)));
+                              (numbers::k197_2 * std::cos(2.0 * (p_ - xi_))));
   }
 
   /// @brief Gets the node factor of @f$M_{2}@f$.
@@ -261,8 +264,8 @@ class Astronomic {
   FES_MATH_CONSTEXPR auto f_k1() const noexcept -> double {
     // SCHUREMAN P.45 (227)
     auto sin_2i = std::sin(2.0 * i_);
-    return std::sqrt(numbers::k227_1 * detail::math::pow<2>(sin_2i) +
-                     numbers::k227_2 * sin_2i * std::cos(nu_) +
+    return std::sqrt((numbers::k227_1 * detail::math::pow<2>(sin_2i)) +
+                     (numbers::k227_2 * sin_2i * std::cos(nu_)) +
                      numbers::k227_3);
   }
 
@@ -273,8 +276,8 @@ class Astronomic {
   FES_MATH_CONSTEXPR auto f_k2() const noexcept -> double {
     // SCHUREMAN P.46 (235)
     auto sin_i2 = detail::math::pow<2>(std::sin(i_));
-    return sqrt(numbers::k235_1 * detail::math::pow<2>(sin_i2) +
-                numbers::k235_2 * sin_i2 * std::cos(2.0 * nu_) +
+    return sqrt((numbers::k235_1 * detail::math::pow<2>(sin_i2)) +
+                (numbers::k235_2 * sin_i2 * std::cos(2.0 * nu_)) +
                 numbers::k235_3);
   }
 
@@ -439,17 +442,17 @@ class Astronomic {
   /// order 1.
   ///
   /// @param[in] epoch Desired UTC time in seconds since 1970-01-01T00:00:00Z.
-  FES_MATH_CONSTEXPR auto schureman_order1(const double epoch) noexcept -> void;
+  FES_MATH_CONSTEXPR auto schureman_order1(double epoch) noexcept -> void;
 
   /// Calculates the astronomic angles using the Schureman formulae.
   ///
   /// @param[in] epoch Desired UTC time in seconds since 1970-01-01T00:00:00Z.
-  FES_MATH_CONSTEXPR auto schureman_order3(const double epoch) noexcept -> void;
+  FES_MATH_CONSTEXPR auto schureman_order3(double epoch) noexcept -> void;
 
   /// Calculates the astronomic angles using the Meeus formulae.
   ///
   /// @param[in] epoch Desired UTC time in seconds since 1970-01-01T00:00:00Z.
-  FES_MATH_CONSTEXPR auto meeus(const double epoch) noexcept -> void;
+  FES_MATH_CONSTEXPR auto meeus(double epoch) noexcept -> void;
 
   /// Calculates the astronomic angles using the the International Earth
   /// Rotation and Reference Systems Service (IERS)
@@ -462,7 +465,7 @@ class Astronomic {
   ///
   /// @param[in] epoch Desired UTC time in seconds since 1970-01-01T00:00:00Z.
   /// @see IERS Conventions (2010) Chapter 5, Sections 5.7.1 - 5.7.2 (pp. 57-59)
-  FES_MATH_CONSTEXPR auto iers(const double epoch) noexcept -> void;
+  FES_MATH_CONSTEXPR auto iers(double epoch) noexcept -> void;
 
   /// Pointer to the function that calculates the astronomic angles.
   void (Astronomic::*update_)(const double epoch) noexcept {
@@ -482,7 +485,7 @@ FES_MATH_CONSTEXPR auto utc_2_tdt(const double epoch) -> double {
 // /////////////////////////////////////////////////////////////////////////////
 auto FES_MATH_CONSTEXPR
 Astronomic::schureman_order1(const double epoch) noexcept -> void {
-  auto reference = 25567.5;
+  constexpr auto reference = 25567.5;
   auto jc =
       ((epoch / static_cast<double>(numbers::kSecondsPerDay)) + reference) /
       static_cast<double>(numbers::kDaysPerCentury);
@@ -492,14 +495,14 @@ Astronomic::schureman_order1(const double epoch) noexcept -> void {
   // Longitude of moon's node (N)
   n_ = detail::math::horner(
       jc, detail::math::dms_to_degrees(259.0, 10.0, 57.12),
-      -(5 * 360 + detail::math::dms_to_degrees(0.0, 0.0, 482'912.63)));
+      -((5 * 360) + detail::math::dms_to_degrees(0.0, 0.0, 482'912.63)));
   // Mean longitude of sun (h)
   h_ = detail::math::horner(
       jc, detail::math::dms_to_degrees(279.0, 41.0, 48.04),
       detail::math::dms_to_degrees(0.0, 0.0, 129'602'768.13));
   s_ = detail::math::horner(
       jc, detail::math::dms_to_degrees(270.0, 26.0, 14.72),
-      (1336 * 360 + detail::math::dms_to_degrees(0.0, 0.0, 1'108'411.20)));
+      ((1336 * 360) + detail::math::dms_to_degrees(0.0, 0.0, 1'108'411.20)));
   // Longitude of solar perigee (p_1)
   p1_ =
       detail::math::horner(jc, detail::math::dms_to_degrees(281.0, 13.0, 15.0),
@@ -507,7 +510,7 @@ Astronomic::schureman_order1(const double epoch) noexcept -> void {
   // Longitude of lunar perigee (p)
   p_ = detail::math::horner(
       jc, detail::math::dms_to_degrees(334.0, 19.0, 40.87),
-      (11 * 360 + detail::math::dms_to_degrees(0.0, 0.0, 392'515.94)));
+      ((11 * 360) + detail::math::dms_to_degrees(0.0, 0.0, 392'515.94)));
 }
 
 // /////////////////////////////////////////////////////////////////////////////
@@ -523,7 +526,7 @@ Astronomic::schureman_order3(const double epoch) noexcept -> void {
   // Longitude of moon's node (N)
   n_ = detail::math::horner(
       jc, detail::math::dms_to_degrees(259.0, 10.0, 57.12),
-      -(5 * 360 + detail::math::dms_to_degrees(0.0, 0.0, 482'912.63)),
+      -((5 * 360) + detail::math::dms_to_degrees(0.0, 0.0, 482'912.63)),
       detail::math::dms_to_degrees(0.0, 0.0, 7.58),
       detail::math::dms_to_degrees(0.0, 0.0, 0.008));
   // Mean longitude of sun (h)
@@ -534,7 +537,7 @@ Astronomic::schureman_order3(const double epoch) noexcept -> void {
   // Mean longitude of moon (s)
   s_ = detail::math::horner(
       jc, detail::math::dms_to_degrees(270.0, 26.0, 14.72),
-      (1336 * 360 + detail::math::dms_to_degrees(0.0, 0.0, 1'108'411.20)),
+      ((1336 * 360) + detail::math::dms_to_degrees(0.0, 0.0, 1'108'411.20)),
       detail::math::dms_to_degrees(0.0, 0.0, 9.09),
       detail::math::dms_to_degrees(0.0, 0.0, 0.006'8));
   // Longitude of solar perigee (p_1)
@@ -546,7 +549,7 @@ Astronomic::schureman_order3(const double epoch) noexcept -> void {
   // Longitude of lunar perigee (p)
   p_ = detail::math::horner(
       jc, detail::math::dms_to_degrees(334.0, 19.0, 40.87),
-      (11 * 360 + detail::math::dms_to_degrees(0.0, 0.0, 392'515.94)),
+      ((11 * 360) + detail::math::dms_to_degrees(0.0, 0.0, 392'515.94)),
       -detail::math::dms_to_degrees(0.0, 0.0, 37.24),
       -detail::math::dms_to_degrees(0.0, 0.0, 0.045));
 }
@@ -655,7 +658,8 @@ auto FES_MATH_CONSTEXPR Astronomic::update(const double epoch) noexcept
 
   // T mean solar angle relative to Greenwich
   t_ = std::remainder(
-      180.0 + 15.0 * (std::fmod(epoch, numbers::kSecondsPerDay) / 3600), 360.0);
+      180.0 + (15.0 * (std::fmod(epoch, numbers::kSecondsPerDay) / 3600)),
+      360.0);
 
   // Normalize angles to [0, 2π)
   t_ = detail::math::radians(t_);
@@ -666,7 +670,7 @@ auto FES_MATH_CONSTEXPR Astronomic::update(const double epoch) noexcept
   p1_ = detail::math::radians(detail::math::normalize_angle(p1_));
 
   // SCHUREMAN FORMULAE P. 156
-  auto u = numbers::kCosICosW - numbers::kSinISinW * std::cos(n_);
+  auto u = numbers::kCosICosW - (numbers::kSinISinW * std::cos(n_));
 
   // Inclination of the moon's orbit to the celestial equator
   i_ = std::acos(u);
@@ -694,7 +698,7 @@ auto FES_MATH_CONSTEXPR Astronomic::update(const double epoch) noexcept
   auto p = p_ - xi_;
 
   // SCHUREMAN P. 44 (213)
-  x1ra_ = std::sqrt(1.0 + tgi2 * (36.0 * tgi2 - 12.0 * std::cos(2.0 * p)));
+  x1ra_ = std::sqrt(1.0 + (tgi2 * (36.0 * tgi2 - 12.0 * std::cos(2.0 * p))));
 
   // SCHUREMAN P. 41 (196)
   r_ = std::atan(std::sin(2.0 * p) / (1.0 / (6.0 * tgi2) - std::cos(2.0 * p)));
