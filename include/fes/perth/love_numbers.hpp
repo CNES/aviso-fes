@@ -47,8 +47,8 @@ inline auto love_pmm95b(double frequency) noexcept
   const auto f = frequency / f_k1;
   const auto frac = (f - frequency_ratio) / (f_fcn - f);
 
-  return std::make_tuple(0.2962 - 0.00127 * frac, 0.5994 - 0.002532 * frac,
-                         0.08378 + 0.00007932 * frac);
+  return std::make_tuple(0.2962 - (0.00127 * frac), 0.5994 - (0.002532 * frac),
+                         0.08378 + (0.00007932 * frac));
 }
 
 }  // namespace perth
