@@ -191,9 +191,9 @@ auto evaluate_tide(const TidalModelInterface<T>* const tidal_model,
   auto worker = [&](const int64_t start, const int64_t end) -> void {
     // For each thread, we create a new instance of the wave table, inference,
     // and accelerator
-    auto acc_ptr = std::unique_ptr<Accelerator>(
+    auto acc_ptr =
         tidal_model->accelerator(settings_instance.astronomic_formulae(),
-                                 settings_instance.time_tolerance()));
+                                 settings_instance.time_tolerance());
     auto wt_ptr = tidal_model->wave_table(settings_instance.engine_type());
     auto inference_ptr =
         inference_factory(*wt_ptr, settings_instance.inference_type());
