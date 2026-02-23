@@ -132,17 +132,16 @@ class Settings {
 class FESSettings : public Settings {
  public:
   /// @brief Constructor.
-  constexpr FESSettings() : Settings() {
-    // Default constructor of Settings already initializes the settings with the
-    // default values for FES models
-  }
+  constexpr FESSettings() = default;
+  // Default constructor of Settings already initializes the settings with the
+  // default values for FES models
 };
 
 /// @brief Default settings for GOT models.
 class PerthSettings : public Settings {
  public:
   /// @brief Constructor.
-  constexpr PerthSettings() : Settings() {
+  constexpr PerthSettings() {
     // Override the default settings for FES models with the default settings
     // for GOT models
     engine_type_ = EngineType::kDoodson;
