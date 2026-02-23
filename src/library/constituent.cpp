@@ -5,7 +5,6 @@
 #include "fes/constituent.hpp"
 
 #include <array>
-#include <stdexcept>
 
 #include "fes/detail/string.hpp"
 
