@@ -66,6 +66,18 @@ class Accelerator {
   /// Default destructor
   virtual ~Accelerator() = default;
 
+  /// Copy constructor
+  Accelerator(const Accelerator&) = default;
+
+  /// Move constructor
+  Accelerator(Accelerator&&) = default;
+
+  /// Copy assignment operator
+  auto operator=(const Accelerator&) -> Accelerator& = default;
+
+  /// Move assignment operator
+  auto operator=(Accelerator&&) -> Accelerator& = default;
+
   /// @brief Casts the object to a pointer of type T.
   ///
   /// @tparam T The type to cast to.
@@ -73,7 +85,7 @@ class Accelerator {
   /// is not possible.
   template <typename T>
   constexpr auto cast() noexcept -> T* {
-    auto* type_info = &typeid(*this);
+    const auto* type_info = &typeid(*this);
     if (*type_info != typeid(T)) {
       return nullptr;
     }
@@ -138,6 +150,18 @@ class TidalModelInterface
   /// Destructor
   virtual ~TidalModelInterface() = default;
 
+  /// Copy constructor
+  TidalModelInterface(const TidalModelInterface&) = delete;
+
+  /// Move constructor
+  TidalModelInterface(TidalModelInterface&&) = delete;
+
+  /// Copy assignment operator
+  auto operator=(const TidalModelInterface&) -> TidalModelInterface& = delete;
+
+  /// Move assignment operator
+  auto operator=(TidalModelInterface&&) -> TidalModelInterface& = delete;
+
   /// @brief Returns a pointer to the accelerator used to speed up the
   /// interpolation of tidal models.
   ///
@@ -148,8 +172,8 @@ class TidalModelInterface
   /// @return A pointer to the accelerator used to speed up the interpolation of
   /// tidal models.
   virtual auto accelerator(const angle::Formulae& formulae,
-                           const double time_tolerance) const
-      -> Accelerator* = 0;
+                           double time_tolerance) const
+      -> std::unique_ptr<Accelerator> = 0;
 
   /// @brief Returns a wave table initialized with the tidal constituents
   /// modeled by this instance.
@@ -169,7 +193,7 @@ class TidalModelInterface
   ///
   /// @param[in] ident The tidal constituent identifier.
   /// @param[in] wave The tidal constituent modelled.
-  virtual auto add_constituent(const ConstituentId ident,
+  virtual auto add_constituent(ConstituentId ident,
                                Vector<std::complex<T>> wave) -> void = 0;
 
   /// Add a tidal constituent to the model.
@@ -177,8 +201,8 @@ class TidalModelInterface
   /// @param[in] name The tidal constituent name. Search is not case sensitive.
   /// So  "Msqm", "MSQM" and "msqm" are equivalent.
   /// @param[in] wave The tidal constituent modelled.
-  inline auto add_constituent(const std::string& name,
-                              Vector<std::complex<T>> wave) -> void {
+  auto add_constituent(const std::string& name, Vector<std::complex<T>> wave)
+      -> void {
     try {
       add_constituent(constituents::parse(name), std::move(wave));
     } catch (const ConstituentValidationError&) {
@@ -192,10 +216,10 @@ class TidalModelInterface
   /// Set the dynamic tidal constituents not interpolated by the model.
   ///
   /// @param[in] dynamic The dynamic tidal constituents.
-  inline auto dynamic(const std::vector<std::string>& dynamic) -> void {
+  auto dynamic(const std::vector<std::string>& dynamic) -> void {
     dynamic_.clear();
     dynamic_.reserve(dynamic.size());
-    for (auto& item : dynamic) {
+    for (const auto& item : dynamic) {
       dynamic_.push_back(constituents::parse(item));
     }
   }
@@ -203,7 +227,7 @@ class TidalModelInterface
   /// Set the dynamic tidal constituents not interpolated by the model.
   ///
   /// @param[in] dynamic The dynamic tidal constituents.
-  inline auto dynamic(std::vector<ConstituentId> dynamic) -> void {
+  auto dynamic(std::vector<ConstituentId> dynamic) -> void {
     dynamic_ = std::move(dynamic);
   }
 
@@ -231,10 +255,9 @@ class TidalModelInterface
   /// @param[inout] acc The accelerator to use.
   /// @return A flag indicating if the point was extrapolated, interpolated or
   /// if the model is undefined.
-  inline auto interpolate(const geometry::Point& point,
-                          WaveTableInterface& wave_table,
-                          Accelerator& acc) const -> Quality {
-    Quality quality;
+  auto interpolate(const geometry::Point& point, WaveTableInterface& wave_table,
+                   Accelerator& acc) const -> Quality {
+    Quality quality = kUndefined;
     for (auto&& item : this->interpolate(point, quality, acc)) {
       wave_table.set_tide(std::get<0>(item), std::get<1>(item));
     }
@@ -248,7 +271,7 @@ class TidalModelInterface
   }
 
   /// Clear all tidal constituents.
-  inline auto clear() -> void {
+  auto clear() -> void {
     data_.clear();
     dynamic_.clear();
   }
@@ -260,7 +283,7 @@ class TidalModelInterface
   constexpr auto size() const -> size_t { return data_.size(); }
 
   /// Get the tidal constituent identifiers handled by the model.
-  inline auto identifiers() const -> std::vector<ConstituentId> {
+  auto identifiers() const -> std::vector<ConstituentId> {
     auto result = std::vector<ConstituentId>();
     result.reserve(data_.size());
     for (const auto& item : data_) {
@@ -277,7 +300,7 @@ class TidalModelInterface
     size_t memory = 0;
     for (const auto& item : data_) {
       memory += sizeof(std::get<0>(item)) + sizeof(std::get<1>(item)) +
-                std::get<1>(item).size() * sizeof(std::complex<T>);
+                (std::get<1>(item).size() * sizeof(std::complex<T>));
     }
     return memory;
   }
