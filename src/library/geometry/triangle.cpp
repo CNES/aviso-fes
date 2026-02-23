@@ -47,7 +47,7 @@ auto Triangle::reference_right_angled(const Point& point) const
   const auto cpx = p2 - p1;
   const auto cpy = p3 - p1;
 
-  auto jacobien = ctx * cpy - cty * cpx;
+  auto jacobien = (ctx * cpy) - (cty * cpx);
 
   if (detail::math::is_almost_zero(jacobien)) {
     return {0.0, 0.0};
