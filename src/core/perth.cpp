@@ -7,7 +7,6 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
-#include "fes/perth/constituent.hpp"
 #include "fes/perth/wave.hpp"
 #include "fes/perth/wave_table.hpp"
 
