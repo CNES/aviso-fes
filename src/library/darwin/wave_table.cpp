@@ -11,7 +11,6 @@
 #include "fes/darwin/constituent.hpp"
 #include "fes/darwin/wave.hpp"
 #include "fes/interface/wave.hpp"
-#include "fes/interface/wave_table.hpp"
 
 namespace fes {
 namespace darwin {
@@ -237,12 +236,9 @@ static auto build_constituent_ids(const std::vector<std::string>& waves = {})
   return waves.empty() ? to_ids(darwin::constituents::known()) : to_ids(waves);
 }
 
-WaveTable::WaveTable() : WaveTableInterface() {
-  populate_map(build_constituent_ids(), wave_factory);
-}
+WaveTable::WaveTable() { populate_map(build_constituent_ids(), wave_factory); }
 
-WaveTable::WaveTable(const std::vector<std::string>& names)
-    : WaveTableInterface() {
+WaveTable::WaveTable(const std::vector<std::string>& names) {
   populate_map(build_constituent_ids(names), wave_factory);
 }
 
