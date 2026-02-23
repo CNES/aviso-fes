@@ -90,6 +90,18 @@ class WaveInterface {
   /// @brief Destructor.
   virtual ~WaveInterface() = default;
 
+  /// @brief Copy constructor
+  WaveInterface(const WaveInterface&) = default;
+
+  /// @brief Move constructor
+  WaveInterface(WaveInterface&&) = default;
+
+  /// @brief Copy assignment operator
+  auto operator=(const WaveInterface&) -> WaveInterface& = default;
+
+  /// @brief Move assignment operator
+  auto operator=(WaveInterface&&) -> WaveInterface& = default;
+
   /// @brief Clones the wave.
   /// @return A unique pointer to the cloned wave.
   virtual auto clone() const -> std::unique_ptr<WaveInterface> = 0;
@@ -198,8 +210,7 @@ class WaveInterface {
   /// @param[in] group_modulations If true, applies group modulations to nodal
   /// corrections.
   virtual auto compute_nodal_corrections(const angle::Astronomic& angles,
-                                         const bool group_modulations)
-      -> void = 0;
+                                         bool group_modulations) -> void = 0;
 
   /// Gets the XDO numerical representation of the wave
   virtual auto xdo_numerical() const -> std::string = 0;
@@ -215,7 +226,7 @@ class WaveInterface {
   virtual auto doodson_numbers() const -> Vector7b = 0;
 
  protected:
-  Complex tide_{};     ///< Tide value
+  Complex tide_;       ///< Tide value
   double v_{};         ///< Greenwich argument
   double f_{};         ///< Nodal correction for amplitude
   double u_{};         ///< Nodal correction for phase
