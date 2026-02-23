@@ -29,7 +29,7 @@ class Axis {
   /// a longitude axis.
   /// @param[in] is_longitude True if the axis represents longitude in degrees.
   explicit Axis(const Eigen::Ref<const Eigen::VectorXd>& points,
-                const double epsilon = 1e-6, const bool is_longitude = false);
+                double epsilon = 1e-6, bool is_longitude = false);
 
   /// Build an axis from start, end and step.
   ///
@@ -83,7 +83,7 @@ class Axis {
   constexpr auto is_longitude() const -> bool { return is_longitude_; }
 
   /// Return true if tis instance represents a periodic longitude axis.
-  constexpr auto is_periodic() const -> double {
+  constexpr auto is_periodic() const -> bool {
     return period_ == detail::math::circle_degrees<double>();
   }
 
@@ -95,7 +95,7 @@ class Axis {
     if (index < 0 || index >= size_) {
       throw std::out_of_range("The index is out of range.");
     }
-    return static_cast<double>(start_ + index * step_);
+    return static_cast<double>(start_ + (static_cast<double>(index) * step_));
   }
 
   /// Search the index on the axis that is closest to the given value.
@@ -176,7 +176,7 @@ class Axis {
 
   /// Initializes the axis container from values.
   auto initialize(const Eigen::Ref<const Eigen::VectorXd>& values,
-                  const double epsilon = 1e-6) -> void;
+                  double epsilon = 1e-6) -> void;
 
   /// Returns the normalized value of the coordinate with the respect to the
   /// axis definition.
