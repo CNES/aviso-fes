@@ -62,7 +62,7 @@ class Box {
   }
 
   /// Convert the box to a string representation.
-  explicit inline operator std::string() const {
+  explicit operator std::string() const {
     auto ss = std::stringstream{};
     ss << *this;
     return ss.str();
@@ -73,7 +73,7 @@ class Box {
   /// @param[in] geometry The geometry to test.
   /// @return True if the geometry intersects the box, false otherwise.
   template <typename Geometry>
-  inline auto intersects(const Geometry& geometry) const -> bool {
+  auto intersects(const Geometry& geometry) const -> bool {
     return boost::geometry::intersects(box_, geometry);
   }
 
