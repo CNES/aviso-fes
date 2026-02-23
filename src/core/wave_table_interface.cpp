@@ -175,7 +175,7 @@ Returns:
             auto result = std::vector<std::string>();
             result.reserve(sorted.size());
             for (const auto& ident : sorted) {
-              result.push_back(constituents::name(ident));
+              result.emplace_back(constituents::name(ident));
             }
             return result;
           },
@@ -377,9 +377,8 @@ inline auto init_wave_table_factory(py::module& m) -> void {
          const boost::optional<std::vector<std::string>>& constituents) {
         if (constituents) {
           return wave_table_factory(engine_type, *constituents);
-        } else {
-          return wave_table_factory(engine_type);
         }
+        return wave_table_factory(engine_type);
       },
       py::arg("engine_type") = EngineType::kDarwin,
       py::arg("constituents") = boost::none,
