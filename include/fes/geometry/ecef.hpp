@@ -44,24 +44,24 @@ class EarthCenteredEarthFixed : public CartesianPoint3D {
   /// Set the x coordinate.
   ///
   /// @param[in] x The x coordinate.
-  inline auto x(const double x) { set<0>(x); }
+  auto x(const double x) { set<0>(x); }
 
   /// Set the y coordinate.
   ///
   /// @param[in] y The y coordinate.
-  inline auto y(const double y) { set<1>(y); }
+  auto y(const double y) { set<1>(y); }
 
   /// Set the z coordinate.
   ///
   /// @param[in] z The z coordinate.
-  inline auto z(const double z) { set<2>(z); }
+  auto z(const double z) { set<2>(z); }
 
   /// Write the ECEF point to a stream.
   friend auto operator<<(std::ostream& os, const EarthCenteredEarthFixed& ecef)
       -> std::ostream&;
 
   /// Convert the point to a string representation.
-  explicit inline operator std::string() const {
+  explicit operator std::string() const {
     auto ss = std::stringstream{};
     ss << *this;
     return ss.str();
@@ -70,7 +70,7 @@ class EarthCenteredEarthFixed : public CartesianPoint3D {
   /// Test if the point is equal to another point.
   /// @param[in] other The other point.
   /// @return True if the point is equal to the other point.
-  inline auto operator==(const EarthCenteredEarthFixed& other) const -> bool {
+  auto operator==(const EarthCenteredEarthFixed& other) const -> bool {
     return boost::geometry::equals(*this, other);
   }
 };
