@@ -51,7 +51,7 @@ constexpr auto lower_bound_by_year(Iterator first, Iterator last, double value)
     -> Iterator {
   while (first != last) {
     auto count = last - first;
-    auto mid = first + count / 2;
+    auto mid = first + (count / 2);
     if (mid->year < value) {
       first = mid + 1;
     } else {
@@ -69,7 +69,7 @@ constexpr auto lower_bound_by_year(Iterator first, Iterator last, double value)
 constexpr auto interpolate(const DeltaTEntry& p1, const DeltaTEntry& p2,
                            double year) noexcept -> double {
   double fraction = (year - p1.year) / (p2.year - p1.year);
-  return p1.delta_t + fraction * (p2.delta_t - p1.delta_t);
+  return p1.delta_t + (fraction * (p2.delta_t - p1.delta_t));
 }
 
 /// @brief Morrison & Stephenson (2004) long-term parabola.
@@ -85,7 +85,7 @@ constexpr auto morrison_stephenson_parabola(double year) noexcept -> double {
   constexpr double kMorrisonOffset = -20.0;
 
   double t_cent = (year - kMorrisonEpoch) / 100.0;
-  return kMorrisonOffset + kMorrisonCoeff * t_cent * t_cent;
+  return kMorrisonOffset + (kMorrisonCoeff * t_cent * t_cent);
 }
 
 /// @brief Polynomial approximation for 1900-1973 era.
@@ -94,8 +94,8 @@ constexpr auto morrison_stephenson_parabola(double year) noexcept -> double {
 /// @note Coefficients from Espenak & Meeus polynomial fit.
 constexpr auto polynomial_1900_1973(double year) noexcept -> double {
   double t = year - 1900.0;
-  return -2.79 + 1.494119 * t - 0.0598939 * t * t +
-         0.0061966 * math::pow<3>(t) - 0.000197 * math::pow<4>(t);
+  return -2.79 + (1.494119 * t) - (0.0598939 * t * t) +
+         (0.0061966 * math::pow<3>(t)) - (0.000197 * math::pow<4>(t));
 }
 
 /// @brief Polynomial approximation for 1800-1900 era.
@@ -103,15 +103,15 @@ constexpr auto polynomial_1900_1973(double year) noexcept -> double {
 /// @return Delta T in seconds.
 constexpr auto polynomial_1800_1900(double year) noexcept -> double {
   double t = year - 1900.0;
-  return -2.50 + 228.95 * (t / 100.0) + 5218.61 * math::pow<2>(t / 100.0) +
-         56282.84 * math::pow<3>(t / 100.0) +
-         324011.78 * math::pow<4>(t / 100.0) +
-         1061660.75 * math::pow<5>(t / 100.0) +
-         2087298.89 * math::pow<6>(t / 100.0) +
-         2513807.78 * math::pow<7>(t / 100.0) +
-         1818961.41 * math::pow<8>(t / 100.0) +
-         727058.63 * math::pow<9>(t / 100.0) +
-         123563.95 * math::pow<10>(t / 100.0);
+  return -2.50 + (228.95 * (t / 100.0)) + (5218.61 * math::pow<2>(t / 100.0)) +
+         (56282.84 * math::pow<3>(t / 100.0)) +
+         (324011.78 * math::pow<4>(t / 100.0)) +
+         (1061660.75 * math::pow<5>(t / 100.0)) +
+         (2087298.89 * math::pow<6>(t / 100.0)) +
+         (2513807.78 * math::pow<7>(t / 100.0)) +
+         (1818961.41 * math::pow<8>(t / 100.0)) +
+         (727058.63 * math::pow<9>(t / 100.0)) +
+         (123563.95 * math::pow<10>(t / 100.0));
 }
 
 /// @brief Polynomial approximation for 1700-1800 era.
@@ -119,8 +119,8 @@ constexpr auto polynomial_1800_1900(double year) noexcept -> double {
 /// @return Delta T in seconds.
 constexpr auto polynomial_1700_1800(double year) noexcept -> double {
   double t = year - 1700.0;
-  return 8.83 + 0.1603 * t - 0.0059285 * t * t + 0.00013336 * math::pow<3>(t) -
-         math::pow<4>(t) / 1174000.0;
+  return 8.83 + (0.1603 * t) - (0.0059285 * t * t) +
+         (0.00013336 * math::pow<3>(t)) - (math::pow<4>(t) / 1174000.0);
 }
 
 /// @brief Polynomial approximation for 1600-1700 era.
@@ -128,7 +128,7 @@ constexpr auto polynomial_1700_1800(double year) noexcept -> double {
 /// @return Delta T in seconds.
 constexpr auto polynomial_1600_1700(double year) noexcept -> double {
   double t = year - 1600.0;
-  return 120.0 - 0.9808 * t - 0.01532 * t * t + math::pow<3>(t) / 7129.0;
+  return 120.0 - (0.9808 * t) - (0.01532 * t * t) + (math::pow<3>(t) / 7129.0);
 }
 
 }  // namespace detail
@@ -163,7 +163,7 @@ FES_MATH_CONSTEXPR auto fetch_delta_time(double epoch) -> double {
 
   // Modern era: IERS table lookup with linear interpolation
   if (year >= IERS_TABLE.front().year && year <= IERS_TABLE.back().year) {
-    auto it =
+    const auto* it =
         detail::lower_bound_by_year(IERS_TABLE.begin(), IERS_TABLE.end(), year);
 
     // Exact match on first entry
