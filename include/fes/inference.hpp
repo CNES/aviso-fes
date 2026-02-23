@@ -34,7 +34,7 @@ class SplineInference : public Inference<SplineInference> {
   /// @brief Apply inference to compute minor constituents.
   /// @param[in,out] wave_table The wave table to process.
   /// @param[in] lat Latitude in degrees.
-  auto apply_impl(WaveTableInterface& wave_table, const double lat) -> void;
+  static auto apply_impl(WaveTableInterface& wave_table, double lat) -> void;
 
   /// @brief Returns the list of the tidal constituents inferred by the model.
   /// @return A vector of constituent identifiers.
@@ -64,13 +64,13 @@ class PerthInference : public Inference<PerthInference> {
   /// admittance, except when the interpolation type is set to zero admittance,
   /// in which case they are not inferred.
   explicit PerthInference(const WaveTableInterface& wave_table,
-                          const InterpolationType interpolation_type =
+                          InterpolationType interpolation_type =
                               InterpolationType::kLinearAdmittance);
 
   /// @brief Apply inference to compute minor constituents.
   /// @param[in,out] wave_table The wave table to process.
   /// @param[in] lat Latitude in degrees.
-  auto apply_impl(WaveTableInterface& wave_table, const double lat) -> void;
+  auto apply_impl(WaveTableInterface& wave_table, double lat) -> void;
 
   /// @brief Returns the list of the tidal constituents inferred by the model.
   /// @return A vector of constituent identifiers.
@@ -85,7 +85,7 @@ class PerthInference : public Inference<PerthInference> {
                             double, const Complex&, double)>;
 
   /// Inferred diurnal constituents with their (frequency, amplitude) pairs.
-  Map<ConstituentId, std::pair<double, double>, 19> inferred_diurnal_{};
+  Map<ConstituentId, std::pair<double, double>, 19> inferred_diurnal_;
 
   /// Inferred semidiurnal constituents with their (frequency, amplitude) pairs.
   Map<ConstituentId, std::pair<double, double>, 17> inferred_semidiurnal_;
@@ -130,7 +130,7 @@ class PerthInference : public Inference<PerthInference> {
   /// missing.
   /// @param[in,out] node The TideComponent for the node constituent.
   /// @param[in] lat The latitude for the computation.
-  static auto evaluate_node_tide(WaveInterface& node, const double lat)
+  static auto evaluate_node_tide(WaveInterface& node, double lat)
       -> const Complex&;
 };
 
@@ -140,7 +140,7 @@ class PerthInference : public Inference<PerthInference> {
 /// @param inference_type The type of inference interpolation to use.
 /// @return A unique pointer to the created inference object.
 auto inference_factory(WaveTableInterface& wave_table,
-                       const InferenceType inference_type)
+                       InferenceType inference_type)
     -> std::unique_ptr<InferenceInterface>;
 
 // ============================================================================
@@ -148,7 +148,7 @@ auto inference_factory(WaveTableInterface& wave_table,
 // ============================================================================
 
 inline auto SplineInference::apply_impl(WaveTableInterface& wave_table,
-                                        const double /* lat */) -> void {
+                                        double /* lat */) -> void {
   // Arrays who contains the spline coefficients needed to compute MU2, NU2,
   // L2, T2 and Lambda2 by admittance.
   constexpr auto mu2 =
@@ -389,7 +389,8 @@ inline auto PerthInference::evaluate_node_tide(WaveInterface& node,
     constexpr auto gamma2 = 0.682;
     constexpr auto amplitude = 0.0279;  // m
     auto p20 =
-        0.5 - 1.5 * detail::math::pow<2>(std::sin(detail::math::radians(lat)));
+        0.5 -
+        (1.5 * detail::math::pow<2>(std::sin(detail::math::radians(lat))));
     auto xi = gamma2 * p20 * std::sqrt(1.25 / detail::math::pi<double>());
     node.set_tide(Complex(xi * amplitude, 0.0));
   }
@@ -489,9 +490,9 @@ inline PerthInference::PerthInference(
   x8_ = mm.first;
   x9_ = mf.first;
 
-  double fk;
-  double fh;
-  double fl;
+  double fk{};
+  double fh{};
+  double fl{};
 
   std::tie(fk, fh, fl) = perth::love_pmm95b(x1_);
   amp1_ = q1.second * (1 + fk - fh);
@@ -549,9 +550,9 @@ inline auto PerthInference::apply_impl(WaveTableInterface& wave_table,
     if (!wave_table.contains(constituent)) {
       continue;  // Skip if the constituent is not in the wave table
     }
-    double fk;
-    double fh;
-    double fl;
+    double fk{};
+    double fh{};
+    double fl{};
 
     auto& updated_item = *wave_table[constituent];
     if (updated_item.is_modeled() || updated_item.type() != kShortPeriod) {
