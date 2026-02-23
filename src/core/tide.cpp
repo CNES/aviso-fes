@@ -13,7 +13,6 @@
 #include "fes/python/datetime64.hpp"
 #include "fes/python/optional.hpp"  // IWYU pragma: keep
 #include "fes/settings.hpp"
-#include "fes/tide.hpp"
 
 namespace py = pybind11;
 
