@@ -21,8 +21,9 @@ auto Wave::doodson_numbers() const -> Vector7b {
   const auto p1 = argument_[5];
 
   // Normalize shift: convert 1 or -1 to their negatives, leave others unchanged
-  const int8_t normalized_shift =
-      (argument_[6] == 1 || argument_[6] == -1) ? -argument_[6] : argument_[6];
+  const auto normalized_shift = (argument_[6] == 1 || argument_[6] == -1)
+                                    ? static_cast<int8_t>(-argument_[6])
+                                    : static_cast<int8_t>(argument_[6]);
   return {t,                           // tau
           static_cast<int8_t>(s + t),  // s + tau
           static_cast<int8_t>(h - t),  // h - tau
