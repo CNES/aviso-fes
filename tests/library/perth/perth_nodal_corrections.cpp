@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include "fes/constituent.hpp"
 #include "fes/perth/nodal_corrections.hpp"
 
 namespace fes {
@@ -11,11 +12,14 @@ TEST(NodalCorrectionsTest, EvaluateNodalCorrections) {
 
   // Create vector with all constituents
   std::vector<ConstituentId> constituents{
-      k2Q1,  kSigma1, kQ1,     kRho1, kO1,    kTau1,   kBeta1,   kM1,
-      kChi1, kPi1,    kP1,     kS1,   kK1,    kPsi1,   kPhi1,    kTheta1,
-      kJ1,   kSO1,    kOO1,    kUps1, kEps2,  k2N2,    kMu2,     kN2,
-      kNu2,  kGamma2, kAlpha2, kM2,   kBeta2, kDelta2, kLambda2, kL2,
-      kT2,   kS2,     kR2,     kK2,   kEta2,  kM4,     kMS4,
+      k2MK3, k2MK6,   k2MN2,  k2MN6, k2MS2,   k2MS6,    k2N2,    k2Q1,
+      k2SM2, k2SM6,   kBeta1, kChi1, kDelta2, kEps2,    kEta2,   kGamma2,
+      kJ1,   kK1,     kK2,    kL2,   kL2P,    kLambda2, kM1,     kM13,
+      kM2,   kM3,     kM4,    kM6,   kM8,     kMf,      kMK3,    kMK4,
+      kMKS2, kMm,     kMN4,   kMO3,  kMqm,    kMS4,     kMSf,    kMSK6,
+      kMSm,  kMSN2,   kMSN6,  kMSqm, kMStm,   kMtm,     kMu2,    kN2,
+      kN2P,  kN4,     kNu2,   kO1,   kOO1,    kP1,      kQ1,     kRho1,
+      kS2,   kSigma1, kSK4,   kSN4,  kSO1,    kTau1,    kTheta1, kUps1,
   };
 
   // Compute nodal corrections
@@ -115,9 +119,140 @@ TEST(NodalCorrectionsTest, EvaluateNodalCorrections) {
         EXPECT_NEAR(item.f, 1.005389, 1e-6);
         EXPECT_NEAR(item.u, -4.263229, 1e-6);
         break;
+      case k2MK3:
+        EXPECT_NEAR(item.f, 1.012476, 1e-6);
+        EXPECT_NEAR(item.u, 4.617356, 1e-6);
+        break;
+      case k2MK6:
+        EXPECT_NEAR(item.f, 1.002104, 1e-6);
+        EXPECT_NEAR(item.u, -22.126300, 1e-6);
+        break;
+      case k2MN2:
+        EXPECT_NEAR(item.f, 1.008094, 1e-6);
+        EXPECT_NEAR(item.u, -2.131614, 1e-6);
+        break;
+      case k2MN6:
+        EXPECT_NEAR(item.f, 1.008094, 1e-6);
+        EXPECT_NEAR(item.u, -6.394842, 1e-6);
+        break;
+      case k2MS2:
+        EXPECT_NEAR(item.f, 1.005389, 1e-6);
+        EXPECT_NEAR(item.u, -4.263228, 1e-6);
+        break;
+      case k2MS6:
+        EXPECT_NEAR(item.f, 1.005389, 1e-6);
+        EXPECT_NEAR(item.u, -4.263228, 1e-6);
+        break;
+      case k2SM2:
+        EXPECT_NEAR(item.f, 1.002691, 1e-6);
+        EXPECT_NEAR(item.u, 2.131614, 1e-6);
+        break;
+      case k2SM6:
+        EXPECT_NEAR(item.f, 1.002691, 1e-6);
+        EXPECT_NEAR(item.u, -2.131614, 1e-6);
+        break;
+      case kL2P:
+        EXPECT_NEAR(item.f, 1.021928, 1e-6);
+        EXPECT_NEAR(item.u, -14.098653, 1e-6);
+        break;
+      case kM13:
+        EXPECT_NEAR(item.f, 1.018905, 1e-6);
+        EXPECT_NEAR(item.u, -1.018360, 1e-6);
+        break;
+      case kM3:
+        EXPECT_NEAR(item.f, 1.005379, 1e-6);
+        EXPECT_NEAR(item.u, -3.210853, 1e-6);
+        break;
+      case kM6:
+        EXPECT_NEAR(item.f, 1.008094, 1e-6);
+        EXPECT_NEAR(item.u, -6.394842, 1e-6);
+        break;
+      case kM8:
+        EXPECT_NEAR(item.f, 1.010807, 1e-6);
+        EXPECT_NEAR(item.u, -8.526457, 1e-6);
+        break;
+      case kMf:
+        EXPECT_NEAR(item.f, 0.978514, 1e-6);
+        EXPECT_NEAR(item.u, -22.782435, 1e-6);
+        break;
+      case kMK3:
+        EXPECT_NEAR(item.f, 1.009759, 1e-6);
+        EXPECT_NEAR(item.u, -11.012198, 1e-6);
+        break;
+      case kMK4:
+        EXPECT_NEAR(item.f, 0.999415, 1e-6);
+        EXPECT_NEAR(item.u, -19.994686, 1e-6);
+        break;
+      case kMKS2:
+        EXPECT_NEAR(item.f, 0.999415, 1e-6);
+        EXPECT_NEAR(item.u, -19.994686, 1e-6);
+        break;
+      case kMm:
+        EXPECT_NEAR(item.f, 1.061803, 1e-6);
+        EXPECT_NEAR(item.u, 1.057907, 1e-6);
+        break;
+      case kMN4:
+        EXPECT_NEAR(item.f, 1.005389, 1e-6);
+        EXPECT_NEAR(item.u, -4.263228, 1e-6);
+        break;
+      case kMO3:
+        EXPECT_NEAR(item.f, 1.019093, 1e-6);
+        EXPECT_NEAR(item.u, 8.837919, 1e-6);
+        break;
+      case kMqm:
+        EXPECT_NEAR(item.f, 0.978514, 1e-6);
+        EXPECT_NEAR(item.u, -22.782435, 1e-6);
+        break;
+      case kMSf:
+        EXPECT_NEAR(item.f, 1.009299, 1e-6);
+        EXPECT_NEAR(item.u, 7.783470, 1e-6);
+        break;
+      case kMSK6:
+        EXPECT_NEAR(item.f, 0.999415, 1e-6);
+        EXPECT_NEAR(item.u, 15.731458, 1e-6);
+        break;
+      case kMSm:
+        EXPECT_NEAR(item.f, 1.061803, 1e-6);
+        EXPECT_NEAR(item.u, 1.057907, 1e-6);
+        break;
+      case kMSN2:
+        EXPECT_NEAR(item.f, 1.005389, 1e-6);
+        EXPECT_NEAR(item.u, 0.000000, 1e-6);
+        break;
+      case kMSN6:
+        EXPECT_NEAR(item.f, 1.005389, 1e-6);
+        EXPECT_NEAR(item.u, -4.263228, 1e-6);
+        break;
+      case kMSqm:
+        EXPECT_NEAR(item.f, 0.978514, 1e-6);
+        EXPECT_NEAR(item.u, -22.782435, 1e-6);
+        break;
+      case kMStm:
+        EXPECT_NEAR(item.f, 0.674669, 1e-6);
+        EXPECT_NEAR(item.u, -12.587631, 1e-6);
+        break;
+      case kMtm:
+        EXPECT_NEAR(item.f, 1.000936, 1e-6);
+        EXPECT_NEAR(item.u, -23.296901, 1e-6);
+        break;
+      case kN2P:
+        EXPECT_NEAR(item.f, 1.021282, 1e-6);
+        EXPECT_NEAR(item.u, 10.301177, 1e-6);
+        break;
+      case kN4:
+        EXPECT_NEAR(item.f, 1.005389, 1e-6);
+        EXPECT_NEAR(item.u, -4.263228, 1e-6);
+        break;
+      case kSK4:
+        EXPECT_NEAR(item.f, 0.996733, 1e-6);
+        EXPECT_NEAR(item.u, -17.863072, 1e-6);
+        break;
+      case kSN4:
+        EXPECT_NEAR(item.f, 1.002691, 1e-6);
+        EXPECT_NEAR(item.u, -2.131614, 1e-6);
+        break;
       default:
-        EXPECT_EQ(item.f, 1.0);
-        EXPECT_EQ(item.u, 0.0);
+        FAIL() << "Unexpected constituent: " << static_cast<int>(constituent);
         break;
     }
   }
@@ -130,8 +265,10 @@ TEST(NodalCorrectionsTest, EvaluateGroupNodalCorrections) {
   double hsolar = 280.08979471465113;
 
   // Create vector with all constituents
-  std::vector<ConstituentId> constituents{kNode, kSa, kSsa,  kSta, kMSm,  kMm,
-                                          kMSf,  kMf, kMStm, kMtm, kMSqm, kMqm};
+  std::vector<ConstituentId> constituents{
+      k2N2, k2Q1, kEps2, kJ1,  kK1,   kL2,     kM1,  kM2, kMf,
+      kMm,  kMqm, kMSf,  kMSm, kMSqm, kMtm,    kMu2, kN2, kNode,
+      kO1,  kOO1, kQ1,   kS2,  kSa,   kSigma1, kSta};
 
   // Compute nodal corrections
   auto results = evaluate_nodal_corrections(perihelion, omega, perigee, hsolar,
@@ -181,6 +318,66 @@ TEST(NodalCorrectionsTest, EvaluateGroupNodalCorrections) {
       case kMqm:
         EXPECT_NEAR(item.f, 2.2833835, 1e-6);
         EXPECT_NEAR(item.u, -10.3654824, 1e-5);
+        break;
+      case kS2:
+        EXPECT_NEAR(item.f, 0.780631, 1e-6);
+        EXPECT_NEAR(item.u, -0.815940, 1e-6);
+        break;
+      case k2N2:
+        EXPECT_NEAR(item.f, 2.275933, 1e-6);
+        EXPECT_NEAR(item.u, -15.557717, 1e-6);
+        break;
+      case k2Q1:
+        EXPECT_NEAR(item.f, 2.175457, 1e-6);
+        EXPECT_NEAR(item.u, -1.8271054, 1e-6);
+        break;
+      case kEps2:
+        EXPECT_NEAR(item.f, 1.362711, 1e-6);
+        EXPECT_NEAR(item.u, 6.339470, 1e-6);
+        break;
+      case kJ1:
+        EXPECT_NEAR(item.f, 1.202151, 1e-6);
+        EXPECT_NEAR(item.u, -8.431590, 1e-6);
+        break;
+      case kK1:
+        EXPECT_NEAR(item.f, 1.335916, 1e-6);
+        EXPECT_NEAR(item.u, -11.983923, 1e-6);
+        break;
+      case kL2:
+        EXPECT_NEAR(item.f, 1.554452, 1e-6);
+        EXPECT_NEAR(item.u, 5.385221, 1e-6);
+        break;
+      case kM1:
+        EXPECT_NEAR(item.f, 0.755623, 1e-6);
+        EXPECT_NEAR(item.u, -6.503163, 1e-5);
+        break;
+      case kM2:
+        EXPECT_NEAR(item.f, 0.999082, 1e-6);
+        EXPECT_NEAR(item.u, -2.240433, 1e-6);
+        break;
+      case kMu2:
+        EXPECT_NEAR(item.f, 1.886803, 1e-6);
+        EXPECT_NEAR(item.u, 7.461294, 1e-6);
+        break;
+      case kN2:
+        EXPECT_NEAR(item.f, 1.181877, 1e-6);
+        EXPECT_NEAR(item.u, -5.775347, 1e-6);
+        break;
+      case kO1:
+        EXPECT_NEAR(item.f, 1.029290, 1e-6);
+        EXPECT_NEAR(item.u, 11.086248, 1e-6);
+        break;
+      case kOO1:
+        EXPECT_NEAR(item.f, 0.580194, 1e-6);
+        EXPECT_NEAR(item.u, -38.337098, 1e-6);
+        break;
+      case kQ1:
+        EXPECT_NEAR(item.f, 1.183320, 1e-6);
+        EXPECT_NEAR(item.u, 7.174645, 1e-6);
+        break;
+      case kSigma1:
+        EXPECT_NEAR(item.f, 1.870445, 1e-6);
+        EXPECT_NEAR(item.u, 19.853450, 1e-6);
         break;
       default:
         FAIL() << "Unexpected constituent: " << static_cast<int>(constituent);
