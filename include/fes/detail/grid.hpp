@@ -74,14 +74,14 @@ class Grid {
   /// stored in row-major order.
   constexpr auto index_xy(const int64_t x, const int64_t y) const noexcept
       -> size_t {
-    return static_cast<size_t>(x) * ny_ + static_cast<size_t>(y);
+    return (static_cast<size_t>(x) * ny_) + static_cast<size_t>(y);
   }
 
   /// The index of the element at the given row and column if the grid is
   /// stored in column-major order.
   constexpr auto index_yx(const int64_t x, const int64_t y) const noexcept
       -> size_t {
-    return static_cast<size_t>(y) * nx_ + static_cast<size_t>(x);
+    return (static_cast<size_t>(y) * nx_) + static_cast<size_t>(x);
   }
 };
 
