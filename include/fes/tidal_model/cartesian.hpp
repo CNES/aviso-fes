@@ -43,8 +43,8 @@ class Cartesian : public TidalModelInterface<T> {
   ///
   /// @param[in] ident The tidal constituent identifier.
   /// @param[in] wave The tidal constituent modelled.
-  inline auto add_constituent(const ConstituentId ident,
-                              Vector<std::complex<T>> wave) -> void override {
+  auto add_constituent(const ConstituentId ident, Vector<std::complex<T>> wave)
+      -> void override {
     if (wave.size() != lon_.size() * lat_.size()) {
       throw std::invalid_argument("wave size does not match expected size");
     }
@@ -59,10 +59,11 @@ class Cartesian : public TidalModelInterface<T> {
   /// angles are considered constant. The default value is 0 seconds, indicating
   /// that astronomical angles do not remain constant with time.
   /// @return A null pointer
-  constexpr auto accelerator(const angle::Formulae& formulae,
-                             const double time_tolerance) const
-      -> Accelerator* override {
-    return new Accelerator(formulae, time_tolerance, this->data_.size());
+  auto accelerator(const angle::Formulae& formulae,
+                   const double time_tolerance) const
+      -> std::unique_ptr<Accelerator> override {
+    return std::make_unique<Accelerator>(formulae, time_tolerance,
+                                         this->data_.size());
   }
 
   /// Interpolate the tidal model at a given point.
@@ -95,9 +96,8 @@ class Cartesian : public TidalModelInterface<T> {
   /// the number of threads is determined by the number of cores.
   /// @return A vector containing the resampled wave on this model's grid.
   auto resample(const Axis& origin_lon, const Axis& origin_lat,
-                const Vector<std::complex<T>>& wave,
-                const bool row_major = true, const size_t num_threads = 0) const
-      -> Vector<std::complex<T>>;
+                const Vector<std::complex<T>>& wave, bool row_major = true,
+                size_t num_threads = 0) const -> Vector<std::complex<T>>;
 
  private:
   /// @brief Type alias for Bilinear interpolation weights.
@@ -105,10 +105,10 @@ class Cartesian : public TidalModelInterface<T> {
 
   /// Helper struct to hold interpolation context
   struct InterpolationContext {
-    int64_t i1;       //!< Index of the first longitude grid point.
-    int64_t i2;       //!< Index of the second longitude grid point.
-    int64_t j1;       //!< Index of the first latitude grid point.
-    int64_t j2;       //!< Index of the second latitude grid point.
+    int64_t i1{};     //!< Index of the first longitude grid point.
+    int64_t i2{};     //!< Index of the second longitude grid point.
+    int64_t j1{};     //!< Index of the first latitude grid point.
+    int64_t j2{};     //!< Index of the second latitude grid point.
     Weights weights;  //!< Bilinear interpolation weights (w11, w12, w21, w22).
 
     /// @brief Check if the interpolation context is valid (i.e., the point is
@@ -165,10 +165,10 @@ auto Cartesian<T>::prepare_interpolation(double lon, double lat,
     return {-1, 0, 0, 0, {}};
   }
 
-  int64_t i1;
-  int64_t i2;
-  int64_t j1;
-  int64_t j2;
+  int64_t i1{};
+  int64_t i2{};
+  int64_t j1{};
+  int64_t j2{};
   std::tie(i1, i2) = *lon_index;
   std::tie(j1, j2) = *lat_index;
 
