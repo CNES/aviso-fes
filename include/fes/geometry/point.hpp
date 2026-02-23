@@ -38,7 +38,7 @@ class Point : public GeographicPoint2D {
   friend auto operator<<(std::ostream& os, const Point& point) -> std::ostream&;
 
   /// Convert the point to a string representation.
-  explicit inline operator std::string() const {
+  explicit operator std::string() const {
     auto ss = std::stringstream{};
     ss << *this;
     return ss.str();
@@ -53,12 +53,12 @@ class Point : public GeographicPoint2D {
   /// Set the longitude in degrees.
   ///
   /// @param[in] lon The longitude in degrees.
-  inline auto lon(const double lon) { set<0>(lon); }
+  auto lon(const double lon) { set<0>(lon); }
 
   /// Set the latitude in degrees.
   ///
   /// @param[in] lat The latitude in degrees.
-  inline auto lat(const double lat) { set<1>(lat); }
+  auto lat(const double lat) { set<1>(lat); }
 
   /// Return true if this instance is valid.
   FES_MATH_CONSTEXPR auto is_valid() const -> bool {
@@ -69,7 +69,7 @@ class Point : public GeographicPoint2D {
   ///
   /// @param[in] other The other point.
   /// @return True if the point is equal to the other point.
-  inline auto operator==(const Point& other) const -> bool {
+  auto operator==(const Point& other) const -> bool {
     return boost::geometry::equals(*this, other);
   }
 };
@@ -154,8 +154,8 @@ FES_MATH_CONSTEXPR Point::operator EarthCenteredEarthFixed() const {
   auto sincos_x = detail::math::sincosd(lon());
   auto sincos_y = detail::math::sincosd(lat());
   const auto chi =
-      std::sqrt(1.0 - detail::math::pow<2>(E) *
-                          detail::math::pow<2>(std::get<0>(sincos_y)));
+      std::sqrt(1.0 - (detail::math::pow<2>(E) *
+                       detail::math::pow<2>(std::get<0>(sincos_y))));
   const auto a_chi = A / chi;
 
   return {a_chi * std::get<1>(sincos_y) * std::get<1>(sincos_x),
