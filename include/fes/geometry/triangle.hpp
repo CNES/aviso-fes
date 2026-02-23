@@ -30,42 +30,42 @@ class Triangle : public GeographicPolygon {
   /// @param[in] v1 The first vertex.
   /// @param[in] v2 The second vertex.
   /// @param[in] v3 The third vertex.
-  inline Triangle(const Point &v1, const Point &v2, const Point &v3)
+  Triangle(const Point &v1, const Point &v2, const Point &v3)
       : GeographicPolygon{{{v1.lon(), v1.lat()},
                            {v2.lon(), v2.lat()},
                            {v3.lon(), v3.lat()},
                            {v1.lon(), v1.lat()}}} {}
 
   /// Get the first vertex.
-  inline auto v1() const -> const Point & { return this->outer()[0]; }
+  auto v1() const -> const Point & { return this->outer()[0]; }
 
   /// Get the second vertex.
-  inline auto v2() const -> const Point & { return this->outer()[1]; }
+  auto v2() const -> const Point & { return this->outer()[1]; }
 
   /// Get the third vertex.
-  inline auto v3() const -> const Point & { return this->outer()[2]; }
+  auto v3() const -> const Point & { return this->outer()[2]; }
 
   /// Set the first vertex.
   ///
   /// @param[in] v1 The first vertex.
-  inline auto v1(const Point &v1) -> void { this->outer()[0] = v1; }
+  auto v1(const Point &v1) -> void { this->outer()[0] = v1; }
 
   /// Set the second vertex.
   ///
   /// @param[in] v2 The second vertex.
-  inline auto v2(const Point &v2) -> void { this->outer()[1] = v2; }
+  auto v2(const Point &v2) -> void { this->outer()[1] = v2; }
 
   /// Set the third vertex.
   ///
   /// @param[in] v3 The third point.
-  inline auto v3(const Point &v3) -> void { this->outer()[2] = v3; }
+  auto v3(const Point &v3) -> void { this->outer()[2] = v3; }
 
   /// Returns the vertex index of the triangle corresponding to the given point,
   /// or -1 if the point is not a vertex of the triangle.
   ///
   /// @param[in] point The point.
-  inline auto is_vertex(const Point &point) const -> int {
-    auto *outer = this->outer().data();
+  auto is_vertex(const Point &point) const -> int {
+    const auto *outer = this->outer().data();
     for (int ix = 0; ix < 3; ++ix) {
       if (point == *(outer++)) {
         return ix;
@@ -83,32 +83,28 @@ class Triangle : public GeographicPolygon {
   /// the calculation of the angles of the reference triangle is also carried
   /// out in this space. The search carried out in geodesic space can cause
   /// inconsistencies between these two spaces and generate erroneous values.
-  inline auto covered_by(const geometry::Point &point) const -> bool {
+  auto covered_by(const geometry::Point &point) const -> bool {
     return boost::geometry::covered_by(point, *this);
   }
 
   /// Check if the triangle is valid (in the OGC sense)
-  inline auto is_valid() const -> bool {
-    return boost::geometry::is_valid(*this);
-  }
+  auto is_valid() const -> bool { return boost::geometry::is_valid(*this); }
 
   /// Check if the triangle is empty.
-  inline auto is_empty() const -> bool {
-    return boost::geometry::is_empty(*this);
-  }
+  auto is_empty() const -> bool { return boost::geometry::is_empty(*this); }
 
   /// Calculate the distance between the triangle and a point.
   ///
   /// @param[in] point The point.
   /// @return The distance between the triangle and the point in meters.
-  inline auto distance(const Point &point) const -> double {
+  auto distance(const Point &point) const -> double {
     return detail::geometry::distance(point, *this);
   }
 
   /// Calculate the area of the triangle.
   ///
   /// @return The area of the triangle in square meters.
-  inline auto area() const -> double { return detail::geometry::area(*this); }
+  auto area() const -> double { return detail::geometry::area(*this); }
 
   /// Write the triangle to a stream.
   friend auto operator<<(std::ostream &os, const Triangle &triangle)
@@ -121,7 +117,7 @@ class Triangle : public GeographicPolygon {
   ///
   /// @param[in] other The other triangle.
   /// @return True if the triangles are equal, else false.
-  inline auto operator==(const Triangle &other) const -> bool {
+  auto operator==(const Triangle &other) const -> bool {
     return boost::geometry::equals(*this, other);
   }
 
@@ -139,7 +135,7 @@ class Triangle : public GeographicPolygon {
   ///
   /// @param[in] point The point.
   /// @return The projection of the point on the triangle.
-  inline auto project(const Point &point) const -> Point {
+  auto project(const Point &point) const -> Point {
     boost::geometry::model::segment<Point> segment;
 
     detail::geometry::closest_points(point, *this, segment);
