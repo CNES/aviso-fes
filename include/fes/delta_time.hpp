@@ -163,7 +163,10 @@ FES_MATH_CONSTEXPR auto fetch_delta_time(double epoch) -> double {
 
   // Modern era: IERS table lookup with linear interpolation
   if (year >= IERS_TABLE.front().year && year <= IERS_TABLE.back().year) {
-    const auto* it =
+    // Use auto for type-safe iterator handling across different container
+    // implementations
+    // NOLINTNEXTLINE(readability-qualified-auto)
+    const auto it =
         detail::lower_bound_by_year(IERS_TABLE.begin(), IERS_TABLE.end(), year);
 
     // Exact match on first entry
