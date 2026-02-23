@@ -67,7 +67,7 @@ static inline auto npdatetime64_to_epoch(const pybind11::array& array)
   {
     pybind11::gil_scoped_release release;
     for (pybind11::ssize_t ix = 0; ix < ptr.size(); ++ix) {
-      result(ix) = ptr(ix) * scale;
+      result(ix) = static_cast<double>(ptr(ix)) * scale;
     }
   }
   return result;
