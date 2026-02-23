@@ -7,7 +7,6 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
-#include "fes/darwin/constituent.hpp"
 #include "fes/darwin/wave.hpp"
 #include "fes/darwin/wave_table.hpp"
 
