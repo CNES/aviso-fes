@@ -398,7 +398,7 @@ constexpr auto horner(const T x, Args... args) -> T {
   auto result = coefficients[ix];
   while (ix > 0) {
     ix--;
-    result = result * x + coefficients[ix];
+    result = (result * x) + coefficients[ix];
   }
   return result;
 }
@@ -414,7 +414,7 @@ constexpr auto horner(const T x, Args... args) -> T {
 template <typename T>
 constexpr auto dms_to_degrees(const T degrees, const T minutes,
                               const T seconds) noexcept -> T {
-  return degrees + (minutes + seconds / T(60)) / T(60);
+  return degrees + ((minutes + seconds / T(60)) / T(60));
 }
 
 }  // namespace math
