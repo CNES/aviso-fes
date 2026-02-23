@@ -45,11 +45,23 @@ class LGPAccelerator : public Accelerator {
   /// Default destructor.
   virtual ~LGPAccelerator() = default;
 
+  /// Copy constructor
+  LGPAccelerator(const LGPAccelerator&) = default;
+
+  /// Move constructor
+  LGPAccelerator(LGPAccelerator&&) = default;
+
+  /// Copy assignment operator
+  auto operator=(const LGPAccelerator&) -> LGPAccelerator& = default;
+
+  /// Move assignment operator
+  auto operator=(LGPAccelerator&&) -> LGPAccelerator& = default;
+
   /// Set the selected triangle for the accelerator.
   ///
   /// @param[in] triangle The selected triangle.
   auto set(fes::mesh::TriangleQueryResult&& triangle) -> void {
-    selected_ = triangle;
+    selected_ = std::move(triangle);
   }
 
   /// Reset the point of the selected triangle.
@@ -66,7 +78,7 @@ class LGPAccelerator : public Accelerator {
   ///
   /// @param[in] point The point to check.
   /// @return True if the point is in the cache, false otherwise.
-  inline auto in_cache(const geometry::Point& point) const -> bool {
+  auto in_cache(const geometry::Point& point) const -> bool {
     // Check if the point is within the previously selected triangle to avoid
     // redundant triangle searches.
     return selected_.is_inside() && selected_.triangle.covered_by(point);
@@ -74,7 +86,7 @@ class LGPAccelerator : public Accelerator {
 
  private:
   /// The selected triangle for the accelerator.
-  mesh::TriangleQueryResult selected_{};
+  mesh::TriangleQueryResult selected_;
 };
 
 /// @brief %LGP tidal models.
@@ -94,6 +106,18 @@ class LGP : public TidalModelInterface<T> {
   /// codes. It is represented by a tuple of four values: the minimum longitude,
   /// the minimum latitude, the maximum longitude, and the maximum latitude.
   using BoundingBoxType = std::tuple<double, double, double, double>;
+
+  /// Copy constructor
+  LGP(const LGP&) = delete;
+
+  /// Move constructor
+  LGP(LGP&&) = delete;
+
+  /// Copy assignment operator
+  auto operator=(const LGP&) -> LGP& = delete;
+
+  /// Move assignment operator
+  auto operator=(LGP&&) -> LGP& = delete;
 
   /// Build a new %LGP tidal model.
   ///
@@ -118,8 +142,8 @@ class LGP : public TidalModelInterface<T> {
   ///
   /// @param[in] ident The wave model identifier.
   /// @param[in] wave The wave model.
-  inline auto add_constituent(const ConstituentId ident,
-                              Vector<std::complex<T>> wave) -> void override {
+  auto add_constituent(const ConstituentId ident, Vector<std::complex<T>> wave)
+      -> void override {
     // wave is a vector of values for each LGP codes. The number of values must
     // match the number of LGP codes handled by this instance.
     if (expected_data_size_ != wave.size()) {
@@ -143,10 +167,12 @@ class LGP : public TidalModelInterface<T> {
   /// @param[in] time_tolerance The time in seconds during which astronomical
   /// angles are considered constant. The default value is 0 seconds, indicating
   /// that astronomical angles do not remain constant with time.
-  /// @return A pointer  to the newly created LGPAccelerator instance.
+  /// @return A unique pointer to the newly created LGPAccelerator instance.
   auto accelerator(const angle::Formulae& formulae,
-                   const double time_tolerance) const -> Accelerator* override {
-    return new LGPAccelerator(formulae, time_tolerance, this->data_.size());
+                   const double time_tolerance) const
+      -> std::unique_ptr<Accelerator> override {
+    return std::make_unique<LGPAccelerator>(formulae, time_tolerance,
+                                            this->data_.size());
   }
 
   /// Interpolate the wave models loaded at the given point.
@@ -161,16 +187,14 @@ class LGP : public TidalModelInterface<T> {
   /// Get the mesh index.
   ///
   /// @return The mesh index.
-  inline auto index() const -> std::shared_ptr<mesh::Index> const& {
-    return index_;
-  }
+  auto index() const -> std::shared_ptr<mesh::Index> const& { return index_; }
 
   /// Retrieve the indices for wave model values that intersect the specified
   /// bounding box.
   ///
   /// @return A vector containing the selected indices. If no bounding box is
   /// set, an empty vector is returned.
-  inline auto selected_indices() const -> Vector<int64_t> {
+  auto selected_indices() const -> Vector<int64_t> {
     if (selected_indices_.empty()) {
       return {};
     }
@@ -187,7 +211,7 @@ class LGP : public TidalModelInterface<T> {
   }
 
   /// Return the memory usage of the tidal model in bytes.
-  inline auto memory_usage() const -> size_t override {
+  auto memory_usage() const -> size_t override {
     auto memory = TidalModelInterface<T>::memory_usage();
     memory += index_ ? index_->memory_usage() : 0;
     memory += selected_indices_.size() * (sizeof(int64_t) + sizeof(int64_t));
@@ -200,7 +224,7 @@ class LGP : public TidalModelInterface<T> {
   /// @param[in] x The x coordinate of the point to interpolate at.
   /// @param[in] y The y coordinate of the point to interpolate at.
   /// @return The coefficients of the Lagrange polynomials.
-  virtual auto calculate_beta(const double x, const double y) const
+  virtual auto calculate_beta(double x, double y) const
       -> Eigen::Matrix<double, N * 3, 1> = 0;
 
  private:
@@ -260,7 +284,6 @@ class LGP : public TidalModelInterface<T> {
                                  LGPAccelerator& acc, Quality& quality) const
       -> void;
 
- private:
   /// Expected data size for each data set
   int expected_data_size_{};
 
@@ -302,7 +325,7 @@ class LGP1 : public LGP<T, 1> {
   /// @param[in] x The x coordinate of the point.
   /// @param[in] y The y coordinate of the point.
   /// @return The beta coefficients.
-  inline auto calculate_beta(const double x, const double y) const
+  auto calculate_beta(const double x, const double y) const
       -> Eigen::Vector3d override {
     return (Eigen::Vector3d() << 1 - x - y, x, y).finished();
   }
@@ -326,7 +349,7 @@ class LGP2 : public LGP<T, 2> {
   /// @param[in] x The x coordinate of the point.
   /// @param[in] y The y coordinate of the point.
   /// @return The beta coefficients.
-  inline auto calculate_beta(const double x, const double y) const
+  auto calculate_beta(const double x, const double y) const
       -> Vector6d override {
     return (Vector6d()
                 //  2x² + 2y² + 4xy - 3x - 3y + 1
@@ -611,7 +634,7 @@ template <typename T, int N>
 auto LGP<T, N>::interpolate(const geometry::Point& point, Quality& quality,
                             Accelerator& acc) const
     -> const ConstituentValues& {
-  auto& lgp_acc = reinterpret_cast<LGPAccelerator&>(acc);
+  auto& lgp_acc = dynamic_cast<LGPAccelerator&>(acc);
   /// Lambda that sets the interpolation result to NaN if the point:
   /// - Is not located within or near the mesh, or
   /// - Lies outside the designated geographical area.
@@ -639,7 +662,9 @@ auto LGP<T, N>::interpolate(const geometry::Point& point, Quality& quality,
   if (!query_result.is_valid()) {
     // The point is outside the mesh or too far from it, we return NaN
     return reset_values_to_undefined();
-  } else if (!query_result.is_inside()) {
+  }
+
+  if (!query_result.is_inside()) {
     // The point is outside the mesh, but within the maximum distance
     // allowed, we extrapolate the wave model using the nearest vertices from
     // the mesh index.
