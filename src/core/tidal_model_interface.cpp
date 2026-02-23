@@ -39,9 +39,10 @@ class PyTidalModelInterface : public TidalModelInterface<T> {
   using TidalModelInterface<T>::TidalModelInterface;
 
   auto accelerator(const angle::Formulae& formulae,
-                   const double time_tolerance) const -> Accelerator* override {
-    PYBIND11_OVERLOAD_PURE(Accelerator*, cname, accelerator, formulae,
-                           time_tolerance);
+                   const double time_tolerance) const
+      -> std::unique_ptr<Accelerator> override {
+    PYBIND11_OVERLOAD_PURE(std::unique_ptr<Accelerator>, cname, accelerator,
+                           formulae, time_tolerance);
   }
 
   auto interpolate(const geometry::Point& point, Quality& quality,
