@@ -206,7 +206,8 @@ auto name(ConstituentId constituent,
 /// @return Tidal constituent names.
 template <size_t Size, size_t... I>
 auto known(const std::array<ConstituentId, Size> &defined_constituent,
-           std::index_sequence<I...>) -> std::array<std::string, Size> {
+           std::index_sequence<I...> /*unused*/)
+    -> std::array<std::string, Size> {
   return {{name(defined_constituent[I])...}};
 }
 
