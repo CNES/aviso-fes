@@ -9,13 +9,11 @@
 #include <stdexcept>
 #include <string>
 #include <tuple>
-#include <utility>
 #include <vector>
 
 #include "fes/constituent.hpp"
 #include "fes/detail/markdown_table.hpp"
 #include "fes/detail/parallel_for.hpp"
-#include "fes/inference.hpp"
 #include "fes/interface/wave.hpp"
 
 namespace fes {
@@ -182,8 +180,9 @@ auto WaveTableInterface::tide_from_tide_series(
       const auto& item = (*wt)[jx];
       double phi = item->vu();
 
-      tide += item->f() * (wave(jx).real() * std::cos(phi) +
-                           wave(jx).imag() * std::sin(phi));
+      tide +=
+          item->f() * (wave(static_cast<int64_t>(jx)).real() * std::cos(phi) +
+                       wave(static_cast<int64_t>(jx)).imag() * std::sin(phi));
     }
     result(ix) = tide;
   }
@@ -209,8 +208,8 @@ auto WaveTableInterface::tide_from_mapping(
     args.angles().update(epoch);
     wt->compute_nodal_corrections(args.angles(), args.group_modulations());
     for (auto ix = start; ix < end; ++ix) {
-      for (size_t jx = 0; jx < wt->size(); ++jx) {
-        const auto& item = (*wt)[jx];
+      for (int64_t jx = 0; jx < static_cast<int64_t>(wt->size()); ++jx) {
+        const auto& item = (*wt)[static_cast<size_t>(jx)];
         double phi = item->vu();
 
         result(ix, jx) += item->f() * (wave(jx, ix).real() * std::cos(phi) +
@@ -243,8 +242,8 @@ auto WaveTableInterface::compute_nodal_modulations(
     wt->compute_nodal_corrections(angles, args.group_modulations());
     for (size_t jx = 0; jx < wt->size(); ++jx) {
       const auto& wave = (*wt)[jx];
-      f(jx, ix) = wave->f();
-      vu(jx, ix) = wave->vu();
+      f(static_cast<int64_t>(jx), ix) = wave->f();
+      vu(static_cast<int64_t>(jx), ix) = wave->vu();
     }
   }
   return std::make_tuple(f, vu);
