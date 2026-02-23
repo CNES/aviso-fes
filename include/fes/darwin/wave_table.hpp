@@ -31,7 +31,7 @@ class WaveTable : public WaveTableInterface {
   /// @param[in] group_modulations If true, applies group modulations to nodal
   /// corrections.
   auto compute_nodal_corrections(const angle::Astronomic& angles,
-                                 const bool group_modulations) -> void final;
+                                 bool group_modulations) -> void final;
 
   /// @brief Clones the wave table.
   /// @return A unique pointer to the cloned wave table.
