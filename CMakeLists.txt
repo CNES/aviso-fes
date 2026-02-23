@@ -277,15 +277,21 @@ if(FES_BUILD_PYTHON_BINDINGS)
 
   target_link_libraries(core PRIVATE fes)
   message(STATUS ${CMAKE_CXX_COMPILER_ID})
-  if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-    set_property(
-      TARGET core
-      APPEND
-      PROPERTY COMPILE_OPTIONS -flto=${NUM_CORES})
-    set_property(
-      TARGET core
-      APPEND
-      PROPERTY LINK_OPTIONS -flto=${NUM_CORES})
+  if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    # Skip LTO if using Clang from conda (does not support Gold plugin)
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_COMPILER MATCHES
+                                                  "conda")
+      message(STATUS "Skipping LTO options for Clang from conda.")
+    else()
+      set_property(
+        TARGET core
+        APPEND
+        PROPERTY COMPILE_OPTIONS -flto=${NUM_CORES})
+      set_property(
+        TARGET core
+        APPEND
+        PROPERTY LINK_OPTIONS -flto=${NUM_CORES})
+    endif()
   elseif(MSVC)
     set_property(
       TARGET core
