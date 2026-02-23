@@ -96,7 +96,7 @@ class WaveTableInterface {
   /// @param[in] constituents The list of constituent identifiers to set as
   /// modeled.
   template <typename Container>
-  inline auto set_modeled_constituents(const Container& constituents) -> void {
+  auto set_modeled_constituents(const Container& constituents) -> void {
     for (const auto& item : constituents) {
       const auto& ident = extract_key(item);
       auto* ptr = map_.get(ident);
@@ -123,7 +123,7 @@ class WaveTableInterface {
   /// @param[in] tides The map of constituent identifiers and their
   /// corresponding tide values to set.
   template <typename Container>
-  inline auto set_tides(const Container& tides) -> void {
+  auto set_tides(const Container& tides) -> void {
     for (const auto& item : tides) {
       set_tide(item.first, item.second);
     }
@@ -135,14 +135,13 @@ class WaveTableInterface {
   /// @param[in] group_modulations If true, applies group modulations to nodal
   /// corrections.
   virtual auto compute_nodal_corrections(const angle::Astronomic& angles,
-                                         const bool group_modulations)
-      -> void = 0;
+                                         bool group_modulations) -> void = 0;
 
   /// @brief Get the wave corresponding at the given index.
   /// @param index The index of the constituent, must be in the range
   /// [0, size()).
   /// @return A constant reference to the unique pointer to the wave.
-  inline auto operator[](const size_t index) const
+  auto operator[](const size_t index) const
       -> const std::unique_ptr<WaveInterface>& {
     return map_[index];
   }
@@ -151,15 +150,14 @@ class WaveTableInterface {
   /// @param index The index of the constituent, must be in the range
   /// [0, size()).
   /// @return A reference to the unique pointer to the wave.
-  inline auto operator[](const size_t index)
-      -> std::unique_ptr<WaveInterface>& {
+  auto operator[](const size_t index) -> std::unique_ptr<WaveInterface>& {
     return map_[index];
   }
 
   /// @brief Get the wave corresponding to the given constituent identifier.
   /// @param ident The constituent identifier.
   /// @return A constant reference to the unique pointer to the wave.
-  inline auto operator[](ConstituentId ident) const
+  auto operator[](ConstituentId ident) const
       -> const std::unique_ptr<WaveInterface>& {
     const auto* ptr = map_.get(ident);
     if (ptr == nullptr) {
@@ -171,8 +169,7 @@ class WaveTableInterface {
   /// @brief Get the wave corresponding to the given constituent identifier.
   /// @param ident The constituent identifier.
   /// @return A reference to the unique pointer to the wave.
-  inline auto operator[](ConstituentId ident)
-      -> std::unique_ptr<WaveInterface>& {
+  auto operator[](ConstituentId ident) -> std::unique_ptr<WaveInterface>& {
     auto* ptr = map_.get(ident);
     if (ptr == nullptr) {
       throw out_of_range(ident);
@@ -182,29 +179,27 @@ class WaveTableInterface {
 
   /// @brief Returns an iterator to the beginning of the wave table
   /// @return An iterator to the beginning of the wave table
-  inline auto begin() const noexcept -> ConstituentMap::const_iterator {
+  auto begin() const noexcept -> ConstituentMap::const_iterator {
     return map_.begin();
   }
 
   /// @brief Returns an iterator to the end of the wave table
   /// @return An iterator to the end of the wave table
-  inline auto end() const noexcept -> ConstituentMap::const_iterator {
+  auto end() const noexcept -> ConstituentMap::const_iterator {
     return map_.end();
   }
 
   /// @brief Returns an iterator to the beginning of the wave table
   /// @return An iterator to the beginning of the wave table
-  inline auto begin() noexcept -> ConstituentMap::iterator {
-    return map_.begin();
-  }
+  auto begin() noexcept -> ConstituentMap::iterator { return map_.begin(); }
 
   /// @brief Returns an iterator to the end of the wave table
   /// @return An iterator to the end of the wave table
-  inline auto end() noexcept -> ConstituentMap::iterator { return map_.end(); }
+  auto end() noexcept -> ConstituentMap::iterator { return map_.end(); }
 
   /// @brief Gets the list of constituent names in the table
   /// @return The list of constituent names in the table
-  inline auto constituents() const -> std::vector<std::string> {
+  auto constituents() const -> std::vector<std::string> {
     auto names = std::vector<std::string>();
     names.reserve(map_.size());
     for (const auto& item : map_) {
@@ -215,7 +210,7 @@ class WaveTableInterface {
 
   /// Get the list of constituent identifiers in the table
   /// @return The list of constituent identifiers in the table
-  inline auto constituent_ids() const -> std::vector<ConstituentId> {
+  auto constituent_ids() const -> std::vector<ConstituentId> {
     auto ids = std::vector<ConstituentId>();
     ids.reserve(map_.size());
     for (const auto& item : map_) {
@@ -225,7 +220,7 @@ class WaveTableInterface {
   }
 
   /// @brief Returns the size of the table
-  inline auto size() const noexcept -> size_t { return map_.size(); }
+  auto size() const noexcept -> size_t { return map_.size(); }
 
   /// @brief Selects the tidal constituents that can be resolved from a record
   /// of a given duration using the Rayleigh criterion.
@@ -286,7 +281,7 @@ class WaveTableInterface {
   /// @brief Check if a constituent is in the table
   /// @param[in] ident The constituent identifier
   /// @return true if the constituent is in the table
-  inline auto contains(const ConstituentId ident) const noexcept -> bool {
+  auto contains(const ConstituentId ident) const noexcept -> bool {
     return map_.contains(ident);
   }
 
@@ -328,7 +323,7 @@ class WaveTableInterface {
   /// @brief Generates an out_of_range exception for a missing constituent.
   /// @param[in] ident The constituent identifier.
   /// @return The out_of_range exception.
-  auto out_of_range(ConstituentId ident) const -> std::out_of_range {
+  static auto out_of_range(ConstituentId ident) -> std::out_of_range {
     auto value = static_cast<size_t>(ident);
     if (value >= kKnownConstituents) {
       return std::out_of_range("Constituent ID#" + std::to_string(value) +
@@ -346,7 +341,7 @@ class WaveTableInterface {
 /// @param[in] engine_type The type of the engine for which to create the wave
 /// table.
 /// @return A unique pointer to the created wave table.
-auto wave_table_factory(const EngineType engine_type)
+auto wave_table_factory(EngineType engine_type)
     -> std::unique_ptr<WaveTableInterface>;
 
 /// @brief Factory function to create a sparse wave table based on the specified
@@ -357,7 +352,7 @@ auto wave_table_factory(const EngineType engine_type)
 /// the wave table. If empty, all known constituents for the engine type are
 /// included.
 /// @return A unique pointer to the created wave table.
-auto wave_table_factory(const EngineType engine_type,
+auto wave_table_factory(EngineType engine_type,
                         const std::vector<std::string>& constituents)
     -> std::unique_ptr<WaveTableInterface>;
 
