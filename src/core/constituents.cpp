@@ -7,7 +7,6 @@
 #include <pyerrors.h>
 
 #include <cstdint>
-#include <stdexcept>
 
 #include "fes/constituent.hpp"
 #include "fes/python/optional.hpp"  // IWYU pragma: keep
