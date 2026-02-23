@@ -18,14 +18,36 @@ class WaveTableInterface;
 /// @brief Inference interface.
 class InferenceInterface {
  public:
+  /// @brief Default constructor
+  InferenceInterface() = default;
+
+  /// @brief Default copy constructor
+  /// @param[in] other The other InferenceInterface to copy from.
+  InferenceInterface(const InferenceInterface&) = default;
+
+  /// @brief Deleted move constructor to prevent moving of InferenceInterface
+  /// instances.
+  /// @param[in] other The other InferenceInterface to move from.
+  InferenceInterface(InferenceInterface&&) = delete;
+
+  /// @brief Default copy assignment operator
+  /// @param[in] other The other InferenceInterface to copy from.
+  /// @return A reference to the assigned InferenceInterface.
+  auto operator=(const InferenceInterface&) -> InferenceInterface& = default;
+
+  /// @brief Deleted move assignment operator to prevent moving of
+  /// InferenceInterface instances.
+  /// @param[in] other The other InferenceInterface to move from.
+  /// @return A reference to the assigned InferenceInterface.
+  auto operator=(InferenceInterface&&) -> InferenceInterface& = delete;
+
   /// @brief Virtual destructor for proper cleanup of derived classes.
   virtual ~InferenceInterface() = default;
 
   /// @brief Apply inference to compute minor constituents.
   /// @param[in,out] wave_table The wave table to process.
   /// @param[in] lat Latitude in degrees.
-  virtual auto apply(WaveTableInterface& wave_table, const double lat)
-      -> void = 0;
+  virtual auto apply(WaveTableInterface& wave_table, double lat) -> void = 0;
 
   /// @brief Returns the list of the tidal constituents inferred by the model.
   /// @return A vector of constituent identifiers.
