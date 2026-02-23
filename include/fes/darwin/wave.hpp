@@ -50,14 +50,14 @@ class Wave : public WaveInterface {
 
   /// @brief Clones the wave.
   /// @return A unique pointer to the cloned wave.
-  inline auto clone() const -> std::unique_ptr<WaveInterface> final {
+  auto clone() const -> std::unique_ptr<WaveInterface> final {
     return std::make_unique<Wave>(*this);
   }
 
   /// @brief Computes the nodal corrections for the wave.
   /// @param[in] angles Astronomical angles used to compute nodal corrections.
-  inline auto compute_nodal_corrections(const angle::Astronomic& angles,
-                                        const bool /*group_modulations*/)
+  auto compute_nodal_corrections(const angle::Astronomic& angles,
+                                 const bool /*group_modulations*/)
       -> void final {
     nodal_a(angles);
     nodal_g(angles);
@@ -83,13 +83,18 @@ class Wave : public WaveInterface {
  protected:
   /// Compute nodal corrections from SCHUREMAN (1958).
   ///
-  /// @param[in] a Astronomic angle
-  virtual inline void nodal_g(const angle::Astronomic& a) {
-    v_ = argument_[0] * a.t() + argument_[1] * a.s() + argument_[2] * a.h() +
-         argument_[3] * a.p() + argument_[5] * a.p1() +
-         argument_[6] * detail::math::pi_2<double>();
-    u_ = argument_[7] * a.xi() + argument_[8] * a.nu() +
-         argument_[9] * a.nuprim() + argument_[10] * a.nusec();
+  /// @param[in] angular_position Astronomic angle
+  virtual void nodal_g(const angle::Astronomic& angular_position) {
+    v_ = (argument_[0] * angular_position.t()) +
+         (argument_[1] * angular_position.s()) +
+         (argument_[2] * angular_position.h()) +
+         (argument_[3] * angular_position.p()) +
+         (argument_[5] * angular_position.p1()) +
+         (argument_[6] * detail::math::pi_2<double>());
+    u_ = (argument_[7] * angular_position.xi()) +
+         (argument_[8] * angular_position.nu()) +
+         (argument_[9] * angular_position.nuprim()) +
+         (argument_[10] * angular_position.nusec());
   }
 
  private:
@@ -316,12 +321,14 @@ class M1 : public Wave {
 
   /// Compute nodal corrections from SCHUREMAN (1958).
   ///
-  /// @param a Astronomic angle
-  inline void nodal_g(const angle::Astronomic& a) final {
-    Wave::nodal_g(a);
+  /// @param[in] angular_position Astronomic angle
+  void nodal_g(const angle::Astronomic& angular_position) final {
+    Wave::nodal_g(angular_position);
     u_ -= detail::math::radians(
-        1.0 / std::sqrt(numbers::k197_1 +
-                        numbers::k197_2 * std::cos(2 * (a.p() - a.xi()))));
+        1.0 /
+        std::sqrt(numbers::k197_1 +
+                  (numbers::k197_2 * std::cos(2 * (angular_position.p() -
+                                                   angular_position.xi())))));
   }
 };
 
@@ -659,10 +666,10 @@ class L2 : public Wave {
 
   /// Compute nodal corrections from SCHUREMAN (1958).
   ///
-  /// @param a Astronomic angle
-  inline void nodal_g(const angle::Astronomic& a) final {
-    Wave::nodal_g(a);
-    u_ -= a.r();
+  /// @param[in] angular_position Astronomic angle
+  void nodal_g(const angle::Astronomic& angular_position) final {
+    Wave::nodal_g(angular_position);
+    u_ -= angular_position.r();
   }
 };
 
