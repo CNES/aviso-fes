@@ -309,7 +309,7 @@ if(FES_ENABLE_COVERAGE)
   coverage_evaluate()
 endif()
 
-# Try to find the prerequistes to compile the tide prediction example. If not
+# Try to find the prerequisites to compile the tide prediction example. If not
 # found, skip it without error.
 find_package(PkgConfig OPTIONAL)
 if(PkgConfig_FOUND)
