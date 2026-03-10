@@ -3,6 +3,19 @@
 Changelog
 #########
 
+2026.3.0
+========
+
+Bug Fixes
+---------
+* Added case-insensitive NetCDF variable name resolution in the Python
+  configuration loader (``src/pyfes/config.py``) to handle constituent
+  variables such as ``MSf_amplitude`` vs ``Msf_amplitude`` while preserving
+  exact-match preference and ambiguity detection.
+* Added case-insensitive NetCDF variable name resolution in the C++ prediction
+  example (``examples/prediction.cpp``), with explicit ambiguity checks when
+  multiple variables differ only by case.
+
 2026.2.0
 ========
 
