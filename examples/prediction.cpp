@@ -1,3 +1,9 @@
+// Copyright (c) 2026 CNES
+//
+// All rights reserved. Use of this source code is governed by a
+// BSD-style license that can be found in the LICENSE file.
+#include <algorithm>
+#include <cctype>
 #include <chrono>
 #include <cmath>
 #include <complex>
@@ -26,9 +32,62 @@
 // Define the ocean tide file path (LPG2)
 #define OCEAN_TIDE "path/to/fes2022_oceantide/fes2022b_lgp2.nc"
 
+/// @brief Convert a string to lower-case using ASCII case folding
+/// @param value Input string
+/// @return Lower-case string
+static auto to_lower(std::string value) -> std::string {
+  std::transform(
+      value.begin(), value.end(), value.begin(),
+      [](const unsigned char c) { return static_cast<char>(std::tolower(c)); });
+  return value;
+}
+
+/// @brief Resolve a NetCDF variable name with case-insensitive fallback
+/// @param ds Open NetCDF dataset
+/// @param expected_name Variable name expected by the code
+/// @return Actual variable name present in the dataset
+static auto resolve_variable_name(const netCDF::NcFile &ds,
+                                  const std::string &expected_name)
+    -> std::string {
+  if (!ds.getVar(expected_name).isNull()) {
+    return expected_name;
+  }
+
+  auto folded = to_lower(expected_name);
+  std::vector<std::string> matches;
+
+  for (const auto &item : ds.getVars()) {
+    if (to_lower(item.first) == folded) {
+      matches.push_back(item.first);
+    }
+  }
+
+  if (matches.size() == 1) {
+    std::cerr << "Warning: variable '" << expected_name
+              << "' not found exactly; using case-insensitive match '"
+              << matches.front() << "'." << std::endl;
+    return matches.front();
+  }
+
+  if (matches.size() > 1) {
+    std::string list;
+    for (size_t i = 0; i < matches.size(); ++i) {
+      if (i != 0) {
+        list += ", ";
+      }
+      list += "'" + matches[i] + "'";
+    }
+    throw std::runtime_error("Ambiguous variable name '" + expected_name +
+                             "'. Matches: " + list + ".");
+  }
+
+  throw std::runtime_error("Variable '" + expected_name +
+                           "' not found in the dataset.");
+}
+
 /// @brief Load tide paths for all constituents
 /// @return A map of constituent identifiers to their file paths
-static std::map<fes::ConstituentId, std::string> load_tide_paths() {
+static auto load_tide_paths() -> std::map<fes::ConstituentId, std::string> {
   return {{fes::ConstituentId::k2N2, LOAD_TIDE("2n2.nc")},
           {fes::ConstituentId::kEps2, LOAD_TIDE("eps2.nc")},
           {fes::ConstituentId::kJ1, LOAD_TIDE("j1.nc")},
@@ -108,8 +167,10 @@ auto polar(const std::vector<float> &amp, const std::vector<float> &pha)
         "Amplitude and phase vectors must be of the same size.");
   }
   // Combine amplitude and phase into a complex wave
-  Eigen::Map<const Eigen::VectorXf> amp_map(amp.data(), size);
-  Eigen::Map<const Eigen::VectorXf> phase_map(pha.data(), size);
+  Eigen::Map<const Eigen::VectorXf> amp_map(amp.data(),
+                                            static_cast<Eigen::Index>(size));
+  Eigen::Map<const Eigen::VectorXf> phase_map(pha.data(),
+                                              static_cast<Eigen::Index>(size));
 
   return amp_map.binaryExpr(
       phase_map, [](float a, float p) { return std::polar(a, to_radians(p)); });
@@ -167,13 +228,15 @@ static auto load_tide_data_from_file(
       lat_var.getVar(lat.data());
 
       auto x_axis =
-          fes::Axis(Eigen::Map<const Eigen::VectorXd>(lon.data(), lon.size()),
+          fes::Axis(Eigen::Map<const Eigen::VectorXd>(
+                        lon.data(), static_cast<Eigen::Index>(lon.size())),
                     1e-6, true);
       auto y_axis =
-          fes::Axis(Eigen::Map<const Eigen::VectorXd>(lat.data(), lat.size()),
+          fes::Axis(Eigen::Map<const Eigen::VectorXd>(
+                        lat.data(), static_cast<Eigen::Index>(lat.size())),
                     1e-6, false);
-      model = std::move(std::make_unique<fes::tidal_model::Cartesian<float>>(
-          std::move(x_axis), std::move(y_axis), fes::TideType::kRadial, false));
+      model = std::make_unique<fes::tidal_model::Cartesian<float>>(
+          x_axis, y_axis, fes::TideType::kRadial, false);
     }
 
     // Combine amplitude and phase into a complex wave
@@ -182,7 +245,8 @@ static auto load_tide_data_from_file(
     // Finally, add the constituent to the model
     model->add_constituent(ident, std::move(wave));
   } catch (netCDF::exceptions::NcException &e) {
-    std::cerr << "Error opening file: " << e.what() << std::endl;
+    std::cerr << "Error opening file: " << filename << " - " << e.what()
+              << std::endl;
     exit(EXIT_FAILURE);
   }
 }
@@ -230,10 +294,12 @@ static auto load_ocean_tide_model()
 
     // Create the mesh index
     auto index = std::make_shared<fes::mesh::Index>(
-        Eigen::Map<const Eigen::VectorXd>(lon.data(), lon.size()),
-        Eigen::Map<const Eigen::VectorXd>(lat.data(), lat.size()),
+        Eigen::Map<const Eigen::VectorXd>(
+            lon.data(), static_cast<Eigen::Index>(lon.size())),
+        Eigen::Map<const Eigen::VectorXd>(
+            lat.data(), static_cast<Eigen::Index>(lat.size())),
         Eigen::Map<const Eigen::Matrix<int32_t, -1, 3, Eigen::RowMajor>>(
-            triangles_data.data(), triangles, 3));
+            triangles_data.data(), static_cast<Eigen::Index>(triangles), 3));
 
     // Initialize the LGP2 model with the mesh index and LGP2 codes
     lpg2_model = std::make_unique<fes::tidal_model::LGP2<float>>(
@@ -246,7 +312,7 @@ static auto load_ocean_tide_model()
     // Read and add each constituent to the model
     for (const auto &ident : ocean_tide_constituents()) {
       std::string prefix = fes::constituents::name(ident);
-      std::string var_name = prefix + "_amplitude";
+      std::string var_name = resolve_variable_name(ds, prefix + "_amplitude");
 
       // Get the amplitude variable
       auto amp = ds.getVar(var_name);
@@ -259,7 +325,7 @@ static auto load_ocean_tide_model()
       amp.getVar(amplitude.data());
 
       // Get the phase variable
-      var_name = prefix + "_phase";
+      var_name = resolve_variable_name(ds, prefix + "_phase");
       auto phase = ds.getVar(var_name);
       if (phase.isNull()) {
         throw std::runtime_error("Variable " + var_name +

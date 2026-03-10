@@ -309,6 +309,28 @@ if(FES_ENABLE_COVERAGE)
   coverage_evaluate()
 endif()
 
+find_package(PkgConfig)
+if(PkgConfig_FOUND)
+  pkg_check_modules(NETCDF_CXX netcdf-cxx4)
+endif()
+if(NOT NETCDF_CXX_FOUND AND DEFINED ENV{CONDA_PREFIX})
+  set(NETCDF_CXX_INCLUDE_DIRS "$ENV{CONDA_PREFIX}/include")
+  find_library(
+    NETCDF_CXX_LIBRARIES
+    NAMES netcdf-cxx4 netcdf_c++4
+    HINTS "$ENV{CONDA_PREFIX}/lib" REQUIRED)
+  if(NETCDF_CXX_LIBRARIES)
+    add_executable(tide_prediction
+                   ${CMAKE_CURRENT_SOURCE_DIR}/examples/prediction.cpp)
+    target_compile_features(tide_prediction PRIVATE cxx_std_20)
+    target_link_libraries(tide_prediction fes ${NETCDF_CXX_LIBRARIES}
+                          Boost::boost)
+    target_include_directories(
+      tide_prediction PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
+                              ${EIGEN3_INCLUDE_DIR} ${NETCDF_CXX_INCLUDE_DIRS})
+  endif()
+endif()
+
 message(STATUS "")
 message(
   STATUS
