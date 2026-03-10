@@ -309,7 +309,9 @@ if(FES_ENABLE_COVERAGE)
   coverage_evaluate()
 endif()
 
-find_package(PkgConfig)
+# Try to find the prerequistes to compile the tide prediction example. If not
+# found, skip it without error.
+find_package(PkgConfig OPTIONAL)
 if(PkgConfig_FOUND)
   pkg_check_modules(NETCDF_CXX netcdf-cxx4)
 endif()
@@ -318,7 +320,7 @@ if(NOT NETCDF_CXX_FOUND AND DEFINED ENV{CONDA_PREFIX})
   find_library(
     NETCDF_CXX_LIBRARIES
     NAMES netcdf-cxx4 netcdf_c++4
-    HINTS "$ENV{CONDA_PREFIX}/lib" REQUIRED)
+    HINTS "$ENV{CONDA_PREFIX}/lib" OPTIONAL)
   if(NETCDF_CXX_LIBRARIES)
     add_executable(tide_prediction
                    ${CMAKE_CURRENT_SOURCE_DIR}/examples/prediction.cpp)
