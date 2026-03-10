@@ -197,6 +197,52 @@ def extract_data_with_bounding_box(
     return numpy.ma.filled(ncvar[slices], numpy.nan)
 
 
+def resolve_variable_name(
+    ds: netCDF4.Dataset,
+    variable_name: str,
+) -> str:
+    """Resolve a NetCDF variable name with case-insensitive fallback.
+
+    The search first tries an exact match. If not found, a case-insensitive
+    match is attempted. If multiple variables only differ by case, the lookup
+    is considered ambiguous and fails.
+
+    Args:
+        ds: Open NetCDF dataset.
+        variable_name: Variable name expected by the configuration.
+
+    Returns:
+        The actual variable name present in the dataset.
+
+    Raises:
+        ValueError: If the variable cannot be resolved or if the match is
+            ambiguous.
+
+    """
+    if variable_name in ds.variables:
+        return variable_name
+
+    folded = variable_name.lower()
+    matches = [name for name in ds.variables if name.lower() == folded]
+
+    if len(matches) == 1:
+        warnings.warn(
+            f'Variable {variable_name!r} not found exactly; using '
+            f'case-insensitive match {matches[0]!r}.',
+            UserWarning,
+            stacklevel=3,
+        )
+        return matches[0]
+
+    if len(matches) > 1:
+        raise ValueError(
+            f'Ambiguous variable name: {variable_name!r}. Matches: '
+            f'{", ".join(repr(item) for item in matches)}.'
+        )
+
+    raise ValueError(f'Variable not found: {variable_name!r}.')
+
+
 @dataclasses.dataclass(frozen=True)
 class VariableNames:
     """Variable names used to load a cartesian tidal model."""
@@ -650,12 +696,14 @@ class LGP(Common):
                     parse_constituent(item)
                 except ValueError as exc:
                     raise ValueError(f'Unknown constituent: {item!r}.') from exc
-                amp_name: str = self.amplitude.format(constituent=item)
-                if amp_name not in ds.variables:
-                    raise ValueError(f'Variable not found: {amp_name!r}.')
-                pha_name: str = self.phase.format(constituent=item)
-                if pha_name not in ds.variables:
-                    raise ValueError(f'Variable not found: {pha_name!r}.')
+                amp_name = resolve_variable_name(
+                    ds,
+                    self.amplitude.format(constituent=item),
+                )
+                pha_name = resolve_variable_name(
+                    ds,
+                    self.phase.format(constituent=item),
+                )
 
                 if instance is None:
                     type_name: LGPModel = self._lgp_class(
