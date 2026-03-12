@@ -115,7 +115,7 @@ inline auto evaluate_tide(const TidalModelInterface<T>& tidal_model,
   if (quality == kUndefined) {
     double long_period_equilibrium = 0.0;
     if (compute_long_period_equilibrium) {
-      auto& angles = acc.calculate_angle(epoch);
+      const auto& angles = acc.calculate_angle(epoch);
       wave_table.compute_nodal_corrections(angles,
                                            settings.group_modulations());
       long_period_equilibrium = long_period.lpe_minus_n_waves(angles, latitude);
@@ -256,7 +256,7 @@ auto evaluate_tide(const TidalModelInterface<T>* const tidal_model,
 /// would make the result inconsistent.
 auto evaluate_tide_from_constituents(
     const std::map<ConstituentId, Complex>& constituents,
-    const Eigen::Ref<const Eigen::VectorXd>& epoch, const double latitude,
+    const Eigen::Ref<const Eigen::VectorXd>& epoch, double latitude,
     const boost::optional<Settings>& settings = boost::none)
     -> std::tuple<Eigen::VectorXd, Eigen::VectorXd>;
 
