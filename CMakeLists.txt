@@ -174,7 +174,7 @@ if(FES_ENABLE_COVERAGE)
 endif()
 
 # Find Eigen.
-find_package(Eigen 3.4.0 CONFIG QUIET)
+find_package(Eigen3 5 CONFIG QUIET)
 if(NOT TARGET Eigen3::Eigen)
   find_package(Eigen3 3.4.0 REQUIRED)
 endif()
