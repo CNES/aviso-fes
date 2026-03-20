@@ -173,9 +173,19 @@ if(FES_ENABLE_COVERAGE)
   find_package(codecov)
 endif()
 
-# Find Eigen
-find_package(Eigen3 3.3.1 REQUIRED)
-include_directories(${EIGEN3_INCLUDE_DIR})
+# Find Eigen.
+find_package(Eigen 3.4.0 CONFIG QUIET)
+if(NOT TARGET Eigen3::Eigen)
+  find_package(Eigen3 3.4.0 CONFIG REQUIRED)
+endif()
+if(NOT EIGEN3_INCLUDE_DIR AND EIGEN3_INCLUDE_DIRS)
+  set(EIGEN3_INCLUDE_DIR ${EIGEN3_INCLUDE_DIRS})
+endif()
+if(NOT EIGEN3_INCLUDE_DIR AND TARGET Eigen3::Eigen)
+  get_target_property(EIGEN3_INCLUDE_DIR Eigen3::Eigen
+                      INTERFACE_INCLUDE_DIRECTORIES)
+endif()
+include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
 
 # Find Google Test, if unit tests are enabled
 if(FES_ENABLE_TEST)
