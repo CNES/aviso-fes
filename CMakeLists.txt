@@ -176,7 +176,7 @@ endif()
 # Find Eigen.
 find_package(Eigen 3.4.0 CONFIG QUIET)
 if(NOT TARGET Eigen3::Eigen)
-  find_package(Eigen3 3.4.0 CONFIG REQUIRED)
+  find_package(Eigen3 3.4.0 REQUIRED)
 endif()
 if(NOT EIGEN3_INCLUDE_DIR AND EIGEN3_INCLUDE_DIRS)
   set(EIGEN3_INCLUDE_DIR ${EIGEN3_INCLUDE_DIRS})
