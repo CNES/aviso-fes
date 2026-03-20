@@ -3,6 +3,14 @@
 Changelog
 #########
 
+2026.3.1
+========
+
+Build System
+------------
+* Fixed a build issue with Eigen 5.x by updating the CMake configuration to
+  properly detect Eigen versions.
+
 2026.3.0
 ========
 
