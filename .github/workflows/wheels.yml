@@ -1,0 +1,129 @@
+name: Build and publish wheels
+
+on:
+  push:
+    tags:
+      - '[0-9]*'
+  workflow_dispatch:
+
+jobs:
+  build_wheels:
+    name: Wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest       # Linux x86_64 (manylinux_2_28)
+          - os: ubuntu-24.04-arm    # Linux aarch64 (manylinux_2_28)
+          - os: macos-latest        # macOS arm64
+            cibw_archs_macos: "arm64"
+          - os: windows-2025        # Windows x86_64
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+          fetch-tags: true
+
+      # Boost (≥ 1.79) and Eigen (≥ 3.4) are required on all platforms.
+      # Linux: handled inside the manylinux container via before-all (pyproject.toml).
+      # macOS: handled via brew in before-all (pyproject.toml).
+      # Windows: micromamba is set up here so the conda prefix is available
+      #          before cibuildwheel runs.
+      - name: Install Boost and Eigen headers (Windows)
+        if: runner.os == 'Windows'
+        uses: mamba-org/setup-micromamba@v1
+        with:
+          cache-downloads: true
+          condarc: |
+            channels:
+              - conda-forge
+          create-args: "libboost-headers eigen"
+          environment-name: build-deps
+          generate-run-shell: false
+          init-shell: none
+
+      - name: Export build prefix to GITHUB_ENV (Windows)
+        if: runner.os == 'Windows'
+        shell: bash
+        run: |
+          # Use forward slashes: cibuildwheel runs CIBW_ENVIRONMENT_WINDOWS
+          # through shlex, which would eat Windows backslashes.
+          prefix="${MAMBA_ROOT_PREFIX//\\//}/envs/build-deps/Library"
+          echo "BUILD_PREFIX=${prefix}" >> "$GITHUB_ENV"
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v3.0
+        env:
+          # Windows: point CMake at the conda-forge Boost and Eigen headers.
+          CIBW_ENVIRONMENT_WINDOWS: >-
+            CMAKE_PREFIX_PATH="${{ env.BUILD_PREFIX }}"
+          # macOS: arm64 only (free Intel runners are deprecated).
+          CIBW_ARCHS_MACOS: ${{ matrix.cibw_archs_macos }}
+          # Sanity-check every built wheel imports and exposes its version.
+          CIBW_TEST_COMMAND: >-
+            python -c "import pyfes; print(pyfes.__version__)"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cibw-wheels-${{ matrix.os }}
+          path: ./wheelhouse/*.whl
+
+  # Pre-release tags (e.g. 2026.4.0rc1, 2026.4.0.dev1) go to TestPyPI;
+  # plain stable tags (X.Y.Z) go to real PyPI.
+  detect-target:
+    name: Detect publish target
+    needs: build_wheels
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    outputs:
+      prerelease: ${{ steps.check.outputs.prerelease }}
+    steps:
+      - id: check
+        shell: bash
+        run: |
+          if [[ "${GITHUB_REF_NAME}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "prerelease=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "prerelease=true"  >> "$GITHUB_OUTPUT"
+          fi
+
+  publish-testpypi:
+    name: Publish wheels to TestPyPI
+    needs: detect-target
+    if: needs.detect-target.outputs.prerelease == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/p/pyfes
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: cibw-wheels-*
+          path: dist
+          merge-multiple: true
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+
+  publish-pypi:
+    name: Publish wheels to PyPI
+    needs: detect-target
+    if: needs.detect-target.outputs.prerelease == 'false'
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/pyfes
+    permissions:
+      id-token: write   # required for OIDC Trusted Publishing
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: cibw-wheels-*
+          path: dist
+          merge-multiple: true
+      - uses: pypa/gh-action-pypi-publish@release/v1

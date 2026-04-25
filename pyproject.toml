@@ -7,7 +7,7 @@ backend-path = ["_custom_build"]
 name = "pyfes"
 description = "Tidal constituents analysis in Python"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 license = "BSD-3-Clause"
 license-files = ["LICENSE"]
 authors = [
@@ -20,7 +20,6 @@ classifiers = [
     "Operating System :: POSIX",
     "Operating System :: MacOS",
     "Operating System :: Microsoft :: Windows",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
@@ -110,6 +109,52 @@ split-on-trailing-comma = false
 combine-as-imports = true
 force-sort-within-sections = true
 
+
+# ---------------------------------------------------------------------------
+# cibuildwheel — binary wheel configuration
+# Run with: pipx run cibuildwheel --platform linux  (local test)
+# Triggered by: .github/workflows/wheels.yml
+# ---------------------------------------------------------------------------
+[tool.cibuildwheel]
+# Build CPython 3.11–3.14 (+ 3.14 free-threaded); skip 32-bit and musl builds.
+build = "cp311-* cp312-* cp313-* cp314-* cp314t-*"
+skip = ["*-win32", "*-manylinux_i686", "*-musllinux*"]
+build-verbosity = 1
+# Opt into free-threaded (cp*t-*) builds and the still-pre-release cp314 matrix.
+enable = ["cpython-freethreading", "cpython-prerelease"]
+
+# ------------------------------------------------------------------
+# Linux (manylinux_2_28 — AlmaLinux 8, glibc ≥ 2.28, gcc ≥ 12)
+# Boost (>=1.79) and Eigen (>=3.4) are installed via miniforge inside the
+# container because the default AlmaLinux repos do not always ship recent
+# enough versions.
+# ------------------------------------------------------------------
+[tool.cibuildwheel.linux]
+manylinux-x86_64-image = "manylinux_2_28"
+manylinux-aarch64-image = "manylinux_2_28"
+before-all = """
+curl -fsSL \
+  "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-$(uname -m).sh" \
+  -o /tmp/miniforge.sh \
+  && bash /tmp/miniforge.sh -b -p /opt/conda \
+  && /opt/conda/bin/conda install -y -c conda-forge 'libboost-headers' 'eigen'
+"""
+environment = {CMAKE_PREFIX_PATH = "/opt/conda"}
+
+# ------------------------------------------------------------------
+# macOS (arm64 only; free Intel runners are deprecated).
+# brew installs both Boost and Eigen.
+# ------------------------------------------------------------------
+[tool.cibuildwheel.macos]
+before-all = "brew install boost eigen || true"
+environment = {MACOSX_DEPLOYMENT_TARGET = "13.4", CMAKE_PREFIX_PATH = "$(brew --prefix boost):$(brew --prefix eigen)"}
+
+# ------------------------------------------------------------------
+# Windows
+# Boost and Eigen headers are installed via mamba-org/setup-micromamba
+# before cibuildwheel runs (see wheels.yml). The conda prefix is forwarded
+# via CIBW_ENVIRONMENT_WINDOWS in the workflow env block.
+# ------------------------------------------------------------------
 
 [tool.ruff.format]
 quote-style = "single"
