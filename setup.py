@@ -266,8 +266,10 @@ class BuildExt(setuptools.command.build_ext.build_ext):
         # If the extension is built in the "root/build/lib.*" directory,
         # then it is not an editable install.
         if distutils_dirname().resolve() != extdir.parent:
-            return pathlib.Path(self.build_lib).joinpath(
-                *ext.name.split('.')[:-1]
+            return (
+                pathlib.Path(self.build_lib)
+                .resolve()
+                .joinpath(*ext.name.split('.')[:-1])
             )
         return extdir
 
