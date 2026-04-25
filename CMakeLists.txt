@@ -117,8 +117,68 @@ if(NOT WIN32)
   endif()
 endif()
 
-# Find boost
-find_package(Boost 1.79 REQUIRED)
+# Helper function to resolve the Boost include directory if find_package fails.
+# It looks for boost/version.hpp in the Boost include directories and in the
+# CMAKE_PREFIX_PATH.
+function(resolve_boost_include_dir out_var)
+  set(boost_search_hints)
+  if(Boost_INCLUDE_DIRS)
+    list(APPEND boost_search_hints "${Boost_INCLUDE_DIRS}")
+  endif()
+  foreach(prefix IN LISTS CMAKE_PREFIX_PATH)
+    list(APPEND boost_search_hints "${prefix}/include" "${prefix}")
+  endforeach()
+
+  find_path(
+    _BOOST_INCLUDE_DIR
+    NAMES boost/version.hpp
+    HINTS ${boost_search_hints})
+
+  set(${out_var}
+      "${_BOOST_INCLUDE_DIR}"
+      PARENT_SCOPE)
+endfunction()
+
+# Helper function to check the Boost version by reading the boost/version.hpp
+# file
+function(check_boost_version boost_include_dir min_version)
+  if(NOT EXISTS "${boost_include_dir}/boost/version.hpp")
+    message(FATAL_ERROR "Boost version.hpp not found at "
+                        "${boost_include_dir}/boost/version.hpp")
+  endif()
+
+  file(READ "${boost_include_dir}/boost/version.hpp" BOOST_VERSION_CONTENT)
+  string(REGEX MATCH "BOOST_LIB_VERSION \"([0-9_]+)\"" _
+               "${BOOST_VERSION_CONTENT}")
+  set(boost_version_string "${CMAKE_MATCH_1}")
+  message(STATUS "Boost version: ${boost_version_string}")
+
+  string(REPLACE "_" "." BOOST_VERSION_FORMATTED "${boost_version_string}")
+  if(BOOST_VERSION_FORMATTED VERSION_LESS "${min_version}")
+    message(FATAL_ERROR "Boost version must be at least ${min_version}, "
+                        "found ${BOOST_VERSION_FORMATTED}")
+  endif()
+endfunction()
+
+# Search for Boost using find_package. If it fails (e.g. CMake 4.x removed
+# FindBoost.cmake and only CONFIG mode is available), fall back to resolving the
+# include directory manually and checking boost/version.hpp.
+find_package(Boost 1.79 QUIET)
+
+if(NOT Boost_FOUND)
+  resolve_boost_include_dir(Boost_INCLUDE_DIRS)
+
+  if(NOT Boost_INCLUDE_DIRS)
+    message(
+      FATAL_ERROR
+        "Boost not found with find_package, and boost/version.hpp was not "
+        "found in Boost_INCLUDE_DIRS/CMAKE_PREFIX_PATH.")
+  endif()
+
+  message(STATUS "Boost headers: ${Boost_INCLUDE_DIRS}")
+  check_boost_version("${Boost_INCLUDE_DIRS}" "1.79.0")
+endif()
+
 include_directories(${Boost_INCLUDE_DIRS})
 
 # BLAS: first try to use MKL as a single dynamic library
