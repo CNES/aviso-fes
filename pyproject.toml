@@ -51,8 +51,6 @@ find = {where = ["src"]}
 pyfes = [
     "py.typed",
     "core/*.pyi",
-    "tests/dataset/*.nc",
-    "data/leap-seconds.txt",
 ]
 "*" = ["py.typed"]
 
