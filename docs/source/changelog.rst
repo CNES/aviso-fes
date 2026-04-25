@@ -3,6 +3,44 @@
 Changelog
 #########
 
+2026.4.0
+========
+
+Distribution
+------------
+* **Binary wheels on PyPI**: pyfes is now distributed as pre-built wheels for
+  Linux (manylinux_2_28 x86_64 and aarch64), macOS (arm64, deployment target
+  13.4) and Windows (x86_64), removing the need to compile Boost, Eigen and
+  the pybind11 extension locally. ``pip install pyfes`` is enough on all
+  supported platforms.
+* **Python 3.14 and free-threaded 3.14t support**: wheels are built for
+  CPython 3.11, 3.12, 3.13, 3.14 and the free-threaded 3.14t build.
+* **Pre-release routing**: PEP 440 pre-release tags (e.g. ``2026.4.0rc1``,
+  ``2026.4.0.dev1``) are published to TestPyPI, while plain ``X.Y.Z`` tags
+  go to the real PyPI index, both via OIDC Trusted Publishing.
+
+Build System
+------------
+* Added a ``[tool.cibuildwheel]`` configuration so wheels can be reproduced
+  locally with ``pipx run cibuildwheel``.
+* Switched the Boost lookup to a CONFIG-mode ``find_package`` with a manual
+  ``boost/version.hpp`` fallback, so builds work with CMake 4.x (which
+  removed ``FindBoost.cmake``) and with the conda-forge ``libboost-headers``
+  package used inside the manylinux container and on Windows.
+* Forwarded ``Python3_EXECUTABLE`` to pybind11 and set
+  ``Python3_FIND_STRATEGY=LOCATION`` so each cibuildwheel slot links the
+  extension against the matching interpreter — fixes a case where the
+  manylinux image's system Python was selected and produced a wheel with
+  the wrong ABI tag.
+* Made the non-editable build path absolute in ``setup.py`` so
+  ``CMAKE_LIBRARY_OUTPUT_DIRECTORY`` is resolved correctly when CMake runs
+  from the temporary build directory — fixes the free-threaded 3.14t wheels
+  that previously shipped without the compiled extension.
+
+Dependencies
+------------
+* Added ``pyyaml`` to the runtime dependencies (used by ``pyfes.config``).
+
 2026.3.1
 ========
 
