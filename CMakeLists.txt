@@ -260,6 +260,13 @@ endif()
 
 # Find Python
 if(FES_BUILD_PYTHON_BINDINGS)
+  # Honour the Python3_EXECUTABLE hint passed by setup.py instead of greedily
+  # picking the highest version found on PATH (manylinux images ship several).
+  set(Python3_FIND_STRATEGY LOCATION) # cmake-lint: disable=C0103
+  set(Python_FIND_STRATEGY LOCATION) # cmake-lint: disable=C0103
+  if(DEFINED Python3_EXECUTABLE AND NOT DEFINED Python_EXECUTABLE)
+    set(Python_EXECUTABLE "${Python3_EXECUTABLE}") # cmake-lint: disable=C0103
+  endif()
   find_package(Python3 3.8 COMPONENTS Interpreter Development)
   set(PYBIND11_FINDPYTHON ON)
   set(PYBIND11_USE_SMART_HOLDER ON)
