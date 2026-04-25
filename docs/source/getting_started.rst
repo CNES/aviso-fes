@@ -7,6 +7,42 @@ Getting Started
 Installation
 ============
 
+PyFES is distributed as pre-built binaries on both PyPI and conda-forge,
+so most users do not need a C++ toolchain to install it.
+
+From PyPI (pip)
+---------------
+
+Binary wheels are published on `PyPI <https://pypi.org/p/pyfes>`_ for:
+
+* **Linux** — ``manylinux_2_28`` on ``x86_64`` and ``aarch64`` (glibc ≥ 2.28)
+* **macOS** — ``arm64`` (Apple Silicon), deployment target 13.4
+* **Windows** — ``x86_64``
+
+Wheels are built for CPython 3.11, 3.12, 3.13, 3.14 and the free-threaded
+build 3.14t.
+
+.. code-block:: bash
+
+    pip install pyfes
+
+To upgrade to the latest release:
+
+.. code-block:: bash
+
+    pip install -U pyfes
+
+Pre-release builds (``X.Y.ZrcN``, ``X.Y.Z.devN``) are uploaded to TestPyPI:
+
+.. code-block:: bash
+
+    pip install --index-url https://test.pypi.org/simple/ \
+        --extra-index-url https://pypi.org/simple/ pyfes
+
+If no wheel matches your platform or interpreter, ``pip`` falls back to
+building from source — see :ref:`building_from_source` below for the
+prerequisites.
+
 From conda-forge
 -----------------
 
@@ -14,10 +50,13 @@ From conda-forge
 
     conda install -c conda-forge pyfes
 
+.. _building_from_source:
+
 Building from Source
 --------------------
 
-PyFES requires a C++14 compiler and CMake:
+PyFES requires a C++14 compiler, CMake, Boost (≥ 1.79) and Eigen (≥ 3.4)
+to build from source:
 
 .. code-block:: bash
 
