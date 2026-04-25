@@ -28,6 +28,7 @@ classifiers = [
 dependencies = [
     "numpy",
     "netCDF4",
+    "pyyaml",
 ]
 dynamic = ["version"]
 
