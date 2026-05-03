@@ -19,9 +19,47 @@ if(POLICY CMP0167)
   cmake_policy(SET CMP0167 NEW)
 endif()
 
-# On development machines, generate the version file. On other machines, ignore
-# errors.
-execute_process(COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/setup.py ERROR_QUIET)
+# Locate the Python interpreter once, before project(), so it can be reused both
+# to refresh the version files (just below) and -- when bindings are enabled --
+# to find the Development component after project().
+#
+# FIND_STRATEGY=LOCATION honours the Python3_EXECUTABLE hint passed by setup.py
+# rather than greedily picking the highest version on PATH (manylinux images
+# ship several).
+set(Python3_FIND_STRATEGY LOCATION) # cmake-lint: disable=C0103
+set(Python_FIND_STRATEGY LOCATION) # cmake-lint: disable=C0103
+if(DEFINED Python3_EXECUTABLE AND NOT DEFINED Python_EXECUTABLE)
+  set(Python_EXECUTABLE "${Python3_EXECUTABLE}") # cmake-lint: disable=C0103
+endif()
+find_package(
+  Python3 3.8
+  COMPONENTS Interpreter
+  QUIET)
+
+# On development machines, refresh the version files. Two safeguards:
+#
+# * Recursion guard. CMake -> setup.py -> setuptools.setup() -> BuildExt spawns
+#   cmake -> CMake hits this line again -> ... infinite loop. We export
+#   FES_GENERATE_VERSION_ONLY=1 so setup.py refreshes the version files and
+#   returns before setuptools.setup(); on the way back, setup.py itself exports
+#   FES_VERSION_FILES_GENERATED=1, which lets us skip this whole block when
+#   cmake is reinvoked from BuildExt.build_cmake.
+#
+# * Explicit interpreter + TIMEOUT. Relying on the script's `#!/usr/bin/env
+#   python3` shebang causes execute_process to hang forever in dyld on some
+#   recent macOS releases (the env binary stays stuck in _dyld_start). Calling
+#   Python3_EXECUTABLE directly avoids that code path; the timeout guarantees we
+#   never freeze configure if the interpreter misbehaves.
+if(NOT DEFINED ENV{FES_VERSION_FILES_GENERATED} # cmake-lint: disable=W0106
+   AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git"
+   AND Python3_Interpreter_FOUND)
+  set(ENV{FES_GENERATE_VERSION_ONLY} 1) # cmake-lint: disable=W0106
+  execute_process(
+    COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/setup.py"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+    TIMEOUT 30)
+  unset(ENV{FES_GENERATE_VERSION_ONLY}) # cmake-lint: disable=W0106
+endif()
 
 # Extract project version from source
 file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/include/fes/version.hpp"
@@ -258,15 +296,9 @@ if((FES_ENABLE_FPIC OR FES_BUILD_PYTHON_BINDINGS) AND NOT BUILD_SHARED_LIBS)
   set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 endif()
 
-# Find Python
+# Find Python (Development component on top of the Interpreter located before
+# project()). FIND_STRATEGY and Python_EXECUTABLE were already set up there.
 if(FES_BUILD_PYTHON_BINDINGS)
-  # Honour the Python3_EXECUTABLE hint passed by setup.py instead of greedily
-  # picking the highest version found on PATH (manylinux images ship several).
-  set(Python3_FIND_STRATEGY LOCATION) # cmake-lint: disable=C0103
-  set(Python_FIND_STRATEGY LOCATION) # cmake-lint: disable=C0103
-  if(DEFINED Python3_EXECUTABLE AND NOT DEFINED Python_EXECUTABLE)
-    set(Python_EXECUTABLE "${Python3_EXECUTABLE}") # cmake-lint: disable=C0103
-  endif()
   find_package(Python3 3.8 COMPONENTS Interpreter Development)
   set(PYBIND11_FINDPYTHON ON)
   set(PYBIND11_USE_SMART_HOLDER ON)

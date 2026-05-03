@@ -337,8 +337,29 @@ class BuildExt(setuptools.command.build_ext.build_ext):
 
 def main() -> None:
     """Execute the setup."""
-    release = fetch_package_version()
-    update_version_library(release)
+    # CMakeLists.txt sets FES_GENERATE_VERSION_ONLY when it invokes setup.py
+    # for the sole purpose of refreshing the version files. Refresh them on a
+    # best-effort basis and return before setuptools.setup() runs: otherwise
+    # BuildExt would dispatch a child cmake, which would re-enter this code
+    # path and recurse without bound.
+    only_version = bool(os.environ.get('FES_GENERATE_VERSION_ONLY'))
+    try:
+        release = fetch_package_version()
+        update_version_library(release)
+    except Exception:
+        if only_version:
+            # Leave existing version.hpp / version.py alone -- CMake will read
+            # whatever is already on disk, which is enough to keep configure
+            # going.
+            return
+        raise
+    if only_version:
+        return
+    # Mark the version files as up to date for the cmake child process spawned
+    # by BuildExt below; CMakeLists.txt skips its own setup.py re-invocation
+    # when it sees this flag, breaking the cmake/setup.py recursion from the
+    # opposite direction.
+    os.environ['FES_VERSION_FILES_GENERATED'] = '1'
     setuptools.setup(
         cmdclass={
             'build_ext': BuildExt,
