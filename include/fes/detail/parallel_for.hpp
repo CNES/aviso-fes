@@ -20,8 +20,8 @@ namespace detail {
 /// @param size The total size of the data to be processed.
 /// @param num_threads The number of threads to be used for processing.
 /// @return The determined chunk size.
-constexpr auto determine_chunk_size(const size_t size,
-                                    const size_t num_threads) -> size_t {
+constexpr auto determine_chunk_size(const size_t size, const size_t num_threads)
+    -> size_t {
   // Aim for a few chunks per thread so that fast threads can pick up extra
   // work while slow threads finish their share. Four is a reasonable
   // compromise between load balancing and per-chunk setup overhead.
@@ -55,8 +55,8 @@ constexpr auto determine_chunk_size(const size_t size,
 /// @param[in] chunk_size Number of elements processed by ``callable`` per
 /// invocation. ``0`` selects ``determine_chunk_size(size, num_threads)``.
 template <typename Lambda>
-void parallel_for(const Lambda& callable, const size_t size,
-                  size_t num_threads, size_t chunk_size = 0) {
+void parallel_for(const Lambda& callable, const size_t size, size_t num_threads,
+                  size_t chunk_size = 0) {
   // If num_threads is 0, use all CPUs. ``hardware_concurrency`` may itself
   // return 0 on exotic systems; fall back to a single worker.
   if (num_threads == 0) {
