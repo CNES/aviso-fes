@@ -3,6 +3,19 @@
 Changelog
 #########
 
+Unreleased
+==========
+
+Performance
+-----------
+* Optimised the ``evaluate_tide`` hot path: faster wave-table indexing,
+  reduced per-call allocations, vectorised LPE arguments, and zero-copy
+  numpy outputs from the Python bindings. Median wall-clock improvements
+  versus 2026.4.0, measured on Apple Silicon (arm64): ~-25 % on small
+  Cartesian batches (10 k-100 k points), ~-5 % on the 1 M-point Cartesian
+  case, and ~-15 % to ~-25 % on LGP2 mesh interpolation across the same
+  range.
+
 2026.4.0
 ========
 
