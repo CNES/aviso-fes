@@ -152,7 +152,7 @@ class LGP : public TidalModelInterface<T> {
           std::to_string(wave.size()) + " values, expected " +
           std::to_string(expected_data_size_) + " values");
     }
-    this->data_.emplace(ident, std::move(wave));
+    this->emplace_constituent(ident, std::move(wave));
   }
 
   /// @brief Create a new instance of the LGPAccelerator class to speed up the

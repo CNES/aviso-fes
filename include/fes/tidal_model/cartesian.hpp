@@ -48,7 +48,7 @@ class Cartesian : public TidalModelInterface<T> {
     if (wave.size() != lon_.size() * lat_.size()) {
       throw std::invalid_argument("wave size does not match expected size");
     }
-    this->data_.emplace(ident, std::move(wave));
+    this->emplace_constituent(ident, std::move(wave));
   }
 
   /// @brief Returns a null pointer as this tidal model does not use an

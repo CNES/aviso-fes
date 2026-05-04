@@ -6,9 +6,12 @@
 /// @brief Abstract tidal model.
 #pragma once
 
+#include <algorithm>
 #include <complex>
 #include <cstdint>
 #include <stdexcept>
+#include <utility>
+#include <vector>
 
 #include "fes/angle/astronomic.hpp"
 #include "fes/constituent.hpp"
@@ -264,11 +267,12 @@ class TidalModelInterface
     return quality;
   }
 
+  /// Type used to store the tidal constituents handled by the model.
+  using ConstituentData =
+      std::vector<std::pair<ConstituentId, Vector<std::complex<T>>>>;
+
   /// Get the tidal constituents handled by the model.
-  constexpr auto data() const
-      -> const std::map<ConstituentId, Vector<std::complex<T>>>& {
-    return data_;
-  }
+  constexpr auto data() const -> const ConstituentData& { return data_; }
 
   /// Clear all tidal constituents.
   auto clear() -> void {
@@ -306,8 +310,26 @@ class TidalModelInterface
   }
 
  protected:
+  /// @brief Insert a tidal constituent: if the identifier is already present,
+  /// the existing entry is kept untouched and ``wave`` is silently dropped.
+  /// @return ``true`` when the constituent was inserted, ``false`` if a
+  /// constituent with the same identifier was already present.
+  auto emplace_constituent(ConstituentId ident, Vector<std::complex<T>> wave)
+      -> bool {
+    auto it =
+        std::find_if(data_.begin(), data_.end(),
+                     [ident](const typename ConstituentData::value_type& item) {
+                       return item.first == ident;
+                     });
+    if (it != data_.end()) {
+      return false;
+    }
+    data_.emplace_back(ident, std::move(wave));
+    return true;
+  }
+
   /// Tidal constituents handled by the model.
-  std::map<ConstituentId, Vector<std::complex<T>>> data_{};
+  ConstituentData data_{};
 
   /// List of tidal constituents handled by the model but not interpolated.
   std::vector<ConstituentId> dynamic_{};
