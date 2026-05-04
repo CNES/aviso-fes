@@ -6,7 +6,6 @@
 
 #include <algorithm>
 #include <limits>
-#include <set>
 #include <string>
 #include <utility>
 #include <vector>
@@ -81,18 +80,23 @@ auto Index::search(const geometry::Point& point,
                    const double max_distance) const -> TriangleQueryResult {
   constexpr size_t kMaxNeighbors = 11;
   constexpr size_t kExtrapolationNeighbors = 16;
+  constexpr size_t kMaxExtrapolationNeighbors = 128;
+  // Distance step (in metres) at which we add another batch of
+  // ``kExtrapolationNeighbors`` to the R-tree query.
+  constexpr double kNeighborScaleDistance = 10'000.0;
+
   auto min_distance = 0.0;
-  auto triangle_indices = std::set<int>();
 
   // Query position in ECEF coordinates
   auto cartesian_point = static_cast<geometry::EarthCenteredEarthFixed>(point);
 
   // Find the nearest triangles
+  auto triangle_indices = std::vector<int32_t>{};
   std::tie(triangle_indices, min_distance) =
       nearest(cartesian_point, kMaxNeighbors);
 
   // Check for each selected triangle if the point is inside.
-  for (auto& ix : triangle_indices) {
+  for (auto ix : triangle_indices) {
     auto triangle = build_triangle(ix);
     if (triangle.covered_by(point)) {
       return {ix, point, std::move(triangle)};
@@ -107,22 +111,26 @@ auto Index::search(const geometry::Point& point,
   // The point is not inside any triangle, so search for the nearest triangle
   // vertices to the query point.
   //
-  // Scale the number of neighbors based on the minimum distance to the mesh.
-  // For points far from the mesh (min_distance > 10km), use more neighbors
-  // to improve extrapolation quality. The neighbor count increases linearly
-  // with distance, capped between kExtrapolationNeighbors and 128.
-  auto num_neighbors =
-      std::max(static_cast<size_t>(128),
-               std::min(kExtrapolationNeighbors,
-                        kExtrapolationNeighbors *
-                            static_cast<size_t>(min_distance / 10'000)));
+  // Scale the number of neighbors with the minimum distance to the mesh: the
+  // farther the point, the more neighbours we sample so that extrapolation
+  // stays well-conditioned. The count is clamped to
+  // [kExtrapolationNeighbors, kMaxExtrapolationNeighbors].
+  //
+  // The previous expression -- ``std::max(128, std::min(16, scale * 16))`` --
+  // collapsed to a constant 128 (the std::min always returned <= 16, then the
+  // std::max promoted it back to 128); the linear ramp was effectively dead
+  // code.
+  const auto scale = static_cast<size_t>(min_distance / kNeighborScaleDistance);
+  const auto num_neighbors = std::min(
+      kMaxExtrapolationNeighbors,
+      std::max(kExtrapolationNeighbors, kExtrapolationNeighbors * scale));
 
   std::tie(triangle_indices, min_distance) =
       nearest(cartesian_point, num_neighbors);
   auto nearest_vertices = std::vector<VertexAttribute>{};
   nearest_vertices.reserve(3 * triangle_indices.size());
 
-  for (auto& ix : triangle_indices) {
+  for (auto ix : triangle_indices) {
     filter_nearby_vertices(cartesian_point, ix, max_distance, nearest_vertices);
   }
 

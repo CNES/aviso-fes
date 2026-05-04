@@ -6,10 +6,10 @@
 /// @brief Mesh indexer
 #pragma once
 #include <Eigen/Core>
+#include <algorithm>
 #include <boost/geometry.hpp>
 #include <cstdint>
 #include <memory>
-#include <set>
 #include <utility>
 #include <vector>
 
@@ -157,9 +157,15 @@ class Index : public std::enable_shared_from_this<Index> {
   RTreeType rtree_;
 
   /// Search the nearest triangles to a point in ECEF coordinates.
+  ///
+  /// The R-tree stores three entries per triangle (one per edge), so the same
+  /// triangle can appear up to three times in a single query. The returned
+  /// vector is deduplicated; for the small number of neighbours we ever query
+  /// (<= 128) the linear-scan dedup is faster than ``std::set`` while
+  /// avoiding heap allocations on the per-point hot path.
   inline auto nearest(const geometry::EarthCenteredEarthFixed& cartesian_point,
                       size_t max_neighbors) const
-      -> std::pair<std::set<int32_t>, double>;
+      -> std::pair<std::vector<int32_t>, double>;
 
   /// Build the selected triangle.
   auto build_triangle(const int triangle_index) const -> geometry::Triangle {
@@ -235,19 +241,24 @@ auto Index::memory_usage() const -> size_t {
 
 auto Index::nearest(const geometry::EarthCenteredEarthFixed& cartesian_point,
                     const size_t max_neighbors) const
-    -> std::pair<std::set<int32_t>, double> {
-  auto triangle_indices = std::set<int>();
+    -> std::pair<std::vector<int32_t>, double> {
+  auto triangle_indices = std::vector<int32_t>{};
+  triangle_indices.reserve(max_neighbors);
   auto min_distance = std::numeric_limits<double>::max();
-  std::for_each(rtree_.qbegin(boost::geometry::index::nearest(cartesian_point,
-                                                              max_neighbors)),
-                rtree_.qend(),
-                [&cartesian_point, &min_distance,
-                 &triangle_indices](const auto& item) -> void {
-                  triangle_indices.emplace(item.second.second);
-                  min_distance = std::min(
-                      min_distance,
-                      boost::geometry::distance(cartesian_point, item.first));
-                });
+  std::for_each(
+      rtree_.qbegin(
+          boost::geometry::index::nearest(cartesian_point, max_neighbors)),
+      rtree_.qend(),
+      [&cartesian_point, &min_distance,
+       &triangle_indices](const auto& item) -> void {
+        const auto id = item.second.second;
+        if (std::find(triangle_indices.begin(), triangle_indices.end(), id) ==
+            triangle_indices.end()) {
+          triangle_indices.push_back(id);
+        }
+        min_distance = std::min(min_distance, boost::geometry::distance(
+                                                  cartesian_point, item.first));
+      });
   return std::make_pair(std::move(triangle_indices), min_distance);
 }
 
