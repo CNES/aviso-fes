@@ -162,6 +162,54 @@ def _parse(contents: Any) -> Any:  # noqa: ANN401
     return contents
 
 
+def _amp_phase_to_wave(
+    amp: numpy.ndarray,
+    pha: numpy.ndarray,
+    *,
+    in_degrees: bool,
+) -> numpy.ndarray:
+    """Build a complex wave from amplitude and phase, minimising allocations.
+
+    Equivalent to ``amp * numpy.exp(1j * numpy.radians(pha))`` (when ``pha``
+    is in degrees), but avoids the two intermediate complex temporaries
+    NumPy would otherwise allocate. Per FES2022 constituent the phase grid
+    can reach hundreds of megabytes, so eliminating the
+    ``1j * pha`` and ``numpy.exp(...)`` buffers is meaningful both for peak
+    memory and for I/O throughput.
+    """
+    # Convert degrees -> radians in place when ``pha`` already holds floats.
+    # The fallback path keeps the previous behaviour for the rare integer
+    # inputs (out= would refuse the dtype mismatch).
+    if in_degrees:
+        if pha.dtype.kind == 'f' and pha.flags.writeable:
+            numpy.radians(pha, out=pha)
+        else:
+            pha = numpy.radians(pha)
+
+    # Match the previous output precision: the C++ TidalModel selects between
+    # complex64 / complex128 from the wave's dtype, and that used to come from
+    # the NumPy promotion rules applied to ``amp * numpy.exp(1j * pha)``.
+    complex_dtype = (
+        numpy.complex64 if amp.dtype == numpy.float32 else numpy.complex128
+    )
+    float_dtype = (
+        numpy.float32 if complex_dtype == numpy.complex64 else numpy.float64
+    )
+    if pha.dtype != float_dtype:
+        pha = pha.astype(float_dtype, copy=False)
+
+    # Allocate the complex output once. ``wave.real`` / ``wave.imag`` are
+    # strided views into this single buffer, so the cos/sin ufuncs write
+    # directly to the final memory location -- no float temporary needed.
+    wave = numpy.empty(pha.shape, dtype=complex_dtype)
+    numpy.cos(pha, out=wave.real)
+    numpy.sin(pha, out=wave.imag)
+    # ``complex *= float`` scales real and imaginary parts in place, again
+    # without an intermediate buffer.
+    wave *= amp
+    return wave
+
+
 @dataclasses.dataclass(frozen=True)
 class BoundingBox:
     """Represent a bounding box in 2D space."""
@@ -315,10 +363,9 @@ def load_cartesian_model(
             amp = numpy.ma.filled(nc_amp[:], numpy.nan)
             pha = numpy.ma.filled(nc_pha[:], numpy.nan)
 
-        if nc_pha.units.lower() in ['degree', 'degrees', 'deg']:
-            pha = numpy.radians(pha)
+        in_degrees = nc_pha.units.lower() in ['degree', 'degrees', 'deg']
 
-    wave: Matrix = amp * numpy.exp(1j * pha)
+    wave: Matrix = _amp_phase_to_wave(amp, pha, in_degrees=in_degrees)
 
     return lon, lat, wave, longitude_major
 
@@ -727,10 +774,14 @@ class LGP(Common):
                     amp = amp[selected_indices]
                     pha = pha[selected_indices]
 
-                if ds.variables[pha_name].units in ['degree', 'degrees']:
-                    pha = numpy.radians(pha)
+                in_degrees = ds.variables[pha_name].units in [
+                    'degree',
+                    'degrees',
+                ]
 
-                wave: Vector = amp * numpy.exp(1j * pha)
+                wave: Vector = _amp_phase_to_wave(
+                    amp, pha, in_degrees=in_degrees
+                )
                 del amp, pha
 
                 instance.add_constituent(item, wave)
