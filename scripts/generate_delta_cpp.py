@@ -25,7 +25,7 @@ URL_FINALS = 'https://maia.usno.navy.mil/ser7/finals.all'
 URL_LEAP = 'https://data.iana.org/time-zones/data/leap-seconds.list'
 
 # Output C++ source file
-CPP_SRC = HERE.parent / 'include/fes/delta_t.hpp'
+CPP_SRC = HERE.parent / 'include/fes/delta_time.hpp'
 
 # Brief of the generated table
 BRIEF = '/// @brief Table generated dynamically from IERS (finals.all)'
