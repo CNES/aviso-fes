@@ -22,7 +22,7 @@ import setuptools.command.build_ext
 WORKING_DIRECTORY = pathlib.Path(__file__).parent.absolute()
 
 # OSX deployment target
-OSX_DEPLOYMENT_TARGET = '10.14'
+OSX_DEPLOYMENT_TARGET = '11.0'
 
 # Python version file path
 PY_VERSION = WORKING_DIRECTORY / 'src' / 'pyfes' / 'version.py'
