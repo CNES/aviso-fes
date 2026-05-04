@@ -72,40 +72,59 @@ static auto interpolate(const TidalModelInterface<T>& self,
                         const Eigen::Ref<const Eigen::VectorXd>& lon,
                         const Eigen::Ref<const Eigen::VectorXd>& lat,
                         const size_t num_threads = 0)
-    -> std::tuple<std::map<std::string, Eigen::VectorXcd>,
-                  Eigen::Matrix<int8_t, -1, 1>> {
+    -> std::tuple<py::dict, py::array_t<int8_t>> {
   if (lon.size() != lat.size()) {
     throw std::invalid_argument("lon and lat must have the same size");
   }
-  // Allocate result vectors
-  auto values = std::map<ConstituentId, Eigen::VectorXcd>();
-  auto qualities = Eigen::Matrix<int8_t, -1, 1>(lon.size());
 
-  for (auto&& ident : self.identifiers()) {
-    values[ident] = Eigen::VectorXcd(lon.size());
+  const auto n = static_cast<py::ssize_t>(lon.size());
+  const auto identifiers = self.identifiers();
+
+  // Allocate Python-owned numpy arrays up-front. Workers will write directly
+  // into these buffers instead of populating Eigen vectors that pybind11
+  // would later copy when converting them back to numpy. ``data_by_id`` lets
+  // each worker resolve the destination buffer in O(1) from a ConstituentId.
+  py::dict result;
+  std::array<std::complex<double>*, kKnownConstituents> data_by_id{};
+  data_by_id.fill(nullptr);
+  for (auto ident : identifiers) {
+    auto arr = py::array_t<std::complex<double>>(n);
+    auto* ptr = static_cast<std::complex<double>*>(arr.request().ptr);
+    data_by_id[static_cast<size_t>(ident)] = ptr;
+    result[constituents::name(ident)] = std::move(arr);
   }
 
-  // Interpolate in parallel
-  auto thread = [&](const int64_t start, const int64_t end) -> void {
-    auto acc = std::unique_ptr<Accelerator>(
-        self.accelerator(angle::Formulae::kSchuremanOrder1, 0.0));
-    for (auto ix = start; ix < end; ++ix) {
-      auto quality = kUndefined;
-      for (auto&& item : self.interpolate({lon[ix], lat[ix]}, quality, *acc)) {
-        values[std::get<0>(item)][ix] =
-            quality == kUndefined ? std::numeric_limits<double>::quiet_NaN()
-                                  : std::get<1>(item);
+  auto qualities_arr = py::array_t<int8_t>(n);
+  auto* qualities = static_cast<int8_t*>(qualities_arr.request().ptr);
+
+  // Drop the GIL only around the parallel work; the binding don't uses
+  // py::call_guard<gil_scoped_release> because the allocations above need
+  // the GIL.
+  {
+    py::gil_scoped_release release;
+    auto thread = [&](const int64_t start, const int64_t end) -> void {
+      auto acc = std::unique_ptr<Accelerator>(
+          self.accelerator(angle::Formulae::kSchuremanOrder1, 0.0));
+      for (auto ix = start; ix < end; ++ix) {
+        auto quality = kUndefined;
+        for (auto&& item :
+             self.interpolate({lon[ix], lat[ix]}, quality, *acc)) {
+          auto* dst = data_by_id[static_cast<size_t>(std::get<0>(item))];
+          if (dst == nullptr) {
+            continue;
+          }
+          dst[ix] = quality == kUndefined
+                        ? std::numeric_limits<double>::quiet_NaN()
+                        : std::get<1>(item);
+        }
+        qualities[ix] = static_cast<int8_t>(quality);
       }
-      qualities[ix] = static_cast<int8_t>(quality);
-    }
-  };
+    };
 
-  detail::parallel_for(thread, lon.size(), num_threads);
-  auto result = std::map<std::string, Eigen::VectorXcd>();
-  for (auto&& item : values) {
-    result[constituents::name(item.first)] = std::move(item.second);
+    detail::parallel_for(thread, lon.size(), num_threads);
   }
-  return std::make_tuple(result, qualities);
+
+  return std::make_tuple(std::move(result), std::move(qualities_arr));
 }
 
 template <typename T>
@@ -144,8 +163,10 @@ Args:
 Returns:
   The accelerator.
 )__doc__")
+      // No call_guard: ``interpolate<T>`` allocates py::array_t buffers under
+      // the GIL and releases it itself only around the parallel inner loop.
       .def("interpolate", &interpolate<T>, py::arg("lon"), py::arg("lat"),
-           py::arg("num_threads") = 0, py::call_guard<py::gil_scoped_release>(),
+           py::arg("num_threads") = 0,
            R"__doc__(
 Interpolate the wave models loaded at the given coordinates.
 
