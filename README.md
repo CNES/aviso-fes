@@ -199,6 +199,11 @@ When using FES2022, please mention: *FES2022 was produced by LEGOS, NOVELTIS
 and CLS Ocean and Climate Division; the project was funded by CNES. It is
 distributed by AVISO, with support from CNES (http://www.aviso.altimetry.fr/)*
 
+The PERTH engine is a C++ port of the original Fortran
+[PERTH5 library](https://codeberg.org/rray/perth5) by Richard Ray (NASA GSFC).
+The integration into pyfes was developed under CNES funding to support tidal
+correction for SWOT (Surface Water and Ocean Topography) altimetry products.
+
 ## References
 
 * Lyard, F., Carrere, L., Fouchet, E., Cancet, M., Greenberg, D., Dibarboure,
