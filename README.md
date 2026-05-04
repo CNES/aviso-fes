@@ -152,6 +152,15 @@ A full technical description is available in the
 [FES2022 handbook](https://www.aviso.altimetry.fr/fileadmin/documents/data/tools/hdbk_FES2022.pdf)
 and the scientific paper (Lyard et al. 2024).
 
+### Operational Use
+
+PyFES (release [`2026.3.1`](https://github.com/CNES/aviso-fes/releases/tag/2026.3.1))
+is the tidal correction component embedded in the **SWOT KaRIn ground segment**
+for Level-2 product generation. It is also being extended to integrate Richard
+Ray's GOT model (via the Perth engine) for upcoming SWOT product versions, so
+that the same code path produces both FES- and GOT-based corrections in the
+operational pipeline.
+
 ## Documentation
 
 The complete documentation is available on
@@ -203,6 +212,16 @@ The PERTH engine is a C++ port of the original Fortran
 [PERTH5 library](https://codeberg.org/rray/perth5) by Richard Ray (NASA GSFC).
 The integration into pyfes was developed under CNES funding to support tidal
 correction for SWOT (Surface Water and Ocean Topography) altimetry products.
+
+## Related Projects
+
+PyFES focuses on high-performance tidal prediction from FES atlases (Darwin
+engine) and GOT atlases (Perth engine), including loaders for FES2022's
+unstructured native grid. For a broader pure-Python tide-modeling toolbox
+covering OTIS, IERS pole tides, ocean and solid-Earth tides, and
+tide-generating force computations -- complementary to the FES / GOT scope
+covered here -- see
+[pyTMD](https://github.com/pyTMD/pyTMD) by Tyler Sutterley (NASA GSFC).
 
 ## References
 
