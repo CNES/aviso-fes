@@ -114,7 +114,10 @@ PERTH/Doodson Engine
 The PERTH engine uses the systematic :term:`Doodson number` classification
 developed by Arthur Doodson in 1921. It was implemented by Dr. Richard Ray at
 NASA Goddard Space Flight Center for the GOT (Goddard Ocean Tide) model
-series.
+series. The engine bundled with PyFES is a C++ port of the original Fortran
+`PERTH5 library <https://codeberg.org/rray/perth5>`_ by Richard Ray; the
+integration was developed under CNES funding to support tidal correction for
+SWOT (Surface Water and Ocean Topography) altimetry products.
 
 Doodson Number Classification
 ------------------------------
