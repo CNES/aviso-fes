@@ -5,6 +5,7 @@
 /// @file include/fes/geometry/triangle.hpp
 /// @brief Triangle in Geographic Coordinate System
 #pragma once
+#include <boost/container/static_vector.hpp>
 #include <boost/geometry.hpp>
 #include <ostream>
 #include <sstream>
@@ -17,8 +18,31 @@
 namespace fes {
 namespace geometry {
 
+/// @brief Outer-ring storage for ``GeographicPolygon``.
+///
+/// Triangles are stored as closed polygons, i.e. four points (three
+/// vertices + the closing duplicate of the first vertex). Substituting
+/// the default ``std::vector`` with a fixed-capacity
+/// ``boost::container::static_vector`` keeps the storage on the
+/// containing object (no heap allocation) while preserving the
+/// vector-like API that ``boost::geometry`` requires (push_back,
+/// resize, iterators, contiguous data). Triangles thus become
+/// pure-stack objects, eliminating the malloc churn that the LGP hot
+/// path used to incur on every ``mesh::Index::build_triangle`` call.
+///
+/// The second template parameter is the allocator-template the
+/// ``boost::geometry::model::polygon`` template-template-parameter slot
+/// expects; ``static_vector`` does not need an allocator, so it is
+/// silently ignored.
+template <typename T, typename /*Alloc, ignored*/>
+using TriangleRingStorage = boost::container::static_vector<T, 4>;
+
 /// Base class of the geodetic triangle.
-using GeographicPolygon = boost::geometry::model::polygon<Point, false>;
+using GeographicPolygon =
+    boost::geometry::model::polygon<Point,
+                                    /*ClockWise=*/false,
+                                    /*Closed=*/true,
+                                    /*PointList=*/TriangleRingStorage>;
 
 /// @brief Geodetic triangle.
 class Triangle : public GeographicPolygon {
@@ -162,25 +186,25 @@ struct tag<fg::Triangle> {
 template <>
 struct ring_const_type<fg::Triangle> {
   /// @brief Type of a ring of the triangle geometry.
-  using type = const model::polygon<fg::Point, false>::ring_type &;
+  using type = const fg::GeographicPolygon::ring_type &;
 };
 /// @brief Type of a mutable ring of the triangle geometry.
 template <>
 struct ring_mutable_type<fg::Triangle> {
   /// @brief Type of a mutable ring of the triangle geometry.
-  using type = model::polygon<fg::Point, false>::ring_type &;
+  using type = fg::GeographicPolygon::ring_type &;
 };
 /// @brief Type of the interior of the triangle geometry.
 template <>
 struct interior_const_type<fg::Triangle> {
   /// @brief Type of the interior of the triangle geometry.
-  using type = const model::polygon<fg::Point, false>::inner_container_type &;
+  using type = const fg::GeographicPolygon::inner_container_type &;
 };
 /// @brief Type of a mutable interior of the triangle geometry.
 template <>
 struct interior_mutable_type<fg::Triangle> {
   /// @brief Type of a mutable interior of the triangle geometry.
-  using type = model::polygon<fg::Point, false>::inner_container_type &;
+  using type = fg::GeographicPolygon::inner_container_type &;
 };
 
 /// @brief Get the ring of the triangle geometry.
@@ -189,15 +213,15 @@ struct exterior_ring<fg::Triangle> {
   /// @brief Get the ring of the triangle geometry.
   /// @param[in] p The triangle geometry.
   /// @return The ring of the triangle geometry.
-  static auto get(model::polygon<fg::Point, false> &p)
-      -> model::polygon<fg::Point, false>::ring_type & {
+  static auto get(fg::GeographicPolygon &p)
+      -> fg::GeographicPolygon::ring_type & {
     return p.outer();
   }
   /// @brief Get the ring of the triangle geometry.
   /// @param[in] p The triangle geometry.
   /// @return The ring of the triangle geometry.
-  static auto get(model::polygon<fg::Point, false> const &p)
-      -> model::polygon<fg::Point, false>::ring_type const & {
+  static auto get(fg::GeographicPolygon const &p)
+      -> fg::GeographicPolygon::ring_type const & {
     return p.outer();
   }
 };
@@ -208,15 +232,15 @@ struct interior_rings<fg::Triangle> {
   /// @brief Get the interior of the triangle geometry.
   /// @param[in] p The triangle geometry.
   /// @return The interior of the triangle geometry.
-  static auto get(model::polygon<fg::Point, false> &p)
-      -> model::polygon<fg::Point, false>::inner_container_type & {
+  static auto get(fg::GeographicPolygon &p)
+      -> fg::GeographicPolygon::inner_container_type & {
     return p.inners();
   }
   /// @brief Get the interior of the triangle geometry.
   /// @param[in] p The triangle geometry.
   /// @return The interior of the triangle geometry.
-  static auto get(model::polygon<fg::Point, false> const &p)
-      -> model::polygon<fg::Point, false>::inner_container_type const & {
+  static auto get(fg::GeographicPolygon const &p)
+      -> fg::GeographicPolygon::inner_container_type const & {
     return p.inners();
   }
 };
