@@ -4,6 +4,8 @@
 // BSD-style license that can be found in the LICENSE file.
 #include <pybind11/pybind11.h>
 
+#include "fes/numbers.hpp"
+
 namespace py = pybind11;
 
 extern void init_angle(py::module& m);
@@ -26,6 +28,9 @@ extern void init_wave_table_interface(py::module& m);
 PYBIND11_MODULE(core, m) {
   m.doc() = "FES Tidal Prediction Library";
   auto tidal_model = m.def_submodule("tidal_model", "Tidal model handlers");
+
+  // Flags to determine if the library was compiled using IERS 2010 conventions
+  m.attr("IERS_2010") = fes::numbers::kUseSchuremanConstants == false;
 
   // Common types and utilities
   init_angle(m);

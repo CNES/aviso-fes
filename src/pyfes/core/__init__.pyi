@@ -69,17 +69,18 @@ __all__ = [
 ]
 
 DARWIN: EngineType
-DEGREE: AngleUnit
 DEGREE_PER_HOUR: FrequencyUnit
+DEGREE: AngleUnit
 DOODSON: EngineType
 FOURIER: InferenceType
+IERS_2010: bool
 IERS: Formulae
 LINEAR: InferenceType
 LONG_PERIOD: WaveType
 MEEUS: Formulae
 RADIAL: TideType
-RADIAN: AngleUnit
 RADIAN_PER_HOUR: FrequencyUnit
+RADIAN: AngleUnit
 SCHUREMAN_ORDER_1: Formulae
 SCHUREMAN_ORDER_3: Formulae
 SHORT_PERIOD: WaveType
