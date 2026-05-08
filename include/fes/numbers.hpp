@@ -103,7 +103,7 @@ constexpr auto k216 = kUseSchuremanConstants ? 0.5023 : 0.502261;
 /// @brief Second coefficient for the terms that combine to form the lunisolar
 /// constituents K1 and K2.
 /// Formulae 216-219 (P. 45)
-constexpr auto k217 = kUseSchuremanConstants ? 0.1681 : 0.167675;
+constexpr auto k217 = kUseSchuremanConstants ? 0.1681 : 0.167671;
 /// @brief Third coefficient for the terms that combine to form the lunisolar
 /// constituents K1 and K2.
 /// Formulae 216-219 (P. 45)
@@ -111,45 +111,45 @@ constexpr auto k218 = kUseSchuremanConstants ? 0.5023 : 0.502261;
 /// @brief Fourth coefficient for the terms that combine to form the lunisolar
 /// constituents K1 and K2.
 /// Formulae 216-219 (P. 45)
-constexpr auto k219 = kUseSchuremanConstants ? 0.0365 : 0.036348;
+constexpr auto k219 = kUseSchuremanConstants ? 0.0365 : 0.036347;
 
 /// @brief Ratio of the solar coefficient to the lunar coefficient for the
 /// K1 tide.
 /// Formulae 224 (P. 45)
-constexpr auto k224 = kUseSchuremanConstants ? 0.3347 : 0.333840;
+constexpr auto k224 = kUseSchuremanConstants ? 0.3347 : 0.333832;
 
 /// @brief Mean value of the K1 coefficient.
 /// Formula 226 (P. 45)
-constexpr auto k226 = kUseSchuremanConstants ? 0.5305 : 0.529855;
+constexpr auto k226 = kUseSchuremanConstants ? 0.5305 : 0.529851;
 
 /// @brief First component for the node factor K1
 /// Formula 227 (P. 45)
-constexpr auto k227_1 = kUseSchuremanConstants ? 0.8965 : 0.898554;
+constexpr auto k227_1 = kUseSchuremanConstants ? 0.8965 : 0.898567;
 /// @brief Second component for the node factor K1
 /// Formula 227 (P. 45)
-constexpr auto k227_2 = kUseSchuremanConstants ? 0.6001 : 0.599946;
+constexpr auto k227_2 = kUseSchuremanConstants ? 0.6001 : 0.599941;
 /// @brief Third component for the node factor K1
 /// Formula 227 (P. 45)
-constexpr auto k227_3 = kUseSchuremanConstants ? 0.1006 : 0.100143;
+constexpr auto k227_3 = kUseSchuremanConstants ? 0.1006 : 0.100140;
 
 /// @brief Ratio of the solar coefficient to the lunar coefficient factor for
 /// the K2 tide
 /// Formulae 232 (P. 46)
-constexpr auto k232 = kUseSchuremanConstants ? 0.0727 : 0.072369;
+constexpr auto k232 = kUseSchuremanConstants ? 0.0727 : 0.072367;
 
 /// @brief Mean value of the K2 coefficient
 /// Formula 234 (P. 46)
-constexpr auto k234 = kUseSchuremanConstants ? 0.1151 : 0.114860;
+constexpr auto k234 = kUseSchuremanConstants ? 0.1151 : 0.114859;
 
 /// @brief First component for the node factor K2
 /// Formula 235 (P. 46)
-constexpr auto k235_1 = kUseSchuremanConstants ? 19.0444 : 19.121423;
+constexpr auto k235_1 = kUseSchuremanConstants ? 19.0444 : 19.121706;
 /// @brief Second component for the node factor K2
 /// Formula 235 (P. 46)
-constexpr auto k235_2 = kUseSchuremanConstants ? 2.7702 : 2.767581;
+constexpr auto k235_2 = kUseSchuremanConstants ? 2.7702 : 2.767557;
 /// @brief Third component for the node factor K2
 /// Formula 235 (P. 46)
-constexpr auto k235_3 = kUseSchuremanConstants ? 0.0981 : 0.100143;
+constexpr auto k235_3 = kUseSchuremanConstants ? 0.0981 : 0.100140;
 
 /// @brief @f$\sin(I) \sin(\omega)@f$
 /// Formulae Page 156
