@@ -304,12 +304,6 @@ f69 = round_to_4_decimal(
     * math.cos(0.5 * const.i) ** 4
 )
 print(f'f69 = {f69:.4f} (Schureman: 0.0164)')
-f69 = round_to_4_decimal(
-    math.sin(const.w)
-    * math.sin(0.5 * const.w) ** 2
-    * math.cos(0.5 * const.i) ** 4
-)
-print(f'f69 = {f69:.4f}')
 
 # %%
 # Formulae 70 & 78 (P. 25)
@@ -329,7 +323,7 @@ print(f'f69 = {f69:.4f}')
 f70 = round_to_4_decimal(
     math.cos(0.5 * const.w) ** 4 * math.cos(0.5 * const.i) ** 4
 )
-print(f'f70 = {f70:.4f}')
+print(f'f70 = {f70:.4f} (Schureman: 0.9154)')
 
 # %%
 # Formulae 71 & 79 (P. 25)
@@ -349,7 +343,7 @@ print(f'f70 = {f70:.4f}')
 f71 = round_to_4_decimal(
     math.sin(const.w) ** 2 * (1 - 3 / 2 * math.sin(const.i) ** 2)
 )
-print(f'f71 = {f71:.4f}')
+print(f'f71 = {f71:.4f} (Schureman: 0.1565)')
 
 # %%
 # Formulae 141 & 137 (P. 35, 36)
@@ -368,7 +362,7 @@ print(f'f71 = {f71:.4f}')
 #
 #   f(141) = \sin(I) - \frac{5}{4} \times \sin^3(I) / 0.3192
 f141 = round_to_4_decimal(math.sin(const.w) - 5 / 4 * math.sin(const.w) ** 3)
-print(f'f141 = {f141:.4f}')
+print(f'f141 = {f141:.4f} (Schureman: 0.3192)')
 
 # %%
 # Formulae 144 & 138 (P. 35, 36)
@@ -391,7 +385,7 @@ f144 = round_to_4_decimal(
     (1 - 10 * math.sin(0.5 * const.w) ** 2 + 15 * math.sin(0.5 * const.w) ** 4)
     * math.cos(0.5 * const.w) ** 2
 )
-print(f'f144 = {f144:.4f}')
+print(f'f144 = {f144:.4f} (Schureman: 0.5873)')
 
 # %%
 # Formulae 146 & 139 (P. 35, 36)
@@ -409,7 +403,7 @@ print(f'f144 = {f144:.4f}')
 #
 #     f(146) = \sin(I) \cos^4(\frac{1}{2}I) / 0.3658
 f146 = round_to_4_decimal(math.sin(const.w) * math.cos(0.5 * const.w) ** 4)
-print(f'f146 = {f146:.4f}')
+print(f'f146 = {f146:.4f} (Schureman: 0.3658)')
 
 # %%
 # Formulae 147 & 139 (P. 35, 36)
@@ -431,7 +425,7 @@ f147 = round_to_4_decimal(
     * math.sin(const.w)
     * math.cos(0.5 * const.w) ** 2
 )
-print(f'f147 = {f147:.4f}')
+print(f'f147 = {f147:.4f} (Schureman: 0.1114)')
 
 # %%
 # Formula 149 (P. 36)
@@ -449,7 +443,7 @@ print(f'f147 = {f147:.4f}')
 f149 = round_to_4_decimal(
     math.cos(0.5 * const.w) ** 6 * math.cos(0.5 * const.i) ** 6
 )
-print(f'f149 = {f149:.4f}')
+print(f'f149 = {f149:.4f} (Schureman: 0.8758)')
 
 # %%
 # Formula 197 (P. 41)
@@ -487,8 +481,8 @@ f197_1 = round_to_4_decimal(
 f197_2 = round_to_4_decimal(
     (3 / 2) * (math.cos(const.w) / math.cos(0.5 * const.w) ** 2)
 )
-print(f'f197_1 = {f197_1:.3f}')
-print(f'f197_2 = {f197_2:.3f}')
+print(f'f197_1 = {f197_1:.3f} (Schureman: 2.310)')
+print(f'f197_2 = {f197_2:.3f} (Schureman: 1.435)')
 
 # %%
 # Formulae 216-219 (P. 45)
@@ -531,10 +525,10 @@ f218 = round_to_4_decimal(1 / 2 + 3 / 4 * const.e**2)
 f219 = round_to_4_decimal(
     (1 / 2 + 3 / 4 * const.e1**2) * const.s * math.sin(const.w) ** 2
 )
-print(f'f216 = {f216:.4f}')
-print(f'f217 = {f217:.4f}')
-print(f'f218 = {f218:.4f}')
-print(f'f219 = {f219:.4f}')
+print(f'f216 = {f216:.4f} (Schureman: 0.5023)')
+print(f'f217 = {f217:.4f} (Schureman: 0.1681)')
+print(f'f218 = {f218:.4f} (Schureman: 0.5023)')
+print(f'f219 = {f219:.4f} (Schureman: 0.0365)')
 
 # %%
 # Formulae 224 (P. 45)
@@ -549,7 +543,7 @@ print(f'f219 = {f219:.4f}')
 #
 # where :math:`A = 0.5023 \sin(2I)` and :math:`B = 0.1681`.
 f224 = round_to_4_decimal(f217 / f216)
-print(f'f224 = {f224:.4f}')
+print(f'f224 = {f224:.4f} (Schureman: 0.3347)')
 
 # %%
 # Formula 226 (P. 45)
@@ -567,7 +561,7 @@ print(f'f224 = {f224:.4f}')
 #   = \left[0.5023 \sin(2I) \cos\nu + 0.1681\right]_0
 #   = 0.5305
 f226 = round_to_4_decimal(f216 * f68 + f217)
-print(f'f226 = {f226:.4f}')
+print(f'f226 = {f226:.4f} (Schureman: 0.5305)')
 
 # %%
 # Formula 227 (P. 45)
@@ -602,9 +596,9 @@ denominator = f226**2
 f227_1 = round_to_4_decimal(f216**2) / denominator
 f227_2 = round_to_4_decimal(f216 * f217 * 2) / denominator
 f227_3 = round_to_4_decimal(f217**2) / denominator
-print(f'{f227_1:.4f}')
-print(f'{f227_2:.4f}')
-print(f'{f227_3:.4f}')
+print(f'{f227_1:.4f} (Schureman: 0.8665)')
+print(f'{f227_2:.4f} (Schureman: 0.6001)')
+print(f'{f227_3:.4f} (Schureman: 0.1006)')
 
 # %%
 # Formulae 232 (P. 45)
@@ -619,7 +613,7 @@ print(f'{f227_3:.4f}')
 #
 # where :math:`A = 0.5023 \sin(2I)` and :math:`B = 0.0365`.
 f232 = round_to_4_decimal(f219 / f218)
-print(f'f232 = {f232:.4f}')
+print(f'f232 = {f232:.4f} (Schureman: 0.0727)')
 
 # %%
 # Formula 234 (P. 46)
@@ -636,7 +630,7 @@ print(f'f232 = {f232:.4f}')
 #
 #   \left[0.5023 \sin^2I \cos(2\nu) + 0.0365\right]_0 = 0.1151
 f234 = round_to_4_decimal(f218 * f71 + f219)
-print(f'f234 = {f234:.4f}')
+print(f'f234 = {f234:.4f} (Schureman: 0.1151)')
 
 # %%
 # Formula 235 (P. 46)
@@ -671,9 +665,9 @@ denominator = f234**2
 f235_1 = round_to_4_decimal(f218**2) / denominator
 f235_2 = round_to_4_decimal(f218 * f219 * 2) / denominator
 f235_3 = round_to_4_decimal(f219**2) / denominator
-print(f'{f235_1:.4f}')
-print(f'{f235_2:.4f}')
-print(f'{f235_3:.4f}')
+print(f'{f235_1:.4f} (Schureman: 19.0444)')
+print(f'{f235_2:.4f} (Schureman: 2.7702)')
+print(f'{f235_3:.4f} (Schureman: 0.0981)')
 
 # %%
 # Formulae from Page 156
@@ -687,8 +681,8 @@ print(f'{f235_3:.4f}')
 #   = 0.91370 - 0.03569\cos(N)
 cos_i_cos_w = math.cos(const.i) * math.cos(const.w)
 sin_i_sin_w = math.sin(const.i) * math.sin(const.w)
-print(f'cos(i) * cos(ω) = {cos_i_cos_w:.5f}')
-print(f'sin(i) * sin(ω) = {sin_i_sin_w:.5f}')
+print(f'cos(i) * cos(ω) = {cos_i_cos_w:.5f} (Schureman: 0.91370)')
+print(f'sin(i) * sin(ω) = {sin_i_sin_w:.5f} (Schureman: 0.03569)')
 # %%
 # .. math::
 #
@@ -699,7 +693,7 @@ print(f'sin(i) * sin(ω) = {sin_i_sin_w:.5f}')
 numerator = math.cos(0.5 * (const.w - const.i))
 denominator = math.cos(0.5 * (const.w + const.i))
 tan_coeff_1 = numerator / denominator
-print(f'{tan_coeff_1:.5f}')
+print(f'{tan_coeff_1:.5f} (Schureman: 1.01883)')
 
 # %%
 # .. math::
@@ -711,4 +705,4 @@ print(f'{tan_coeff_1:.5f}')
 numerator = math.sin(0.5 * (const.w - const.i))
 denominator = math.sin(0.5 * (const.w + const.i))
 tan_coeff_2 = numerator / denominator
-print(f'{tan_coeff_2:.5f}')
+print(f'{tan_coeff_2:.5f} (Schureman: 0.64412)')
