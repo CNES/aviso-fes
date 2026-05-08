@@ -145,45 +145,86 @@ def updated_astronomic_constants() -> AstronomicConstants:
     The "solar factor" (s) is the ratio of the tide-generating forces of the
     Sun and Moon, calculated as: s = (M_sun / M_moon) * (a_moon / a_sun)^3
     This is equivalent to (S/E) / (M/E) * (a_moon / AU)^3.
+
+    References
+    ----------
+    Petit, G. & Luzum, B. (eds.), *IERS Conventions (2010)*, IERS Technical
+        Note No. 36, Verlag des Bundesamts für Kartographie und Geodäsie,
+        Frankfurt am Main, 2010. ISBN 3-89888-989-6.
+        https://www.iers.org/IERS/EN/Publications/TechnicalNotes/tn36.html
+    Luzum, B., Capitaine, N., Fienga, A., et al. "The IAU 2009 system of
+        astronomical constants: the report of the IAU working group on
+        numerical standards for Fundamental Astronomy",
+        *Celestial Mechanics and Dynamical Astronomy*, 110, 293-304 (2011).
+        https://doi.org/10.1007/s10569-011-9352-4
+    IAU 2012 Resolution B2 (re-definition of the astronomical unit),
+        XXVIII General Assembly, Beijing.
+        https://www.iau.org/static/resolutions/IAU2012_English.pdf
+    Capitaine, N., Wallace, P. T. & Chapront, J., "Expressions for IAU 2000
+        precession quantities", *A&A* 412, 567-586 (2003).
+        https://doi.org/10.1051/0004-6361:20031539
+    Chapront-Touzé, M. & Chapront, J., "The lunar ephemeris ELP 2000",
+        *A&A* 124, 50-62 (1983).
     """
-    # Mass of Sun / Mass of Earth (S/E) from G*M_sun and G*M_earth
-    # IERS 2010 recommends using the geocentric gravitational constant (GE)
-    # and the heliocentric gravitational constant (GS). GS/GE = (S/E).
-    SE = 332946.0487  # This value is surprisingly stable and close to IERS.
+    # Mass of Sun / Mass of Earth (S/E) — μ in IERS 2010 Table 1.1.
+    # Derived from the heliocentric (GM_sun) and geocentric (GM_earth)
+    # gravitational constants: GM_sun / GM_earth.
+    # Source: IERS Conventions (2010), Table 1.1; IAU 2009 system
+    # (Luzum et al. 2011).
+    SE = 332946.0487
 
-    # Mass of Moon / Mass of Earth (M/E)
-    # IERS Conventions (2010), Table 1.1
-    ME = 0.0123000371  # This value is also very precise.
+    # Mass of Moon / Mass of Earth (M/E).
+    # Source: IERS Conventions (2010), Table 1.1; IAU 2009 system
+    # (Luzum et al. 2011).
+    ME = 0.0123000371
 
-    # Instead of parallaxes, modern conventions use the semi-major axes.
-    # Semi-major axis of lunar orbit (a_moon) in meters
-    # IERS Conventions (2010), Table 1.1
-    a_moon = 384402e3  # meters (Note: this is an average value)
+    # Semi-major axis of the lunar orbit (a_moon) in meters.
+    # Source: IERS Conventions (2010), Ch. 5 / JPL DE ephemerides; equivalent
+    # to the value used to derive Schureman's lunar equatorial parallax.
+    a_moon = 384399e3
 
-    # Astronomical Unit (a_sun or AU) in meters
-    # IERS Conventions (2010), a defining constant. IAU 2012 resolution.
-    AU = 149597870700.0  # meters
+    # Astronomical Unit (AU) in meters — exact by definition.
+    # Source: IAU 2012 Resolution B2 (Beijing); adopted by IERS.
+    AU = 149597870700.0
 
     # The ratio of tide-generating forces (Solar Factor 's')
     # s = (SE / ME) * (a_moon / AU)**3
     s = (SE / ME) * (a_moon / AU) ** 3
 
     return AstronomicConstants(
-        # Inclination of the mean lunar orbit to the mean ecliptic (I)
-        # IERS Conventions (2010), Chapter 5, eq. 5.76
-        i=math.radians(dms_to_deg(5, 8, 43.4)),  # 5.14539°
-        # Obliquity of the ecliptic for J2000.0 (ε)
-        # IERS Conventions (2010), Table 1.1
+        # Inclination of the mean lunar orbit to the mean ecliptic (I).
+        # Source: ELP2000 (Chapront-Touzé & Chapront 1983); IERS
+        # Conventions (2010), Ch. 5. 5°08'43.4″ ≈ 5.14539°.
+        i=math.radians(dms_to_deg(5, 8, 43.4)),
+        # Obliquity of the ecliptic at J2000.0 (ε).
+        # Source: IAU 2006 precession (Capitaine, Wallace & Chapront 2003);
+        # IERS Conventions (2010), eq. 5.39.
         w=math.radians(dms_to_deg(23, 26, 21.406)),
-        # Eccentricity of the Earth's mean orbit for J2000.0
-        # IERS Conventions (2010), Chapter 5
+        # Eccentricity of the Earth's mean orbit at J2000.0.
+        # Source: VSOP87 / IAU 2006 (Simon et al. 1994, A&A 282, 663);
+        # IERS Conventions (2010), Ch. 5.
         e1=0.016708634,
-        # Eccentricity of the Moon's mean orbit for J2000.0
-        # IERS Conventions (2010), Chapter 5
-        e=0.054900489,
-        # The calculated solar factor
+        # Eccentricity of the Moon's mean orbit.
+        # Source: ELP2000 (Chapront-Touzé & Chapront 1983); IERS
+        # Conventions (2010), Ch. 5.
+        e=0.0549006,
+        # The calculated solar factor.
         s=s,
     )
+
+
+# %%
+# Note on the parallaxes used by Schureman
+# ----------------------------------------
+# Schureman uses the solar (8.80″) and lunar equatorial (0°57'02.70″)
+# parallaxes directly. With the modern IERS 2010 / IAU 2012 lengths
+# (a_E = 6378136.6 m, AU = 149597870700 m, a_moon = 384399 km) these
+# become:
+#
+#   π_sun  = arcsin(a_E / AU)     ≈ 8.794143″
+#            (Luzum et al. 2011, IAU 2009 system)
+#   π_moon = arcsin(a_E / a_moon) ≈ 3422.6″ ≈ 0°57'02.6″
+#            (IERS Conventions 2010 / JPL DE ephemerides)
 
 
 # %%
