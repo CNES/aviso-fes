@@ -58,7 +58,6 @@ def test_select_waves_for_analysis() -> None:
     # For a 15-day record: M₂ and S₂ should both be selected
     # (their separation period is ~14.77 days < 15 days)
     selected_waves = wt.select_waves_for_analysis(15 * 86400)
-    print(selected_waves)
     assert 'M2' in selected_waves
     assert 'S2' in selected_waves
     # For a 14-day record: only one of M2/S2 should survive

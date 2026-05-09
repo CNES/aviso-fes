@@ -114,10 +114,12 @@ def load_model(
     return model
 
 
-def check_tide(tide, radial) -> None:
-    """Validate tide and radial outputs against a table of expected values."""
-    # Table of expected (h, lp, load) for each hour 0..23
-    EXPECTED = [
+# Reference table of (h, lp, load) per hour 0..23, keyed by build flavor.
+# When the C++ library is rebuilt with ``FES_USE_IERS_CONSTANTS`` the constants
+# in numbers.hpp shift, the predicted tide drifts a few millimetres, and the
+# ``iers2010`` table below must be refreshed from a one-off run on that build.
+EXPECTED_TIDE: dict[str, list[tuple[float, float, float]]] = {
+    'schureman': [
         (-100.9914560408143, 0.8962384327950185, 3.88117368364037),
         (-137.10501916452552, 0.8694202846939806, 4.328348741981256),
         (-138.48300705968734, 0.8419806943259117, 3.710706028150491),
@@ -142,22 +144,52 @@ def check_tide(tide, radial) -> None:
         (117.46522048490488, 0.2277708336655093, -2.1324613415016462),
         (77.02639695142673, 0.1919912926311164, -0.635100251236484),
         (14.661322939332242, 0.15601781901998055, 1.2095550658262517),
-    ]
+    ],
+    'iers2010': [
+        (-100.98822480037529, 0.8973908109908358, 3.8811901650618332),
+        (-137.097048232869, 0.8705721620833335, 4.328365559396372),
+        (-138.4725278722844, 0.8431315905021234, 3.7107243370979286),
+        (-104.33586791034888, 0.8150865360424596, 2.134294589755064),
+        (-42.509721558587145, 0.7864548276845342, -0.05198892359994449),
+        (32.37456064958061, 0.7572546692170512, -2.3413113756408),
+        (102.16049099929785, 0.7275046246607058, -4.194107304275129),
+        (149.45641521657816, 0.6972236034159222, -5.171799717932914),
+        (162.0864079050915, 0.6664308451588495, -5.045478388394841),
+        (136.489760726482, 0.6351459045052545, -3.852191990824),
+        (78.88336100403725, 0.6033886354964684, -1.884779346841636),
+        (3.6385947875833557, 0.5711791758396685, 0.382045174548401),
+        (-70.65763217712114, 0.5385379310160714, 2.410566363619619),
+        (-126.1439086392463, 0.5054855581923208, 3.733833746924149),
+        (-150.10216464146595, 0.47204294998101437, 4.07059832616364),
+        (-137.7653822199834, 0.43823121810338483, 3.3925876170316385),
+        (-93.11998829211153, 0.4040716768829598, 1.9274483449921018),
+        (-27.81188981896157, 0.36958582669366086, 0.09702145908465071),
+        (41.54338992490613, 0.33479533726726185, -1.59302793896453),
+        (97.24670102026342, 0.2997220309856639, -2.6839653293641628),
+        (124.93257165814332, 0.26438786608480874, -2.881832508129235),
+        (117.45739229339519, 0.22881491982634578, -2.1325097115343103),
+        (77.02038081023828, 0.1930253716598841, -0.6350921864183299),
+        (14.659264675927863, 0.15704148640515983, 1.209603523443338),
+    ],
+}
 
+
+def check_tide(tide, radial, expected) -> None:
+    """Validate tide and radial outputs against a table of expected values."""
     tol = 1e-5
     for hour in range(24):
         h = tide[0][hour]
         lp = tide[1][hour]
         load = radial[0][hour]
 
-        exp_h, exp_lp, exp_load = EXPECTED[hour]
+        exp_h, exp_lp, exp_load = expected[hour]
 
         assert h == pytest.approx(exp_h, tol)
         assert lp == pytest.approx(exp_lp, tol)
         assert load == pytest.approx(exp_load, tol)
 
 
-def test_tide() -> None:
+def test_tide(constants_flavor: str) -> None:
     """Test tide evaluation against expected values."""
     wave_files = {
         '2N2': DATASET / '2N2_radial.nc',
@@ -194,7 +226,7 @@ def test_tide() -> None:
         lats,
         core.FESSettings().with_num_threads(1),
     )
-    check_tide(tide, radial_waves)
+    check_tide(tide, radial_waves, EXPECTED_TIDE[constants_flavor])
 
 
 def cpu_intensive_task(

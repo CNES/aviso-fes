@@ -156,3 +156,17 @@ def push_front_syspath() -> None:
 
 
 push_front_syspath()
+
+
+@pytest.fixture(scope='session')
+def constants_flavor() -> str:
+    """Detect which astronomic constants the C++ library was built with.
+
+    Returns ``'iers2010'`` when ``include/fes/numbers.hpp`` was compiled with
+    ``FES_USE_IERS_CONSTANTS`` defined, otherwise ``'schureman'``. Tests that
+    depend on the constants pull their expected values from a dict keyed by
+    this string.
+    """
+    from pyfes import core  # noqa: PLC0415
+
+    return 'iers2010' if core.IERS_2010 else 'schureman'

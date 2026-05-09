@@ -4,12 +4,40 @@
 // BSD-style license that can be found in the LICENSE file.
 #include <gtest/gtest.h>
 
-#include "fes/darwin/wave.hpp"
 #include "fes/darwin/wave_table.hpp"
 #include "fes/interface/wave.hpp"
 
 namespace fes {
 namespace darwin {
+namespace {
+
+// Reference nodal phase / amplitude values for the Meeus formulation evaluated
+// at 1900-01-01 with all of the angles forced to 1 rad (or 1°) by the
+// ``AstronomicAngleForNodalA``/``...G`` fixtures below. The two columns of
+// each ternary are (Schureman, IERS-2010); the right column is selected when
+// ``include/fes/numbers.hpp`` is built with ``FES_USE_IERS_CONSTANTS``.
+constexpr bool kSchureman = numbers::kUseSchuremanConstants;
+
+constexpr double kFO1 = kSchureman ? 1.705420655553 : 1.706183948373;
+constexpr double kFK1 = kSchureman ? 1.066148291966 : 1.066697288438;
+constexpr double kFM2 = kSchureman ? 0.647949309991 : 0.647889857568;
+constexpr double kFK2 = kSchureman ? 2.971544714732 : 2.978532446798;
+constexpr double kFEta2 = kSchureman ? 4.524430787691 : 4.529698552141;
+constexpr double kFJ1 = kSchureman ? 1.260462194103 : 1.260986585530;
+constexpr double kFOO1 = kSchureman ? 11.793361932776 : 11.832322017468;
+constexpr double kFM4 = kSchureman ? 0.41983830831770 : 0.419761267539;
+constexpr double kFMf = kSchureman ? 4.48715727676534 : 4.493136736300;
+constexpr double kFMm = kSchureman ? -0.08246714122068 : -0.082433320739;
+constexpr double kFM3 = kSchureman ? 0.52158244862336 : 0.521496703561;
+constexpr double kFM6 = kSchureman ? 0.27203394218220 : 0.271959067839;
+constexpr double kFM1 = kSchureman ? 3.300330475634 : 3.302230768603;
+constexpr double kFMm2 = kSchureman ? 0.302919608612788 : 0.303011689233;
+constexpr double kFL2P = kSchureman ? 0.60201203371380 : 0.602082294664;
+constexpr double kFN2P = kSchureman ? 1.36441782384535 : 1.365052211150;
+
+constexpr double kVuM1 = kSchureman ? 270.48325761 : 270.48332383;
+
+}  // namespace
 
 class AstronomicAngleForNodalG : public angle::Astronomic {
  public:
@@ -133,7 +161,7 @@ inline auto check_nodal_phase(const WaveTable& table) -> void {
         EXPECT_NEAR(detail::math::degrees(wave->vu()), 91.0, 1e-8);
         break;
       case kM1:
-        EXPECT_NEAR(detail::math::degrees(wave->vu()), 270.48325761, 1e-8);
+        EXPECT_NEAR(detail::math::degrees(wave->vu()), kVuM1, 1e-8);
         break;
       case kM11:
         EXPECT_NEAR(detail::math::degrees(wave->vu()), 271.0, 1e-8);
@@ -372,7 +400,7 @@ inline auto check_nodal_amplitude(const WaveTable& table) {
       case kM11:
       case kSO1:
       case kSO3:
-        EXPECT_NEAR(wave->f(), 1.705420655553602, 1e-8);
+        EXPECT_NEAR(wave->f(), kFO1, 1e-8);
         break;
       case kP1:
       case kT2:
@@ -393,7 +421,7 @@ inline auto check_nodal_amplitude(const WaveTable& table) {
         break;
       case kK1:
       case kSK3:
-        EXPECT_NEAR(wave->f(), 1.0661482919660317, 1e-8);
+        EXPECT_NEAR(wave->f(), kFK1, 1e-8);
         break;
       case k2N2:
       case kMu2:
@@ -408,27 +436,25 @@ inline auto check_nodal_amplitude(const WaveTable& table) {
       case k2SM2:
       case kMSf:
       case k2SMu2:
-        EXPECT_NEAR(wave->f(), 0.64794930999090794, 1e-8);
-        break;
       case kL2:
-        EXPECT_NEAR(wave->f(), 0.64794930999090794, 1e-8);
+        EXPECT_NEAR(wave->f(), kFM2, 1e-8);
         break;
       case kK2:
       case kSK4:
-        EXPECT_NEAR(wave->f(), 2.9715447147317122, 1e-8);
+        EXPECT_NEAR(wave->f(), kFK2, 1e-8);
         break;
       case kEta2:
-        EXPECT_NEAR(wave->f(), 4.5244307876905507, 1e-8);
+        EXPECT_NEAR(wave->f(), kFEta2, 1e-8);
         break;
       case kM12:
       case kChi1:
       case kTheta1:
       case kJ1:
       case kMP1:
-        EXPECT_NEAR(wave->f(), 1.2604621941026914, 1e-8);
+        EXPECT_NEAR(wave->f(), kFJ1, 1e-8);
         break;
       case kOO1:
-        EXPECT_NEAR(wave->f(), 11.793361932776087, 1e-8);
+        EXPECT_NEAR(wave->f(), kFOO1, 1e-8);
         break;
       case kM4:
       case kMN4:
@@ -442,22 +468,22 @@ inline auto check_nodal_amplitude(const WaveTable& table) {
       case kMNuS2:
       case k2MP5:
       case k2NS2:
-        EXPECT_NEAR(wave->f(), 0.4198383083176937, 1e-8);
+        EXPECT_NEAR(wave->f(), kFM4, 1e-8);
         break;
       case kMf:
       case kMtm:
       case kMSqm:
       case kMm1:
-        EXPECT_NEAR(wave->f(), 4.4871572767653438, 1e-8);
+        EXPECT_NEAR(wave->f(), kFMf, 1e-8);
         break;
       case kA5:
       case kM0:
       case kMf1:
       case kMm:
-        EXPECT_NEAR(wave->f(), -0.08246714122068223, 1e-8);
+        EXPECT_NEAR(wave->f(), kFMm, 1e-8);
         break;
       case kM3:
-        EXPECT_NEAR(wave->f(), 0.5215824486233587, 1e-8);
+        EXPECT_NEAR(wave->f(), kFM3, 1e-8);
         break;
       case kM6:
       case k2MN6:
@@ -466,10 +492,10 @@ inline auto check_nodal_amplitude(const WaveTable& table) {
       case k2MSN4:
       case k3MS8:
       case k2MNS4:
-        EXPECT_NEAR(wave->f(), 0.2720339421821998, 1e-8);
+        EXPECT_NEAR(wave->f(), kFM6, 1e-8);
         break;
       case kM1:
-        EXPECT_NEAR(wave->f(), 3.300330475634, 1e-8);
+        EXPECT_NEAR(wave->f(), kFM1, 1e-8);
         break;
       case kMK4:
       case kMSK6:
@@ -477,54 +503,48 @@ inline auto check_nodal_amplitude(const WaveTable& table) {
       case kSKM2:
       case kNK4:
       case kMKS2:
-        EXPECT_NEAR(wave->f(), 0.64794930999090794 * 2.9715447147317122, 1e-8);
+        EXPECT_NEAR(wave->f(), kFM2 * kFK2, 1e-8);
         break;
       case k2MK6:
-        EXPECT_NEAR(wave->f(), 0.2720339421821998 * 2.9715447147317122, 1e-8);
+        EXPECT_NEAR(wave->f(), kFM6 * kFK2, 1e-8);
         break;
       case kMO3:
-        EXPECT_NEAR(wave->f(), 0.64794930999090794 * 1.705420655553602, 1e-8);
+        EXPECT_NEAR(wave->f(), kFM2 * kFO1, 1e-8);
         break;
       case k2MK3:
-        EXPECT_NEAR(wave->f(), 0.4198383083176937 * 1.0661482919660317, 1e-8);
+        EXPECT_NEAR(wave->f(), kFM4 * kFK1, 1e-8);
         break;
       case kMK3:
-        EXPECT_NEAR(wave->f(), 0.64794930999090794 * 1.0661482919660317, 1e-8);
+        EXPECT_NEAR(wave->f(), kFM2 * kFK1, 1e-8);
         break;
       case kM8:
-        EXPECT_NEAR(wave->f(), detail::math::pow<4>(0.64794930999090794), 1e-8);
+        EXPECT_NEAR(wave->f(), detail::math::pow<4>(kFM2), 1e-8);
         break;
       case kMm2:
       case kMf2:
-        EXPECT_NEAR(wave->f(), 0.302919608612788327, 1e-8);
+        EXPECT_NEAR(wave->f(), kFMm2, 1e-8);
         break;
       case kM13:
         break;
       case kL2P:
-        EXPECT_NEAR(wave->f(), 0.60201203371380063, 1e-8);
+        EXPECT_NEAR(wave->f(), kFL2P, 1e-8);
         break;
       case kN2P:
-        EXPECT_NEAR(wave->f(), 1.3644178238453521512, 1e-8);
+        EXPECT_NEAR(wave->f(), kFN2P, 1e-8);
         break;
       case kOQ2:
-        EXPECT_NEAR(wave->f(), detail::math::pow<2>(1.705420655553602), 1e-8);
+        EXPECT_NEAR(wave->f(), detail::math::pow<2>(kFO1), 1e-8);
         break;
       case k2MK2:
       case kNKM2:
       case kMNK6:
-        EXPECT_NEAR(
-            wave->f(),
-            detail::math::pow<2>(0.64794930999090794) * 2.9715447147317122,
-            1e-8);
+        EXPECT_NEAR(wave->f(), detail::math::pow<2>(kFM2) * kFK2, 1e-8);
         break;
       case kML4:
-        EXPECT_NEAR(wave->f(), 0.64794930999090794 * 0.64794930999090794, 1e-8);
+        EXPECT_NEAR(wave->f(), kFM2 * kFM2, 1e-8);
         break;
       case k2NM6:
-        EXPECT_NEAR(
-            wave->f(),
-            detail::math::pow<4>(0.64794930999090794) * 0.64794930999090794,
-            1e-8);
+        EXPECT_NEAR(wave->f(), detail::math::pow<4>(kFM2) * kFM2, 1e-8);
         break;
       default:
         throw std::runtime_error(wave->name());

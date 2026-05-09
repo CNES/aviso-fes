@@ -10,47 +10,124 @@ import pytest
 from pyfes import core
 
 
-def test_astronomic_angle() -> None:
+# Expected angle values for ``2000-01-01T00:00:00``, organised by formulation
+# and by build flavor. Tests pull from the entry matching ``constants_flavor``
+# (``'schureman'`` or ``'iers2010'``); rebuilding the C++ library with
+# ``FES_USE_IERS_CONSTANTS`` flips the fixture, and the corresponding
+# ``iers2010`` block must hold the values produced by that build.
+EXPECTED_ANGLES: dict[str, dict[str, dict[str, float]]] = {
+    'MEEUS': {
+        'schureman': {
+            'h': 4.886470984554807,
+            'n': 2.1829004947295840,
+            'nu': 0.20721813091600161,
+            'nuprim': 0.13805659123725886,
+            'nusec': 0.132258440531486,
+            'p': 1.4538178589080255,
+            'p1': 4.93818437065075,
+            'r': 0.10104533494633117,
+            's': 3.6955259116230854,
+            't': 3.1415926535897931,
+            'x1ra': 1.1723204500596927,
+            'xi': 0.19203231321420278,
+        },
+        'iers2010': {
+            'h': 4.8864709410237595,
+            'n': 2.1829004970682835,
+            'nu': 0.20735602997621727,
+            'nuprim': 0.1382466880942348,
+            'nusec': 0.132515605173428,
+            'p': 1.4538178539878968,
+            'p1': 4.938184370648674,
+            'r': 0.10098738315829554,
+            's': 3.695525329688446,
+            't': 3.141592653589793,
+            'x1ra': 1.1720793639429103,
+            'xi': 0.1921797482814256,
+        },
+    },
+    'SCHUREMAN_ORDER_3': {
+        'schureman': {
+            'h': 4.886452090906138,
+            'n': 2.1828609691751804,
+            'nu': 0.20722218281018479,
+            'nuprim': 0.13805962974049285,
+            'nusec': 0.1322618637171819,
+            'p': 1.4537574500601673,
+            'p1': 4.938242280709079,
+            'r': 0.10106627840451653,
+            's': 3.6956256194908494,
+            't': 3.141592653589793,
+            'x1ra': 1.172310749175076,
+            'xi': 0.19203593918558792,
+        },
+        'iers2010': {
+            'h': 4.886452090906138,
+            'n': 2.1828609691751804,
+            'nu': 0.2073600834294561,
+            'nuprim': 0.13824972990136372,
+            'nusec': 0.13251903316860011,
+            'p': 1.4537574500601673,
+            'p1': 4.938242280709079,
+            'r': 0.1010083032393994,
+            's': 3.6956256194908494,
+            't': 3.141592653589793,
+            'x1ra': 1.1720696689212957,
+            'xi': 0.19218337605697933,
+        },
+    },
+    'IERS': {
+        'schureman': {
+            'h': 4.8864743802966597,
+            'n': 2.1829004947295840,
+            'nu': 0.20721813091600161,
+            'nuprim': 0.13805659123725886,
+            'nusec': 0.132258440531486,
+            'p': 1.4538178589080255,
+            'p1': 4.9381877667320335,
+            'r': 0.10104533494633117,
+            's': 3.6955293661624493,
+            't': 3.1415926535897931,
+            'x1ra': 1.1723204500596927,
+            'xi': 0.19203231321420278,
+        },
+        'iers2010': {
+            'h': 4.8864743367656125,
+            'n': 2.182900621154722,
+            'nu': 0.20735601725089692,
+            'nuprim': 0.13824667854493217,
+            'nusec': 0.1325155944118521,
+            'p': 1.4538177950180629,
+            'p1': 4.938187766729955,
+            'r': 0.10098739264009973,
+            's': 3.69552878422781,
+            't': 3.141592653589793,
+            'x1ra': 1.172079344249698,
+            'xi': 0.1921797368924345,
+        },
+    },
+}
+
+
+def _check_angles(aa: core.AstronomicAngle, expected: dict[str, float]) -> None:
+    for name, value in expected.items():
+        assert getattr(aa, name) == pytest.approx(value, rel=1e-6), name
+
+
+def test_astronomic_angle(constants_flavor: str) -> None:
     """Test the computation of astronomical angles."""
     aa = core.AstronomicAngle(core.MEEUS)
     aa.update(datetime.datetime(2000, 1, 1))
     assert isinstance(aa, core.AstronomicAngle)
-    assert aa.h == pytest.approx(4.886470984554807, rel=1e-6)
-    assert aa.n == pytest.approx(2.1829004947295840, rel=1e-6)
-    assert aa.nu == pytest.approx(0.20721813091600161, rel=1e-6)
-    assert aa.nuprim == pytest.approx(0.13805659123725886, rel=1e-6)
-    assert aa.nusec == pytest.approx(0.132258440531486, rel=1e-6)
-    assert aa.p == pytest.approx(1.4538178589080255, rel=1e-6)
-    assert aa.p1 == pytest.approx(4.93818437065075, rel=1e-6)
-    assert aa.r == pytest.approx(0.10104533494633117, rel=1e-6)
-    assert aa.s == pytest.approx(3.6955259116230854, rel=1e-6)
-    assert aa.t == pytest.approx(3.1415926535897931, rel=1e-6)
-    assert aa.x1ra == pytest.approx(1.1723204500596927, rel=1e-6)
-    assert aa.xi == pytest.approx(0.19203231321420278, rel=1e-6)
+    _check_angles(aa, EXPECTED_ANGLES['MEEUS'][constants_flavor])
 
     aa = core.AstronomicAngle(core.SCHUREMAN_ORDER_3)
     aa.update(datetime.datetime(2000, 1, 1))
-    assert aa.h == pytest.approx(4.886452090906138, rel=1e-6)
-    assert aa.n == pytest.approx(2.1828609691751804, rel=1e-6)
-    assert aa.p == pytest.approx(1.4537574500601673, rel=1e-6)
-    assert aa.p1 == pytest.approx(4.938241458772235, rel=1e-6)
-    assert aa.s == pytest.approx(3.6956256194908494, rel=1e-6)
-    assert aa.t == pytest.approx(3.141592653589793, rel=1e-6)
+    _check_angles(aa, EXPECTED_ANGLES['SCHUREMAN_ORDER_3'][constants_flavor])
 
     aa = core.AstronomicAngle(core.IERS)
     aa.update(datetime.datetime(2000, 1, 1))
-    assert aa.h == pytest.approx(4.8864743802966597, 1e-6)
-    assert aa.n == pytest.approx(2.1829004947295840, 1e-6)
-    assert aa.nu == pytest.approx(0.20721813091600161, 1e-6)
-    assert aa.nuprim == pytest.approx(0.13805659123725886, 1e-6)
-    assert aa.nusec == pytest.approx(0.132258440531486, 1e-6)
-    assert aa.p == pytest.approx(1.4538178589080255, 1e-6)
-    assert aa.p1 == pytest.approx(4.9381877667320335, 1e-6)
-    assert aa.r == pytest.approx(0.10104533494633117, 1e-6)
-    assert aa.s == pytest.approx(3.6955293661624493, 1e-6)
-    assert aa.t == pytest.approx(3.1415926535897931, 1e-6)
-    assert aa.x1ra == pytest.approx(1.1723204500596927, 1e-6)
-    assert aa.xi == pytest.approx(0.19203231321420278, 1e-6)
+    _check_angles(aa, EXPECTED_ANGLES['IERS'][constants_flavor])
 
 
 def test_astronomical_angle_thread_safety() -> None:

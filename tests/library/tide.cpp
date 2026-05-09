@@ -129,8 +129,12 @@ TEST_F(EvaluateTideTest, FES) {
       model_.get(), epochs, lons, lats,
       FESSettings{}.with_num_threads((1)).with_astronomic_formulae(
           angle::Formulae::kIERS));
-  EXPECT_NEAR(std::get<0>(result)(0), -0.93594685657527033, 1e-6);
-  EXPECT_NEAR(std::get<1>(result)(0), 0.91756905183442172, 1e-6);
+#ifdef FES_USE_IERS_CONSTANTS
+  EXPECT_NEAR(std::get<0>(result)(0), -0.93591680399692079, 1e-6);
+#else
+  EXPECT_NEAR(std::get<0>(result)(0), -0.93594685657527, 1e-6);
+#endif
+  EXPECT_NEAR(std::get<1>(result)(0), 0.91756905183442, 1e-6);
   EXPECT_EQ(std::get<2>(result)(0), 4);
 }
 
@@ -141,8 +145,13 @@ TEST_F(EvaluateTideFromConstituentsTest, Darwin) {
 
   auto result = evaluate_tide_from_constituents(
       data_, epochs, 48.383, FESSettings{}.with_num_threads((1)));
-  EXPECT_NEAR(std::get<0>(result)(0), -272.41405405513166, 1e-6);
-  EXPECT_NEAR(std::get<1>(result)(0), 3.8406047433116997, 1e-6);
+#ifdef FES_USE_IERS_CONSTANTS
+  EXPECT_NEAR(std::get<0>(result)(0), -272.383990608873, 1e-6);
+  EXPECT_NEAR(std::get<1>(result)(0), 3.84122128352824, 1e-6);
+#else
+  EXPECT_NEAR(std::get<0>(result)(0), -272.414054055131, 1e-6);
+  EXPECT_NEAR(std::get<1>(result)(0), 3.84060474331170, 1e-6);
+#endif
 }
 
 TEST_F(EvaluateTideFromConstituentsTest, Perth5) {
