@@ -64,6 +64,70 @@ to build from source:
     cd aviso-fes
     pip install -e .
 
+Build options
+~~~~~~~~~~~~~
+
+The ``build_ext`` command exposes several options to customise the
+build. Pass them through ``setup.py`` directly, or via
+``pip install`` using the ``--config-settings`` flag (one
+``--config-settings=--build-option=<flag>`` per flag, since pip forwards
+each value as a single token).
+
+.. list-table::
+    :header-rows: 1
+    :widths: 25 75
+
+    * - Option
+      - Description
+    * - ``--cxx-compiler=<path>``
+      - Path to the preferred C++ compiler. Translated to
+        ``-DCMAKE_CXX_COMPILER=...``.
+    * - ``--generator=<name>``
+      - CMake generator to use (e.g. ``Ninja``, ``"Unix Makefiles"``).
+    * - ``--cmake-args="<args>"``
+      - Extra arguments forwarded verbatim to CMake (space-separated, quote
+        the whole value).
+    * - ``--mkl[=yes|no]``
+      - Use Intel MKL as the BLAS implementation. When the MKL header is
+        available under ``$CONDA_PREFIX``, ``MKLROOT`` is set automatically.
+    * - ``--iers[=yes|no]``
+      - Compile with the IERS 2010 astronomic constants instead of the
+        Schureman (1958) values. Defines ``-DFES_USE_IERS_CONSTANTS=ON``.
+        See :ref:`Astronomic Constants <astronomic_constants>` for the
+        difference.
+    * - ``--reconfigure``
+      - Force CMake to re-run from scratch (drops the cached configuration).
+
+In addition, when ``CONDA_PREFIX`` is set, ``-DCMAKE_PREFIX_PATH=$CONDA_PREFIX``
+is added automatically so dependencies installed in the active conda
+environment are picked up.
+
+Examples
+^^^^^^^^
+
+Editable install with Ninja and the IERS 2010 constants:
+
+.. code-block:: bash
+
+    python setup.py build_ext --generator=Ninja --iers --inplace
+    pip install -e . --no-build-isolation
+
+Same thing through ``pip``:
+
+.. code-block:: bash
+
+    pip install -e . --no-build-isolation \
+        --config-settings=--build-option=build_ext \
+        --config-settings=--build-option=--generator=Ninja \
+        --config-settings=--build-option=--iers
+
+Forwarding raw CMake options (here, an explicit Boost root):
+
+.. code-block:: bash
+
+    python setup.py build_ext \
+        --cmake-args="-DBOOST_ROOT=/opt/boost -DCMAKE_BUILD_TYPE=Release"
+
 .. _quickstart:
 
 Quickstart: Predicting Tides from a Model
