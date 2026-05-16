@@ -51,7 +51,8 @@ class Wave : public WaveInterface {
   /// @brief Clones the wave.
   /// @return A unique pointer to the cloned wave.
   auto clone() const -> std::unique_ptr<WaveInterface> final {
-    return std::make_unique<Wave>(*this);
+    return clone_impl();
+    ;
   }
 
   /// @brief Computes the nodal corrections for the wave.
@@ -95,6 +96,11 @@ class Wave : public WaveInterface {
          (argument_[8] * angular_position.nu()) +
          (argument_[9] * angular_position.nuprim()) +
          (argument_[10] * angular_position.nusec());
+  }
+
+  /// Clones the wave. This is a helper function for the public clone() method.
+  virtual auto clone_impl() const -> std::unique_ptr<WaveInterface> {
+    return std::make_unique<Wave>(*this);
   }
 
  private:
@@ -329,6 +335,12 @@ class M1 : public Wave {
         std::sqrt(numbers::k197_1 +
                   (numbers::k197_2 * std::cos(2 * (angular_position.p() -
                                                    angular_position.xi())))));
+  }
+
+ private:
+  /// Clones the wave. This is a helper function for the public clone() method.
+  auto clone_impl() const -> std::unique_ptr<WaveInterface> override {
+    return std::make_unique<M1>(*this);
   }
 };
 
@@ -670,6 +682,12 @@ class L2 : public Wave {
   void nodal_g(const angle::Astronomic& angular_position) final {
     Wave::nodal_g(angular_position);
     u_ -= angular_position.r();
+  }
+
+ private:
+  /// Clones the wave. This is a helper function for the public clone() method.
+  auto clone_impl() const -> std::unique_ptr<WaveInterface> override {
+    return std::make_unique<L2>(*this);
   }
 };
 
