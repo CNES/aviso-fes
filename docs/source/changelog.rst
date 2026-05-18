@@ -3,8 +3,8 @@
 Changelog
 #########
 
-Unreleased
-==========
+2026.5.0
+========
 
 Performance
 -----------
@@ -15,6 +15,14 @@ Performance
   2026.4.0, measured on Apple Silicon (arm64): ~-25 % on small Cartesian
   batches (10 k-100 k points), ~-5 % on the 1 M-point Cartesian case, and
   ~-20 % to ~-30 % on LGP2 mesh interpolation across the same range.
+
+Bug Fixes
+---------
+* Fixed Darwin wave cloning to preserve the dynamic wave type when copying
+  through ``WaveInterface`` pointers. The ``Wave::clone()`` implementation now
+  dispatches to a virtual ``clone_impl()`` helper, with overrides for derived
+  classes such as ``M1`` and ``L2`` so clones keep their concrete type instead
+  of being sliced to ``Wave``.
 
 2026.4.0
 ========
