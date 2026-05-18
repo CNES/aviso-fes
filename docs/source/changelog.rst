@@ -3,6 +3,14 @@
 Changelog
 #########
 
+2026.5.2
+========
+
+**Note:** Version ``2026.5.2`` is an alias for ``2026.5.1``. The original
+``2026.5.1`` release was removed from PyPI due to an incorrect upload and
+cannot be republished under the same version number. ``2026.5.2`` is published
+with identical code and should be used in place of ``2026.5.1``.
+
 2026.5.1
 ========
 
