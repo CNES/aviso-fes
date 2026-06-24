@@ -19,9 +19,10 @@ if(POLICY CMP0167)
   cmake_policy(SET CMP0167 NEW)
 endif()
 
-# Locate the Python interpreter once, before project(), so it can be reused both
-# to refresh the version files (just below) and -- when bindings are enabled --
-# to find the Development component after project().
+# Locate the Python interpreter once, before project(), so that -- when bindings
+# are enabled -- the Development component can be found against the same
+# interpreter after project(). The version files no longer need it: they are
+# generated with pure CMake (see FesVersion below).
 #
 # FIND_STRATEGY=LOCATION honours the Python3_EXECUTABLE hint passed by setup.py
 # rather than greedily picking the highest version on PATH (manylinux images
@@ -36,29 +37,18 @@ find_package(
   COMPONENTS Interpreter
   QUIET)
 
-# On development machines, refresh the version files. Two safeguards:
+# Refresh include/fes/version.hpp from the Git tags.
 #
-# * Recursion guard. CMake -> setup.py -> setuptools.setup() -> BuildExt spawns
-#   cmake -> CMake hits this line again -> ... infinite loop. We export
-#   FES_GENERATE_VERSION_ONLY=1 so setup.py refreshes the version files and
-#   returns before setuptools.setup(); on the way back, setup.py itself exports
-#   FES_VERSION_FILES_GENERATED=1, which lets us skip this whole block when
-#   cmake is reinvoked from BuildExt.build_cmake.
-#
-# * Explicit interpreter + TIMEOUT. Relying on the script's `#!/usr/bin/env
-#   python3` shebang causes execute_process to hang forever in dyld on some
-#   recent macOS releases (the env binary stays stuck in _dyld_start). Calling
-#   Python3_EXECUTABLE directly avoids that code path; the timeout guarantees we
-#   never freeze configure if the interpreter misbehaves.
-if(NOT DEFINED ENV{FES_VERSION_FILES_GENERATED} # cmake-lint: disable=W0106
-   AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git"
-   AND Python3_Interpreter_FOUND)
-  set(ENV{FES_GENERATE_VERSION_ONLY} 1) # cmake-lint: disable=W0106
-  execute_process(
-    COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/setup.py"
-    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-    TIMEOUT 30)
-  unset(ENV{FES_GENERATE_VERSION_ONLY}) # cmake-lint: disable=W0106
+# The version files are not tracked in Git; they are derived from the tags. When
+# the project is built as a Python wheel, setup.py (setuptools_scm) writes them
+# and exports FES_VERSION_FILES_GENERATED=1 before invoking cmake, so we leave
+# its files untouched here. In every other case -- a plain cmake build, a Git
+# submodule, add_subdirectory() or FetchContent -- we generate version.hpp with
+# pure CMake, so neither Python nor setuptools_scm is required to consume the
+# library as a C++ dependency.
+if(NOT DEFINED ENV{FES_VERSION_FILES_GENERATED}) # cmake-lint: disable=W0106
+  include(FesVersion)
+  fes_generate_version_header("${CMAKE_CURRENT_SOURCE_DIR}")
 endif()
 
 # Extract project version from source
