@@ -12,7 +12,10 @@ Build System
   ``cmake/FesVersion.cmake``) derived from the Git tags, so the project can be
   consumed as a Git submodule, via ``add_subdirectory()`` or ``FetchContent``
   without Python or ``setuptools_scm``. Python wheel builds still use
-  ``setup.py``/``setuptools_scm`` as before.
+  ``setup.py``/``setuptools_scm`` as before. When consumed from a GitHub source
+  archive (``.../archive/...zip``) -- which has no ``.git`` -- the version is
+  recovered from ``.git_archival.txt``, whose placeholders are expanded by
+  ``git archive`` via the ``export-subst`` attribute.
 * Fixed discovery of ``netcdf-cxx4`` for the tide prediction example: rely on
   CMake's standard ``find_path``/``find_library`` search (which honours
   ``CMAKE_PREFIX_PATH``) instead of guessing the prefix from ``CONDA_PREFIX``,

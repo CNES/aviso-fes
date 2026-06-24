@@ -12,8 +12,55 @@
 # can be produced without Python. It mirrors setuptools_scm's default
 # "guess-next-dev" scheme: an exact tag yields `MAJOR.MINOR.PATCH`, while N
 # commits past the latest tag yield `MAJOR.MINOR.(PATCH+1).devN`.
+#
+# Two version sources are supported, in order of preference:
+#   1. A live Git checkout (.git present) -- queried with `git describe`.
+#   2. `.git_archival.txt`, whose `$Format:...$` placeholders are expanded by
+#      `git archive` (the mechanism behind GitHub's source zip/tarball
+#      downloads, e.g. FetchContent from .../archive/refs/heads/main.zip). This
+#      requires the `.git_archival.txt export-subst` entry in .gitattributes.
 
 include_guard(GLOBAL)
+
+# Turn a `git describe` string into MAJOR/MINOR/PATCH/DEV. Accepts both the
+# exact-tag form ("2026.5.2") and the ahead-of-tag form
+# ("2026.5.2-5-gabcdef[-dirty]").
+function(_fes_version_from_describe describe out_major out_minor out_patch
+         out_dev)
+  set(dev "")
+  if(describe MATCHES "^(.+)-([0-9]+)-g[0-9a-f]+(-dirty)?$")
+    set(tag "${CMAKE_MATCH_1}")
+    set(distance "${CMAKE_MATCH_2}")
+    set(dirty "${CMAKE_MATCH_3}")
+  else()
+    # Archived exactly on a tag: no distance/hash suffix.
+    set(tag "${describe}")
+    set(distance 0)
+    set(dirty "")
+  endif()
+
+  _fes_parse_tag("${tag}" major minor patch)
+
+  if(NOT distance EQUAL 0 OR dirty)
+    # guess-next-dev: the working tree is ahead of the tag, so advertise the
+    # upcoming release as a development build of the next patch.
+    math(EXPR patch "${patch} + 1")
+    set(dev ".dev${distance}")
+  endif()
+
+  set(${out_major}
+      "${major}"
+      PARENT_SCOPE)
+  set(${out_minor}
+      "${minor}"
+      PARENT_SCOPE)
+  set(${out_patch}
+      "${patch}"
+      PARENT_SCOPE)
+  set(${out_dev}
+      "${dev}"
+      PARENT_SCOPE)
+endfunction()
 
 # Extract MAJOR.MINOR.PATCH from a tag such as "2026.5.2" or "2026.4.0rc1".
 function(_fes_parse_tag tag out_major out_minor out_patch)
@@ -66,23 +113,48 @@ function(_fes_version_from_git source_dir out_major out_minor out_patch out_dev)
     return()
   endif()
 
-  if(NOT describe MATCHES "^(.+)-([0-9]+)-g[0-9a-f]+(-dirty)?$")
-    message(WARNING "FES: unexpected 'git describe' output: ${describe}")
+  _fes_version_from_describe("${describe}" major minor patch dev)
+
+  set(${out_major}
+      "${major}"
+      PARENT_SCOPE)
+  set(${out_minor}
+      "${minor}"
+      PARENT_SCOPE)
+  set(${out_patch}
+      "${patch}"
+      PARENT_SCOPE)
+  set(${out_dev}
+      "${dev}"
+      PARENT_SCOPE)
+endfunction()
+
+# Resolve MAJOR/MINOR/PATCH/DEV from a `git archive`-expanded .git_archival.txt.
+# Returns an empty MAJOR when the file is missing or its placeholders were never
+# substituted (e.g. a plain `cp -r` of the source tree rather than an archive).
+function(_fes_version_from_archive source_dir out_major out_minor out_patch
+         out_dev)
+  set(${out_major}
+      ""
+      PARENT_SCOPE)
+
+  set(archival "${source_dir}/.git_archival.txt")
+  if(NOT EXISTS "${archival}")
     return()
   endif()
-  set(tag "${CMAKE_MATCH_1}")
-  set(distance "${CMAKE_MATCH_2}")
-  set(dirty "${CMAKE_MATCH_3}")
 
-  _fes_parse_tag("${tag}" major minor patch)
-
-  set(dev "")
-  if(NOT distance EQUAL 0 OR dirty)
-    # guess-next-dev: the working tree is ahead of the tag, so advertise the
-    # upcoming release as a development build of the next patch.
-    math(EXPR patch "${patch} + 1")
-    set(dev ".dev${distance}")
+  file(READ "${archival}" contents)
+  if(NOT contents MATCHES "describe-name:[ \t]*([^\r\n]*)")
+    return()
   endif()
+  string(STRIP "${CMAKE_MATCH_1}" describe)
+
+  # Unsubstituted ("$Format:...$") or describe found no tag: nothing usable.
+  if(describe STREQUAL "" OR describe MATCHES "\\$Format:")
+    return()
+  endif()
+
+  _fes_version_from_describe("${describe}" major minor patch dev)
 
   set(${out_major}
       "${major}"
@@ -104,9 +176,11 @@ endfunction()
 #
 # Resolution order:
 #   1. The Git tags (preferred, no external tooling required).
-#   2. An already-present version.hpp (e.g. shipped in an sdist, or written by
+#   2. .git_archival.txt expanded by `git archive` (GitHub zip/tarball, i.e.
+#      FetchContent from an archive URL).
+#   3. An already-present version.hpp (e.g. shipped in an sdist, or written by
 #      setup.py during a wheel build) -- left untouched.
-#   3. A 0.0.0 placeholder, so configuration can still proceed.
+#   4. A 0.0.0 placeholder, so configuration can still proceed.
 #
 # The file is only rewritten when its contents change, to avoid spurious header
 # rebuilds on every reconfigure.
@@ -114,6 +188,9 @@ function(fes_generate_version_header source_dir)
   set(header "${source_dir}/include/fes/version.hpp")
 
   _fes_version_from_git("${source_dir}" major minor patch dev)
+  if(major STREQUAL "")
+    _fes_version_from_archive("${source_dir}" major minor patch dev)
+  endif()
 
   if(major STREQUAL "")
     if(EXISTS "${header}")
