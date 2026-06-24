@@ -3,6 +3,22 @@
 Changelog
 #########
 
+Unreleased
+==========
+
+Build System
+------------
+* Generate ``include/fes/version.hpp`` with pure CMake (new
+  ``cmake/FesVersion.cmake``) derived from the Git tags, so the project can be
+  consumed as a Git submodule, via ``add_subdirectory()`` or ``FetchContent``
+  without Python or ``setuptools_scm``. Python wheel builds still use
+  ``setup.py``/``setuptools_scm`` as before.
+* Fixed discovery of ``netcdf-cxx4`` for the tide prediction example: rely on
+  CMake's standard ``find_path``/``find_library`` search (which honours
+  ``CMAKE_PREFIX_PATH``) instead of guessing the prefix from ``CONDA_PREFIX``,
+  so the example builds reliably inside conda and mamba/micromamba
+  environments.
+
 2026.5.2
 ========
 
