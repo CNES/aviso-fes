@@ -410,17 +410,39 @@ endif()
 
 # Try to find the prerequisites to compile the tide prediction example. If not
 # found, skip it without error.
+#
+# netcdf-cxx4 from conda-forge ships no pkg-config file, and neither conda nor
+# mamba export PKG_CONFIG_PATH, so pkg_check_modules only ever helps a system
+# install. Fall back to searching the active environment directly. The prefix is
+# advertised through different variables depending on the tool: conda/mamba set
+# CONDA_PREFIX on activation, while micromamba may expose only its root prefix
+# (MAMBA_ROOT_PREFIX); CONDA_PREFIX_1 holds the base prefix when an env is
+# stacked. Collect every candidate and let find_library pick.
 find_package(PkgConfig)
 if(PkgConfig_FOUND)
   pkg_check_modules(NETCDF_CXX netcdf-cxx4)
 endif()
-if(NOT NETCDF_CXX_FOUND AND DEFINED ENV{CONDA_PREFIX})
-  set(NETCDF_CXX_INCLUDE_DIRS "$ENV{CONDA_PREFIX}/include")
+
+set(_netcdf_prefixes)
+foreach(prefix_var CONDA_PREFIX MAMBA_ROOT_PREFIX CONDA_PREFIX_1)
+  if(DEFINED ENV{${prefix_var}})
+    list(APPEND _netcdf_prefixes "$ENV{${prefix_var}}")
+  endif()
+endforeach()
+
+if(NOT NETCDF_CXX_FOUND AND _netcdf_prefixes)
   find_library(
     NETCDF_CXX_LIBRARIES
     NAMES netcdf-cxx4 netcdf_c++4
-    HINTS "$ENV{CONDA_PREFIX}/lib")
+    HINTS ${_netcdf_prefixes}
+    PATH_SUFFIXES lib)
   if(NETCDF_CXX_LIBRARIES)
+    # Derive the matching include directory from the prefix that actually
+    # provided the library, rather than assuming a single CONDA_PREFIX.
+    get_filename_component(_netcdf_libdir "${NETCDF_CXX_LIBRARIES}" DIRECTORY)
+    get_filename_component(_netcdf_root "${_netcdf_libdir}" DIRECTORY)
+    set(NETCDF_CXX_INCLUDE_DIRS "${_netcdf_root}/include")
+
     add_executable(tide_prediction
                    ${CMAKE_CURRENT_SOURCE_DIR}/examples/prediction.cpp)
     target_compile_features(tide_prediction PRIVATE cxx_std_20)
