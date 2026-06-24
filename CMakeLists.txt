@@ -411,49 +411,53 @@ endif()
 # Try to find the prerequisites to compile the tide prediction example. If not
 # found, skip it without error.
 #
-# netcdf-cxx4 from conda-forge ships no pkg-config file, and neither conda nor
-# mamba export PKG_CONFIG_PATH, so pkg_check_modules only ever helps a system
-# install. Fall back to searching the active environment directly. The prefix is
-# advertised through different variables depending on the tool: conda/mamba set
-# CONDA_PREFIX on activation, while micromamba may expose only its root prefix
-# (MAMBA_ROOT_PREFIX); CONDA_PREFIX_1 holds the base prefix when an env is
-# stacked. Collect every candidate and let find_library pick.
+# netcdf-cxx4 from conda-forge ships no pkg-config file, so pkg_check_modules
+# only ever helps a plain system install. What actually locates the library
+# inside a conda/mamba environment is the find_path/find_library pair below:
+# CMake searches CMAKE_PREFIX_PATH automatically, and conda's (and
+# mamba/micromamba's) compiler activation exports the active prefix there. That
+# is far more reliable than guessing the prefix from CONDA_PREFIX /
+# MAMBA_ROOT_PREFIX, which vary between tools and activation styles -- those are
+# kept only as best-effort extra hints for the rare case where the environment
+# is on disk but CMAKE_PREFIX_PATH was not exported.
 find_package(PkgConfig)
 if(PkgConfig_FOUND)
   pkg_check_modules(NETCDF_CXX netcdf-cxx4)
 endif()
 
-set(_netcdf_prefixes)
-foreach(prefix_var CONDA_PREFIX MAMBA_ROOT_PREFIX CONDA_PREFIX_1)
-  if(DEFINED ENV{${prefix_var}})
-    list(APPEND _netcdf_prefixes "$ENV{${prefix_var}}")
-  endif()
-endforeach()
+if(NOT NETCDF_CXX_FOUND)
+  set(_netcdf_hints)
+  foreach(prefix_var CONDA_PREFIX MAMBA_ROOT_PREFIX CONDA_PREFIX_1)
+    if(DEFINED ENV{${prefix_var}})
+      list(APPEND _netcdf_hints "$ENV{${prefix_var}}")
+    endif()
+  endforeach()
 
-if(NOT NETCDF_CXX_FOUND AND _netcdf_prefixes)
+  find_path(
+    NETCDF_CXX_INCLUDE_DIRS
+    NAMES netcdf ncFile.h
+    HINTS ${_netcdf_hints}
+    PATH_SUFFIXES include)
   find_library(
     NETCDF_CXX_LIBRARIES
-    NAMES netcdf-cxx4 netcdf_c++4
-    HINTS ${_netcdf_prefixes}
+    NAMES netcdf_c++4 netcdf-cxx4
+    HINTS ${_netcdf_hints}
     PATH_SUFFIXES lib)
-  if(NETCDF_CXX_LIBRARIES)
-    # Derive the matching include directory from the prefix that actually
-    # provided the library, rather than assuming a single CONDA_PREFIX.
-    get_filename_component(_netcdf_libdir "${NETCDF_CXX_LIBRARIES}" DIRECTORY)
-    get_filename_component(_netcdf_root "${_netcdf_libdir}" DIRECTORY)
-    set(NETCDF_CXX_INCLUDE_DIRS "${_netcdf_root}/include")
+endif()
 
-    add_executable(tide_prediction
-                   ${CMAKE_CURRENT_SOURCE_DIR}/examples/prediction.cpp)
-    target_compile_features(tide_prediction PRIVATE cxx_std_20)
-    target_link_libraries(tide_prediction fes ${NETCDF_CXX_LIBRARIES}
-                          Boost::boost)
-    target_include_directories(
-      tide_prediction PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
-                              ${EIGEN3_INCLUDE_DIR} ${NETCDF_CXX_INCLUDE_DIRS})
-  else()
-    message(STATUS "Skipping tide prediction example: netcdf-cxx4 not found.")
-  endif()
+if(NETCDF_CXX_INCLUDE_DIRS AND NETCDF_CXX_LIBRARIES)
+  message(STATUS "Building tide prediction example with netcdf-cxx4: "
+                 "${NETCDF_CXX_LIBRARIES}")
+  add_executable(tide_prediction
+                 ${CMAKE_CURRENT_SOURCE_DIR}/examples/prediction.cpp)
+  target_compile_features(tide_prediction PRIVATE cxx_std_20)
+  target_link_libraries(tide_prediction fes ${NETCDF_CXX_LIBRARIES}
+                        Boost::boost)
+  target_include_directories(
+    tide_prediction PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
+                            ${EIGEN3_INCLUDE_DIR} ${NETCDF_CXX_INCLUDE_DIRS})
+else()
+  message(STATUS "Skipping tide prediction example: netcdf-cxx4 not found.")
 endif()
 
 message(STATUS "")
