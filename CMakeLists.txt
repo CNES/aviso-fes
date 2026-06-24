@@ -429,6 +429,8 @@ if(NOT NETCDF_CXX_FOUND AND DEFINED ENV{CONDA_PREFIX})
     target_include_directories(
       tide_prediction PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
                               ${EIGEN3_INCLUDE_DIR} ${NETCDF_CXX_INCLUDE_DIRS})
+  else()
+    message(STATUS "Skipping tide prediction example: netcdf-cxx4 not found.")
   endif()
 endif()
 
