@@ -422,7 +422,7 @@ endif()
 # is on disk but CMAKE_PREFIX_PATH was not exported.
 find_package(PkgConfig)
 if(PkgConfig_FOUND)
-  pkg_check_modules(NETCDF_CXX netcdf-cxx4)
+  pkg_check_modules(NETCDF_CXX netcdf-cxx4 QUIET)
 endif()
 
 if(NOT NETCDF_CXX_FOUND)
