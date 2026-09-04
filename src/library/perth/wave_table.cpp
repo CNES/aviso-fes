@@ -5,6 +5,7 @@
 #include "fes/perth/wave_table.hpp"
 
 #include <algorithm>
+#include <iterator>
 #include <memory>
 #include <stdexcept>
 #include <string>

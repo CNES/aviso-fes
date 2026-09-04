@@ -4,6 +4,7 @@
 // BSD-style license that can be found in the LICENSE file.
 #include "fes/darwin/wave_table.hpp"
 
+#include <iterator>
 #include <memory>
 
 #include "fes/angle/astronomic.hpp"
