@@ -39,15 +39,15 @@ from .core import (
 
 
 if TYPE_CHECKING:
-    from collections.abc import Callable, Iterable
+    from collections.abc import Iterable
 
     from .type_hints import Matrix, Vector
 
 #: Alias for a tidal type.
 TidalModel = Union[TidalModelInterfaceComplex64, TidalModelInterfaceComplex128]
 
-#: Pattern to search for an environment variable.
-PATTERN: Callable[[str], Match | None] = re.compile(r'\${(\w+)}').search
+#: Pattern matching a reference to an environment variable.
+PATTERN: re.Pattern[str] = re.compile(r'\${(\w+)}')
 
 #: Maximum number of nested environment variables.
 MAX_INTERPOLATION_DEPTH = 10
@@ -89,6 +89,28 @@ class InterpolationDepthError(Exception):
     """
 
 
+def _substitute(match: Match[str]) -> str:
+    """Replace a reference to an environment variable by its value.
+
+    Args:
+        match: Reference to the environment variable found.
+
+    Returns:
+        The value of the environment variable.
+
+    Raises:
+        InterpolationError: If the environment variable found is not defined.
+
+    """
+    name: str = match.group(1)
+    try:
+        return os.environ[name]
+    except KeyError:
+        raise InterpolationError(
+            f"The shell variable {name!r} doesn't exist."
+        ) from None
+
+
 def _expand(rawval: str) -> str:
     """Interpolation of environment variables present in a character string.
 
@@ -107,32 +129,13 @@ def _expand(rawval: str) -> str:
     result: str = rawval
     if '$' not in result:
         return result
-    interpolation = False
-    depth = MAX_INTERPOLATION_DEPTH
-    while depth:
-        depth -= 1
-        match: Match[str] | None = PATTERN(result)
-        if not match:
-            break
-
-        istart: int
-        iend: int
-        istart, iend = match.span(0)
-        name: str = match.group(1)
-        if name in os.environ:
-            interpolation = True
-            tail: str = result[iend:]
-            result = result[:istart] + os.environ[name]
-            result += tail
-        else:
-            raise InterpolationError(
-                f"The shell variable {name!r} doesn't exist."
-            )
-    if '$' in result and interpolation:
-        raise InterpolationDepthError(
-            f'Value interpolation too deeply recursive: {rawval!r}.'
-        )
-    return result
+    for _ in range(MAX_INTERPOLATION_DEPTH):
+        if PATTERN.search(result) is None:
+            return result
+        result = PATTERN.sub(_substitute, result)
+    raise InterpolationDepthError(
+        f'Value interpolation too deeply recursive: {rawval!r}.'
+    )
 
 
 def _parse(contents: Any) -> Any:  # noqa: ANN401
