@@ -29,7 +29,7 @@ constexpr auto kConstituentNames =
         "S1",    "S2",    "S4",    "S6",     "Sa",   "Sa1",     "Sigma1",
         "SK3",   "SK4",   "SKM2",  "SN4",    "SO1",  "SO3",     "Ssa",
         "Sta",   "T2",    "Tau1",  "Theta1", "Ups1",
-    };
+};
 
 auto parse(const std::string& constituent_name) -> ConstituentId {
   for (size_t ix = 0; ix < kNumConstituents; ++ix) {
