@@ -6,6 +6,8 @@
 
 #include <gtest/gtest.h>
 
+#include <cmath>
+
 namespace fes {
 namespace angle {
 
@@ -39,6 +41,27 @@ TEST(Angle, Meeus) {
   EXPECT_NEAR(a.t(), 3.1415926535897931, 1e-6);
   EXPECT_NEAR(a.x1ra(), 0.7873131023129901, 1e-6);
   EXPECT_NEAR(a.xi(), -0.20894666114487137, 1e-6);
+}
+
+// The mean longitude of the Sun is h = s - D, where D is the mean elongation
+// of the Moon (Meeus, Astronomical Algorithms, 2nd ed., 1998, eq. 47.2):
+// D = 297.8501921 + 445267.1114034 T - 0.0018819 T^2 + T^3 / 545868
+//     - T^4 / 113065000
+TEST(Angle, MeeusMeanElongation) {
+  // 1000-01-01, 1900-01-01, 2100-01-01 and 3000-01-01: far from J2000, the T^3
+  // and T^4 terms are large enough to be checked (3.7e-6 degrees at 1900 and
+  // 2100, 3.5e-3 degrees at 1000 and 3000).
+  for (const auto epoch :
+       {-30610224000.0, -2208988800.0, 4102444800.0, 32503680000.0}) {
+    auto a = Astronomic(Formulae::kMeeus, epoch);
+    // Julian centuries (TT) since J2000
+    auto jc = (epoch + fetch_delta_time(epoch) - 946728000.0) / 3155760000.0;
+    auto d = detail::math::horner(jc, 297.8501921, 445267.1114034, -0.0018819,
+                                  1.0 / 545868.0, -1.0 / 113065000.0);
+    auto residual = std::remainder(a.s() - a.h() - detail::math::radians(d),
+                                   detail::math::two_pi<double>());
+    EXPECT_NEAR(residual, 0.0, 1e-9) << "epoch: " << epoch;
+  }
 }
 
 TEST(Angle, SchuremanOrder1) {

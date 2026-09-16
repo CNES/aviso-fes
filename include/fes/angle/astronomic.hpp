@@ -558,7 +558,7 @@ Astronomic::schureman_order3(const double epoch) noexcept -> void {
 FES_MATH_CONSTEXPR auto Astronomic::meeus(const double epoch) noexcept -> void {
   // Number of seconds elapsed since 2000-01-01T12:00:00Z (J2000) to epoch
   constexpr auto j2000 = 946728000.0;
-  // Julian Ephemeris Millennium
+  // Julian centuries (TT) since J2000
   const auto jc = (utc_2_tdt(epoch) - j2000) / 3155760000.0;
 
   // Longitude of moon's node (N)
@@ -577,7 +577,7 @@ FES_MATH_CONSTEXPR auto Astronomic::meeus(const double epoch) noexcept -> void {
   // Jean Meeus, Astronomical Algorithms, 2nd ed., 1998., Willmann-Bell, Inc.
   // Formula 47.2, page 338.
   auto d = detail::math::horner(jc, 297.8501921, 445267.1114034, -0.0018819,
-                                -1.0 / 545868.0, 1.0 / 113065000.0);
+                                1.0 / 545868.0, -1.0 / 113065000.0);
 
   // Mean longitude of sun (h)
   h_ = s_ - d;
@@ -601,7 +601,7 @@ FES_MATH_CONSTEXPR auto Astronomic::meeus(const double epoch) noexcept -> void {
 auto FES_MATH_CONSTEXPR Astronomic::iers(const double epoch) noexcept -> void {
   // Number of seconds elapsed since 2000-01-01T12:00:00Z (J2000) to epoch
   constexpr auto j2000 = 946728000.0;
-  // Julian Ephemeris Millennium
+  // Julian centuries (TT) since J2000
   const auto jc = (utc_2_tdt(epoch) - j2000) / 3155760000.0;
   // Arcseconds in a full circle
   constexpr auto arcseconds_in_circle = 1296000.0;

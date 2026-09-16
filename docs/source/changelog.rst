@@ -56,6 +56,10 @@ Bug Fixes
     local copies of ``finals.all`` and ``leap-seconds.list``
     (``--finals``, ``--leap-seconds``) and records their SHA-256, so that the
     table can be regenerated identically.
+* Fixed the signs of the :math:`T^3` and :math:`T^4` terms of the mean
+  elongation of the Moon in the ``MEEUS`` formulae (Meeus, 1998, eq. 47.2).
+  The mean longitudes of the Sun and of the solar perigee change by
+  3.7e-6 degrees one century away from J2000.
 
 2026.5.2
 ========
