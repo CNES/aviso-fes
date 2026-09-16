@@ -87,7 +87,10 @@ lons = np.full(dates.shape, -7.688)
 lats = np.full(dates.shape, 59.195)
 
 tide, lp, flags = pyfes.evaluate_tide(
-    config.models['tide'], dates, lons, lats,
+    config.models['tide'],
+    dates,
+    lons,
+    lats,
     settings=config.settings,
 )
 total_tide = tide + lp  # in the same units as the tidal atlas
@@ -104,7 +107,9 @@ constituents = {
 }
 
 tide, lp = pyfes.evaluate_tide_from_constituents(
-    constituents, dates, latitude=48.38,
+    constituents,
+    dates,
+    latitude=48.38,
 )
 ```
 
