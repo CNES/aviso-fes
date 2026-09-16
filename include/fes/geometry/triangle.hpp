@@ -154,17 +154,6 @@ class Triangle : public GeographicPolygon {
   /// is undefined.
   auto reference_right_angled(const Point &point) const
       -> std::tuple<double, double>;
-
-  /// Calculate the projection of a point on the triangle.
-  ///
-  /// @param[in] point The point.
-  /// @return The projection of the point on the triangle.
-  auto project(const Point &point) const -> Point {
-    boost::geometry::model::segment<Point> segment;
-
-    detail::geometry::closest_points(point, *this, segment);
-    return point == segment.second ? segment.first : segment.second;
-  }
 };
 
 }  // namespace geometry

@@ -70,18 +70,5 @@ TEST(Triangle, ReferenceRightAngled) {
   EXPECT_NEAR(0.0, y, 1e-6);
 }
 
-TEST(Triangle, ReferenceRightAngledDegradedCase) {
-  double x = NAN;
-  double y = NAN;
-  auto v1 = Point(-122.3500060000000075888238, 38.00500499999999703959475);
-  auto v2 = Point(-122.4700000000000272848411, 38.11000400000000354339136);
-  auto v3 = Point(-122.4700000000000272848411, 37.97500200000000347699824);
-  auto triangle = Triangle(v1, v2, v3);
-  auto pt = triangle.project({-122.5, 38.0});
-  std::tie(x, y) = triangle.reference_right_angled(pt);
-  EXPECT_NEAR(x, 0.18519769401644656, 1e-6);
-  EXPECT_NEAR(y, 0.81480230598367187, 1e-6);
-}
-
 }  // namespace geometry
 }  // namespace fes
