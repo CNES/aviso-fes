@@ -22,6 +22,14 @@ Build System
   so the example builds reliably inside conda and mamba/micromamba
   environments.
 
+Bug Fixes
+---------
+* Fixed environment variable interpolation in ``pyfes.config.load``. A value
+  expanding to a string containing ``$`` (e.g. ``/data/fes$2022``), or
+  referencing more than 10 variables without nesting, was wrongly rejected
+  with ``InterpolationDepthError``. The limit of 10 now applies to the nesting
+  depth only (`#60 <https://github.com/CNES/aviso-fes/pull/60>`_).
+
 2026.5.2
 ========
 

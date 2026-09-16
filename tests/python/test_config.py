@@ -111,6 +111,17 @@ def test_config_expand_nested_variables(monkeypatch) -> None:
     )
 
 
+def test_config_expand_nesting_up_to_the_depth(monkeypatch) -> None:
+    """Test variables nested as deep as, then deeper than, the depth."""
+    depth = pyfes.config.MAX_INTERPOLATION_DEPTH
+    for index in range(depth):
+        monkeypatch.setenv(f'FES_TEST_{index}', f'${{FES_TEST_{index + 1}}}')
+    monkeypatch.setenv(f'FES_TEST_{depth}', 'leaf')
+    assert pyfes.config._expand('${FES_TEST_1}') == 'leaf'
+    with pytest.raises(pyfes.config.InterpolationDepthError):
+        pyfes.config._expand('${FES_TEST_0}')
+
+
 def test_config_expand_self_referencing_variable(monkeypatch) -> None:
     """Test a variable defining itself."""
     monkeypatch.setenv('FES_TEST_LOOP', '${FES_TEST_LOOP}')

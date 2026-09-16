@@ -130,9 +130,9 @@ def _expand(rawval: str) -> str:
     if '$' not in result:
         return result
     for _ in range(MAX_INTERPOLATION_DEPTH):
+        result = PATTERN.sub(_substitute, result)
         if PATTERN.search(result) is None:
             return result
-        result = PATTERN.sub(_substitute, result)
     raise InterpolationDepthError(
         f'Value interpolation too deeply recursive: {rawval!r}.'
     )
