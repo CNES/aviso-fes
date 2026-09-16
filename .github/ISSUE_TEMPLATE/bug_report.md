@@ -25,6 +25,7 @@ A clear and concise description of what you expected to happen.
 Output from
 ```python
 import sys, numpy, pyfes.version
+
 print(pyfes.__version__)
 print(numpy.__version__)
 print(sys.version)
