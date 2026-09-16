@@ -18,7 +18,7 @@ repos:
     - id: pyupgrade
       args: [--py310-plus]
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.13
+    rev: v0.16.7
     hooks:
       - id: ruff
         args: [--fix, --unsafe-fixes]
@@ -33,18 +33,18 @@ repos:
       types: [file]
       files: CMakeLists.txt
   - repo: https://github.com/codespell-project/codespell
-    rev: "v2.4.1"
+    rev: "v2.4.3"
     hooks:
     - id: codespell
       exclude: "leap-seconds.txt"
       args: [-L inout]
   - repo: https://github.com/pre-commit/mirrors-clang-format
-    rev: v21.1.8
+    rev: v23.1.1
     hooks:
       - id: clang-format
         exclude: "(.*json)"
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.19.1
+    rev: v2.3.1
     hooks:
       - id: mypy
         exclude: docs
