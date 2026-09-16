@@ -29,6 +29,33 @@ Bug Fixes
   referencing more than 10 variables without nesting, was wrongly rejected
   with ``InterpolationDepthError``. The limit of 10 now applies to the nesting
   depth only (`#60 <https://github.com/CNES/aviso-fes/pull/60>`_).
+* Fixed Delta T (TT - UT1), used to convert UTC to TDT by the ``MEEUS`` and
+  ``IERS`` astronomic formulae (``IERS`` is the default of the PERTH engine;
+  the Schureman formulae used by default with FES atlases are not affected):
+
+  - After its IERS table (2027-01-01T06:00Z), Delta T jumped by 48 s and then
+    followed the Morrison & Stephenson (2004) parabola, 48 s to 65 s too high
+    over 2027-2040. It now continues the least-squares trend of the last two
+    years of IERS data (69.42 s in mid-2028, 69.73 s in mid-2030, 71.28 s in
+    mid-2040) and blends into the parabola between 2050 and 2150. Predicted
+    tides change by up to 1.1 mm over 2028-2035 where the tidal range
+    reaches 7 m, and by 0.17 mm in the open ocean.
+  - The polynomial of Espenak & Meeus for 1900-1920 was applied up to 1973
+    (-534 s in 1950, -3397 s at the end of 1972). Delta T now follows the
+    Espenak & Meeus (2006) polynomials of every era from -500 to 1973 (with
+    the parabola before -500), joined smoothly to each other and to the IERS
+    data. This also removes a 15 s jump in 1600.
+  - The IERS table held yearly means stamped at the start of each year, half
+    a year too early (biased by up to 0.57 s). It now holds calendar-month
+    means stamped at the mean date of their days, within 7 ms of the daily
+    IERS values. Tides computed since 1973 change by up to 10 µm.
+  - ``fetch_delta_time`` can now be evaluated at compile time for every epoch
+    in C++14 (GCC 11 or later). ``DeltaTEntry`` stores a Modified Julian Date
+    (``mjd``) instead of a decimal year (``year``).
+  - ``scripts/generate_delta_cpp.py`` generates the monthly table, accepts
+    local copies of ``finals.all`` and ``leap-seconds.list``
+    (``--finals``, ``--leap-seconds``) and records their SHA-256, so that the
+    table can be regenerated identically.
 
 2026.5.2
 ========

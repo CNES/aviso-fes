@@ -116,6 +116,16 @@ improved precision for modern epochs.
     UTC to TDT using the ``utc_2_tdt()`` function, applying the appropriate
     :math:`\Delta T` correction.
 
+    From 1973, :math:`\Delta T` is interpolated linearly in monthly means of
+    the IERS values and IERS Bulletin A predictions (``finals.all``). Beyond
+    them, it continues the least-squares trend of their last two years, and
+    blends from 2050 to 2150 into the long-term parabola of Morrison &
+    Stephenson (2004). Before 1973, it follows the polynomials of Espenak &
+    Meeus (2006), joined smoothly to each other and to the IERS data. Values
+    beyond the predictions are extrapolations: over 1973-2026, this method
+    missed the observed :math:`\Delta T` by 1.0 s RMS after five years and
+    3.2 s RMS after thirteen years.
+
 IERS
 =====
 
