@@ -8,12 +8,13 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
+# Cancel superseded runs of the same pull request. Every push gets its own
+# group, so all pushed commits are tested and nothing is serialized; the
+# deploy job serializes GitHub Pages deployments on its own.
 concurrency:
-  group: "pages"
-  cancel-in-progress: false
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   linux:
@@ -52,23 +53,6 @@ jobs:
         python setup.py build
         pytest -q -ra
 
-    - name: Generate Documentation
-      shell: bash -l {0}
-      run: |
-        sphinx-build -b html docs/source docs/build
-
-    - name: Setup Pages
-      uses: actions/configure-pages@v5
-
-    - name: Upload artifact
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: docs/build
-
-    - name: Deploy to GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v4
-
     - name: Build C++ Library and Testing
       shell: bash -l {0}
       run: |
@@ -77,6 +61,17 @@ jobs:
         cmake .. -DFES_ENABLE_TEST=ON
         make -j 2
         ctest
+
+    - name: Generate Documentation
+      shell: bash -l {0}
+      run: |
+        sphinx-build -b html docs/source docs/build
+
+    - name: Upload artifact
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: docs/build
 
   win:
     name: win
@@ -112,3 +107,26 @@ jobs:
         python setup.py build_ext --generator="Visual Studio 17 2022"
         python setup.py build
         pytest -q -ra
+
+  # Publish the documentation built by the linux job. Pull requests never reach
+  # this job: fork PRs cannot obtain the Pages/OIDC permissions it requires.
+  deploy:
+    name: deploy-docs
+    needs: linux
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    # Run one deployment at a time and never interrupt one in progress.
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+
+    steps:
+    - name: Setup Pages
+      uses: actions/configure-pages@v5
+
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
