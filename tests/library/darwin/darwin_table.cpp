@@ -510,6 +510,36 @@ inline auto check_wave_table_constructor(const WaveTable& table) -> void {
         EXPECT_NEAR(wave->frequency<kDegreePerHour>(), 72.927139789, 1e-7);
         EXPECT_EQ(wave->type(), kShortPeriod);
         break;
+      case kTau1:
+        EXPECT_EQ(wave->ident(), kTau1);
+        EXPECT_NEAR(wave->frequency<kDegreePerHour>(), 14.0251729, 1e-7);
+        EXPECT_EQ(wave->type(), kShortPeriod);
+        break;
+      case kBeta1:
+        EXPECT_EQ(wave->ident(), kBeta1);
+        EXPECT_NEAR(wave->frequency<kDegreePerHour>(), 14.4145567, 1e-7);
+        EXPECT_EQ(wave->type(), kShortPeriod);
+        break;
+      case kGamma2:
+        EXPECT_EQ(wave->ident(), kGamma2);
+        EXPECT_NEAR(wave->frequency<kDegreePerHour>(), 28.9112506, 1e-7);
+        EXPECT_EQ(wave->type(), kShortPeriod);
+        break;
+      case kAlpha2:
+        EXPECT_EQ(wave->ident(), kAlpha2);
+        EXPECT_NEAR(wave->frequency<kDegreePerHour>(), 28.9430376, 1e-7);
+        EXPECT_EQ(wave->type(), kShortPeriod);
+        break;
+      case kBeta2:
+        EXPECT_EQ(wave->ident(), kBeta2);
+        EXPECT_NEAR(wave->frequency<kDegreePerHour>(), 29.0251709, 1e-7);
+        EXPECT_EQ(wave->type(), kShortPeriod);
+        break;
+      case kDelta2:
+        EXPECT_EQ(wave->ident(), kDelta2);
+        EXPECT_NEAR(wave->frequency<kDegreePerHour>(), 29.0662415, 1e-7);
+        EXPECT_EQ(wave->type(), kShortPeriod);
+        break;
       default:
         break;
     }

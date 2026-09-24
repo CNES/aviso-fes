@@ -283,7 +283,7 @@ TEST(InferenceTest, FourierInference) {
 
 // The Perth inference must work with the Darwin wave table, which does not
 // define all the constituents handled by the Perth admittance tables (e.g.
-// Tau1, Alpha2 or Node).
+// Ups1, MSm or Node).
 TEST(InferenceTest, ZeroInferenceDarwin) {
   auto wt = fes::darwin::WaveTable();
   for (auto& item : wt) {
@@ -300,7 +300,8 @@ TEST(InferenceTest, ZeroInferenceDarwin) {
     }
   }
   admittance({1, 1}, kM2, wt);
-  EXPECT_EQ(boost::range::find(inferred, kTau1), inferred.end());
+  EXPECT_NE(boost::range::find(inferred, kTau1), inferred.end());
+  EXPECT_EQ(boost::range::find(inferred, kUps1), inferred.end());
   EXPECT_EQ(boost::range::find(inferred, kNode), inferred.end());
 }
 

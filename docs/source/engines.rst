@@ -34,7 +34,7 @@ Engine Comparison
      - :term:`Darwin notation`
      - :term:`Doodson numbers <Doodson number>`
    * - **Constituents**
-     - 99
+     - 105
      - 80
    * - **Nodal corrections**
      - Individual Schureman factors
@@ -102,7 +102,7 @@ Default Settings
 Constituent List
 ----------------
 
-The Darwin engine supports 99 tidal constituents. See
+The Darwin engine supports 105 tidal constituents. See
 :doc:`constituents/darwin` for the complete list with frequencies and
 :term:`XDO notation`.
 

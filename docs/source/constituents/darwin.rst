@@ -28,6 +28,8 @@ Q1                            13.3986609     A XZA ZZY
 Rho1 (:math:`{\rho}1`)        13.4715145     A XBY ZZY
 O1                            13.9430356     A YZZ ZZY
 MP1                           14.0251729     A YBZ ZZA
+Tau1 (:math:`{\tau}1`)        14.0251729     A YBZ ZZA
+Beta1 (:math:`{\beta}1`)      14.4145567     A ZXA ZZA
 M11                           14.4874103     A ZZY ZZA
 M13                           14.4920521     A ZZZ ZZZ
 M1                            14.4966939     A ZZA ZZA
@@ -56,8 +58,12 @@ N2P                           28.4350877     B YZZ ZZY
 N2                            28.4397295     B YZA ZZZ
 Nu2 (:math:`{\nu}2`)          28.5125832     B YBY ZZZ
 MSK2                          28.9019670     B ZXZ ZZZ
+Gamma2 (:math:`{\gamma}2`)    28.9112506     B ZXB ZZB
+Alpha2 (:math:`{\alpha}2`)    28.9430376     B ZYZ ZAB
 M2                            28.9841042     B ZZZ ZZZ
+Beta2 (:math:`{\beta}2`)      29.0251709     B ZAZ ZYZ
 MKS2                          29.0662415     B ZBZ ZZZ
+Delta2 (:math:`{\delta}2`)    29.0662415     B ZBZ ZZZ
 Lambda2 (:math:`{\lambda}2`)  29.4556253     B AXA ZZB
 2MN2                          29.5284789     B AZY ZZB
 L2                            29.5284789     B AZY ZZB

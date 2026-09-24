@@ -303,7 +303,7 @@ inline auto perth_frequency(const ConstituentId ident) -> double {
 /// but without frequencies.
 /// @param[in] wave_table The wave table containing the waves for the
 /// constituents, used to look up frequencies for the inferred constituents.
-/// Constituents not defined in this table (e.g. Tau1 or Node for the Darwin
+/// Constituents not defined in this table (e.g. Ups1 or Node for the Darwin
 /// engine) use the frequency defined by the Perth engine.
 template <size_t N>
 auto populate_and_sort_inferred(

@@ -142,6 +142,33 @@ class Wave : public WaveInterface {
   }
 };
 
+/// @brief Wave whose nodal corrections follow R. Ray's formulas (PERTH engine)
+/// rather than Schureman (1958).
+///
+/// For some minor constituents, the nodal modulation is dominated by satellite
+/// lines of the Cartwright-Tayler-Edden expansion of the tidal potential that
+/// Schureman's obliquity factors do not account for. For these waves, the
+/// Greenwich argument @f$V@f$ is still computed from the Darwin arguments, but
+/// @f$f@f$ and @f$u@f$ are those of the PERTH engine.
+class RayWave : public Wave {
+ public:
+  /// @brief Initializes the properties of the wave.
+  /// @param[in] ident Tidal constituent identifier.
+  /// @param[in] type Type of tidal wave
+  /// @param[in] darwin Darwin parameters for the wave (without any nodal
+  /// coefficient)
+  RayWave(const ConstituentId ident, WaveType type,
+          const Darwin& darwin) noexcept
+      : Wave(ident, type, darwin, &angle::Astronomic::f_1) {}
+
+ protected:
+  /// Computes the Greenwich argument from the Darwin arguments, and replaces
+  /// the nodal corrections by those computed by the PERTH engine.
+  ///
+  /// @param[in] angular_position Astronomic angle
+  void nodal_g(const angle::Astronomic& angular_position) override;
+};
+
 namespace wave {
 
 /// @brief @f$Mm@f$
@@ -1520,6 +1547,113 @@ class _2SMu2 : public Wave {
 class _2MP5 : public Wave {
  public:
   _2MP5();
+};
+
+/// @brief @f$\tau_1@f$
+///
+/// <table>
+/// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
+/// <tr><td>@f$T - 2s + 3h - 90^{\circ}@f$</td>
+/// <td colspan="2">@f$f e^{iu} = 1 - 0.219 e^{-iN}@f$</td></tr>
+/// </table>
+/// @note Schureman: %Table 2, Page 164, Ref. A29 (listed as @f$MP_1@f$).
+/// Schureman's nodal corrections for this term (@f$f(J_1)@f$, @f$-\nu@f$)
+/// have the wrong sign of modulation; the nodal corrections are those of
+/// R. Ray (PERTH), in agreement with Foreman (1977).
+class Tau1 : public RayWave {
+ public:
+  Tau1();
+
+ private:
+  /// Clones the wave. This is a helper function for the public clone() method.
+  auto clone_impl() const -> std::unique_ptr<WaveInterface> override {
+    return std::make_unique<Tau1>(*this);
+  }
+};
+
+/// @brief @f$\beta_1@f$
+///
+/// <table>
+/// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
+/// <tr><td>@f$T - s - h + p - 90^{\circ}@f$</td>
+/// <td>@f$+2\xi - \nu@f$</td>
+/// <td>@f$f(O_1)@f$</td></tr>
+/// </table>
+/// @note Schureman: %Table 2, Page 164, Ref. A21
+class Beta1 : public Wave {
+ public:
+  Beta1();
+};
+
+/// @brief @f$\gamma_2@f$
+///
+/// <table>
+/// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
+/// <tr><td>@f$2T - 2s + 2p + 180^{\circ}@f$</td>
+/// <td colspan="2">@f$f e^{iu} = 1 + 0.147 e^{2i(N - p)}@f$</td></tr>
+/// </table>
+/// @note Not listed by Schureman. The nodal corrections are those of R. Ray
+/// (PERTH), in agreement with Foreman (1977).
+class Gamma2 : public RayWave {
+ public:
+  Gamma2();
+
+ private:
+  /// Clones the wave. This is a helper function for the public clone() method.
+  auto clone_impl() const -> std::unique_ptr<WaveInterface> override {
+    return std::make_unique<Gamma2>(*this);
+  }
+};
+
+/// @brief @f$\alpha_2@f$
+///
+/// <table>
+/// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
+/// <tr><td>@f$2T - 2s + h + p_1 + 180^{\circ}@f$</td>
+/// <td>@f$+2\xi - 2\nu@f$</td>
+/// <td>@f$f(M_2)@f$</td></tr>
+/// </table>
+/// @note Not listed by Schureman.
+class Alpha2 : public Wave {
+ public:
+  Alpha2();
+};
+
+/// @brief @f$\beta_2@f$
+///
+/// <table>
+/// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
+/// <tr><td>@f$2T - 2s + 3h - p_1@f$</td>
+/// <td>@f$+2\xi - 2\nu@f$</td>
+/// <td>@f$f(M_2)@f$</td></tr>
+/// </table>
+/// @note Not listed by Schureman.
+class Beta2 : public Wave {
+ public:
+  Beta2();
+};
+
+/// @brief @f$\delta_2@f$
+///
+/// <table>
+/// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
+/// <tr><td>@f$2T - 2s + 4h@f$</td>
+/// <td colspan="2">@f$f e^{iu} = 1 - 0.505 e^{-2ip} - 0.505 e^{-iN}
+/// + 0.165 e^{-2iN}@f$</td></tr>
+/// </table>
+/// @note Schureman: %Table 2, Page 165, Ref. A54. Schureman's nodal
+/// corrections for this term (@f$f(79)@f$, @f$-2\nu@f$) ignore satellites as
+/// large as half the main line; the nodal corrections are those of R. Ray
+/// (PERTH).
+class Delta2 : public RayWave {
+ public:
+  Delta2();
+
+ private:
+  /// Clones the wave. This is a helper function for the public clone() method.
+  auto clone_impl() const -> std::unique_ptr<WaveInterface> override {
+    return std::make_unique<Delta2>(*this);
+  }
 };
 
 }  // namespace wave

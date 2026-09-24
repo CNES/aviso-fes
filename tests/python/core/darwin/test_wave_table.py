@@ -24,8 +24,8 @@ FES_TIDE_TIME_SERIES = DATASET_DIR / 'fes_tide_time_series.nc'
 
 def test_constructor() -> None:
     wt = core.wave_table_factory(core.DARWIN)
-    assert len(wt) == 99
-    assert len(wt.waves()) == 99
+    assert len(wt) == 105
+    assert len(wt.waves()) == 105
     with pytest.raises(
         ValueError,
         match='unknown constituent name: __M2__',

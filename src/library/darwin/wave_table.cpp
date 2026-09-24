@@ -217,6 +217,18 @@ static auto wave_factory(ConstituentId ident)
       return std::unique_ptr<WaveInterface>(new wave::_2SMu2());
     case k2MP5:
       return std::unique_ptr<WaveInterface>(new wave::_2MP5());
+    case kTau1:
+      return std::unique_ptr<WaveInterface>(new wave::Tau1());
+    case kBeta1:
+      return std::unique_ptr<WaveInterface>(new wave::Beta1());
+    case kGamma2:
+      return std::unique_ptr<WaveInterface>(new wave::Gamma2());
+    case kAlpha2:
+      return std::unique_ptr<WaveInterface>(new wave::Alpha2());
+    case kBeta2:
+      return std::unique_ptr<WaveInterface>(new wave::Beta2());
+    case kDelta2:
+      return std::unique_ptr<WaveInterface>(new wave::Delta2());
     default:
       throw std::invalid_argument("wave identifier not recognized: " +
                                   std::to_string(ident));

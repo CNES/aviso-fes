@@ -4,8 +4,15 @@
 // BSD-style license that can be found in the LICENSE file.
 #include <gtest/gtest.h>
 
+#include <map>
+#include <string>
+#include <utility>
+#include <vector>
+
 #include "fes/darwin/wave_table.hpp"
 #include "fes/interface/wave.hpp"
+#include "fes/perth/nodal_corrections.hpp"
+#include "fes/perth/wave_table.hpp"
 
 namespace fes {
 namespace darwin {
@@ -79,9 +86,23 @@ class AstronomicAngleForNodalA : public fes::angle::Astronomic {
   }
 };
 
+// Checks a wave whose nodal corrections are computed by the PERTH engine.
+inline auto check_ray_wave(const WaveInterface& wave,
+                           const angle::Astronomic& angles, const double v)
+    -> void {
+  const auto expected = perth::evaluate_nodal_correction(
+      detail::math::degrees(angles.n()), detail::math::degrees(angles.p()),
+      wave.ident());
+  EXPECT_NEAR(wave.f(), expected.f, 1e-12);
+  EXPECT_NEAR(detail::math::degrees(wave.u()), expected.u, 1e-10);
+  EXPECT_NEAR(detail::math::degrees(wave.vu()),
+              detail::math::normalize_angle(v + expected.u), 1e-8);
+}
+
 // NOLINTBEGIN(readability-function-cognitive-complexity)
 // Used to test all wave components in a single function
-inline auto check_nodal_phase(const WaveTable& table) -> void {
+inline auto check_nodal_phase(const WaveTable& table,
+                              const angle::Astronomic& angles) -> void {
   for (auto&& item : table) {
     auto& wave = item.value();
     switch (wave->ident()) {
@@ -382,13 +403,32 @@ inline auto check_nodal_phase(const WaveTable& table) -> void {
       case k2MP5:
         EXPECT_NEAR(detail::math::degrees(wave->vu()), 94, 1e-8);
         break;
+      case kTau1:
+        check_ray_wave(*wave, angles, -88);
+        break;
+      case kBeta1:
+        EXPECT_NEAR(detail::math::degrees(wave->vu()), 271, 1e-8);
+        break;
+      case kGamma2:
+        check_ray_wave(*wave, angles, 182);
+        break;
+      case kAlpha2:
+        EXPECT_NEAR(detail::math::degrees(wave->vu()), 182, 1e-8);
+        break;
+      case kBeta2:
+        EXPECT_NEAR(detail::math::degrees(wave->vu()), 2, 1e-8);
+        break;
+      case kDelta2:
+        check_ray_wave(*wave, angles, 4);
+        break;
       default:
         throw std::runtime_error(wave->name());
     }
   }
 }
 
-inline auto check_nodal_amplitude(const WaveTable& table) {
+inline auto check_nodal_amplitude(const WaveTable& table,
+                                  const angle::Astronomic& angles) {
   for (auto&& item : table) {
     const auto& wave = item.value();
     switch (wave->ident()) {
@@ -400,6 +440,7 @@ inline auto check_nodal_amplitude(const WaveTable& table) {
       case kM11:
       case kSO1:
       case kSO3:
+      case kBeta1:
         EXPECT_NEAR(wave->f(), kFO1, 1e-8);
         break;
       case kP1:
@@ -437,6 +478,8 @@ inline auto check_nodal_amplitude(const WaveTable& table) {
       case kMSf:
       case k2SMu2:
       case kL2:
+      case kAlpha2:
+      case kBeta2:
         EXPECT_NEAR(wave->f(), kFM2, 1e-8);
         break;
       case kK2:
@@ -546,6 +589,16 @@ inline auto check_nodal_amplitude(const WaveTable& table) {
       case k2NM6:
         EXPECT_NEAR(wave->f(), detail::math::pow<4>(kFM2) * kFM2, 1e-8);
         break;
+      case kTau1:
+      case kGamma2:
+      case kDelta2:
+        EXPECT_NEAR(wave->f(),
+                    perth::evaluate_nodal_correction(
+                        detail::math::degrees(angles.n()),
+                        detail::math::degrees(angles.p()), wave->ident())
+                        .f,
+                    1e-12);
+        break;
       default:
         throw std::runtime_error(wave->name());
     }
@@ -555,14 +608,54 @@ inline auto check_nodal_amplitude(const WaveTable& table) {
 
 TEST(Wave, NodalPhase) {
   auto table = WaveTable();
-  table.compute_nodal_corrections(AstronomicAngleForNodalG(), false);
-  check_nodal_phase(table);
+  const auto angles = AstronomicAngleForNodalG();
+  table.compute_nodal_corrections(angles, false);
+  check_nodal_phase(table, angles);
 }
 
 TEST(Wave, NodalAmplitude) {
   auto table = WaveTable();
-  table.compute_nodal_corrections(AstronomicAngleForNodalA(), false);
-  check_nodal_amplitude(table);
+  const auto angles = AstronomicAngleForNodalA();
+  table.compute_nodal_corrections(angles, false);
+  check_nodal_amplitude(table, angles);
+}
+
+// Validates the nodal corrections of Tau1, Beta1, Gamma2, Alpha2, Beta2 and
+// Delta2 against the PERTH engine over 40 years (1990-2030). Beta1, Alpha2 and
+// Beta2 use Schureman's formulas, which differ slightly from those of R. Ray;
+// the other ones use R. Ray's formulas and must be identical.
+TEST(Wave, NodalCorrectionsAgainstPerth) {
+  const auto names = std::vector<std::string>{"Tau1",   "Beta1", "Gamma2",
+                                              "Alpha2", "Beta2", "Delta2"};
+  // Maximum differences on f and on V + u (degrees).
+  const auto tolerances = std::map<ConstituentId, std::pair<double, double>>{
+      {kTau1, {1e-12, 1e-8}}, {kBeta1, {0.045, 3.6}}, {kGamma2, {1e-12, 1e-8}},
+      {kAlpha2, {0.04, 3.7}}, {kBeta2, {0.04, 3.7}},  {kDelta2, {1e-12, 1e-8}}};
+  auto darwin_table = WaveTable(names);
+  auto perth_table = perth::WaveTable(names);
+  for (const auto& item : tolerances) {
+    EXPECT_NEAR(darwin_table[item.first]->frequency<kDegreePerHour>(),
+                perth_table[item.first]->frequency<kDegreePerHour>(), 1e-7);
+  }
+  for (auto day = 0; day <= 40 * 365; day += 5) {
+    // 631152000 = 1990-01-01 00:00:00 UTC
+    const auto angles = angle::Astronomic(angle::Formulae::kIERS,
+                                          631152000.0 + (day * 86400.0));
+    darwin_table.compute_nodal_corrections(angles, false);
+    perth_table.compute_nodal_corrections(angles, false);
+    for (const auto& item : tolerances) {
+      const auto& darwin_wave = darwin_table[item.first];
+      const auto& perth_wave = perth_table[item.first];
+      EXPECT_NEAR(darwin_wave->f(), perth_wave->f(), item.second.first)
+          << darwin_wave->name();
+      EXPECT_NEAR(
+          detail::math::normalize_angle(
+              detail::math::degrees(darwin_wave->vu() - perth_wave->vu()),
+              -180.0),
+          0.0, item.second.second)
+          << darwin_wave->name();
+    }
+  }
 }
 
 }  // namespace darwin

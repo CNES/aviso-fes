@@ -17,7 +17,7 @@ inspect the constituent definitions.
 Darwin
 ------
 
-The :mod:`pyfes.darwin` module provides the 99 constituents expressed in Darwin
+The :mod:`pyfes.darwin` module provides the 105 constituents expressed in Darwin
 notation with Schureman's nodal corrections.
 
 .. autoclass:: pyfes.darwin.WaveTable

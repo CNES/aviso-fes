@@ -6,6 +6,26 @@ Changelog
 Unreleased
 ==========
 
+New Features
+------------
+* Added the :math:`\tau_1`, :math:`\beta_1`, :math:`\gamma_2`,
+  :math:`\alpha_2`, :math:`\beta_2` and :math:`\delta_2` constituents to the
+  Darwin engine (105 constituents). Their arguments follow Schureman (1958)
+  when listed (:math:`\tau_1`: Ref. A29, listed as :math:`MP_1`;
+  :math:`\beta_1`: A21; :math:`\delta_2`: A54). The nodal corrections were
+  validated against the PERTH engine over 1990-2030:
+
+  - :math:`\beta_1` uses :math:`f(O_1)`, :math:`2\xi - \nu`; :math:`\alpha_2`
+    and :math:`\beta_2` use :math:`f(M_2)`, :math:`2\xi - 2\nu`. They differ
+    from PERTH by less than 4.3 % in amplitude and 3.6° in phase.
+  - For :math:`\tau_1`, :math:`\gamma_2` and :math:`\delta_2`, Schureman's
+    obliquity factors ignore dominant satellite lines of the tidal potential
+    (up to 40 % in amplitude and 107° in phase from PERTH), so these waves
+    use R. Ray's nodal corrections, identical to the PERTH engine.
+
+  The ``ZERO``, ``LINEAR`` and ``FOURIER`` inference modes now also infer
+  these constituents with the Darwin engine.
+
 Build System
 ------------
 * Generate ``include/fes/version.hpp`` with pure CMake (new

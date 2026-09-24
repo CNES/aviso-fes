@@ -74,7 +74,7 @@ mathematical formulation and constituent notation:
 
 * **FES/Darwin Engine** (``engine: darwin``): Uses :term:`Darwin notation` with
   Schureman's nodal corrections. This is the classical approach developed for
-  FES tidal atlases (FES2014, FES2022). It supports 99 tidal constituents and
+  FES tidal atlases (FES2014, FES2022). It supports 105 tidal constituents and
   follows traditional oceanographic conventions.
 
 * **PERTH/Doodson Engine** (``engine: perth``): Uses :term:`Doodson number`

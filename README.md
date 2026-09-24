@@ -121,7 +121,7 @@ PyFES provides two prediction engines to support different tidal atlas formats:
 |---|---|---|
 | **YAML key** | `engine: darwin` | `engine: perth` |
 | **Notation** | Darwin notation | Doodson numbers |
-| **Constituents** | 99 | 80 |
+| **Constituents** | 105 | 80 |
 | **Nodal corrections** | Individual Schureman factors | Individual (group modulations optional) |
 | **Default inference** | `SPLINE` | `LINEAR` |
 | **Compatible atlases** | FES2014, FES2022 | GOT4.10, GOT5.5, GOT5.6 |
@@ -140,7 +140,7 @@ PyFES provides two catalogues of tidal constituents, one for each prediction
 engine. Every constituent is characterised by its name, angular speed, and XDO
 notation encoding.
 
-- **Darwin catalogue** -- 99 constituents used by the FES/Darwin engine. See
+- **Darwin catalogue** -- 105 constituents used by the FES/Darwin engine. See
   the [full list](https://cnes.github.io/aviso-fes/constituents/darwin.html).
 - **Doodson catalogue** -- 80 constituents used by the PERTH/Doodson engine.
   See the [full list](https://cnes.github.io/aviso-fes/constituents/perth.html).

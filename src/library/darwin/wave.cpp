@@ -6,6 +6,7 @@
 
 #include <array>
 
+#include "fes/perth/nodal_corrections.hpp"
 #include "fes/types.hpp"
 
 namespace fes {
@@ -31,6 +32,15 @@ auto Wave::doodson_numbers() const -> Vector7b {
           n,                           // n
           p1,                          // p1
           normalized_shift};           // normalized shift
+}
+
+void RayWave::nodal_g(const angle::Astronomic& angular_position) {
+  Wave::nodal_g(angular_position);
+  const auto nodal = perth::evaluate_nodal_correction(
+      detail::math::degrees(angular_position.n()),
+      detail::math::degrees(angular_position.p()), ident());
+  f_ = nodal.f;
+  u_ = detail::math::radians(nodal.u);
 }
 
 namespace wave {
@@ -479,6 +489,32 @@ _2MP5::_2MP5()
     : Wave(k2MP5, kShortPeriod,
            Darwin::Builder().T(5).s(-4).h(3).shift(1).xi(4).nu(-4),
            &angle::Astronomic::f_m22) {}
+
+Tau1::Tau1()
+    : RayWave(kTau1, kShortPeriod,
+              Darwin::Builder().T(1).s(-2).h(3).shift(-1)) {}
+
+Beta1::Beta1()
+    : Wave(kBeta1, kShortPeriod,
+           Darwin::Builder().T(1).s(-1).h(-1).p(1).shift(-1).xi(2).nu(-1),
+           &angle::Astronomic::f_o1) {}
+
+Gamma2::Gamma2()
+    : RayWave(kGamma2, kShortPeriod,
+              Darwin::Builder().T(2).s(-2).p(2).shift(2)) {}
+
+Alpha2::Alpha2()
+    : Wave(kAlpha2, kShortPeriod,
+           Darwin::Builder().T(2).s(-2).h(1).p1(1).shift(2).xi(2).nu(-2),
+           &angle::Astronomic::f_m2) {}
+
+Beta2::Beta2()
+    : Wave(kBeta2, kShortPeriod,
+           Darwin::Builder().T(2).s(-2).h(3).p1(-1).xi(2).nu(-2),
+           &angle::Astronomic::f_m2) {}
+
+Delta2::Delta2()
+    : RayWave(kDelta2, kShortPeriod, Darwin::Builder().T(2).s(-2).h(4)) {}
 
 }  // namespace wave
 }  // namespace darwin
