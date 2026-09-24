@@ -15,6 +15,7 @@
 #include "fes/interface/wave_table.hpp"
 #include "fes/map.hpp"
 #include "fes/perth/love_numbers.hpp"
+#include "fes/perth/wave_table.hpp"
 #include "fes/types.hpp"
 
 namespace fes {
@@ -126,12 +127,18 @@ class PerthInference : public Inference<PerthInference> {
   Interpolator interpolation_3_;  ///< Interpolation function for long-period.
 
   /// @brief Returns inphase/quad components of the 18.6-y equilibrium node
-  /// tide. This is used only if inference is requested but the node tide is
-  /// missing.
-  /// @param[in,out] node The TideComponent for the node constituent.
+  /// tide.
   /// @param[in] lat The latitude for the computation.
-  static auto evaluate_node_tide(WaveInterface& node, double lat)
-      -> const Complex&;
+  static auto equilibrium_node_tide(double lat) -> Complex;
+
+  /// @brief Returns the node tide used as reference for the long-period
+  /// admittance. If the node tide is not provided by the model, it is set to
+  /// the equilibrium value. If the wave table does not define the node
+  /// constituent (Darwin engine), the equilibrium value is returned.
+  /// @param[in,out] wave_table The wave table to process.
+  /// @param[in] lat The latitude for the computation.
+  static auto evaluate_node_tide(WaveTableInterface& wave_table, double lat)
+      -> Complex;
 };
 
 /// @brief Factory function to create an inference object based on the specified
@@ -271,17 +278,33 @@ inline auto SplineInference::inferred_constituents() const
 
 // ============================================================================
 
+/// @brief Returns the frequency, in degrees per hour, of a constituent handled
+/// by the Perth inference scheme.
+/// @details The frequency is read from the Perth wave table, which defines all
+/// the constituents used by the Perth admittance tables. It is used when the
+/// wave table processed by the inference (e.g. the Darwin one) does not define
+/// the constituent.
+/// @param[in] ident The constituent identifier.
+/// @return The frequency in degrees per hour.
+inline auto perth_frequency(const ConstituentId ident) -> double {
+  static const auto kReferenceTable = perth::WaveTable();
+  return kReferenceTable[ident]->frequency<kDegreePerHour>();
+}
+
 /// @brief Populate the inferred constituents map and sort the keys by
 /// frequency.
 /// @tparam N The maximum number of constituents in the map.
 /// @param[out] mutable_inferred The map to populate with inferred constituents
 /// and their (frequency, amplitude) pairs.
 /// @param[out] keys The vector to populate with the keys of the inferred
-/// constituents, which will be sorted by frequency.
+/// constituents, which will be sorted by frequency. Only the constituents
+/// defined in the wave table are added to this vector.
 /// @param[in] inferred The map of inferred constituents with their amplitudes,
 /// but without frequencies.
 /// @param[in] wave_table The wave table containing the waves for the
 /// constituents, used to look up frequencies for the inferred constituents.
+/// Constituents not defined in this table (e.g. Tau1 or Node for the Darwin
+/// engine) use the frequency defined by the Perth engine.
 template <size_t N>
 auto populate_and_sort_inferred(
     Map<ConstituentId, std::pair<double, double>, N>& mutable_inferred,
@@ -291,9 +314,17 @@ auto populate_and_sort_inferred(
   for (const auto& item : inferred) {
     const auto ident = item.first;
     const auto ampl = item.second;
-    mutable_inferred.insert(
-        ident, {wave_table[ident]->template frequency<kDegreePerHour>(), ampl});
-    keys.push_back(ident);
+    if (wave_table.contains(ident)) {
+      mutable_inferred.insert(
+          ident,
+          {wave_table[ident]->template frequency<kDegreePerHour>(), ampl});
+      keys.push_back(ident);
+    } else {
+      // The constituent cannot be inferred because it is not defined in the
+      // wave table, but its frequency is still needed if it is one of the
+      // reference constituents used for the admittance interpolation.
+      mutable_inferred.insert(ident, {perth_frequency(ident), ampl});
+    }
   }
 
   // Sort the inferred constituents by frequency
@@ -382,17 +413,25 @@ auto fourier_interpolation(double /*x1*/, const Complex& z1, double /*x2*/,
 
 // ============================================================================
 
-inline auto PerthInference::evaluate_node_tide(WaveInterface& node,
-                                               const double lat)
-    -> const Complex& {
+inline auto PerthInference::equilibrium_node_tide(const double lat) -> Complex {
+  constexpr auto gamma2 = 0.682;
+  constexpr auto amplitude = 0.0279;  // m
+  auto p20 =
+      0.5 - (1.5 * detail::math::pow<2>(std::sin(detail::math::radians(lat))));
+  auto xi = gamma2 * p20 * std::sqrt(1.25 / detail::math::pi<double>());
+  return {xi * amplitude, 0.0};
+}
+
+inline auto PerthInference::evaluate_node_tide(WaveTableInterface& wave_table,
+                                               const double lat) -> Complex {
+  // The Darwin wave table does not define the node tide: use the equilibrium
+  // value.
+  if (!wave_table.contains(ConstituentId::kNode)) {
+    return PerthInference::equilibrium_node_tide(lat);
+  }
+  auto& node = *wave_table[ConstituentId::kNode];
   if (!node.is_modeled()) {
-    constexpr auto gamma2 = 0.682;
-    constexpr auto amplitude = 0.0279;  // m
-    auto p20 =
-        0.5 -
-        (1.5 * detail::math::pow<2>(std::sin(detail::math::radians(lat))));
-    auto xi = gamma2 * p20 * std::sqrt(1.25 / detail::math::pi<double>());
-    node.set_tide(Complex(xi * amplitude, 0.0));
+    node.set_tide(PerthInference::equilibrium_node_tide(lat));
   }
   return node.tide();
 }
@@ -542,9 +581,7 @@ inline auto PerthInference::apply_impl(WaveTableInterface& wave_table,
   auto y8 = wave_table[ConstituentId::kMm]->tide() / amp8_;
   auto y9 = wave_table[ConstituentId::kMf]->tide() / amp9_;
 
-  auto y7 = PerthInference::evaluate_node_tide(
-                *wave_table[ConstituentId::kNode], lat) /
-            amp7_;
+  auto y7 = PerthInference::evaluate_node_tide(wave_table, lat) / amp7_;
 
   for (const auto& constituent : diurnal_keys_) {
     if (!wave_table.contains(constituent)) {

@@ -3,6 +3,8 @@
 #include <gtest/gtest.h>
 
 #include <boost/range/algorithm/find.hpp>
+#include <initializer_list>
+#include <map>
 
 #include "fes/darwin//wave_table.hpp"
 #include "fes/interface/wave_table.hpp"
@@ -277,6 +279,70 @@ TEST(InferenceTest, FourierInference) {
   admittance({0, 0}, kMSK6, wt);
   admittance({0, 0}, kS6, wt);
   admittance({0, 0}, kM8, wt);
+}
+
+// The Perth inference must work with the Darwin wave table, which does not
+// define all the constituents handled by the Perth admittance tables (e.g.
+// Tau1, Alpha2 or Node).
+TEST(InferenceTest, ZeroInferenceDarwin) {
+  auto wt = fes::darwin::WaveTable();
+  for (auto& item : wt) {
+    item.value()->set_tide({1, 1});
+  }
+  wt[kM2]->set_is_modeled(true);
+  auto inference = inference_factory(wt, InferenceType::kZero);
+  EXPECT_NO_THROW(inference->apply(wt, 45.0));
+  auto inferred = inference->inferred_constituents();
+  for (const auto& ident : inferred) {
+    EXPECT_TRUE(wt.contains(ident)) << constituents::name(ident);
+    if (ident != kM2) {
+      admittance({0, 0}, ident, wt);
+    }
+  }
+  admittance({1, 1}, kM2, wt);
+  EXPECT_EQ(boost::range::find(inferred, kTau1), inferred.end());
+  EXPECT_EQ(boost::range::find(inferred, kNode), inferred.end());
+}
+
+// The Linear and Fourier inferences computed with the Darwin wave table must
+// match the values computed with the Perth wave table for the constituents
+// shared by both tables.
+TEST(InferenceTest, PerthInferenceDarwin) {
+  for (const auto inference_type :
+       {InferenceType::kLinear, InferenceType::kFourier}) {
+    auto darwin_wt = fes::darwin::WaveTable();
+    auto perth_wt = fes::perth::WaveTable();
+    const auto majors = std::map<ConstituentId, Complex>{
+        {kQ1, {2.044581413269043, -2.3776917457580566}},
+        {kO1, {7.7220735549926758, 1.2257133722305298}},
+        {kK1, {-7.9487228393554688, 5.2526679039001465}},
+        {kN2, {-18.638496398925781, 3.0053455829620361}},
+        {kM2, {-90.521110534667969, -20.603012084960938}},
+        {kS2, {-24.581066131591797, -25.664165496826172}},
+        {kMm, {1.0, 0.5}},
+        {kMf, {2.0, -0.5}}};
+    for (auto* wt :
+         std::initializer_list<WaveTableInterface*>{&darwin_wt, &perth_wt}) {
+      for (const auto& item : majors) {
+        (*wt)[item.first]->set_tide(item.second);
+        (*wt)[item.first]->set_is_modeled(true);
+      }
+    }
+    auto darwin_inference = inference_factory(darwin_wt, inference_type);
+    auto perth_inference = inference_factory(perth_wt, inference_type);
+    ASSERT_NO_THROW(darwin_inference->apply(darwin_wt, 45.0));
+    perth_inference->apply(perth_wt, 45.0);
+
+    for (const auto& ident : darwin_inference->inferred_constituents()) {
+      ASSERT_TRUE(darwin_wt.contains(ident)) << constituents::name(ident);
+      const auto& expected = perth_wt[ident]->tide();
+      const auto& actual = darwin_wt[ident]->tide();
+      EXPECT_NEAR(actual.real(), expected.real(), 1e-3)
+          << constituents::name(ident);
+      EXPECT_NEAR(actual.imag(), expected.imag(), 1e-3)
+          << constituents::name(ident);
+    }
+  }
 }
 
 }  // namespace fes

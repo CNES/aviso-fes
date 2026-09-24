@@ -24,6 +24,16 @@ Build System
 
 Bug Fixes
 ---------
+* Fixed the ``ZERO``, ``LINEAR`` and ``FOURIER`` inference modes with the
+  Darwin engine (the default of ``FESSettings``). They failed with
+  ``IndexError: Constituent ID 'Tau1' not found in the wave table`` because
+  the PERTH admittance scheme looked up constituents that the Darwin wave
+  table does not define (Tau1, Beta1, Ups1, Gamma2, Alpha2, Beta2, Delta2,
+  Node, MSm, MStm, Mqm). These constituents are now skipped, the reference
+  frequencies are taken from the PERTH definitions when needed, and the
+  equilibrium value of the 18.6-year node tide is used as the long-period
+  reference. With ``ZERO``, only the supplied constituents contribute to the
+  tide, as documented.
 * Fixed environment variable interpolation in ``pyfes.config.load``. A value
   expanding to a string containing ``$`` (e.g. ``/data/fes$2022``), or
   referencing more than 10 variables without nesting, was wrongly rejected
