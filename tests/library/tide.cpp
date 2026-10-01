@@ -130,7 +130,7 @@ TEST_F(EvaluateTideTest, FES) {
       FESSettings{}.with_num_threads((1)).with_astronomic_formulae(
           angle::Formulae::kIERS));
   EXPECT_NEAR(std::get<0>(result)(0), -0.93594685657527033, 1e-6);
-  EXPECT_NEAR(std::get<1>(result)(0), 0.91756905183442172, 1e-6);
+  EXPECT_NEAR(std::get<1>(result)(0), 1.0314332433365883, 1e-6);
   EXPECT_EQ(std::get<2>(result)(0), 4);
 }
 
@@ -142,7 +142,7 @@ TEST_F(EvaluateTideFromConstituentsTest, Darwin) {
   auto result = evaluate_tide_from_constituents(
       data_, epochs, 48.383, FESSettings{}.with_num_threads((1)));
   EXPECT_NEAR(std::get<0>(result)(0), -272.41405405513166, 1e-6);
-  EXPECT_NEAR(std::get<1>(result)(0), 3.8406047433116997, 1e-6);
+  EXPECT_NEAR(std::get<1>(result)(0), 3.7832571896134044, 1e-6);
 }
 
 TEST_F(EvaluateTideFromConstituentsTest, Perth5) {

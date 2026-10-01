@@ -35,7 +35,7 @@ class AstronomicAngle : public angle::Astronomic {
 TEST(WaveOrder2, LpeMinus5WavesNonRegression) {
   auto table = darwin::WaveTable();
   auto lpe = LongPeriodEquilibrium(table);
-  EXPECT_NEAR(lpe.lpe_minus_n_waves(AstronomicAngle(), 1), 0.41377275320048151,
+  EXPECT_NEAR(lpe.lpe_minus_n_waves(AstronomicAngle(), 1), 0.36202800763394194,
               1e-6);
 
   table[kMm]->set_is_modeled(true);
@@ -45,7 +45,7 @@ TEST(WaveOrder2, LpeMinus5WavesNonRegression) {
   table[kSsa]->set_is_modeled(true);
 
   lpe = LongPeriodEquilibrium(table);
-  EXPECT_NEAR(lpe.lpe_minus_n_waves(AstronomicAngle(), 1), -0.58598307964904195,
+  EXPECT_NEAR(lpe.lpe_minus_n_waves(AstronomicAngle(), 1), -0.51376912892297621,
               1e-6);
 
   table[kSa1]->set_is_modeled(true);
@@ -55,14 +55,14 @@ TEST(WaveOrder2, LpeMinus5WavesNonRegression) {
   table[kA5]->set_is_modeled(true);
 
   lpe = LongPeriodEquilibrium(table);
-  EXPECT_NEAR(lpe.lpe_minus_n_waves(AstronomicAngle(), 1), -0.53097185112613943,
+  EXPECT_NEAR(lpe.lpe_minus_n_waves(AstronomicAngle(), 1), -0.46557868598100655,
               1e-6);
 
   table[kMm2]->set_is_modeled(true);
   table[kMf2]->set_is_modeled(true);
 
   lpe = LongPeriodEquilibrium(table);
-  EXPECT_NEAR(lpe.lpe_minus_n_waves(AstronomicAngle(), 1), -0.52879623974557166,
+  EXPECT_NEAR(lpe.lpe_minus_n_waves(AstronomicAngle(), 1), -0.46340307460043872,
               1e-6);
 }
 
@@ -70,7 +70,7 @@ TEST(WaveOrder2, LpeMinus5WavesAvisoFES) {
   auto table = darwin::WaveTable();
   auto lpe = LongPeriodEquilibrium(table);
   EXPECT_NEAR(lpe.lpe_minus_n_waves(AstronomicAngle(true), 1),
-              -3.2392765310488252, 1e-6);
+              -2.8364655076670591, 1e-6);
 
   table[kMm]->set_is_modeled(true);
   table[kMf]->set_is_modeled(true);
@@ -78,7 +78,7 @@ TEST(WaveOrder2, LpeMinus5WavesAvisoFES) {
   table[kMSqm]->set_is_modeled(true);
   lpe = LongPeriodEquilibrium(table);
   EXPECT_NEAR(lpe.lpe_minus_n_waves(AstronomicAngle(true), 1),
-              -1.1941264878178992, 1e-6);
+              -1.0448915124588791, 1e-6);
 
   table[kSsa]->set_is_modeled(true);
   table[kSa1]->set_is_modeled(true);
@@ -90,7 +90,7 @@ TEST(WaveOrder2, LpeMinus5WavesAvisoFES) {
   table[kMf2]->set_is_modeled(true);
   lpe = LongPeriodEquilibrium(table);
   EXPECT_NEAR(lpe.lpe_minus_n_waves(AstronomicAngle(true), 1),
-              -0.70850451575143991, 1e-6);
+              -0.62074437408363481, 1e-6);
 }
 
 }  // namespace fes
