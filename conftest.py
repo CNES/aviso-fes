@@ -24,7 +24,7 @@ MINOR = sys.version_info[1]
 WORKING_DIRECTORY = pathlib.Path(__file__).parent.absolute()
 
 # Dataset URL
-DATASET_URL = 'https://osf.io/download/yfr24'
+DATASET_URL = 'https://osf.io/download/bvurc'
 
 # Dataset target directory
 DATASET_DIR = pathlib.Path(__file__).parent / 'tests' / 'python' / 'dataset'
