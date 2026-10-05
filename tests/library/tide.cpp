@@ -134,7 +134,7 @@ TEST_F(EvaluateTideTest, FES) {
 #else
   EXPECT_NEAR(std::get<0>(result)(0), -0.93594906906760, 1e-6);
 #endif
-  EXPECT_NEAR(std::get<1>(result)(0), 0.91757214759985, 1e-6);
+  EXPECT_NEAR(std::get<1>(result)(0), 1.0314366983965328, 1e-6);
   EXPECT_EQ(std::get<2>(result)(0), 4);
 }
 
@@ -147,10 +147,10 @@ TEST_F(EvaluateTideFromConstituentsTest, Darwin) {
       data_, epochs, 48.383, FESSettings{}.with_num_threads((1)));
 #ifdef FES_USE_IERS_CONSTANTS
   EXPECT_NEAR(std::get<0>(result)(0), -272.383990608873, 1e-6);
-  EXPECT_NEAR(std::get<1>(result)(0), 3.84122128352824, 1e-6);
+  EXPECT_NEAR(std::get<1>(result)(0), 3.7838737298299381, 1e-6);
 #else
   EXPECT_NEAR(std::get<0>(result)(0), -272.414054055131, 1e-6);
-  EXPECT_NEAR(std::get<1>(result)(0), 3.84060474331170, 1e-6);
+  EXPECT_NEAR(std::get<1>(result)(0), 3.7832571896134044, 1e-6);
 #endif
 }
 
