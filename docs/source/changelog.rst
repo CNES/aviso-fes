@@ -44,6 +44,16 @@ Build System
 
 Bug Fixes
 ---------
+* Fixed the sign of the ``mean_c20`` constant in the long-period equilibrium
+  computation (``LongPeriodEquilibrium::lpe_minus_n_waves``): the constant is
+  now subtracted (``c20 = Y20 - mean_c20``, i.e. ``Y20 + 0.014432247 / f20``)
+  as in the previous implementation, instead of being added. This removes a
+  spurious offset of about -24.4 * h20 mm. The normalization by ``f20`` is
+  unchanged. Long-period equilibrium values (and the tides derived from them)
+  change accordingly.
+* Added the missing ``<iterator>`` include (``std::back_inserter``) in the
+  Darwin and PERTH wave tables, which broke the build with some standard
+  library implementations.
 * Fixed the ``ZERO``, ``LINEAR`` and ``FOURIER`` inference modes with the
   Darwin engine (the default of ``FESSettings``). They failed with
   ``IndexError: Constituent ID 'Tau1' not found in the wave table`` because
@@ -160,22 +170,6 @@ Build System
 Dependencies
 ------------
 * Added ``pyyaml`` to the runtime dependencies (used by ``pyfes.config``).
-
-2026.3.2
-========
-
-Bug Fixes
----------
-* Fixed the sign of the ``mean_c20`` constant in the long-period equilibrium
-  computation (``LongPeriodEquilibrium::lpe_minus_n_waves``): the constant is
-  now subtracted (``c20 = Y20 - mean_c20``, i.e. ``Y20 + 0.014432247 / f20``)
-  as in the previous implementation, instead of being added. This removes a
-  spurious offset of about -24.4 * h20 mm with respect to V310. The
-  normalization by ``f20`` is unchanged. Long-period equilibrium values (and
-  the tides derived from them) change accordingly.
-* Added the missing ``<iterator>`` include (``std::back_inserter``) in the
-  Darwin and PERTH wave tables, which broke the build with some standard
-  library implementations.
 
 2026.3.1
 ========
