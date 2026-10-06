@@ -6,8 +6,8 @@ Changelog
 Unreleased
 ==========
 
-New Features
-------------
+2026.10.0
+---------
 * Added the :math:`\tau_1`, :math:`\beta_1`, :math:`\gamma_2`,
   :math:`\alpha_2`, :math:`\beta_2` and :math:`\delta_2` constituents to the
   Darwin engine (105 constituents). Their arguments follow Schureman (1958)
