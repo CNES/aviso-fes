@@ -18,6 +18,13 @@ namespace detail {
 TEST(Math, Pi) {
   // pi<double> == π
   EXPECT_DOUBLE_EQ(math::pi<double>(), M_PI);
+  // The literal must be bit-for-bit identical to atan2(0, -1), which was the
+  // previous definition. Float is not checked against atan2f: some libm
+  // (e.g. macOS) round it down to stay within [-pi, pi].
+  EXPECT_EQ(math::pi<float>(), static_cast<float>(M_PI));
+  EXPECT_EQ(math::pi<double>(), std::atan2(0.0, -1.0));
+  EXPECT_EQ(math::pi<long double>(), std::atan2(0.0L, -1.0L));
+  static_assert(math::pi<double>() > 3.14, "pi must be constexpr");
 }
 
 TEST(Math, PiDiv2) {

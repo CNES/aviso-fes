@@ -78,9 +78,11 @@ constexpr auto construct_nan() noexcept ->
 ///
 /// @tparam T The type of the result.
 /// @return \f$\pi\f$
+/// @note A literal is used instead of `std::atan2(0, -1)`: the latter is not
+/// constexpr before C++23 and was evaluated at run time on every call.
 template <typename T>
 constexpr auto pi() noexcept -> T {
-  return std::atan2(T(0), T(-1));
+  return static_cast<T>(3.141592653589793238462643383279502884L);
 }
 
 /// \f$\pi/2\f$
