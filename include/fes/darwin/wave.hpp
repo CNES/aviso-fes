@@ -62,6 +62,7 @@ class Wave : public WaveInterface {
       -> void final {
     nodal_a(angles);
     nodal_g(angles);
+    invalidate_trigonometry();
   }
 
   /// Gets the XDO numerical representation of the wave

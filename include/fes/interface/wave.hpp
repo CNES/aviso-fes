@@ -164,11 +164,17 @@ class WaveInterface {
   /// @return The tide value after applying the nodal corrections.
   /// @note Computes
   /// @f$\Re(T e^{-i(v+u)})=\Re(T)\cos(v+u)+\Im(T)\sin(v+u)@f$
+  /// @note @f$\cos(v+u)@f$ and @f$\sin(v+u)@f$ are cached until the nodal
+  /// corrections change.
   FES_MATH_CONSTEXPR auto corrected_tide() const noexcept -> double {
-    auto phi = vu();
+    if (!trigonometry_valid_) {
+      auto phi = vu();
+      cos_vu_ = std::cos(phi);
+      sin_vu_ = std::sin(phi);
+      trigonometry_valid_ = true;
+    }
     auto raw_tide = tide();
-    return f() *
-           (raw_tide.real() * std::cos(phi) + raw_tide.imag() * std::sin(phi));
+    return f() * ((raw_tide.real() * cos_vu_) + (raw_tide.imag() * sin_vu_));
   }
 
   /// @brief Gets the Greenwich argument, in radians.
@@ -203,6 +209,7 @@ class WaveInterface {
     f_ = f;
     u_ = unit == AngleUnit::kRadian ? u : detail::math::radians(u);
     v_ = unit == AngleUnit::kRadian ? v : detail::math::radians(v);
+    invalidate_trigonometry();
   }
 
   /// @brief Computes the nodal corrections for the wave.
@@ -226,6 +233,12 @@ class WaveInterface {
   virtual auto doodson_numbers() const -> Vector7b = 0;
 
  protected:
+  /// @brief Invalidates the cached trigonometric functions of the tidal
+  /// argument. Must be called whenever v_ or u_ is modified.
+  constexpr void invalidate_trigonometry() noexcept {
+    trigonometry_valid_ = false;
+  }
+
   Complex tide_;       ///< Tide value
   double v_{};         ///< Greenwich argument
   double f_{};         ///< Nodal correction for amplitude
@@ -233,6 +246,12 @@ class WaveInterface {
   ConstituentId id_;   ///< Constituent identifier
   WaveType type_;      ///< Type of tidal wave
   bool is_modeled_{};  ///< Indicates whether the tide is provided by the model
+
+ private:
+  mutable double cos_vu_{};  ///< Cached cosine of the tidal argument
+  mutable double sin_vu_{};  ///< Cached sine of the tidal argument
+  /// Indicates whether cos_vu_ and sin_vu_ match the current v_ and u_
+  mutable bool trigonometry_valid_{};
 };
 
 }  // namespace fes

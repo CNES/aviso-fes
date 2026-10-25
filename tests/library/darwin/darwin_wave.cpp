@@ -4,6 +4,7 @@
 // BSD-style license that can be found in the LICENSE file.
 #include <gtest/gtest.h>
 
+#include <cmath>
 #include <map>
 #include <string>
 #include <utility>
@@ -656,6 +657,37 @@ TEST(Wave, NodalCorrectionsAgainstPerth) {
           << darwin_wave->name();
     }
   }
+}
+
+TEST(Wave, CorrectedTideFollowsNodalCorrections) {
+  // corrected_tide() caches cos(v + u) and sin(v + u): the cache must be
+  // refreshed whenever the nodal corrections change, whatever the engine.
+  auto darwin_table = WaveTable();
+  auto perth_table = perth::WaveTable();
+  auto check = [](WaveTableInterface& table, const ConstituentId ident,
+                  const double epoch) {
+    const auto angles = angle::Astronomic(angle::Formulae::kIERS, epoch);
+    table.compute_nodal_corrections(angles, false);
+    auto& wave = *table[ident];
+    wave.set_tide({12.5, -3.25});
+    const auto phi = wave.vu();
+    const auto expected =
+        wave.f() * ((12.5 * std::cos(phi)) + (-3.25 * std::sin(phi)));
+    EXPECT_EQ(wave.corrected_tide(), expected) << wave.name();
+  };
+  // 631152000 = 1990-01-01 00:00:00 UTC
+  for (const auto epoch : {631152000.0, 631152000.0 + 3600.0, 1e9}) {
+    check(darwin_table, kM2, epoch);
+    check(darwin_table, kK1, epoch);
+    check(perth_table, kM2, epoch);
+  }
+  // Direct update of the nodal corrections.
+  auto& wave = *darwin_table[kO1];
+  wave.set_tide({1.0, 0.0});
+  wave.set_nodal_corrections(1.0, 0.0, 0.0, kRadian);
+  EXPECT_EQ(wave.corrected_tide(), 1.0);
+  wave.set_nodal_corrections(1.0, 0.0, 180.0, kDegree);
+  EXPECT_EQ(wave.corrected_tide(), std::cos(detail::math::pi<double>()));
 }
 
 }  // namespace darwin

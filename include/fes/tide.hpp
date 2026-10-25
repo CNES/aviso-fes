@@ -103,6 +103,12 @@ inline auto evaluate_tide_from_waves(const double epoch, const double latitude,
   auto h = 0.0;
   for (const auto& item : wave_table) {
     auto& wave = *item.value();
+    // A wave neither modeled nor inferred has a null tide: its contribution,
+    // f * (0 * cos + 0 * sin) = ±0, leaves the sums unchanged.
+    const auto& raw_tide = wave.tide();
+    if (raw_tide.real() == 0 && raw_tide.imag() == 0) {
+      continue;
+    }
     auto tide = wave.corrected_tide();
     wave.type() == kShortPeriod ? h += tide : h_long_period += tide;
   }
