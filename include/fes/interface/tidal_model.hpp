@@ -122,9 +122,18 @@ class Accelerator {
     if (std::abs(epoch - angle_.first) > time_tolerance_) {
       angle_.first = epoch;
       angle_.second.update(epoch);
+      ++generation_;
     }
     return angle_.second;
   }
+
+  /// @brief Returns a counter incremented each time calculate_angle updates
+  /// the astronomic angle.
+  ///
+  /// Comparing it with a previously stored value tells whether the quantities
+  /// derived from the astronomic angle must be recomputed.
+  /// @return The number of updates of the astronomic angle.
+  constexpr auto generation() const noexcept -> uint64_t { return generation_; }
 
  protected:
   /// @brief Time in seconds for which astronomical angles are considered
@@ -133,6 +142,9 @@ class Accelerator {
 
   /// @brief The last angle used to evaluate the tidal constituents.
   std::pair<double, angle::Astronomic> angle_;
+
+  /// @brief Number of updates of the astronomic angle.
+  uint64_t generation_{0};
 
   /// @brief The tidal constituent values interpolated at the last point.
   ConstituentValues values_;

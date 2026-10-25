@@ -37,6 +37,7 @@
 #include <Eigen/Core>
 #include <boost/none.hpp>
 #include <boost/optional.hpp>
+#include <cstdint>
 #include <limits>
 
 #include "fes/constituent.hpp"
@@ -53,6 +54,29 @@ namespace fes {
 namespace detail {
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+// Update the astronomic angle for the given date, then refresh the quantities
+// that depend only on it (nodal corrections and long period potential). They
+// are recomputed only if the accelerator actually updated the angle since the
+// last refresh, whose generation is stored in `generation` by the caller.
+inline auto update_angle_dependent_terms(
+    const double epoch, const bool compute_long_period_equilibrium,
+    const Settings& settings, WaveTableInterface& wave_table,
+    LongPeriodEquilibrium& long_period, Accelerator& acc, uint64_t& generation)
+    -> void {
+  const auto& angles = acc.calculate_angle(epoch);
+  if (acc.generation() == generation) {
+    return;
+  }
+  generation = acc.generation();
+
+  // Adjusts nodal corrections to the tidal estimate date.
+  wave_table.compute_nodal_corrections(angles, settings.group_modulations());
+
+  if (compute_long_period_equilibrium) {
+    long_period.update_potential(angles);
+  }
+}
+
 // Compute the tide from the waves provided by the tidal model. This function
 // is used internally by the evaluate_tide function after the interpolation of
 // the waves from the model.
@@ -62,18 +86,14 @@ inline auto evaluate_tide_from_waves(const double epoch, const double latitude,
                                      WaveTableInterface& wave_table,
                                      InferenceInterface& inference,
                                      LongPeriodEquilibrium& long_period,
-                                     Accelerator& acc)
+                                     Accelerator& acc, uint64_t& generation)
     -> std::tuple<double, double> {
-  // Update the astronomic angle used to evaluate the tidal constituents.
-  const auto& angles = acc.calculate_angle(epoch);
-
-  // Adjusts nodal corrections to the tidal estimate date.
-  wave_table.compute_nodal_corrections(angles, settings.group_modulations());
+  update_angle_dependent_terms(epoch, compute_long_period_equilibrium, settings,
+                               wave_table, long_period, acc, generation);
 
   // Initialize long period ocean tides
-  auto h_long_period = compute_long_period_equilibrium
-                           ? long_period.lpe_minus_n_waves(angles, latitude)
-                           : 0.0;
+  auto h_long_period =
+      compute_long_period_equilibrium ? long_period.evaluate(latitude) : 0.0;
 
   // Apply the inference to compute minor constituents from the major ones
   // provided by the model.
@@ -98,7 +118,8 @@ inline auto evaluate_tide(const TidalModelInterface<T>& tidal_model,
                           const double latitude, const Settings& settings,
                           WaveTableInterface& wave_table,
                           InferenceInterface& inference,
-                          LongPeriodEquilibrium& long_period, Accelerator& acc)
+                          LongPeriodEquilibrium& long_period, Accelerator& acc,
+                          uint64_t& generation)
     -> std::tuple<double, double, Quality> {
   const auto compute_long_period_equilibrium =
       tidal_model.tide_type() == fes::kTide &&
@@ -115,17 +136,17 @@ inline auto evaluate_tide(const TidalModelInterface<T>& tidal_model,
   if (quality == kUndefined) {
     double long_period_equilibrium = 0.0;
     if (compute_long_period_equilibrium) {
-      const auto& angles = acc.calculate_angle(epoch);
-      wave_table.compute_nodal_corrections(angles,
-                                           settings.group_modulations());
-      long_period_equilibrium = long_period.lpe_minus_n_waves(angles, latitude);
+      update_angle_dependent_terms(epoch, compute_long_period_equilibrium,
+                                   settings, wave_table, long_period, acc,
+                                   generation);
+      long_period_equilibrium = long_period.evaluate(latitude);
     }
     return {std::numeric_limits<double>::quiet_NaN(), long_period_equilibrium,
             quality};
   }
   auto tides = evaluate_tide_from_waves(
       epoch, latitude, compute_long_period_equilibrium, settings, wave_table,
-      inference, long_period, acc);
+      inference, long_period, acc, generation);
   return {std::get<0>(tides), std::get<1>(tides), quality};
 }
 #endif  // DOXYGEN_SHOULD_SKIP_THIS
@@ -208,12 +229,16 @@ auto evaluate_tide(const TidalModelInterface<T>* const tidal_model,
     // Initialize the long period equilibrium handler for this thread
     auto lpe = LongPeriodEquilibrium(wt_instance);
 
+    // Generation of the astronomic angle used for the last computation of the
+    // nodal corrections (none yet).
+    auto generation = uint64_t{0};
+
     // Evaluate the tide for each point in the assigned chunk
     for (auto ix = start; ix < end; ++ix) {
-      std::tie(tide(ix), long_period(ix), quality(ix)) =
-          detail::evaluate_tide(tidal_model_instance, epoch(ix), longitude(ix),
-                                latitude(ix), settings_instance, wt_instance,
-                                inference_instance, lpe, acc_instance);
+      std::tie(tide(ix), long_period(ix), quality(ix)) = detail::evaluate_tide(
+          tidal_model_instance, epoch(ix), longitude(ix), latitude(ix),
+          settings_instance, wt_instance, inference_instance, lpe, acc_instance,
+          generation);
     }
   };
 

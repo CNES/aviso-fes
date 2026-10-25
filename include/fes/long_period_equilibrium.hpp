@@ -58,9 +58,30 @@ class LongPeriodEquilibrium {
   /// @return Computed long-period tide, in centimeters.
   auto lpe_minus_n_waves(const angle::Astronomic& angles, double lat) -> double;
 
+  /// @brief Computes the part of the long-period equilibrium ocean tides that
+  /// depends only on the astronomic angles (the order 2 and order 3 tidal
+  /// potentials).
+  ///
+  /// Together with evaluate(), this splits lpe_minus_n_waves() so that the
+  /// potentials can be reused for all positions sharing the same date.
+  ///
+  /// @param[in] angles the astronomic angle, indicating the date on which the
+  /// tide is to be calculated.
+  auto update_potential(const angle::Astronomic& angles) -> void;
+
+  /// @brief Computes the long-period equilibrium ocean tides at the given
+  /// latitude from the potentials of the last call to update_potential().
+  ///
+  /// @param[in] lat Latitude in degrees (positive north) for the position at
+  /// which tide is computed.
+  /// @return Computed long-period tide, in centimeters.
+  auto evaluate(double lat) const -> double;
+
  private:
   Eigen::Matrix<double, 106, 6> order2_;  // NOLINT (magic number, physics)
   Eigen::Matrix<double, 17, 6> order3_;   // NOLINT (magic number, physics)
+  double h20_{0};  ///< Tidal potential V20 of the last update_potential call
+  double h30_{0};  ///< Tidal potential V30 of the last update_potential call
 };
 
 }  // namespace fes

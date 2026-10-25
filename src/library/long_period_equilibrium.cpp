@@ -216,6 +216,12 @@ auto LongPeriodEquilibrium::disable_dynamic_wave(
 
 auto LongPeriodEquilibrium::lpe_minus_n_waves(const angle::Astronomic& angles,
                                               const double lat) -> double {
+  update_potential(angles);
+  return evaluate(lat);
+}
+
+auto LongPeriodEquilibrium::update_potential(const angle::Astronomic& angles)
+    -> void {
   // Vector containing the required nodal corrections.
   Eigen::Matrix<double, 5, 1> shpn =
       (Eigen::Matrix<double, 5, 1>() << angles.s(), angles.h(), angles.p(),
@@ -249,7 +255,11 @@ auto LongPeriodEquilibrium::lpe_minus_n_waves(const angle::Astronomic& angles,
   for (Eigen::Index ix = 0; ix < args3.size(); ++ix) {
     h30 += std::sin(args3(ix)) * order3_(ix, 5);
   }
+  h20_ = h20;
+  h30_ = h30;
+}
 
+auto LongPeriodEquilibrium::evaluate(const double lat) const -> double {
   // FES14C: mass conservation for long period equilibrium
   // Subtraction of the mean of c20 and c30 on ocean, for mass conservation
   constexpr auto factor_20 = (1.0 - 0.609 /* H2 */ + 0.302 /* K2 */);
@@ -269,7 +279,7 @@ auto LongPeriodEquilibrium::lpe_minus_n_waves(const angle::Astronomic& angles,
              mean_c30;
 
   // m -> cm
-  return (factor_20 * c20 * h20 + factor_30 * c30 * h30) * 100;
+  return ((factor_20 * c20 * h20_) + (factor_30 * c30 * h30_)) * 100;
 }
 
 }  // namespace fes

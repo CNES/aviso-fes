@@ -7,6 +7,7 @@
 #include <gtest/gtest.h>
 
 #include "fes/darwin/wave_table.hpp"
+#include "fes/interface/tidal_model.hpp"
 
 namespace fes {
 
@@ -91,6 +92,30 @@ TEST(WaveOrder2, LpeMinus5WavesAvisoFES) {
   lpe = LongPeriodEquilibrium(table);
   EXPECT_NEAR(lpe.lpe_minus_n_waves(AstronomicAngle(true), 1),
               -0.62074437408363481, 1e-6);
+}
+
+TEST(WaveOrder2, SplitPotentialMatchesLpeMinusNWaves) {
+  auto table = darwin::WaveTable();
+  auto lpe = LongPeriodEquilibrium(table);
+  auto split = LongPeriodEquilibrium(table);
+  const auto angles = AstronomicAngle(true);
+  split.update_potential(angles);
+  for (const auto lat : {-75.0, -12.5, 0.0, 1.0, 48.383, 89.0}) {
+    // Bit-for-bit identical: same operations, potential computed once.
+    EXPECT_EQ(split.evaluate(lat), lpe.lpe_minus_n_waves(angles, lat));
+  }
+}
+
+TEST(Accelerator, Generation) {
+  auto acc = Accelerator(angle::Formulae::kSchuremanOrder1, 60.0, 0);
+  EXPECT_EQ(acc.generation(), 0U);
+  acc.calculate_angle(0.0);
+  EXPECT_EQ(acc.generation(), 1U);
+  // Within the time tolerance: the angle is not updated.
+  acc.calculate_angle(30.0);
+  EXPECT_EQ(acc.generation(), 1U);
+  acc.calculate_angle(3600.0);
+  EXPECT_EQ(acc.generation(), 2U);
 }
 
 }  // namespace fes

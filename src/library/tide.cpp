@@ -41,10 +41,15 @@ auto evaluate_tide_from_constituents(
     const auto compute_long_period_equilibrium =
         settings_instance.compute_long_period_equilibrium();
 
+    // Generation of the astronomic angle used for the last computation of the
+    // nodal corrections (none yet).
+    auto generation = uint64_t{0};
+
     for (auto ix = start; ix < end; ++ix) {
       std::tie(tide(ix), long_period(ix)) = detail::evaluate_tide_from_waves(
           epoch(ix), latitude, compute_long_period_equilibrium,
-          settings_instance, wt_instance, inference_instance, lpe, acc);
+          settings_instance, wt_instance, inference_instance, lpe, acc,
+          generation);
     }
   };
 
@@ -86,8 +91,13 @@ auto evaluate_equilibrium_long_period(
     }
 
     for (auto ix = start; ix < end; ++ix) {
-      angles.update(epoch(ix));
-      result(ix) = model.lpe_minus_n_waves(angles, latitude(ix));
+      // The tidal potential depends only on the date: it is recomputed only
+      // when the date changes.
+      if (ix == start || epoch(ix) != epoch(ix - 1)) {
+        angles.update(epoch(ix));
+        model.update_potential(angles);
+      }
+      result(ix) = model.evaluate(latitude(ix));
     }
   };
 
