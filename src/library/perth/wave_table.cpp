@@ -203,26 +203,44 @@ static auto build_constituent_ids(const std::vector<std::string>& waves = {})
   return waves.empty() ? to_ids(perth::constituents::known()) : to_ids(waves);
 }
 
-WaveTable::WaveTable() { populate_map(build_constituent_ids(), wave_factory); }
+WaveTable::WaveTable() {
+  populate_map(build_constituent_ids(), wave_factory);
+  cache_constituents();
+}
 
 WaveTable::WaveTable(const std::vector<std::string>& names) {
   populate_map(build_constituent_ids(names), wave_factory);
+  cache_constituents();
+}
+
+auto WaveTable::cache_constituents() -> void {
+  ids_ = constituent_ids();
+  doodson_numbers_.clear();
+  doodson_numbers_.reserve(ids_.size());
+  for (const auto& item : *this) {
+    doodson_numbers_.emplace_back(
+        item.value()->doodson_numbers().template cast<double>());
+  }
 }
 
 auto WaveTable::compute_nodal_corrections(const angle::Astronomic& angles,
                                           const bool group_modulations)
     -> void {
-  auto constituent_ids = this->constituent_ids();
   auto nodal_corrections = NodalCorrectionProcessor(
-      NodalCorrectionsArgs(angles, group_modulations))(constituent_ids);
+      NodalCorrectionsArgs(angles, group_modulations))(ids_);
 
-  for (size_t ix = 0; ix < constituent_ids.size(); ++ix) {
-    auto& component = (*this)[constituent_ids[ix]];
-    auto tidal_argument = calculate_doodson_argument(
-        angles, component->doodson_numbers().template cast<double>());
-    component->set_nodal_corrections(nodal_corrections[ix].f,
-                                     nodal_corrections[ix].u, tidal_argument,
-                                     AngleUnit::kDegree);
+  // The astronomical variables depend only on the date: they are computed once
+  // for all the constituents.
+  const auto beta = calculate_doodson_beta(angles);
+
+  auto ix = size_t{0};
+  for (auto& item : *this) {
+    auto tidal_argument =
+        calculate_doodson_argument(beta, doodson_numbers_[ix]);
+    item.value()->set_nodal_corrections(nodal_corrections[ix].f,
+                                        nodal_corrections[ix].u, tidal_argument,
+                                        AngleUnit::kDegree);
+    ++ix;
   }
 }
 

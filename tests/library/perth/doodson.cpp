@@ -3,6 +3,7 @@
 #include <gtest/gtest.h>
 
 #include "fes/angle/astronomic.hpp"
+#include "fes/perth/wave_table.hpp"
 #include "fes/types.hpp"
 
 namespace fes {
@@ -48,6 +49,40 @@ TEST(DoodsonTest, TidalFrequency) {
   auto lambda2 = Vector7b{2, 1, -2, 1, 0, 0, 2};
   double result = tidal_frequency(lambda2);
   EXPECT_NEAR(result, 29.455625, 1e-5);
+}
+
+namespace {
+
+// Checks that the nodal corrections computed by the table are identical to
+// those computed wave by wave.
+auto check_wave_table(WaveTable& table, const angle::Astronomic& angles,
+                      const bool group_modulations) -> void {
+  table.compute_nodal_corrections(angles, group_modulations);
+  auto reference = WaveTable();
+  for (const auto& item : reference) {
+    auto& expected = *item.value();
+    expected.compute_nodal_corrections(angles, group_modulations);
+    const auto& actual = *table[item.key()];
+    EXPECT_EQ(actual.f(), expected.f()) << expected.name();
+    EXPECT_EQ(actual.u(), expected.u()) << expected.name();
+    EXPECT_EQ(actual.v(), expected.v()) << expected.name();
+  }
+}
+
+}  // namespace
+
+TEST(DoodsonTest, WaveTableMatchesWaves) {
+  // The table computes the astronomical variables once for all the
+  // constituents: the result must be identical to the per-wave computation.
+  auto table = WaveTable();
+  for (const auto group_modulations : {false, true}) {
+    // 631152000 = 1990-01-01 00:00:00 UTC
+    for (auto day = 0; day <= 20 * 365; day += 97) {
+      const auto angles = angle::Astronomic(angle::Formulae::kIERS,
+                                            631152000.0 + (day * 86400.0));
+      check_wave_table(table, angles, group_modulations);
+    }
+  }
 }
 
 }  // namespace perth

@@ -29,6 +29,35 @@ inline auto calculate_celestial_vector(const angle::Astronomic& angle) noexcept
   });
 }
 
+/// @brief Evaluate the vector multiplied by the Doodson numbers to compute the
+/// tidal arguments: Doodson's 6 astronomical variables followed by 90 degrees
+/// for the 7th Doodson number.
+/// @param[in] angle Astronomic angles.
+/// @return The 7-dimensional vector, in degrees.
+inline auto calculate_doodson_beta(const angle::Astronomic& angle) noexcept
+    -> Vector7d {
+  Vector7d beta;
+  beta << calculate_celestial_vector(angle), 90.0;
+  return beta;
+}
+
+/// @brief Evaluate Doodson's tidal argument from a precomputed vector of
+/// astronomical variables.
+///
+/// The vector depends only on the date: computing it once with
+/// calculate_doodson_beta() allows evaluating the tidal arguments of all
+/// constituents for the same date at the cost of a dot product each.
+/// @param[in] beta Vector returned by calculate_doodson_beta().
+/// @param[in] doodson_number Doodson number as a 7-dimensional vector.
+/// @return Doodson's tidal argument
+inline auto calculate_doodson_argument(
+    const Eigen::Ref<const Vector7d>& beta,
+    const Eigen::Ref<const Vector7d>& doodson_number) -> double {
+  // Compute argument as dot product with Doodson number
+  double arg = doodson_number.dot(beta);
+  return detail::math::normalize_angle(arg);
+}
+
 /// @brief Evaluate Doodson's tidal argument at a given time.
 /// @param[in] angle Astronomic angles.
 /// @param[in] doodson_number Doodson number as a 7-dimensional vector.
@@ -36,12 +65,8 @@ inline auto calculate_celestial_vector(const angle::Astronomic& angle) noexcept
 inline auto calculate_doodson_argument(
     const angle::Astronomic& angle,
     const Eigen::Ref<const Vector7d>& doodson_number) -> double {
-  Eigen::Vector<double, 7> beta;
-  beta << calculate_celestial_vector(angle), 90.0;
-
-  // Compute argument as dot product with Doodson number
-  double arg = doodson_number.dot(beta);
-  return detail::math::normalize_angle(arg);
+  return calculate_doodson_argument(calculate_doodson_beta(angle),
+                                    doodson_number);
 }
 
 /// @brief Compute the frequency of a tide with a given Doodson number
