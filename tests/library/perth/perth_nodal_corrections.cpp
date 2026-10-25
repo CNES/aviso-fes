@@ -1,5 +1,8 @@
 #include <gtest/gtest.h>
 
+#include <cstddef>
+#include <vector>
+
 #include "fes/constituent.hpp"
 #include "fes/perth/nodal_corrections.hpp"
 
@@ -383,6 +386,63 @@ TEST(NodalCorrectionsTest, EvaluateGroupNodalCorrections) {
         FAIL() << "Unexpected constituent: " << static_cast<int>(constituent);
         break;
     }
+  }
+}
+
+namespace {
+
+constexpr double kPerihelion = 282.94;
+constexpr double kHsolar = 280.46;
+
+auto expect_identical(const NodalCorrections& actual,
+                      const NodalCorrections& expected) -> void {
+  EXPECT_EQ(actual.f, expected.f);
+  EXPECT_EQ(actual.u, expected.u);
+}
+
+// Checks that the batch, buffer and single-constituent evaluations of the
+// standard nodal corrections are identical.
+auto check_standard(const std::vector<ConstituentId>& ids, const double omega,
+                    const double p) -> void {
+  const auto expected = evaluate_nodal_corrections(omega, p, ids);
+  // The buffer is initially too large: it must be resized.
+  auto buffer = std::vector<NodalCorrections>(ids.size() + 3);
+  evaluate_nodal_corrections(omega, p, ids, buffer);
+  ASSERT_EQ(buffer.size(), ids.size());
+  for (size_t ix = 0; ix < ids.size(); ++ix) {
+    expect_identical(buffer[ix], expected[ix]);
+    expect_identical(evaluate_nodal_correction(omega, p, ids[ix]),
+                     expected[ix]);
+  }
+}
+
+// Same check for the group modulations.
+auto check_group(const std::vector<ConstituentId>& ids, const double omega,
+                 const double p) -> void {
+  const auto expected =
+      evaluate_nodal_corrections(kPerihelion, omega, p, kHsolar, ids);
+  auto buffer = std::vector<NodalCorrections>(ids.size() + 3);
+  evaluate_nodal_corrections(kPerihelion, omega, p, kHsolar, ids, buffer);
+  ASSERT_EQ(buffer.size(), ids.size());
+  for (size_t ix = 0; ix < ids.size(); ++ix) {
+    expect_identical(buffer[ix], expected[ix]);
+    expect_identical(
+        evaluate_nodal_correction(kPerihelion, omega, p, kHsolar, ids[ix]),
+        expected[ix]);
+  }
+}
+
+}  // namespace
+
+TEST(NodalCorrectionsTest, BatchBufferAndSingleAreIdentical) {
+  auto ids = std::vector<ConstituentId>();
+  for (size_t ix = 0; ix < kKnownConstituents; ++ix) {
+    ids.push_back(static_cast<ConstituentId>(ix));
+  }
+  // omega = 0 cancels the terms in sin(omega) of several constituents.
+  for (const auto omega : {-266.13901453365702, 0.0, 12.5, 180.0}) {
+    check_standard(ids, omega, 111.5928443590156);
+    check_group(ids, omega, 111.5928443590156);
   }
 }
 

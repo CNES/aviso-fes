@@ -226,8 +226,8 @@ auto WaveTable::cache_constituents() -> void {
 auto WaveTable::compute_nodal_corrections(const angle::Astronomic& angles,
                                           const bool group_modulations)
     -> void {
-  auto nodal_corrections = NodalCorrectionProcessor(
-      NodalCorrectionsArgs(angles, group_modulations))(ids_);
+  NodalCorrectionProcessor(NodalCorrectionsArgs(angles, group_modulations))(
+      ids_, nodal_corrections_);
 
   // The astronomical variables depend only on the date: they are computed once
   // for all the constituents.
@@ -237,9 +237,9 @@ auto WaveTable::compute_nodal_corrections(const angle::Astronomic& angles,
   for (auto& item : *this) {
     auto tidal_argument =
         calculate_doodson_argument(beta, doodson_numbers_[ix]);
-    item.value()->set_nodal_corrections(nodal_corrections[ix].f,
-                                        nodal_corrections[ix].u, tidal_argument,
-                                        AngleUnit::kDegree);
+    item.value()->set_nodal_corrections(nodal_corrections_[ix].f,
+                                        nodal_corrections_[ix].u,
+                                        tidal_argument, AngleUnit::kDegree);
     ++ix;
   }
 }

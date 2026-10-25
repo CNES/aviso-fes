@@ -39,17 +39,31 @@ auto evaluate_nodal_corrections(double omega, double p,
                                 const std::vector<ConstituentId>& constituents)
     -> std::vector<NodalCorrections>;
 
+/// @brief Computes standard nodal corrections for a list of constituents into
+/// a caller-provided buffer.
+///
+/// Same as the overload returning a vector, without allocating memory when
+/// the buffer is reused.
+///
+/// @param[in] omega Mean longitude of lunar node, in degrees.
+/// @param[in] p Mean longitude of lunar perigee, in degrees.
+/// @param[in] constituents A vector of constituents for which to compute
+///   corrections.
+/// @param[out] corrections Resized to the number of constituents and filled
+///   with their NodalCorrections.
+auto evaluate_nodal_corrections(double omega, double p,
+                                const std::vector<ConstituentId>& constituents,
+                                std::vector<NodalCorrections>& corrections)
+    -> void;
+
 /// @brief Compute nodal corrections for a single constituent.
 ///
 /// @param[in] omega Mean longitude of lunar node, in degrees.
 /// @param[in] p Mean longitude of lunar perigee, in degrees.
 /// @param[in] constituent The constituent to compute corrections for.
 /// @return Nodal corrections {f, u}.
-inline auto evaluate_nodal_correction(double omega, double p,
-                                      const ConstituentId constituent)
-    -> NodalCorrections {
-  return evaluate_nodal_corrections(omega, p, {constituent})[0];
-}
+auto evaluate_nodal_correction(double omega, double p,
+                               ConstituentId constituent) -> NodalCorrections;
 
 /// @brief Computes group modulation nodal corrections.
 ///
@@ -74,6 +88,26 @@ auto evaluate_nodal_corrections(double perihelion, double omega, double perigee,
                                 const std::vector<ConstituentId>& constituents)
     -> std::vector<NodalCorrections>;
 
+/// @brief Computes group modulation nodal corrections into a caller-provided
+/// buffer.
+///
+/// Same as the overload returning a vector, without allocating memory when
+/// the buffer is reused.
+///
+/// @param[in] perihelion Mean longitude of the sun's perihelion, in degrees.
+/// @param[in] omega Mean longitude of the lunar node, in degrees.
+/// @param[in] perigee Mean longitude of the lunar perigee, in degrees.
+/// @param[in] hsolar Mean longitude of the sun, in degrees.
+/// @param[in] constituents A vector of constituents for which to compute
+///   corrections.
+/// @param[out] corrections Resized to the number of constituents and filled
+///   with their NodalCorrections.
+auto evaluate_nodal_corrections(double perihelion, double omega, double perigee,
+                                double hsolar,
+                                const std::vector<ConstituentId>& constituents,
+                                std::vector<NodalCorrections>& corrections)
+    -> void;
+
 /// @brief Compute group modulation nodal corrections for a single constituent.
 ///
 /// @param[in] perihelion Mean longitude of the sun's perihelion, in degrees.
@@ -82,13 +116,9 @@ auto evaluate_nodal_corrections(double perihelion, double omega, double perigee,
 /// @param[in] hsolar Mean longitude of the sun, in degrees.
 /// @param[in] constituent The constituent to compute corrections for.
 /// @return Nodal corrections {f, u}.
-inline auto evaluate_nodal_correction(double perihelion, double omega,
-                                      double perigee, double hsolar,
-                                      const ConstituentId constituent)
-    -> NodalCorrections {
-  return evaluate_nodal_corrections(perihelion, omega, perigee, hsolar,
-                                    {constituent})[0];
-}
+auto evaluate_nodal_correction(double perihelion, double omega, double perigee,
+                               double hsolar, ConstituentId constituent)
+    -> NodalCorrections;
 
 /// @brief Helper class to evaluate nodal corrections from arguments.
 class NodalCorrectionProcessor {
@@ -112,6 +142,13 @@ class NodalCorrectionProcessor {
   /// @return Vector of Nodal corrections {f, u}.
   auto operator()(const std::vector<ConstituentId>& ids) const
       -> std::vector<NodalCorrections>;
+
+  /// @brief Evaluates nodal corrections for a list of constituents into a
+  /// caller-provided buffer, without allocating memory when it is reused.
+  /// @param[in] ids Vector of constituent identifiers.
+  /// @param[out] corrections Nodal corrections {f, u} of each constituent.
+  auto operator()(const std::vector<ConstituentId>& ids,
+                  std::vector<NodalCorrections>& corrections) const -> void;
 };
 
 }  // namespace perth

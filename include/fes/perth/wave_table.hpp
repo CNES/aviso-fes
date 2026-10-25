@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "fes/interface/wave_table.hpp"
+#include "fes/perth/nodal_corrections.hpp"
 #include "fes/types.hpp"
 
 namespace fes {
@@ -44,6 +45,8 @@ class WaveTable : public WaveTableInterface {
   std::vector<ConstituentId> ids_;
   /// Doodson numbers of the constituents, in the iteration order of the table.
   std::vector<Vector7d> doodson_numbers_;
+  /// Buffer receiving the nodal corrections, reused between calls.
+  std::vector<NodalCorrections> nodal_corrections_;
 
   /// Caches the constituent properties used by compute_nodal_corrections.
   auto cache_constituents() -> void;
