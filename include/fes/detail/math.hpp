@@ -379,6 +379,52 @@ constexpr auto bilinear_interpolation(const T& wx1, const T& wx2, const T& wy1,
   return std::abs(sum_w) > 0 ? result / sum_w : construct_nan<T>();
 }
 
+/// Calculate the bilinear interpolation of complex values with real weights.
+///
+/// Equivalent to the generic function called with the weights converted to
+/// complex numbers, but the weights stay real: the products and the division
+/// by the sum of the weights use real arithmetic instead of the complex
+/// arithmetic of the runtime (e.g. __divdc3), which is much slower and whose
+/// division algorithm, hence the last bit of the result, depends on the
+/// platform.
+///
+/// @param[in] wx1 weight for the first point in x
+/// @param[in] wx2 weight for the second point in x
+/// @param[in] wy1 weight for the first point in y
+/// @param[in] wy2 weight for the second point in y
+/// @param[in] z11 value of the first point
+/// @param[in] z12 value of the second point
+/// @param[in] z21 value of the third point
+/// @param[in] z22 value of the fourth point
+/// @param[out] n The number of points used for the interpolation
+/// @return the interpolated value
+inline auto bilinear_interpolation(
+    const double wx1, const double wx2, const double wy1, const double wy2,
+    const std::complex<double>& z11, const std::complex<double>& z12,
+    const std::complex<double>& z21, const std::complex<double>& z22,
+    int64_t& n) noexcept -> std::complex<double> {
+  using Complex = std::complex<double>;
+  auto real = 0.0;
+  auto imag = 0.0;
+  auto sum_w = 0.0;
+  n = 0;
+  auto add_sample = [&real, &imag, &sum_w, &n](const Complex& z,
+                                               const double w) {
+    if (z - z == Complex(0)) {
+      real += z.real() * w;
+      imag += z.imag() * w;
+      sum_w += w;
+      ++n;
+    }
+  };
+  add_sample(z11, wx1 * wy1);
+  add_sample(z12, wx1 * wy2);
+  add_sample(z21, wx2 * wy1);
+  add_sample(z22, wx2 * wy2);
+  return std::abs(sum_w) > 0 ? Complex(real / sum_w, imag / sum_w)
+                             : construct_nan<Complex>();
+}
+
 /// @brief Evaluates a polynomial using Horner's method.
 ///
 /// @tparam T The type of the input and output values.

@@ -187,7 +187,7 @@ template <typename Grid>
 constexpr auto Cartesian<T>::interpolate_value(const InterpolationContext& ctx,
                                                const Grid& grid,
                                                int64_t& n) const -> Complex {
-  return detail::math::bilinear_interpolation<Complex>(
+  return detail::math::bilinear_interpolation(
       std::get<0>(ctx.weights), std::get<1>(ctx.weights),
       std::get<2>(ctx.weights), std::get<3>(ctx.weights), grid(ctx.i1, ctx.j1),
       grid(ctx.i1, ctx.j2), grid(ctx.i2, ctx.j1), grid(ctx.i2, ctx.j2), n);

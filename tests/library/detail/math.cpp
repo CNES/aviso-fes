@@ -6,7 +6,10 @@
 
 #include <gtest/gtest.h>
 
+#include <array>
 #include <cmath>
+#include <complex>
+#include <tuple>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -173,6 +176,44 @@ TEST(Math, BilinearInterpolationComplex) {
       std::complex<double>(3.0, 3.0), n);
   EXPECT_TRUE(std::isnan(z.real()));
   EXPECT_TRUE(std::isnan(z.imag()));
+}
+
+TEST(Math, BilinearInterpolationRealWeights) {
+  using C = std::complex<double>;
+  const auto nan = C(NAN, NAN);
+  double w0 = NAN;
+  double w1 = NAN;
+  double w2 = NAN;
+  double w3 = NAN;
+  std::tie(w0, w1, w2, w3) =
+      math::bilinear_weights(0.13, 0.07, 0.0, 0.0, 0.25, 0.25);
+  // Same result as the generic function, to the rounding of the division.
+  auto n_expected = static_cast<int64_t>(0);
+  auto n = static_cast<int64_t>(0);
+  const auto z =
+      std::array<C, 4>{C(1.5, -2.25), C(3.0, 0.5), C(-7.0, 2.0), C(4.0, 1.0)};
+  auto expected = math::bilinear_interpolation<C>(w0, w1, w2, w3, z[0], z[1],
+                                                  z[2], z[3], n_expected);
+  auto actual =
+      math::bilinear_interpolation(w0, w1, w2, w3, z[0], z[1], z[2], z[3], n);
+  EXPECT_EQ(n, 4);
+  EXPECT_NEAR(actual.real(), expected.real(), 1e-15);
+  EXPECT_NEAR(actual.imag(), expected.imag(), 1e-15);
+
+  // Missing point: the weights are normalized by their sum.
+  expected = math::bilinear_interpolation<C>(w0, w1, w2, w3, z[0], nan, z[2],
+                                             z[3], n_expected);
+  actual =
+      math::bilinear_interpolation(w0, w1, w2, w3, z[0], nan, z[2], z[3], n);
+  EXPECT_EQ(n, 3);
+  EXPECT_NEAR(actual.real(), expected.real(), 1e-15);
+  EXPECT_NEAR(actual.imag(), expected.imag(), 1e-15);
+
+  // No point defined.
+  actual = math::bilinear_interpolation(w0, w1, w2, w3, nan, nan, nan, nan, n);
+  EXPECT_EQ(n, 0);
+  EXPECT_TRUE(std::isnan(actual.real()));
+  EXPECT_TRUE(std::isnan(actual.imag()));
 }
 
 TEST(Math, Horner) {
