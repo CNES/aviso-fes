@@ -41,15 +41,14 @@ auto evaluate_tide_from_constituents(
     const auto compute_long_period_equilibrium =
         settings_instance.compute_long_period_equilibrium();
 
-    // Generation of the astronomic angle used for the last computation of the
-    // nodal corrections (none yet).
-    auto generation = uint64_t{0};
+    // Quantities computed for the previous points, reused while the
+    // astronomic angle does not change.
+    auto state = detail::EvaluationState();
 
     for (auto ix = start; ix < end; ++ix) {
       std::tie(tide(ix), long_period(ix)) = detail::evaluate_tide_from_waves(
           epoch(ix), latitude, compute_long_period_equilibrium,
-          settings_instance, wt_instance, inference_instance, lpe, acc,
-          generation);
+          settings_instance, wt_instance, inference_instance, lpe, acc, state);
     }
   };
 

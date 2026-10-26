@@ -137,6 +137,25 @@ class WaveTableInterface {
   virtual auto compute_nodal_corrections(const angle::Astronomic& angles,
                                          bool group_modulations) -> void = 0;
 
+  /// @brief Computes the nodal corrections for some constituents of the table.
+  ///
+  /// The other constituents keep their nodal corrections. The default
+  /// implementation computes them wave by wave; engines override it to share
+  /// the computations depending only on the date.
+  ///
+  /// @param[in] angles Astronomical angles used to compute nodal corrections.
+  /// @param[in] group_modulations If true, applies group modulations to nodal
+  /// corrections.
+  /// @param[in] idents Identifiers of the constituents to update. They must
+  /// belong to the table.
+  virtual auto compute_nodal_corrections_for(
+      const angle::Astronomic& angles, const bool group_modulations,
+      const std::vector<ConstituentId>& idents) -> void {
+    for (const auto& ident : idents) {
+      (*this)[ident]->compute_nodal_corrections(angles, group_modulations);
+    }
+  }
+
   /// @brief Get the wave corresponding at the given index.
   /// @param index The index of the constituent, must be in the range
   /// [0, size()).

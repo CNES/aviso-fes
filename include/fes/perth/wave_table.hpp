@@ -34,6 +34,16 @@ class WaveTable : public WaveTableInterface {
   auto compute_nodal_corrections(const angle::Astronomic& angles,
                                  bool group_modulations) -> void final;
 
+  /// @brief Computes the nodal corrections for some constituents of the table.
+  /// @param[in] angles Astronomical angles used to compute nodal corrections.
+  /// @param[in] group_modulations If true, applies group modulations to nodal
+  /// corrections.
+  /// @param[in] idents Identifiers of the constituents to update.
+  auto compute_nodal_corrections_for(const angle::Astronomic& angles,
+                                     bool group_modulations,
+                                     const std::vector<ConstituentId>& idents)
+      -> void final;
+
   /// @brief Clones the wave table.
   /// @return A unique pointer to the cloned wave table.
   auto clone() const -> std::unique_ptr<WaveTableInterface> final {
@@ -43,7 +53,7 @@ class WaveTable : public WaveTableInterface {
  private:
   /// Identifiers of the constituents, in the iteration order of the table.
   std::vector<ConstituentId> ids_;
-  /// Doodson numbers of the constituents, in the iteration order of the table.
+  /// Doodson numbers of the constituents, indexed by constituent identifier.
   std::vector<Vector7d> doodson_numbers_;
   /// Buffer receiving the nodal corrections, reused between calls.
   std::vector<NodalCorrections> nodal_corrections_;

@@ -215,32 +215,36 @@ WaveTable::WaveTable(const std::vector<std::string>& names) {
 
 auto WaveTable::cache_constituents() -> void {
   ids_ = constituent_ids();
-  doodson_numbers_.clear();
-  doodson_numbers_.reserve(ids_.size());
+  doodson_numbers_.assign(kKnownConstituents, Vector7d::Zero());
   for (const auto& item : *this) {
-    doodson_numbers_.emplace_back(
-        item.value()->doodson_numbers().template cast<double>());
+    doodson_numbers_[static_cast<size_t>(item.key())] =
+        item.value()->doodson_numbers().template cast<double>();
   }
 }
 
 auto WaveTable::compute_nodal_corrections(const angle::Astronomic& angles,
                                           const bool group_modulations)
     -> void {
+  compute_nodal_corrections_for(angles, group_modulations, ids_);
+}
+
+auto WaveTable::compute_nodal_corrections_for(
+    const angle::Astronomic& angles, const bool group_modulations,
+    const std::vector<ConstituentId>& idents) -> void {
   NodalCorrectionProcessor(NodalCorrectionsArgs(angles, group_modulations))(
-      ids_, nodal_corrections_);
+      idents, nodal_corrections_);
 
   // The astronomical variables depend only on the date: they are computed once
   // for all the constituents.
   const auto beta = calculate_doodson_beta(angles);
 
-  auto ix = size_t{0};
-  for (auto& item : *this) {
-    auto tidal_argument =
-        calculate_doodson_argument(beta, doodson_numbers_[ix]);
-    item.value()->set_nodal_corrections(nodal_corrections_[ix].f,
-                                        nodal_corrections_[ix].u,
-                                        tidal_argument, AngleUnit::kDegree);
-    ++ix;
+  for (size_t ix = 0; ix < idents.size(); ++ix) {
+    const auto ident = idents[ix];
+    auto tidal_argument = calculate_doodson_argument(
+        beta, doodson_numbers_[static_cast<size_t>(ident)]);
+    (*this)[ident]->set_nodal_corrections(nodal_corrections_[ix].f,
+                                          nodal_corrections_[ix].u,
+                                          tidal_argument, AngleUnit::kDegree);
   }
 }
 

@@ -165,4 +165,36 @@ TEST_F(EvaluateTideFromConstituentsTest, Perth5) {
   EXPECT_NEAR(std::get<1>(result)(0), 3.9218148213299369, 1e-6);
 }
 
+TEST(EvaluateTide, WaveContributingAfterFirstPointAtSameDate) {
+  // The nodal corrections are computed only for the waves contributing to the
+  // tide, once per date. M4 is null at the first point and defined at the
+  // second one, evaluated at the same date: its nodal corrections must be
+  // computed for the second point.
+  const auto axis = Axis(0, 1, 1);
+  auto model = tidal_model::Cartesian<double>(axis, axis, kTide);
+  model.add_constituent(kM2, Vector<Complex>::Constant(4, {50.0, -20.0}));
+  model.add_constituent(kK1, Vector<Complex>::Constant(4, {10.0, 5.0}));
+  auto m4 = Vector<Complex>(4);
+  m4 << Complex(0, 0), Complex(0, 0), Complex(0, 0), Complex(3.0, -1.5);
+  model.add_constituent(kM4, m4);
+
+  const auto epoch = Eigen::Vector2d::Constant(410227200.0);
+  const auto lon = Eigen::Vector2d(0.0, 1.0);
+  const auto lat = Eigen::Vector2d(0.0, 1.0);
+  for (const auto& settings :
+       {Settings(FESSettings()), Settings(PerthSettings())}) {
+    auto single_thread = settings;
+    single_thread.with_num_threads(1);
+    const auto both = evaluate_tide(&model, epoch, lon, lat, single_thread);
+    for (auto ix = 0; ix < 2; ++ix) {
+      // Reference: each point evaluated alone.
+      const auto alone =
+          evaluate_tide(&model, epoch.segment<1>(ix), lon.segment<1>(ix),
+                        lat.segment<1>(ix), single_thread);
+      EXPECT_EQ(std::get<0>(both)(ix), std::get<0>(alone)(0));
+      EXPECT_EQ(std::get<1>(both)(ix), std::get<1>(alone)(0));
+    }
+  }
+}
+
 }  // namespace fes
