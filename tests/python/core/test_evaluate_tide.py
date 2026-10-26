@@ -264,10 +264,16 @@ def cpu_intensive_task(
 )
 def test_parallel_tide_evaluation() -> None:
     """Test parallel tide evaluation to verify GIL release."""
-    # Setup test data
-    lon = numpy.linspace(0, 10, 100)
-    lat = numpy.linspace(45, 55, 100)
-    dates = numpy.full(lon.shape, numpy.datetime64('2024-01-01T00:00:00'))
+    # Setup test data. The workload must be large enough for the computation,
+    # run without the GIL, to dominate the fixed cost of each call and of the
+    # thread pool: an hourly time series, which updates the nodal corrections
+    # at every point.
+    size = 10_000
+    lon = numpy.linspace(0, 10, size)
+    lat = numpy.linspace(45, 55, size)
+    dates = numpy.datetime64('2024-01-01T00:00:00') + numpy.arange(
+        size
+    ) * numpy.timedelta64(1, 'h')
 
     # Create a simple tidal model (you'll need to adapt this to your actual
     # model)
@@ -276,13 +282,13 @@ def test_parallel_tide_evaluation() -> None:
     num_threads = 4
 
     # Sequential execution
-    start_sequential = time.time()
+    start_sequential = time.perf_counter()
     for i in range(num_threads):
         _ = cpu_intensive_task(tidal_model, dates, lon, lat, i)
-    sequential_time = time.time() - start_sequential
+    sequential_time = time.perf_counter() - start_sequential
 
     # Parallel execution
-    start_parallel = time.time()
+    start_parallel = time.perf_counter()
     with concurrent.futures.ThreadPoolExecutor(
         max_workers=num_threads
     ) as executor:
@@ -301,7 +307,7 @@ def test_parallel_tide_evaluation() -> None:
             future.result()
             for future in concurrent.futures.as_completed(futures)
         ]
-    parallel_time = time.time() - start_parallel
+    parallel_time = time.perf_counter() - start_parallel
 
     speedup = sequential_time / parallel_time
     assert speedup > 1
