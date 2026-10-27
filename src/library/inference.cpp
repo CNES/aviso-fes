@@ -10,7 +10,7 @@ auto inference_factory(WaveTableInterface& wave_table,
     -> std::unique_ptr<InferenceInterface> {
   switch (inference_type) {
     case InferenceType::kSpline:
-      return std::make_unique<SplineInference>();
+      return std::make_unique<SplineInference>(wave_table);
     case InferenceType::kZero:
       return std::make_unique<PerthInference>(
           wave_table, InterpolationType::kZeroAdmittance);

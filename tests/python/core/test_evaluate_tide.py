@@ -335,3 +335,34 @@ def test_evaluate_tide_from_constituents() -> None:
     assert 0 < tide.max() < 250
     assert -10 < long_period.min() < 10
     assert -10 < long_period.max() < 10
+
+
+@pytest.mark.parametrize('settings', [core.FESSettings, core.PerthSettings])
+@pytest.mark.parametrize(
+    'inference',
+    [
+        core.InferenceType.ZERO,
+        core.InferenceType.LINEAR,
+        core.InferenceType.SPLINE,
+        core.InferenceType.FOURIER,
+    ],
+)
+def test_evaluate_tide_from_constituents_inference(settings, inference) -> None:
+    """Test every inference type with both prediction engines."""
+    dates = numpy.arange(
+        numpy.datetime64('2024-01-01T00:00:00'),
+        numpy.datetime64('2024-01-02T00:00:00'),
+        numpy.timedelta64(1, 'h'),
+    )
+    constituents = {
+        name: BREST_TICON3_DATA[name]
+        for name in ('Q1', 'O1', 'P1', 'K1', 'N2', 'M2', 'S2', 'K2')
+    }
+    tide, long_period = core.evaluate_tide_from_constituents(
+        constituents,
+        dates,
+        BREST_LOCATION[1],
+        settings().with_inference_type(inference).with_num_threads(1),
+    )
+    assert numpy.all(numpy.isfinite(tide))
+    assert numpy.all(numpy.isfinite(long_period))

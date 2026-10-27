@@ -30,8 +30,15 @@ enum class InferenceType : uint8_t {
 
 /// @brief Compute waves by inference from these 7 major ones : O1, Q1, K1,
 /// 2N2, N2, M2, K2 using spline interpolation.
+/// @details Only the constituents defined in the wave table are inferred: the
+/// Perth wave table, for example, defines M1 instead of M11 and M12.
 class SplineInference : public Inference<SplineInference> {
  public:
+  /// @brief Constructor.
+  /// @param[in] wave_table The wave table containing the waves used for
+  /// inference.
+  explicit SplineInference(const WaveTableInterface& wave_table);
+
   /// @brief Apply inference to compute minor constituents.
   /// @param[in,out] wave_table The wave table to process.
   /// @param[in] lat Latitude in degrees.
@@ -40,6 +47,10 @@ class SplineInference : public Inference<SplineInference> {
   /// @brief Returns the list of the tidal constituents inferred by the model.
   /// @return A vector of constituent identifiers.
   auto inferred_constituents() const -> std::vector<ConstituentId> override;
+
+ private:
+  /// The inferred constituents defined in the wave table.
+  std::vector<ConstituentId> inferred_;
 };
 
 /// @brief Enumeration of inference (admittance) interpolation types.
@@ -154,6 +165,18 @@ auto inference_factory(WaveTableInterface& wave_table,
 // Implementation
 // ============================================================================
 
+inline SplineInference::SplineInference(const WaveTableInterface& wave_table) {
+  for (const auto ident :
+       {k2Q1, kSigma1, kRho1, kM11, kM12, kChi1, kPi1, kPhi1, kTheta1, kJ1,
+        kOO1, k2N2, kEps2, kEta2, kMu2, kNu2, kLambda2, kL2, kT2}) {
+    if (wave_table.contains(ident)) {
+      inferred_.push_back(ident);
+    }
+  }
+}
+
+// ============================================================================
+
 inline auto SplineInference::apply_impl(WaveTableInterface& wave_table,
                                         double /* lat */) -> void {
   // Arrays who contains the spline coefficients needed to compute MU2, NU2,
@@ -178,46 +201,52 @@ inline auto SplineInference::apply_impl(WaveTableInterface& wave_table,
   auto* y = wave_table[kO1].get();
   auto* z = wave_table[kK1].get();
 
-  auto set_tide = [](WaveInterface* wave, const Complex& value) {
+  // Constituents missing from the wave table are not inferred.
+  auto set_tide = [&wave_table](const ConstituentId ident,
+                                const Complex& value) -> void {
+    if (!wave_table.contains(ident)) {
+      return;
+    }
+    auto& wave = wave_table[ident];
     if (!wave->is_modeled()) {
       wave->set_tide(value);
     }
   };
 
   // 2Q1
-  set_tide(wave_table[k2Q1].get(), 0.263 * x->tide() - 0.0252 * y->tide());
+  set_tide(k2Q1, 0.263 * x->tide() - 0.0252 * y->tide());
 
   // Sigma1
-  set_tide(wave_table[kSigma1].get(), 0.297 * x->tide() - 0.0264 * y->tide());
+  set_tide(kSigma1, 0.297 * x->tide() - 0.0264 * y->tide());
 
   // rho1
-  set_tide(wave_table[kRho1].get(), 0.164 * x->tide() + 0.0048 * y->tide());
+  set_tide(kRho1, 0.164 * x->tide() + 0.0048 * y->tide());
 
   // from O1, K1  (1-2)
 
   // M11
-  set_tide(wave_table[kM11].get(), 0.0140 * y->tide() + 0.0101 * z->tide());
+  set_tide(kM11, 0.0140 * y->tide() + 0.0101 * z->tide());
 
   // M12
-  set_tide(wave_table[kM12].get(), 0.0389 * y->tide() + 0.0282 * z->tide());
+  set_tide(kM12, 0.0389 * y->tide() + 0.0282 * z->tide());
 
   // CHI1
-  set_tide(wave_table[kChi1].get(), 0.0064 * y->tide() + 0.0060 * z->tide());
+  set_tide(kChi1, 0.0064 * y->tide() + 0.0060 * z->tide());
 
   // pi1
-  set_tide(wave_table[kPi1].get(), 0.0030 * y->tide() + 0.0171 * z->tide());
+  set_tide(kPi1, 0.0030 * y->tide() + 0.0171 * z->tide());
 
   // phi1
-  set_tide(wave_table[kPhi1].get(), -0.0015 * y->tide() + 0.0152 * z->tide());
+  set_tide(kPhi1, -0.0015 * y->tide() + 0.0152 * z->tide());
 
   // theta1
-  set_tide(wave_table[kTheta1].get(), -0.0065 * y->tide() + 0.0155 * z->tide());
+  set_tide(kTheta1, -0.0065 * y->tide() + 0.0155 * z->tide());
 
   // J1
-  set_tide(wave_table[kJ1].get(), -0.0389 * y->tide() + 0.0836 * z->tide());
+  set_tide(kJ1, -0.0389 * y->tide() + 0.0836 * z->tide());
 
   // OO1
-  set_tide(wave_table[kOO1].get(), -0.0431 * y->tide() + 0.0613 * z->tide());
+  set_tide(kOO1, -0.0431 * y->tide() + 0.0613 * z->tide());
 
   // infer additional constituents by admittance SEMI-DIURNALS
   // (from Richard Ray perth3 program)
@@ -227,7 +256,7 @@ inline auto SplineInference::apply_impl(WaveTableInterface& wave_table,
   y = wave_table[kM2].get();
 
   // 2N2
-  set_tide(wave_table[k2N2].get(), 0.264 * x->tide() - 0.0253 * y->tide());
+  set_tide(k2N2, 0.264 * x->tide() - 0.0253 * y->tide());
 
   // SEMI-DIURNAL (from Grenoble to take advantage of 2N2)
 
@@ -236,7 +265,7 @@ inline auto SplineInference::apply_impl(WaveTableInterface& wave_table,
   y = wave_table[kN2].get();
 
   // eps2
-  set_tide(wave_table[kEps2].get(), 0.53285 * x->tide() - 0.03304 * y->tide());
+  set_tide(kEps2, 0.53285 * x->tide() - 0.03304 * y->tide());
 
   // from M2, K2 [5-6]
   x = wave_table[kN2].get();
@@ -244,36 +273,29 @@ inline auto SplineInference::apply_impl(WaveTableInterface& wave_table,
   z = wave_table[kK2].get();
 
   // eta2
-  set_tide(wave_table[kEta2].get(),
-           -0.0034925 * y->tide() + 0.0831707 * z->tide());
+  set_tide(kEta2, -0.0034925 * y->tide() + 0.0831707 * z->tide());
 
   // from N2, M2, K2 by spline admittances [see GRL 18[5]:845-848,1991]
 
   // mu2
-  set_tide(wave_table[kMu2].get(),
-           mu2[0] * z->tide() + mu2[1] * x->tide() + mu2[2] * y->tide());
+  set_tide(kMu2, mu2[0] * z->tide() + mu2[1] * x->tide() + mu2[2] * y->tide());
   // nu2
-  set_tide(wave_table[kNu2].get(),
-           nu2[0] * z->tide() + nu2[1] * x->tide() + nu2[2] * y->tide());
+  set_tide(kNu2, nu2[0] * z->tide() + nu2[1] * x->tide() + nu2[2] * y->tide());
   // lambda2
-  set_tide(wave_table[kLambda2].get(),
+  set_tide(kLambda2,
            lda2[0] * z->tide() + lda2[1] * x->tide() + lda2[2] * y->tide());
   // L2
-  set_tide(wave_table[kL2].get(),
-           l2[0] * z->tide() + l2[1] * x->tide() + l2[2] * y->tide());
+  set_tide(kL2, l2[0] * z->tide() + l2[1] * x->tide() + l2[2] * y->tide());
 
   // T2
-  set_tide(wave_table[kT2].get(),
-           t2[0] * z->tide() + t2[1] * x->tide() + t2[2] * y->tide());
+  set_tide(kT2, t2[0] * z->tide() + t2[1] * x->tide() + t2[2] * y->tide());
 }
 
 // ============================================================================
 
 inline auto SplineInference::inferred_constituents() const
     -> std::vector<ConstituentId> {
-  return {k2Q1,  kSigma1, kRho1,    kM11, kM12, kChi1, kPi1,
-          kPhi1, kTheta1, kJ1,      kOO1, k2N2, kEps2, kEta2,
-          kMu2,  kNu2,    kLambda2, kL2,  kT2};
+  return inferred_;
 }
 
 // ============================================================================

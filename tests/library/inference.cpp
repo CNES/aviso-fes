@@ -5,6 +5,7 @@
 #include <boost/range/algorithm/find.hpp>
 #include <initializer_list>
 #include <map>
+#include <memory>
 
 #include "fes/darwin//wave_table.hpp"
 #include "fes/interface/wave_table.hpp"
@@ -62,6 +63,37 @@ TEST(InferenceTest, SplineInference) {
   wt[k2N2]->set_tide({1, 1});
   inference->apply(wt, 45.0);
   admittance(0.499810, kEps2, wt);
+}
+
+// Sets every tide of the table to (1, 1) and applies the spline inference.
+static auto apply_spline_inference(WaveTableInterface& wt)
+    -> std::unique_ptr<InferenceInterface> {
+  for (auto& item : wt) {
+    item.value()->set_tide({1, 1});
+  }
+  auto inference = inference_factory(wt, InferenceType::kSpline);
+  inference->apply(wt, 45.0);
+  return inference;
+}
+
+// The spline inference must work with the Perth wave table, which defines M1
+// instead of M11 and M12, and give the same values as with the Darwin wave
+// table for the constituents shared by both tables.
+TEST(InferenceTest, SplineInferencePerth) {
+  auto darwin_wt = fes::darwin::WaveTable();
+  auto perth_wt = fes::perth::WaveTable();
+  auto darwin_inference = apply_spline_inference(darwin_wt);
+  auto perth_inference = std::unique_ptr<InferenceInterface>{};
+  ASSERT_NO_THROW(perth_inference = apply_spline_inference(perth_wt));
+
+  auto inferred = perth_inference->inferred_constituents();
+  EXPECT_EQ(boost::range::find(inferred, kM11), inferred.end());
+  EXPECT_EQ(boost::range::find(inferred, kM12), inferred.end());
+  EXPECT_EQ(inferred.size(),
+            darwin_inference->inferred_constituents().size() - 2);
+  for (const auto& ident : inferred) {
+    admittance(darwin_wt[ident]->tide(), ident, perth_wt);
+  }
 }
 
 TEST(InferenceTest, ZeroInference) {
