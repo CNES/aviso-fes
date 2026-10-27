@@ -1,0 +1,201 @@
+/*
+ * FES visual identity for sphinx-book-theme (pydata-sphinx-theme).
+ *
+ * The palette is defined once as --fes-* tokens, then mapped onto the
+ * theme's --pst-color-* variables. Only a few targeted rules follow; the
+ * layout of the theme is left untouched. MathJax output is not restyled.
+ *
+ * Contrast (WCAG 2.x), text or link colour on background:
+ *
+ *   Light                       on #FFFFFF   on Estran #EEF4F6
+ *   Text        #1A2433         15.62        14.07
+ *   Muted       #4A5869          7.26         6.54
+ *   Abyss       #0B2545         15.39        13.85
+ *   Tide (link) #0C747E          5.50         4.96
+ *   Tide hover  #0B5F67          7.38         6.64
+ *
+ *   Dark                        on #0A1626   on Estran #132235
+ *   Text        #E6EDF3         15.38        13.59
+ *   Muted       #A9B8C7          8.97         7.93
+ *   Abyss       #9FC3E7          9.89         8.74
+ *   Tide (link) #4FD1C5          9.74         8.61
+ *   Tide hover  #8BE3DA         12.20        10.78
+ *
+ * Spring tide #F2A541 is for charts and illustrations only, never text
+ * (2.05:1 on white).
+ */
+
+html[data-theme="light"] {
+  --fes-background: #ffffff;
+  --fes-text: #1a2433;
+  --fes-muted: #4a5869;
+  --fes-abyss: #0b2545;
+  --fes-tide: #0c747e;
+  --fes-tide-hover: #0b5f67;
+  --fes-estran: #eef4f6;
+  --fes-border: #d5dee6;
+  --fes-spring-tide: #f2a541;
+}
+
+html[data-theme="dark"] {
+  --fes-background: #0a1626;
+  --fes-text: #e6edf3;
+  --fes-muted: #a9b8c7;
+  --fes-abyss: #9fc3e7;
+  --fes-tide: #4fd1c5;
+  --fes-tide-hover: #8be3da;
+  --fes-estran: #132235;
+  --fes-border: #23364d;
+  --fes-spring-tide: #f2a541;
+}
+
+html[data-theme="light"],
+html[data-theme="dark"] {
+  --pst-color-background: var(--fes-background);
+  --pst-color-on-background: var(--fes-background);
+  --pst-color-surface: var(--fes-estran);
+  --pst-color-on-surface: var(--fes-estran);
+  --pst-color-text-base: var(--fes-text);
+  --pst-color-text-muted: var(--fes-muted);
+  --pst-color-heading: var(--fes-abyss);
+  --pst-color-border: var(--fes-border);
+  --pst-color-primary: var(--fes-tide);
+  --pst-color-secondary: var(--fes-abyss);
+  --pst-color-accent: var(--fes-tide);
+  --pst-color-link: var(--fes-tide);
+  --pst-color-link-hover: var(--fes-tide-hover);
+  --pst-color-inline-code: var(--fes-tide-hover);
+  --pst-color-inline-code-links: var(--fes-tide);
+  --pst-color-target: var(--fes-estran);
+  --pst-color-table-row-hover-bg: var(--fes-estran);
+
+  /* System fonts only: nothing is downloaded. */
+  --pst-font-family-base: system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --pst-font-family-heading: var(--pst-font-family-base);
+  --pst-font-family-monospace: ui-monospace, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", monospace;
+}
+
+/* Headings ---------------------------------------------------------------- */
+
+.bd-content h1,
+.bd-content h2,
+.bd-content h3,
+.bd-content h4 {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--fes-abyss);
+}
+
+/* Sidebar logo: the horizontal lockup would otherwise fill the sidebar. */
+
+.bd-sidebar-primary .navbar-brand img.logo__image {
+  height: 3rem;
+  width: auto;
+}
+
+/* Home page banner (index.rst) -------------------------------------------- */
+
+/* The page title stays in the document for search and screen readers; the
+   banner shows the logo in its place. */
+section:has(> .fes-hero) > h1 {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.fes-hero {
+  margin: 0.5rem 0 2rem;
+  padding: 1.5rem 0 1.75rem;
+  border-bottom: 1px solid var(--fes-border);
+}
+
+.fes-hero img.fes-hero-logo {
+  display: block;
+  height: 72px;
+  width: auto;
+  max-width: 100%;
+  margin: 0 0 1rem;
+}
+
+.fes-hero p {
+  margin: 0;
+  max-width: 40rem;
+  font-size: 1.2rem;
+  line-height: 1.5;
+  color: var(--fes-muted);
+}
+
+/* Admonitions: flatter boxes on the Estran surface. Semantic colours of
+   warnings and errors are kept. */
+
+.bd-content .admonition {
+  border-radius: 4px;
+  box-shadow: none;
+  background-color: var(--fes-estran);
+}
+
+.bd-content .admonition.note,
+.bd-content .admonition.seealso,
+.bd-content .admonition.hint {
+  border-color: var(--fes-tide);
+}
+
+.bd-content .admonition.note > .admonition-title,
+.bd-content .admonition.seealso > .admonition-title,
+.bd-content .admonition.hint > .admonition-title {
+  background-color: var(--fes-estran);
+}
+
+.bd-content .admonition.note > .admonition-title::after,
+.bd-content .admonition.seealso > .admonition-title::after,
+.bd-content .admonition.hint > .admonition-title::after {
+  color: var(--fes-tide);
+}
+
+/* Tables (constituent lists): aligned figures, Estran header. */
+
+.bd-content table.docutils {
+  font-variant-numeric: tabular-nums;
+}
+
+.bd-content table.docutils th {
+  background-color: var(--fes-estran);
+  color: var(--fes-abyss);
+}
+
+/* Gallery cards (sphinx-gallery). */
+
+.sphx-glr-thumbcontainer {
+  border-color: var(--fes-border) !important;
+  border-radius: 6px;
+  box-shadow: none !important;
+}
+
+.sphx-glr-thumbcontainer:hover {
+  border-color: var(--fes-tide) !important;
+}
+
+.sphx-glr-thumbcontainer a.internal,
+.sphx-glr-thumbcontainer .sphx-glr-thumbnail-title {
+  color: var(--fes-abyss);
+}
+
+/* Partner logos in the footer (see _static/partners/README.md). */
+
+.fes-partners {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  align-items: center;
+  margin-top: 0.75rem;
+}
+
+.fes-partners img {
+  height: 40px;
+  width: auto;
+}

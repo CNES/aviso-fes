@@ -3,7 +3,7 @@
        Follows the browser colour scheme. -->
   <style>
     .edge { stroke: #0B2545; }
-    .water { fill: #0E7C86; }
+    .water { fill: #0C747E; }
     @media (prefers-color-scheme: dark) {
       .edge { stroke: #9FC3E7; }
       .water { fill: #4FD1C5; }

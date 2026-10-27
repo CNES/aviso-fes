@@ -6,8 +6,22 @@ Changelog
 Unreleased
 ==========
 
+Documentation
+-------------
+* Added a visual identity for FES: a logo (a triangular finite element holding
+  water whose free surface is the sum of three tidal constituents), its
+  horizontal version with the "FES" wordmark, light, dark and monochrome
+  variants, and an SVG favicon that follows the browser colour scheme.
+* Applied this identity to the Sphinx documentation without new dependencies:
+  ``_static/css/fes.css`` maps the FES palette onto the
+  ``pydata-sphinx-theme`` variables for light and dark modes, with system
+  fonts only. Every text and link colour meets WCAG AA contrast (ratios are
+  listed in the stylesheet). The home page has a logo banner, the navigation
+  links to GitHub and conda-forge, and the footer has a slot for the official
+  partner logos (see ``_static/partners/README.md``).
+
 2026.10.0
----------
+=========
 * Added the :math:`\tau_1`, :math:`\beta_1`, :math:`\gamma_2`,
   :math:`\alpha_2`, :math:`\beta_2` and :math:`\delta_2` constituents to the
   Darwin engine (105 constituents). Their arguments follow Schureman (1958)

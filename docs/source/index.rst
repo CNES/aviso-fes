@@ -1,6 +1,19 @@
 PyFES documentation
 ===================
 
+.. container:: fes-hero
+
+   .. image:: _static/logo/fes-horizontal.svg
+      :class: only-light fes-hero-logo
+      :alt: FES
+
+   .. image:: _static/logo/fes-horizontal-dark.svg
+      :class: only-dark fes-hero-logo
+      :alt: FES
+
+   Ocean tide prediction as a sum of harmonic constituents, interpolated
+   from finite-element or Cartesian tidal atlases.
+
 This package is the fully revised version of the FES2022 distribution. A full
 description of the FES2022 tidal solution is given in the `handbook
 <https://www.aviso.altimetry.fr/fileadmin/documents/data/tools/hdbk_FES2022.pdf>`_

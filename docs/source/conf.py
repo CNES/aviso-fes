@@ -261,3 +261,46 @@ exclude_patterns = []
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = 'sphinx_book_theme'
+html_title = 'PyFES'
+html_static_path = ['_static']
+html_css_files = ['css/fes.css']
+html_favicon = '_static/favicon.svg'
+html_theme_options = {
+    'logo': {
+        # The horizontal logo already contains the "FES" wordmark.
+        'image_light': '_static/logo/fes-horizontal.svg',
+        'image_dark': '_static/logo/fes-horizontal-dark.svg',
+        'alt_text': 'FES - Home',
+    },
+    'repository_url': 'https://github.com/CNES/aviso-fes',
+    'repository_branch': 'main',
+    'path_to_docs': 'docs/source',
+    'use_repository_button': True,
+    'use_edit_page_button': True,
+    'use_issues_button': True,
+    'icon_links': [
+        {
+            'name': 'GitHub',
+            'url': 'https://github.com/CNES/aviso-fes',
+            'icon': 'fa-brands fa-github',
+        },
+        {
+            'name': 'conda-forge',
+            'url': 'https://anaconda.org/conda-forge/pyfes',
+            'icon': 'fa-solid fa-box-open',
+        },
+    ],
+    'footer_content_items': [
+        'author.html',
+        'copyright.html',
+        'last-updated.html',
+        'extra-footer.html',
+        'partners.html',
+    ],
+    "navbar_persistent": [],
+}
+html_context = {
+    # Official partner logos, rendered in the footer by
+    # _templates/partners.html. See _static/partners/README.md.
+    'fes_partners': [],
+}

@@ -1,0 +1,14 @@
+{#- Official partner logos, listed in html_context['fes_partners'] (conf.py)
+    as dicts with "name", "url", "image_light" and "image_dark" keys. -#}
+{%- if fes_partners %}
+<div class="fes-partners">
+  {%- for partner in fes_partners %}
+  <a href="{{ partner.url }}" title="{{ partner.name }}">
+    <img src="{{ pathto('_static/partners/' ~ partner.image_light, 1) }}"
+         class="only-light" alt="{{ partner.name }}">
+    <img src="{{ pathto('_static/partners/' ~ partner.image_dark, 1) }}"
+         class="only-dark" alt="{{ partner.name }}">
+  </a>
+  {%- endfor %}
+</div>
+{%- endif %}
