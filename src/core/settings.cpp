@@ -11,6 +11,17 @@ namespace py = pybind11;
 
 namespace fes {
 
+// Binds a builder method of Settings so that it returns the Python object
+// itself: chained calls keep the type of the caller (FESSettings,
+// PerthSettings) instead of returning a copy of the base class.
+template <typename T>
+auto return_self(Settings& (Settings::*method)(T)) {
+  return [method](py::object self, T value) -> py::object {
+    (self.cast<Settings&>().*method)(value);
+    return self;
+  };
+}
+
 inline auto init_inference_type(py::module& m) -> void {
   py::enum_<InferenceType>(
       m, "InferenceType",
@@ -90,7 +101,7 @@ various physical corrections.
           "Number of threads to use for computation. If 0, the number "
           "of threads is automatically determined.")
       // Builder-style methods returning self for method chaining
-      .def("with_engine_type", &Settings::with_engine_type,
+      .def("with_engine_type", return_self(&Settings::with_engine_type),
            py::arg("engine_type"),
            R"__doc__(
 Set the engine type for the tidal constituent notation system.
@@ -101,7 +112,8 @@ Args:
 Returns:
   self
 )__doc__")
-      .def("with_astronomic_formulae", &Settings::with_astronomic_formulae,
+      .def("with_astronomic_formulae",
+           return_self(&Settings::with_astronomic_formulae),
            py::arg("formulae"),
            R"__doc__(
 Set the astronomic formulae.
@@ -112,7 +124,7 @@ Args:
 Returns:
   self
 )__doc__")
-      .def("with_time_tolerance", &Settings::with_time_tolerance,
+      .def("with_time_tolerance", return_self(&Settings::with_time_tolerance),
            py::arg("time_tolerance"),
            R"__doc__(
 Set the time tolerance.
@@ -124,7 +136,8 @@ Args:
 Returns:
   self
 )__doc__")
-      .def("with_group_modulations", &Settings::with_group_modulations,
+      .def("with_group_modulations",
+           return_self(&Settings::with_group_modulations),
            py::arg("group_modulations"),
            R"__doc__(
 Set whether to use group modulation nodal corrections.
@@ -137,7 +150,7 @@ Returns:
   self
 )__doc__")
       .def("with_compute_long_period_equilibrium",
-           &Settings::with_compute_long_period_equilibrium,
+           return_self(&Settings::with_compute_long_period_equilibrium),
            py::arg("compute_long_period_equilibrium"),
            R"__doc__(
 Set whether to compute the long period equilibrium tide.
@@ -149,7 +162,7 @@ Args:
 Returns:
   self
 )__doc__")
-      .def("with_inference_type", &Settings::with_inference_type,
+      .def("with_inference_type", return_self(&Settings::with_inference_type),
            py::arg("inference_type"),
            R"__doc__(
 Set the inference interpolation type.
@@ -160,7 +173,7 @@ Args:
 Returns:
   self
 )__doc__")
-      .def("with_num_threads", &Settings::with_num_threads,
+      .def("with_num_threads", return_self(&Settings::with_num_threads),
            py::arg("num_threads"),
            R"__doc__(
 Set the number of threads to use for computation.
