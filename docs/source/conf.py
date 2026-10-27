@@ -178,8 +178,26 @@ def push_front_syspath():
         sys.path.insert(0, str(build_dirname().resolve()))
 
 
+def download_test_data() -> None:
+    """Download the dataset used by the gallery examples.
+
+    The dataset is defined once, in the ``conftest.py`` file of the test
+    suite, which downloads it into ``tests/python/dataset``.
+    """
+    root = str(HERE.parent.parent)
+    sys.path.insert(0, root)
+    try:
+        import conftest
+    finally:
+        sys.path.remove(root)
+    conftest.download_test_data()
+
+
 # Insert the project root dir as the first element in the PYTHONPATH.
 push_front_syspath()
+
+# The gallery examples read their data from tests/python/dataset.
+download_test_data()
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
