@@ -109,10 +109,12 @@ venv.bak/
 .vscode/
 
 # Generated files
-src/pyfes/version.py
-include/fes/version.hpp
 docs/source/auto_examples
+docs/source/constituents/darwin.rst
+docs/source/constituents/perth.rst
 docs/source/sg_execution_times.rst
+include/fes/version.hpp
+src/pyfes/version.py
 
 # macOS creates .DS_Store files in directories to store custom attributes of a
 # folder. These files are not needed in the repository and can be ignored.
