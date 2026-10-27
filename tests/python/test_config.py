@@ -5,6 +5,7 @@
 import pathlib
 import shutil
 
+import numpy
 import pytest
 
 import pyfes
@@ -62,6 +63,25 @@ tide:
     config = pyfes.config.load(settings_path)
     assert 'tide' in config.models
     assert isinstance(config.settings, pyfes.FESSettings)
+
+
+@pytest.mark.parametrize(
+    ('lgp_type', 'expected'),
+    [
+        ('lgp1', pyfes.core.tidal_model.LGP1Complex64),
+        ('lgp2', pyfes.core.tidal_model.LGP2Complex64),
+    ],
+)
+def test_config_lgp_type(lgp_type, expected) -> None:
+    """Test that the ``type`` key selects the LGP discretization."""
+    config = pyfes.config.LGP(path='model.nc', type=lgp_type)
+    assert config._lgp_class(numpy.dtype(numpy.complex64)) is expected
+
+
+def test_config_lgp_unknown_type() -> None:
+    """Test that an unknown LGP type is rejected."""
+    with pytest.raises(ValueError, match='Unknown LGP type'):
+        pyfes.config.LGP(path='model.nc', type='LGP1')
 
 
 def test_config_path_holding_a_dollar(tmp_path, monkeypatch) -> None:

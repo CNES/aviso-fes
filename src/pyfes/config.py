@@ -704,7 +704,7 @@ class LGP(Common):
         if not self.phase:
             raise ValueError('phase cannot be empty.')
         self.validate_constituents(self.constituents)
-        if self.type not in tuple(item.name.lower() for item in LGPType):
+        if self.type not in tuple(item.value for item in LGPType):
             raise ValueError(f'Unknown LGP type: {self.type!r}.')
         try:
             self.amplitude.format(constituent='M2')
@@ -719,7 +719,7 @@ class LGP(Common):
 
     def _lgp_class(self, dtype: numpy.dtype) -> LGPModel:
         """Return the class of the LGP tidal model."""
-        if self.type == LGPType.LGP1.name:
+        if self.type == LGPType.LGP1.value:
             if dtype == numpy.complex64:
                 return tidal_model.LGP1Complex64
             if dtype == numpy.complex128:

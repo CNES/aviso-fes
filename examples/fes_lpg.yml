@@ -22,5 +22,5 @@ tide:
     max_distance: 50000.0
     path: ${DATASET_DIR}/fes_2014.nc
     triangle: triangle
-    type: lgp1
+    type: lgp2
     constituents: ['M2', 'S2', 'N2', 'K2', 'K1', 'O1', 'P1', 'Q1', '2N2', 'S1']

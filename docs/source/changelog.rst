@@ -6,6 +6,14 @@ Changelog
 Unreleased
 ==========
 
+Bug Fixes
+---------
+* Fixed the ``type`` key of the ``lgp`` configuration: ``type: lgp1`` was
+  compared with the enum name ``LGP1`` instead of its value, so every LGP
+  model was loaded as LGP2. LGP1 meshes can now be loaded. The example
+  configuration ``examples/fes_lpg.yml``, which declared ``lgp1`` for an LGP2
+  mesh, now declares ``lgp2``.
+
 Documentation
 -------------
 * Added a visual identity for FES: a logo (a triangular finite element holding
