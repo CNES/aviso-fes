@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">FES</title>
+  <defs>
+    <!-- One triangular finite element of the mesh. -->
+    <clipPath id="element">
+      <path d="M5 8.6H59L32 55.4Z"/>
+    </clipPath>
+    <!-- Three tidal constituents (K1, M2, S2), cut out of the water. -->
+    <mask id="constituents">
+      <rect width="64" height="64" fill="#fff"/>
+      <g fill="none" stroke="#000" stroke-width="1.2">
+        <path d="M10 33.3C13.7 33.1 17.3 32.6 21 32C24.7 31.5 28.3 31 32 30.7C35.7 30.4 39.3 30.4 43 30.7C46.7 31 50.3 31.6 54 32.1"/>
+        <path d="M14 37.4C17 38.1 20 38.9 23 38.8C26 38.7 29 37.8 32 37.1C35 36.4 38 36 41 36.4C44 36.7 47 37.7 50 38.3"/>
+        <path d="M18 42.9C20.3 42.2 22.7 41.8 25 42C27.3 42.1 29.7 42.9 32 43.5C34.3 44.1 36.7 44.3 39 43.9C41.3 43.5 43.7 42.6 46 42.2"/>
+      </g>
+    </mask>
+  </defs>
+  <!-- Water; its free surface is the sum of the three constituents. -->
+  <path d="M8 24.4C10 23.8 12 23.3 14 22.8C16 22.3 18 21.8 20 22.1C22 22.5 24 24.1 26 25.3C28 26.5 30 26.4 32 25.2C34 24 36 22.4 38 23C40 23.5 42 25.8 44 26.2C46 26.6 48 24.6 50 22.7C52 20.8 54 20.2 56 21.5V64H8Z" fill="#4FD1C5" clip-path="url(#element)" mask="url(#constituents)"/>
+  <path d="M5 8.6H59L32 55.4Z" fill="none" stroke="#9FC3E7" stroke-width="3.6" stroke-linejoin="round"/>
+</svg>
