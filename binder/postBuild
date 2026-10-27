@@ -4,9 +4,13 @@ TMP_CONTENT_DIR=/tmp/pyfes
 mkdir -p $TMP_CONTENT_DIR
 cp -r examples binder $TMP_CONTENT_DIR
 mkdir -p $TMP_CONTENT_DIR/tests/python
-wget -q https://osf.io/download/yfr24 -O /tmp/dataset.zip
+# The dataset URL is defined once, in conftest.py, for pytest and Binder.
+DATASET_URL=$(sed -n "s/^DATASET_URL = '\(.*\)'$/\1/p" conftest.py)
+test -n "$DATASET_URL"
+wget -q --tries=3 "$DATASET_URL" -O /tmp/dataset.zip
 unzip -q /tmp/dataset.zip -d $TMP_CONTENT_DIR/tests/python/
 rm /tmp/dataset.zip
+test -d $TMP_CONTENT_DIR/tests/python/dataset
 find . -delete
 
 GENERATED_NOTEBOOKS_DIR=.generated-notebooks
