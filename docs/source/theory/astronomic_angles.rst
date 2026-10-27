@@ -6,8 +6,12 @@ Astronomical Angle Computation
 
 The harmonic prediction equation requires knowing the values of the six
 :term:`fundamental variables` (:math:`\tau, s, h, p, N', p_1`) at any given
-time. These angles are computed from polynomial expressions in the Julian
-century :math:`T` measured from a reference epoch. PyFES provides four sets
+time. The mean longitudes :math:`s, h, p, p_1` and the longitude of the
+Moon's node :math:`N` (with :math:`N' = -N`) are computed from polynomial
+expressions in the Julian century :math:`T` measured from a reference epoch.
+The hour angle of the mean Sun :math:`t = 180° + 15° \cdot \mathrm{UT}`
+follows from universal time, and :math:`\tau = t - 180° + h - s` (see
+:doc:`harmonic_development`). PyFES provides four sets
 of formulae, selectable via the :class:`~pyfes.Formulae` enumeration.
 
 This section documents the mathematical expressions implemented in each
@@ -192,11 +196,11 @@ Comparison of Formula Sets
      - 3
      - 4
      - 4
-   * - Default engine
-     - Darwin
-     - Darwin
-     - Either
-     - PERTH
+   * - Default of
+     - :class:`~pyfes.FESSettings`
+     - ---
+     - ---
+     - :class:`~pyfes.PerthSettings`
 
 Derived Auxiliary Angles
 =========================
@@ -275,7 +279,7 @@ The constituent :math:`L_2` requires two additional quantities:
 
 .. math::
 
-    x_{1ra} = \sqrt{1 + 36\,\tan^2\!\left(\tfrac{I}{2}\right)^2
+    x_{1ra} = \frac{1}{R_a} = \sqrt{1 + 36\,\tan^4\!\left(\tfrac{I}{2}\right)
               - 12\,\tan^2\!\left(\tfrac{I}{2}\right)
               \cos 2(p - \xi)}
 
@@ -285,13 +289,19 @@ The constituent :math:`L_2` requires two additional quantities:
         \frac{\sin 2(p - \xi)}{(6\,\tan^2(I/2))^{-1} - \cos 2(p - \xi)}
     \right)
 
-These are derived from Schureman formulas 213--214 (p. 44).
+These are derived from Schureman formulas 213--214 (p. 44), where
+:math:`x_{1ra}` is written :math:`1/R_a`. Unlike the other nodal
+quantities, they also depend on the longitude of the lunar perigee, through
+:math:`p - \xi` (8.85-year period).
 
 Connection to the AstronomicAngle Class
 =========================================
 
 The :class:`~pyfes.AstronomicAngle` Python class exposes all
-the angles described above:
+the angles described above, in radians: ``t`` in :math:`(-\pi, \pi]`, and
+the other longitudes in :math:`[0, 2\pi)`. Note that it exposes the hour
+angle of the mean Sun ``t`` and the longitude of the node ``n``
+(:math:`N`), from which :math:`\tau` and :math:`N' = -N` are derived:
 
 .. list-table::
    :header-rows: 1

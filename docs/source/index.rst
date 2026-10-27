@@ -63,9 +63,11 @@ Where:
       reference epoch. Speeds are constant for each constituent and are
       derived from the six fundamental astronomical variables (see
       :doc:`theory/harmonic_development`).
-    * Phase Lag (:math:`G_k`): Also known as the **epoch** (:math:`\kappa`),
-      this value represents the timing of a constituent's high water relative
-      to its theoretical astronomical forcing. Like the amplitude, it is a
+    * Phase lag (:math:`G_k`): The Greenwich phase lag of the constituent,
+      i.e. the timing of its high water relative to its theoretical
+      astronomical forcing at the Greenwich meridian. It should not be
+      confused with the local epoch :math:`\kappa` of older tables, which is
+      referred to the local meridian and time zone. Like the amplitude, it is a
       location-specific constant found through observation.
     * Nodal corrections (:math:`f_k`, :math:`u_k`): Time-dependent factors
       that account for the 18.61-year lunar nodal cycle. :math:`f_k` modulates
@@ -76,8 +78,8 @@ For a comprehensive treatment of the mathematical foundations underlying this
 equation, see the :doc:`theory/index` section.
 
 The :term:`FES` models, such as FES2022, are sophisticated global atlases that provide
-the location-specific amplitudes (:math:`H`) and phase lags (:math:`\kappa`)
-for a large number of tidal constituents. The **PyFES** library acts as the
+the location-specific amplitudes (:math:`H_k`) and Greenwich phase lags
+(:math:`G_k`) for a large number of tidal constituents. The **PyFES** library acts as the
 harmonic prediction engine.
 
 PyFES Dual-Engine Architecture
