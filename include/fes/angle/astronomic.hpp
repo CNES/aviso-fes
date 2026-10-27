@@ -609,7 +609,7 @@ auto FES_MATH_CONSTEXPR Astronomic::iers(const double epoch) noexcept -> void {
   // Mean anomaly of the moon (L)
   auto l = detail::math::arcseconds2radians(
       std::remainder(detail::math::horner(jc, 485868.249036, 1717915923.2178,
-                                          31.8792, 0.051635, 0.00024470),
+                                          31.8792, 0.051635, -0.00024470),
                      arcseconds_in_circle));
 
   // Mean anomaly of the sun (LP)

@@ -121,5 +121,29 @@ TEST(Angle, IERS) {
   EXPECT_NEAR(a.xi(), 0.19203231321420278, 1e-6);
 }
 
+// The longitude of the lunar perigee p = F + Omega - l must follow the IERS
+// 2010 conventions (eq. 5.43; SOFA iauFal03, iauFaf03, iauFaom03). Far from
+// J2000 the T^4 term of the Moon's mean anomaly l becomes visible: in the year
+// 3000 (T = 10 centuries), a wrong sign shifts p by about 4.9 arcseconds.
+TEST(Angle, IERSPerigeeFarFromJ2000) {
+  // 32503680000 is 3000-01-01T00:00:00Z, 946728000 is J2000.
+  constexpr auto epoch = 32503680000.0;
+  const auto jc = (utc_2_tdt(epoch) - 946728000.0) / 3155760000.0;
+  const auto arcseconds = [](const double value) -> double {
+    return detail::math::arcseconds2radians(std::remainder(value, 1296000.0));
+  };
+  const auto l = arcseconds(detail::math::horner(
+      jc, 485868.249036, 1717915923.2178, 31.8792, 0.051635, -0.00024470));
+  const auto f = arcseconds(detail::math::horner(
+      jc, 335779.526232, 1739527262.8478, -12.7512, -0.001037, 0.00000417));
+  const auto omega = arcseconds(detail::math::horner(
+      jc, 450160.398036, -6962890.5431, 7.4722, 0.007702, -0.00005939));
+  const auto expected = detail::math::normalize_angle(
+      f + omega - l, 0.0, detail::math::two_pi<double>());
+
+  const auto a = Astronomic(Formulae::kIERS, epoch);
+  EXPECT_NEAR(a.p(), expected, 1e-10);
+}
+
 }  // namespace angle
 }  // namespace fes
