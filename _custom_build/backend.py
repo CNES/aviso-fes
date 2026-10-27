@@ -138,8 +138,15 @@ _backend = _CustomBuildMetaBackend()
 build_wheel = _backend.build_wheel
 build_editable = _backend.build_editable
 build_sdist = _backend.build_sdist
-get_requires_for_build_wheel = _backend.get_requires_for_build_wheel
-get_requires_for_build_editable = _backend.get_requires_for_build_editable
-prepare_metadata_for_build_editable = (
-    _backend.prepare_metadata_for_build_editable
-)
+
+# The other hooks don't need the custom options: take them from the public
+# setuptools API rather than from the private ``_BuildMetaBackend`` class. They
+# are optional (PEP 517/660), so a hook missing from setuptools is skipped.
+for _hook in (
+    'get_requires_for_build_wheel',
+    'get_requires_for_build_editable',
+    'prepare_metadata_for_build_editable',
+):
+    if hasattr(setuptools.build_meta, _hook):
+        globals()[_hook] = getattr(setuptools.build_meta, _hook)
+del _hook
