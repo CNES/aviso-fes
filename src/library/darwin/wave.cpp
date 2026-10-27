@@ -21,10 +21,16 @@ auto Wave::doodson_numbers() const -> Vector7b {
   const auto n = argument_[4];
   const auto p1 = argument_[5];
 
-  // Normalize shift: convert 1 or -1 to their negatives, leave others unchanged
-  const auto normalized_shift = (argument_[6] == 1 || argument_[6] == -1)
-                                    ? static_cast<int8_t>(-argument_[6])
-                                    : static_cast<int8_t>(argument_[6]);
+  // The Darwin argument uses the hour angle of the mean Sun,
+  // T = tau + s - h + 180 deg: each multiple of T adds 180 deg, i.e. two
+  // quarter turns, to the phase of the Doodson argument. The result is reduced
+  // to [-1, 2], as in the XDO tables (e.g. O1 = -1).
+  auto quarter_turns = (argument_[6] + (2 * t)) % 4;
+  if (quarter_turns < 0) {
+    quarter_turns += 4;
+  }
+  const auto normalized_shift =
+      static_cast<int8_t>(quarter_turns == 3 ? -1 : quarter_turns);
   return {t,                           // tau
           static_cast<int8_t>(s + t),  // s + tau
           static_cast<int8_t>(h - t),  // h - tau

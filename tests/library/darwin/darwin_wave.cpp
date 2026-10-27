@@ -4,6 +4,7 @@
 // BSD-style license that can be found in the LICENSE file.
 #include <gtest/gtest.h>
 
+#include <array>
 #include <cmath>
 #include <map>
 #include <string>
@@ -656,6 +657,55 @@ TEST(Wave, NodalCorrectionsAgainstPerth) {
           0.0, item.second.second)
           << darwin_wave->name();
     }
+  }
+}
+
+// The Doodson numbers must reproduce the astronomical argument of every wave:
+// V = sum(n_i * beta_i) + n_7 * 90 deg, with tau = T - 180 deg + h - s and
+// N' = -N.
+TEST(Wave, DoodsonNumbersReproduceTheArgument) {
+  // 1710654120 = 2024-03-17 05:42:00 UTC
+  const auto angles = angle::Astronomic(angle::Formulae::kIERS, 1710654120.0);
+  const auto tau =
+      angles.t() - detail::math::pi<double>() + angles.h() - angles.s();
+  const auto beta = std::array<double, 6>{tau,        angles.s(),  angles.h(),
+                                          angles.p(), -angles.n(), angles.p1()};
+  auto table = WaveTable();
+  table.compute_nodal_corrections(angles, false);
+  for (const auto& item : table) {
+    const auto& wave = item.value();
+    const auto doodson = wave->doodson_numbers();
+    auto v = doodson(6) * detail::math::pi_2<double>();
+    for (auto ix = 0; ix < 6; ++ix) {
+      v += doodson(ix) * beta.at(ix);
+    }
+    EXPECT_NEAR(detail::math::normalize_angle(
+                    detail::math::degrees(v - wave->v()), -180.0),
+                0.0, 1e-6)
+        << wave->name();
+    EXPECT_GE(doodson(6), -1) << wave->name();
+    EXPECT_LE(doodson(6), 2) << wave->name();
+  }
+}
+
+// XDO codes checked against independent references: the IHO list of tidal
+// constituents (TWCWG, 2017) for M3, M13 (M1 at 14.492052 deg/h), S1, O1, K1
+// and L2, and the PERTH engine for M3, M13, S1, L2P, N2P and K1 (PERTH writes
+// -1 as 3, e.g. L2P = BAZZZZC).
+TEST(Wave, XdoMatchesReferences) {
+  const auto expected = std::map<std::string, std::string>{
+      {"M3", "CZZZZZB"},  {"M13", "AZZZZZB"}, {"S1", "AAYZZZB"},
+      {"L2P", "BAZZZZY"}, {"N2P", "BYZZZZA"}, {"O1", "AYZZZZY"},
+      {"K1", "AAZZZZA"},  {"L2", "BAZYZZB"}};
+  auto names = std::vector<std::string>{};
+  for (const auto& item : expected) {
+    names.push_back(item.first);
+  }
+  const auto table = WaveTable(names);
+  for (const auto& item : table) {
+    const auto& wave = item.value();
+    EXPECT_EQ(wave->xdo_alphabetical(), expected.at(wave->name()))
+        << wave->name();
   }
 }
 
