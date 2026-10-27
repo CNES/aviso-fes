@@ -24,10 +24,13 @@ into shallow waters, several non-linear processes distort its shape:
    high tide, causing the wave to steepen.
 
 2. **Quadratic bottom friction**: The frictional drag on the seabed is
-   proportional to :math:`|u| \, u` (where :math:`u` is the current
-   velocity), introducing harmonics of the fundamental frequency.
+   proportional to :math:`|\mathbf{v}| \, \mathbf{v}` (where
+   :math:`\mathbf{v}` is the current velocity, not to be confused with the
+   nodal phase correction :math:`u`), introducing harmonics of the
+   fundamental frequency.
 
-3. **Advective acceleration**: The :math:`u \cdot \nabla u` term in the
+3. **Advective acceleration**: The :math:`(\mathbf{v} \cdot \nabla)
+   \mathbf{v}` term in the
    momentum equation generates sum and difference frequencies from
    interacting constituents.
 
@@ -88,7 +91,7 @@ Compound waves span a range of species:
      - Example constituents
    * - Terdiurnal (3)
      - ~8 hours
-     - :math:`MO_3`, :math:`MK_3`, :math:`2MK_3`, :math:`M_3`
+     - :math:`MO_3`, :math:`MK_3`, :math:`2MK_3`, :math:`SO_3`
    * - Quarter-diurnal (4)
      - ~6 hours
      - :math:`M_4`, :math:`MS_4`, :math:`MN_4`, :math:`S_4`
@@ -98,6 +101,9 @@ Compound waves span a range of species:
    * - Eighth-diurnal (8)
      - ~3 hours
      - :math:`M_8`, :math:`3MS_8`
+
+:math:`M_3`, although terdiurnal, is not a compound wave: it is an
+astronomical constituent of the degree-3 potential.
 
 Nodal Corrections for Compound Waves
 ======================================

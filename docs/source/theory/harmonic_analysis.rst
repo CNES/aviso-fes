@@ -91,7 +91,7 @@ The harmonic constants are conventionally expressed as an amplitude
 .. math::
 
     H_k = \sqrt{a_k^2 + b_k^2}, \qquad
-    G_k = \arctan\!\left(\frac{b_k}{a_k}\right)
+    G_k = \operatorname{atan2}(b_k, a_k)
 
 PyFES stores these as complex numbers:
 
@@ -123,9 +123,9 @@ In practice, a Rayleigh factor :math:`C_R \geq 1` (typically
 :math:`C_R = 1`) is used, requiring :math:`T > C_R / |f_1 - f_2|`. As the
 record length increases, more constituent pairs become separable. For example:
 
-- A **15-day** record can separate species (diurnal from semidiurnal) but
-  cannot resolve :math:`M_2` from :math:`S_2` (which requires about 14.8 days
-  --- barely).
+- A **15-day** record separates the species (diurnal from semidiurnal) and
+  only just resolves :math:`M_2` from :math:`S_2`, which requires
+  :math:`1 / |f_{S_2} - f_{M_2}| \approx 14.77` days.
 - A **30-day** record separates most constituents within a species except
   closely spaced pairs like :math:`K_1` and :math:`P_1`.
 - A **year-long** record resolves the vast majority of significant

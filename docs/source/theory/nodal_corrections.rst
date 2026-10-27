@@ -62,12 +62,16 @@ amplitude and phase vary slowly with :math:`N`.
 Nodal Amplitude Factor :math:`f`
 ==================================
 
-The factor :math:`f_k` is defined as the ratio of the true obliquity factor
-(which depends on :math:`I` and hence on :math:`N`) to its mean value. Since
-:math:`I` varies over the 18.61-year cycle, :math:`f_k` oscillates around
-unity. The mean obliquity values used in the denominators are the constants
-:math:`k_{65}` through :math:`k_{235}` defined in PyFES (from Schureman's
-formulae).
+The factor :math:`f_k` is the ratio of the obliquity factor :math:`g(I)`
+(which depends on :math:`I` and hence on :math:`N`) to a mean value
+:math:`k` of this factor. Schureman's constants :math:`k_{65}` to
+:math:`k_{70}` (see :ref:`mean_obliquity_constants`) are not the mean of
+:math:`g(I)` itself, but the mean over the nodal cycle of the complex
+coefficient :math:`g(I) \, e^{iu}`, i.e. the amplitude of the central line of
+the constituent. It is :math:`f_k e^{iu_k}`, not :math:`f_k` alone, that
+averages to 1 over a nodal cycle. The coefficients :math:`k_{227}` and
+:math:`k_{235}` of the :math:`K_1` and :math:`K_2` formulas below are of a
+different kind: they are coefficients under a square root.
 
 Long-Period Constituents
 -------------------------
@@ -136,11 +140,13 @@ where :math:`k_{235,1} = 19.0444`, :math:`k_{235,2} = 2.7702`,
 
 .. math::
 
-    f(L_2) = f(M_2) \times \frac{1}{P_a}
-    \qquad \text{[Schureman formula 215]}
+    f(L_2) = f(M_2) \times \frac{1}{R_a}
+    \qquad \text{[Schureman formulas 213, 215]}
 
-where :math:`1/P_a` is the ``x1ra`` factor documented in
-:ref:`astronomic_angles_theory`.
+where :math:`1/R_a` is the ``x1ra`` factor documented in
+:ref:`astronomic_angles_theory`. Unlike the other factors, it also depends
+on the longitude of the lunar perigee, through :math:`p - \xi`
+(8.85-year period); so does the phase factor :math:`R` of :math:`u(L_2)`.
 
 Compound Constituents
 ----------------------
@@ -175,8 +181,8 @@ Long-Period Constituents
     \begin{aligned}
     u(M_m) &= 0 \\
     u(M_f) &= -2\xi \\
-    u(M_{tf}) &= -2\xi \\
-    u(M_{stm}) &= 0
+    u(M_{tm}) &= -2\xi \\
+    u(MS_{qm}) &= -2\xi
     \end{aligned}
 
 Diurnal Constituents
@@ -225,20 +231,31 @@ parents' corrections. For example:
     u(MS_4) &= u(M_2) + u(S_2) = 2\xi - 2\nu
     \end{aligned}
 
+.. _mean_obliquity_constants:
+
 Mean Obliquity Constants
 =========================
 
-The denominators in the :math:`f`-factor formulae are the mean values of the
-obliquity-dependent expressions, computed with :math:`I` at its mean value.
-These constants come from Schureman's evaluation of the expressions at the
-mean inclination:
+The denominators :math:`k` in the :math:`f`-factor formulae are the means,
+over the 18.61-year nodal cycle, of the complex coefficients
+:math:`g(I) \, e^{iu}`:
+
+.. math::
+
+    k = \left| \frac{1}{2\pi} \int_0^{2\pi} g(I) \, e^{iu(N)} \, dN \right|
+
+They differ from the mean of :math:`g(I)` alone: for :math:`M_f`, the mean
+of :math:`\sin^2 I` is 0.1645, while :math:`k_{66} = 0.1578`. The values
+below are those of the default build; when PyFES is built with
+``FES_USE_IERS_CONSTANTS``, they are recomputed from the IERS 2010
+constants:
 
 .. list-table::
    :header-rows: 1
    :widths: 15 55 15 15
 
    * - Constant
-     - Expression (mean value of)
+     - :math:`g(I)`, averaged with :math:`e^{iu}`
      - Schureman
      - PyFES
    * - :math:`k_{65}`
@@ -282,9 +299,21 @@ Group modulations are enabled via:
 
     settings = pyfes.PerthSettings().with_group_modulations(True)
 
-When group modulations are disabled, the PERTH engine falls back to
-individual nodal corrections computed from the same Schureman-derived
-expressions documented above.
+When group modulations are disabled, the PERTH engine applies R. Ray's
+individual nodal corrections, not the Schureman expressions documented
+above. Each one is written as a sum of satellite lines:
+
+.. math::
+
+    f \, e^{iu} = 1 + \sum_j \alpha_j \, e^{i \phi_j}
+
+where the satellite ratios :math:`\alpha_j` come from the
+Cartwright--Tayler--Edden development of the potential and the phases
+:math:`\phi_j` are combinations of :math:`N` and :math:`p`. For example,
+:math:`f e^{iu}(O_1) = 1 + 0.1886 e^{iN} - 0.0058 e^{2iN} - 0.0065 e^{2ip}`.
+For the main constituents, the two engines agree closely: over 1990--2030,
+:math:`O_1` differs by less than 0.9 % in :math:`f` and 0.5° in :math:`u`,
+and :math:`M_2` by less than 0.01 %.
 
 References
 ==========
