@@ -1,0 +1,33 @@
+/*
+ * FES palette for the Doxygen C++ reference (HTML_EXTRA_STYLESHEET).
+ *
+ * HTML_COLORSTYLE_HUE/SAT/GAMMA in the Doxyfile tint the generated chrome
+ * (header, tree view, tables) towards the FES blues; this file only sets
+ * what a hue shift cannot: the exact link colours, which must reach WCAG AA
+ * (see _static/css/fes.css for the ratios), and the system font stacks.
+ * It relies on the CSS variables of doxygen.css (checked with Doxygen 1.18).
+ */
+
+html {
+  --page-link-color: #0c747e;
+  --page-visited-link-color: #0b5f67;
+  --font-family-normal: system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-family-title: var(--font-family-normal);
+  --font-family-nav: var(--font-family-normal);
+  --font-family-monospace: ui-monospace, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", monospace;
+}
+
+/* Same selector as doxygen.css for HTML_COLORSTYLE = AUTO_LIGHT. */
+@media (prefers-color-scheme: dark) {
+  html:not(.dark-mode) {
+    --page-link-color: #4fd1c5;
+    --page-visited-link-color: #8be3da;
+  }
+}
+
+#projectlogo img {
+  height: 48px;
+  width: auto;
+}

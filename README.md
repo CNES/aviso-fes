@@ -1,3 +1,10 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/CNES/aviso-fes/main/docs/source/_static/logo/fes-horizontal-dark.svg">
+    <img src="https://raw.githubusercontent.com/CNES/aviso-fes/main/docs/source/_static/logo/fes-horizontal.svg" alt="FES" height="96">
+  </picture>
+</p>
+
 ![build](https://github.com/CNES/aviso-fes/actions/workflows/ci.yaml/badge.svg)
 [![platforms](https://anaconda.org/conda-forge/pyfes/badges/platforms.svg?service=github)](https://anaconda.org/conda-forge/pyfes)
 [![latest-release-date](https://anaconda.org/conda-forge/pyfes/badges/latest_release_date.svg?service=github)](https://github.com/CNES/aviso-fes/commits/main)
