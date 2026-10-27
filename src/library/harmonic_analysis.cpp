@@ -26,15 +26,19 @@ auto harmonic_analysis(const Eigen::Ref<const Eigen::VectorXd>& h,
     return result;
   }
 
-  auto H = Eigen::MatrixXd(w_size << 1, h.rows());
+  // The mean sea level S0 is estimated with the constituents (last row of
+  // ones): otherwise a non-zero mean of h biases their amplitudes. It is not
+  // returned.
+  auto H = Eigen::MatrixXd((w_size << 1) + 1, h.rows());
 
   H.topRows(w_size) = f.array() * vu.array().cos();
-  H.bottomRows(w_size) = f.array() * vu.array().sin();
+  H.middleRows(w_size, w_size) = f.array() * vu.array().sin();
+  H.bottomRows(1).setOnes();
 
   Eigen::LDLT<Eigen::MatrixXd> ldlt(H * H.transpose());
   Eigen::VectorXd solution = ldlt.solve(H * h);
-  result.real() = solution.topRows(w_size);
-  result.imag() = solution.bottomRows(w_size);
+  result.real() = solution.head(w_size);
+  result.imag() = solution.segment(w_size, w_size);
 
   return result;
 }

@@ -211,7 +211,7 @@ follow:
 .. math::
 
   S_{ap} = S_{0}(x, y) + \sum_{k=0}^n f_{k}(t)S_{k}(x, y)
-    	imes \cos [\omega_{k}t + v_{k}(t) + u_{k}(t) - G_{k}(x,y)]
+    \times \cos [v_{k}(t) + u_{k}(t) - G_{k}(x,y)]
 
 where:
   - :math:`(n)` is the number of constituents,
@@ -219,13 +219,15 @@ where:
   - :math:`S_{k}(x, y)` is the amplitude of the constituent of index
     :math:`(k)`,
   - :math:`G_{k}(x, y)` is the phase lag relative to Greenwich time,
-  - :math:`\omega_{k}` is the angular frequency of the constituent of index
-    :math:`(k)`,
-  - :math:`v_{k}` is the astronomical argument at time :math:`(t)`,
+  - :math:`v_{k}` is the astronomical argument at time :math:`(t)`, which
+    already contains the term :math:`\omega_{k}t`,
   - :math:`f_{k}(t)` is the nodal correction coefficient applied to
     the amplitude of the constituent of index :math:`(k)`,
   - :math:`u_{k}(t)` is the nodal correction coefficient applied to
     the phase of the constituent of index :math:`(k)`.
+
+The mean sea level :math:`S_{0}` is estimated together with the
+constituents, so that it does not bias them, but it is not returned.
 
 The a priori analysis spectrum includes the most important astronomical
 constituents in the Darwin development, completed by Schureman in 1958,

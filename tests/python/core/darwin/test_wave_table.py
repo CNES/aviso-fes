@@ -173,6 +173,35 @@ def test_harmonic_analysis() -> None:
     assert delta.std(), pytest.approx(0, rel=1e-12)
 
 
+@pytest.mark.parametrize('mean', [0.0, 50.0])
+def test_harmonic_analysis_with_mean(mean) -> None:
+    """A non-zero mean of the sea level does not bias the constituents."""
+    time = numpy.arange(
+        numpy.datetime64('2020-01-01'),
+        numpy.datetime64('2021-01-01'),
+        numpy.timedelta64(1, 'h'),
+    ).astype('datetime64[us]')
+    names = ['Sa', 'Ssa', 'Mm', 'Mf', 'Q1', 'O1', 'K1', 'N2', 'M2', 'S2']
+    wt = core.wave_table_factory(core.DARWIN, names)
+    f, vu = wt.compute_nodal_modulations(time)
+    expected = numpy.array(
+        [
+            (10.0 + 5.0 * ix) * numpy.exp(1j * numpy.radians(30.0 + 40.0 * ix))
+            for ix in range(len(names))
+        ]
+    )
+    h = mean + numpy.sum(
+        f
+        * (
+            expected.real[:, numpy.newaxis] * numpy.cos(vu)
+            + expected.imag[:, numpy.newaxis] * numpy.sin(vu)
+        ),
+        axis=0,
+    )
+    w = wt.harmonic_analysis(h, f, vu)
+    numpy.testing.assert_allclose(w, expected, atol=1e-8)
+
+
 def test_harmonic_analysis_with_empty_table() -> None:
     time = numpy.arange(
         numpy.datetime64('2018-01-01'),

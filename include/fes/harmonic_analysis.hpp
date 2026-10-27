@@ -23,7 +23,7 @@ namespace fes {
 ///
 /// \f[
 ///   S_{ap} = S_{0}(x, y) + \sum_{k=0}^n f_{k}(t)S_{k}(x, y)
-///     \times cos [\omega_{k}t + {v}_{k}(t) + u_{k}(t) - G_{k}(x,y)]
+///     \times cos [{v}_{k}(t) + u_{k}(t) - G_{k}(x,y)]
 /// \f]
 ///
 /// where:
@@ -32,13 +32,15 @@ namespace fes {
 ///   * \f$S_{k}(x, y)\f$ is the amplitude of the constituent of index
 ///     \f$(k\f$),
 ///   * \f$G_{k}(x, y)\f$ is the phase lag relative to Greenwich time,
-///   * \f$w_{k}\f$ is the angular frequency of the constituent of index
-///     \f$(k\f$),
-///   * \f$v_{k}\f$ is the astronomical argument at time \f$(t\f$),
+///   * \f$v_{k}\f$ is the astronomical argument at time \f$(t\f$), which
+///     already contains the term \f$\omega_{k}t\f$,
 ///   * \f$f_{k}(t)\f$ is the nodal correction coefficient applied to
 ///     the amplitude of the constituent of index \f$(k\f$),
 ///   * \f$u_{k}(t)\f$ is the nodal correction coefficient applied to
 ///     the phase of the constituent of index \f$(k\f$).
+///
+///   The mean sea level \f$S_{0}\f$ is estimated together with the
+///   constituents, so that it does not bias them, but it is not returned.
 ///
 ///   The a priori analysis spectrum includes the most important astronomical
 ///   constituents in the Darwin development, completed by Schureman in 1958,
