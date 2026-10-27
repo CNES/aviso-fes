@@ -20,8 +20,8 @@ plus a residual:
 .. math::
 
     h(t_j) = S_0 + \sum_{k=1}^{N} f_k(t_j) \left[
-        a_k \cos\!\left(\omega_k t_j + V_k(t_j) + u_k(t_j)\right)
-      + b_k \sin\!\left(\omega_k t_j + V_k(t_j) + u_k(t_j)\right)
+        a_k \cos\!\left(V_k(t_j) + u_k(t_j)\right)
+      + b_k \sin\!\left(V_k(t_j) + u_k(t_j)\right)
     \right] + \varepsilon_j
 
 where:
@@ -29,9 +29,11 @@ where:
 - :math:`S_0` is the mean sea level,
 - :math:`a_k` and :math:`b_k` are the in-phase and quadrature components of
   constituent :math:`k`,
-- :math:`f_k` and :math:`V_k + u_k` are the :term:`nodal corrections <nodal
+- :math:`V_k(t_j)` is the :term:`astronomical argument` of constituent
+  :math:`k` at time :math:`t_j` (it already contains the term
+  :math:`\omega_k t_j`),
+- :math:`f_k` and :math:`u_k` are the :term:`nodal corrections <nodal
   correction>` (see :doc:`nodal_corrections`),
-- :math:`\omega_k` is the angular speed of constituent :math:`k`,
 - :math:`\varepsilon_j` is the residual (noise, meteorological effects,
   etc.).
 
@@ -46,7 +48,7 @@ as:
 
 .. math::
 
-    \phi_{k,j} = \omega_k t_j + V_k(t_j) + u_k(t_j)
+    \phi_{k,j} = V_k(t_j) + u_k(t_j)
 
 and collecting all unknowns into a vector
 :math:`\mathbf{x} = (S_0, a_1, b_1, a_2, b_2, \ldots, a_N, b_N)^T`
@@ -77,6 +79,8 @@ and is given by the **normal equations**:
     \mathbf{A}^T \mathbf{A} \, \mathbf{x} = \mathbf{A}^T \mathbf{h}
 
 This is the formulation implemented in PyFES's harmonic analysis routines.
+The mean sea level :math:`S_0` is estimated together with the constituents,
+so that it does not bias them, but only the constituents are returned.
 
 Complex Amplitude Representation
 ===================================

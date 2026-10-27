@@ -44,8 +44,8 @@ expressed by the fundamental harmonic prediction equation:
 
 .. math::
 
-    h(t) = H_0 + \sum_{k=1}^{N} f_k \, H_k \,
-    \cos\!\left(\omega_k t + V_k(t) + u_k(t) - G_k\right)
+    h(t) = H_0 + \sum_{k=1}^{N} f_k(t) \, H_k \,
+    \cos\!\left(V_k(t) + u_k(t) - G_k\right)
 
 Where:
     * :math:`H_0` is the mean height of the water level above the chart datum.
@@ -55,13 +55,14 @@ Where:
     * Amplitude (:math:`H_k`): This is the strength, or half the range, of
       each constituent. It is a location-specific value determined from the
       analysis of tidal observations or a tidal atlas.
-    * Speed (:math:`\omega_k`): This is the angular speed of the constituent,
-      representing how quickly its phase changes. Speeds are constant for each
-      constituent and are derived from the six fundamental astronomical
-      variables (see :doc:`theory/harmonic_development`).
-    * Astronomical argument (:math:`V_k`): The equilibrium phase of
-      constituent :math:`k` at the Greenwich meridian, determined by the
-      positions of the Moon and Sun.
+    * Astronomical argument (:math:`V_k(t)`): The equilibrium phase of
+      constituent :math:`k` at the Greenwich meridian at time :math:`t`,
+      determined by the positions of the Moon and Sun. It advances at the
+      angular speed :math:`\omega_k` of the constituent,
+      :math:`V_k(t) = V_k(t_0) + \omega_k (t - t_0)`, where :math:`t_0` is a
+      reference epoch. Speeds are constant for each constituent and are
+      derived from the six fundamental astronomical variables (see
+      :doc:`theory/harmonic_development`).
     * Phase Lag (:math:`G_k`): Also known as the **epoch** (:math:`\kappa`),
       this value represents the timing of a constituent's high water relative
       to its theoretical astronomical forcing. Like the amplitude, it is a

@@ -176,5 +176,5 @@ Glossary
         Each integer coefficient is mapped to a letter via the sequence
         R, S, T, U, V, W, X, Y, Z, A, B, C, D, E, F, G, H, I, J, ...
         where ``Z`` corresponds to coefficient 0. For example, :math:`M_2`
-        with coefficients (2, 0, 0, 0, 0, 0, 0) is encoded as ``BZZZZZ``.
+        with coefficients (2, 0, 0, 0, 0, 0, 0) is encoded as ``BZZZZZZ``.
         See :doc:`theory/harmonic_development`.

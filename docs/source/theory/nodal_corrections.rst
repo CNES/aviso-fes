@@ -19,21 +19,23 @@ PyFES, following Schureman's notation.
 The Prediction Equation with Nodal Corrections
 ================================================
 
-The full harmonic prediction equation at universal time :math:`t_0` is:
+The full harmonic prediction equation at universal time :math:`t` is:
 
 .. math::
 
-    h(t_0) = H_0 + \sum_{k=1}^{N} f_k(t_0) \, H_k \,
-    \cos\!\left[\omega_k t_0 + V_{k,0}(t_0) + u_k(t_0) - G_k\right]
+    h(t) = H_0 + \sum_{k=1}^{N} f_k(t) \, H_k \,
+    \cos\!\left[V_k(t) + u_k(t) - G_k\right]
 
 where:
 
 - :math:`H_0` is the mean water level above the chart datum,
 - :math:`H_k` is the amplitude of constituent :math:`k` from the tidal atlas,
 - :math:`G_k` is the :term:`phase lag` of constituent :math:`k`,
-- :math:`\omega_k` is the angular speed of constituent :math:`k`,
-- :math:`V_{k,0}` is the equilibrium :term:`astronomical argument` at
-  Greenwich,
+- :math:`V_k(t)` is the equilibrium :term:`astronomical argument` at
+  Greenwich at time :math:`t`; it advances at the angular speed
+  :math:`\omega_k` of the constituent,
+  :math:`V_k(t) = V_k(t_0) + \omega_k (t - t_0)` for a reference epoch
+  :math:`t_0`,
 - :math:`f_k` is the **nodal amplitude factor** (dimensionless, close to 1),
 - :math:`u_k` is the **nodal phase correction** (in degrees or radians).
 

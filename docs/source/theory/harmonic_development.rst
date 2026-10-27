@@ -31,7 +31,7 @@ angular velocity:
      - Angular velocity (°/h)
      - Period
    * - :math:`\tau`
-     - Local mean lunar time (hour angle of the mean Moon)
+     - Mean lunar time at Greenwich (hour angle of the mean Moon minus 180°)
      - 14.492052
      - 1.035 days
    * - :math:`s`
@@ -55,16 +55,20 @@ angular velocity:
      - 0.000002
      - 20,940 years
 
-The local mean lunar time :math:`\tau` is related to the civil time
-:math:`T` (in hours) and the mean longitudes by:
+The mean lunar time :math:`\tau` is related to universal time
+:math:`\mathrm{UT}` (in hours) and the mean longitudes by:
 
 .. math::
 
-    \tau = 15° \cdot T + h - s
+    \tau = 15° \cdot \mathrm{UT} + h - s = t - 180° + h - s
 
-This relation arises because the hour angle of the mean Moon equals the hour
-angle of the mean Sun (:math:`15° \cdot T`) plus the difference in mean
-longitudes (:math:`h - s`). These six variables are mutually independent
+where :math:`t = 180° + 15° \cdot \mathrm{UT}` is the hour angle of the
+mean Sun at Greenwich (``AstronomicAngle.t`` in PyFES). The term
+:math:`15° \cdot \mathrm{UT}` is the mean solar time counted from midnight,
+that is the hour angle of the mean Sun minus 180°; adding the difference in
+mean longitudes (:math:`h - s`) gives the hour angle of the mean Moon minus
+180°. Like the whole argument, :math:`\tau` is referred to the Greenwich
+meridian, not to the local one. These six variables are mutually independent
 --- no exact rational relationship exists between any pair of their periods ---
 which is why the tide is technically not periodic but merely
 quasi-periodic.
@@ -80,10 +84,12 @@ form:
 .. math::
 
     \theta_k(t) = n_1 \tau + n_2 s + n_3 h + n_4 p + n_5 N' + n_6 p_1
+                 + n_7 \cdot 90°
 
-where the :math:`n_i` are small integers (typically in the range
-:math:`-5` to :math:`+6` for potential-derived constituents). The constituent's
-angular frequency is:
+where :math:`n_1` to :math:`n_6` are small integers (typically in the range
+:math:`-5` to :math:`+6` for potential-derived constituents) and :math:`n_7`
+is a constant phase offset described in :ref:`extended_doodson_number`. The
+constituent's angular frequency is:
 
 .. math::
 
@@ -127,8 +133,9 @@ each coefficient except the first:
 
 **Example --- S₂ (principal solar semidiurnal)**:
 
-The :math:`S_2` argument is :math:`\theta = 2\tau + 2s - 2h = 2T` (since
-:math:`\tau = T + h - s` in hourly notation), giving
+The :math:`S_2` argument is
+:math:`\theta = 2\tau + 2s - 2h = 2 \cdot 15° \cdot \mathrm{UT}` (since
+:math:`\tau = 15° \cdot \mathrm{UT} + h - s`), giving
 :math:`(n_1, n_2, n_3, n_4, n_5, n_6) = (2, 2, -2, 0, 0, 0)`:
 
 .. math::
@@ -137,7 +144,8 @@ The :math:`S_2` argument is :math:`\theta = 2\tau + 2s - 2h = 2T` (since
 
 **Example --- K₁ (lunisolar diurnal)**:
 
-:math:`(n_1, n_2, n_3, n_4, n_5, n_6) = (1, 1, 1, 0, 0, 0)`:
+The :math:`K_1` argument is :math:`\theta = \tau + s`, giving
+:math:`(n_1, n_2, n_3, n_4, n_5, n_6) = (1, 1, 0, 0, 0, 0)`:
 
 .. math::
 
@@ -151,14 +159,19 @@ The :math:`S_2` argument is :math:`\theta = 2\tau + 2s - 2h = 2T` (since
 
     N_D(O_1) = 1\;4\;5\;.\;5\;5\;5 = 145.555
 
+.. _extended_doodson_number:
+
 Extended Doodson Number
 -----------------------
 
 In practice, an additional seventh digit is appended to encode a phase
-quadrant offset :math:`n_7 \times 90°` that ensures all potential terms
-appear as positive cosines. The coefficient :math:`n_7` is 0 or 1
-for cosine terms and :math:`\pm 1` for sine terms. With the same offset
-convention, the seventh digit is :math:`n_7 + 5`.
+offset :math:`n_7 \times 90°` that ensures all potential terms appear as
+positive cosines: 0 or 2 (180°) for cosine terms with a positive or negative
+coefficient, 1 or -1 (90° or 270°) for sine terms. The offset is defined
+modulo 360°, so :math:`n_7` is defined modulo 4. PyFES reports it in
+:math:`\{-1, 0, 1, 2\}` for the Darwin engine, as in the XDO tables (e.g.
+:math:`O_1`: :math:`n_7 = -1`), while the PERTH engine writes -1 as 3. With
+the same offset convention, the seventh digit is :math:`n_7 + 5`.
 
 Species, Groups, and Subgroups
 -------------------------------
@@ -197,8 +210,9 @@ coefficient :math:`n_i` (including :math:`n_1`) is mapped to a letter:
 The mapping uses the sequence ``R S T U V W X Y Z A B C D E F G H I J ...``
 with ``Z`` at coefficient 0. For example:
 
-- :math:`M_2` with coefficients (2, 0, 0, 0, 0, 0, 0) becomes ``BZZZZZ``
-- :math:`S_2` with coefficients (2, 2, -2, 0, 0, 0, 0) becomes ``BCXZZZZ``
+- :math:`M_2` with coefficients (2, 0, 0, 0, 0, 0, 0) becomes ``BZZZZZZ``
+- :math:`S_2` with coefficients (2, 2, -2, 0, 0, 0, 0) becomes ``BBXZZZZ``
+- :math:`O_1` with coefficients (1, -1, 0, 0, 0, 0, -1) becomes ``AYZZZZY``
 
 In PyFES, the ``xdo_numerical()`` and ``xdo_alphabetical()`` methods on
 :class:`~pyfes.core.WaveInterface` return these representations.
@@ -228,21 +242,23 @@ The Harmonic Prediction Equation
 
 Combining the potential development with the ocean's response at a given
 location yields the **harmonic tidal equation**. The tidal height at a
-point with longitude :math:`G` at universal time :math:`t_0` is:
+given location at universal time :math:`t` is:
 
 .. math::
 
-    h(t_0) = H_0 + \sum_{k=1}^{N} f_k \, H_k \,
-    \cos\!\left(V_{k,0}(t_0) + \omega_k \, t_0 - G_k + u_k\right)
+    h(t) = H_0 + \sum_{k=1}^{N} f_k \, H_k \,
+    \cos\!\left(V_k(t_0) + \omega_k \, (t - t_0) + u_k - G_k\right)
 
 where:
 
 - :math:`H_0` is the mean water level above the datum,
 - :math:`H_k` and :math:`G_k` are the amplitude and :term:`phase lag`
   (harmonic constants) of constituent :math:`k` at the given location,
-- :math:`V_{k,0}(t_0)` is the :term:`astronomical argument` at the Greenwich
-  meridian at time :math:`t_0 = 0`,
-- :math:`\omega_k` is the angular speed of constituent :math:`k`,
+- :math:`V_k(t_0)` is the :term:`astronomical argument` at the Greenwich
+  meridian at a reference epoch :math:`t_0`,
+- :math:`\omega_k` is the angular speed of constituent :math:`k`, so that
+  :math:`V_k(t_0) + \omega_k (t - t_0)` is the astronomical argument
+  :math:`V_k(t)` at time :math:`t`,
 - :math:`f_k` and :math:`u_k` are the :term:`nodal corrections <nodal
   correction>` (see :doc:`nodal_corrections`).
 
