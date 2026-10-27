@@ -34,7 +34,7 @@ jobs:
       #          before cibuildwheel runs.
       - name: Install Boost and Eigen headers (Windows)
         if: runner.os == 'Windows'
-        uses: mamba-org/setup-micromamba@v1
+        uses: mamba-org/setup-micromamba@v3
         with:
           cache-downloads: true
           condarc: |

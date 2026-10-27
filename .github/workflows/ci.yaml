@@ -36,7 +36,7 @@ jobs:
         fetch-tags: true
 
     - name: Setup Miniconda
-      uses: mamba-org/setup-micromamba@v1
+      uses: mamba-org/setup-micromamba@v3
       with:
         cache-downloads: true
         condarc: |
@@ -85,7 +85,7 @@ jobs:
         lfs: true
 
     - name: Setup Miniconda
-      uses: mamba-org/setup-micromamba@v1
+      uses: mamba-org/setup-micromamba@v3
       with:
         cache-downloads: true
         condarc: |
