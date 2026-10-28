@@ -7,6 +7,7 @@ import shutil
 
 import numpy
 import pytest
+import yaml
 
 import pyfes
 
@@ -154,3 +155,13 @@ def test_config_expand_undefined_variable(monkeypatch) -> None:
     monkeypatch.delenv('FES_TEST_UNDEFINED', raising=False)
     with pytest.raises(pyfes.config.InterpolationError):
         pyfes.config._expand('${FES_TEST_UNDEFINED}')
+
+
+def test_config_rejects_python_tags(tmp_path) -> None:
+    """Test that a configuration file cannot construct Python objects."""
+    settings_path = tmp_path / 'config.yaml'
+    settings_path.write_text(
+        'tide: !!python/object/apply:os.getcwd []\n', encoding='utf-8'
+    )
+    with pytest.raises(yaml.constructor.ConstructorError):
+        pyfes.config.parse(settings_path)

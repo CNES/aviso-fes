@@ -69,8 +69,13 @@ CartesianModel = type[
 ]
 
 
-class Loader(yaml.Loader):
-    """Load objects from YAML documents."""
+class Loader(yaml.SafeLoader):
+    """Load objects from YAML documents.
+
+    Only the standard YAML tags are accepted: a tag constructing Python
+    objects, such as ``!!python/object/apply``, would run arbitrary code when
+    a configuration file is loaded.
+    """
 
 
 class InterpolationError(Exception):
