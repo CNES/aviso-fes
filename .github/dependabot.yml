@@ -1,0 +1,20 @@
+version: 2
+
+updates:
+  # Update the actions pinned to a commit in .github/workflows: Dependabot
+  # replaces the commit and the version in the comment that follows it.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    # Wait a week before proposing a new release, so that a compromised one
+    # has time to be detected and withdrawn.
+    cooldown:
+      default-days: 7
+    # One pull request for all the actions.
+    groups:
+      github-actions:
+        patterns:
+          - '*'
+    commit-message:
+      prefix: ci
