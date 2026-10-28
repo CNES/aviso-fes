@@ -793,7 +793,10 @@ class LGP(Common):
                 del amp, pha
 
                 instance.add_constituent(item, wave)
-        assert instance is not None, 'No tidal model loaded.'
+
+        # Check that a tidal model was loaded.
+        if instance is None:
+            raise ValueError('No tidal model loaded.')
 
         # Set the wave to be considered as part of this model, but not defined
         # as a Cartesian grid.
@@ -822,7 +825,8 @@ def parse(path: str | os.PathLike) -> dict[str, Any]:
 
     """
     with open(path, encoding='utf-8') as stream:
-        return _parse(yaml.load(stream, Loader=Loader))
+        # Loader derives from yaml.SafeLoader, which ruff does not recognize.
+        return _parse(yaml.load(stream, Loader=Loader))  # noqa: S506
 
 
 def _load_model(

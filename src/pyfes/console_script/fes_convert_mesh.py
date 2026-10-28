@@ -95,18 +95,27 @@ def main() -> None:
         amp, phase = load_data(path)
         if properties is None:
             properties = x, y, triangles, lgp2
-        else:
-            assert numpy.all(x == properties[0])
-            assert numpy.all(y == properties[1])
-            assert numpy.all(triangles == properties[2])
-            assert numpy.all(lgp2 == properties[3])
+        elif not (
+            numpy.all(x == properties[0])
+            and numpy.all(y == properties[1])
+            and numpy.all(triangles == properties[2])
+            and numpy.all(lgp2 == properties[3])
+        ):
+            raise ValueError(
+                f'The mesh of {path!r} differs from the mesh of the previous '
+                'files.'
+            )
         waves[WAVE_MAP[wave_name]] = amp, phase
 
-    assert properties is not None
+    # argparse requires at least one mesh file.
+    assert properties is not None  # noqa: S101
 
     with netCDF4.Dataset(args.output, 'w') as ds:
         x, y, triangles, lgp2 = properties
-        assert len(x) == len(y)
+        if len(x) != len(y):
+            raise ValueError(
+                'The mesh holds a different number of longitudes and latitudes.'
+            )
         ds.createDimension('coordinates', len(x))
         ds.createDimension('triangles', triangles.shape[0])
         ds.createDimension('three', 3)

@@ -73,7 +73,8 @@ def download(url: str) -> bytes:
     """Download the content of a URL."""
     print(f'Downloading {url}...')
     try:
-        with urllib.request.urlopen(url, context=get_ssl_context()) as response:
+        # The URLs are the HTTPS constants defined in this module.
+        with urllib.request.urlopen(url, context=get_ssl_context()) as response:  # noqa: S310
             return response.read()
     except Exception as exc:
         raise RuntimeError(f'Failed to download {url}: {exc}') from exc
