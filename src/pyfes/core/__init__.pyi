@@ -6,6 +6,7 @@ from typing import ClassVar, overload
 
 from . import (
     darwin as darwin,
+    datemanip as datemanip,
     perth as perth,
     tidal_model as tidal_model,
     mesh as mesh,
