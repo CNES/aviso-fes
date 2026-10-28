@@ -6,6 +6,17 @@ Changelog
 Unreleased
 ==========
 
+Security
+--------
+* ``pyfes.config.load`` and ``pyfes.config.parse`` now read the configuration
+  file with ``yaml.SafeLoader``. They used ``yaml.Loader``, which accepts the
+  ``!!python/*`` tags: a file holding, for example,
+  ``!!python/object/apply:os.system [...]`` ran the command with the rights of
+  the user as soon as it was loaded. Only the standard YAML types are now
+  built. Valid configuration files load as before; a file holding a Python
+  tag raises a ``yaml.constructor.ConstructorError``. Users of earlier
+  versions should only load configuration files from trusted sources.
+
 Bug Fixes
 ---------
 * Fixed the ``type`` key of the ``lgp`` configuration: ``type: lgp1`` was
