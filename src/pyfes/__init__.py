@@ -133,14 +133,20 @@ def evaluate_tide(
     Example:
         >>> import pyfes
         >>> import numpy as np
-        >>> # 1. Load the model (requires a config file)
-        >>> model = pyfes.config.load('path/to/config.yaml')
+        >>> # 1. Load the model and its settings (requires a config file)
+        >>> config = pyfes.config.load('path/to/config.yaml')
         >>> # 2. Define space and time
         >>> dates = np.array(['2025-01-01T12:00:00'], dtype='datetime64[us]')
         >>> lons = np.array([0.0])
         >>> lats = np.array([45.0])
         >>> # 3. Compute tide
-        >>> tide, lp, flags = pyfes.evaluate_tide(model, dates, lons, lats)
+        >>> tide, lp, flags = pyfes.evaluate_tide(
+        ...     config.models['tide'],
+        ...     dates,
+        ...     lons,
+        ...     lats,
+        ...     settings=config.settings,
+        ... )
         >>> total_height = tide + lp
 
     Note:

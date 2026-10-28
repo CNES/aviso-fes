@@ -15,9 +15,9 @@
 # PyFES - Ocean Tide Prediction Software
 
 PyFES is a Python library for predicting ocean tides anywhere on Earth. Using
-global tidal atlases such as FES2022 and GOT5.6, it evaluates tidal heights and
-currents through harmonic analysis -- the same scientific method developed by
-Lord Kelvin over 150 years ago.
+global tidal atlases such as FES2022 and GOT5.6, it predicts tidal heights (and
+currents, from velocity atlases) with the harmonic method -- the same
+scientific method developed by Lord Kelvin over 150 years ago.
 
 ## Features
 
@@ -50,9 +50,15 @@ interpolation techniques, and engine comparison. Everything runs in the cloud.
 conda install -c conda-forge pyfes
 ```
 
+### From PyPI
+
+```bash
+pip install pyfes
+```
+
 ### From source
 
-PyFES requires a C++14 compiler and CMake:
+PyFES requires a C++14 compiler, CMake, Boost (>= 1.79) and Eigen (>= 3.4):
 
 ```bash
 git clone https://github.com/CNES/aviso-fes.git
@@ -188,7 +194,7 @@ The complete documentation is available on
   complete constituent catalogues
 - [Theoretical Background](https://cnes.github.io/aviso-fes/theory/index.html) --
   mathematical foundations of the harmonic method
-- [API Reference](https://cnes.github.io/aviso-fes/api.html) --
+- [API Reference](https://cnes.github.io/aviso-fes/api/index.html) --
   detailed function documentation
 - [Examples](https://cnes.github.io/aviso-fes/auto_examples/index.html) --
   worked examples with plots
@@ -228,7 +234,7 @@ correction for SWOT (Surface Water and Ocean Topography) altimetry products.
 ## Related Projects
 
 PyFES focuses on high-performance tidal prediction from FES atlases (Darwin
-engine) and GOT atlases (Perth engine), including loaders for FES2022's
+engine) and GOT atlases (PERTH engine), including loaders for FES2022's
 unstructured native grid. For a broader pure-Python tide-modeling toolbox
 covering OTIS, IERS pole tides, ocean and solid-Earth tides, and
 tide-generating force computations -- complementary to the FES / GOT scope

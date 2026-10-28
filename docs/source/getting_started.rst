@@ -88,8 +88,9 @@ each value as a single token).
       - Extra arguments forwarded verbatim to CMake (space-separated, quote
         the whole value).
     * - ``--mkl[=yes|no]``
-      - Use Intel MKL as the BLAS implementation. When the MKL header is
-        available under ``$CONDA_PREFIX``, ``MKLROOT`` is set automatically.
+      - Use Intel MKL as the BLAS implementation. When ``mkl.h`` is found
+        under the prefix of the running Python interpreter (``sys.prefix``),
+        ``MKLROOT`` is set automatically.
     * - ``--iers[=yes|no]``
       - Compile with the IERS 2010 astronomic constants instead of the
         Schureman (1958) values. Defines ``-DFES_USE_IERS_CONSTANTS=ON``.

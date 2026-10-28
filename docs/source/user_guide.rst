@@ -50,7 +50,11 @@ Top-Level Keys
     The ocean tide elevation model.
 
 ``radial``
-    The radial (loading) tide model. Optional.
+    Optional radial (loading) tide model: the vertical deformation of the sea
+    floor under the load of the ocean tide. It is evaluated with a second call
+    to :func:`~pyfes.evaluate_tide` on ``config.models['radial']``, and the
+    long-period equilibrium tide is never added to it. The geocentric tide
+    measured by satellite altimetry is the sum ``tide + lp + load``.
 
 Each model section contains either a ``cartesian`` or ``lgp`` block describing
 the grid type.
@@ -92,12 +96,15 @@ stored in a single NetCDF file with variable name patterns:
 
     tide:
       lgp:
-        type: lgp2              # 'lgp1' or 'lgp2'
+        type: lgp2              # 'lgp1' (default) or 'lgp2'
         path: /path/to/model.nc
-        triangle: triangle      # triangle connectivity variable
-        codes: codes            # land/sea mask variable
+        latitude: lat           # default: 'lat'
+        longitude: lon          # default: 'lon'
+        triangle: triangle      # triangle -> vertex connectivity
+        codes: codes            # triangle -> LGP degree-of-freedom indices
         amplitude: '{constituent}_amplitude'
         phase: '{constituent}_phase'
+        max_distance: 0.0       # maximum extrapolation distance (0: none)
         constituents:
           - M2
           - S2
@@ -189,7 +196,14 @@ equilibrium tide:
      - ``0.0`` s
      - ``0.0`` s
 
-All settings can be overridden on either engine using the builder methods:
+``num_threads`` (default 0, i.e. all available cores) controls the
+parallelism. ``time_tolerance`` (in seconds, default 0) lets PyFES reuse the
+astronomical angles and nodal corrections for dates closer than this value,
+which speeds up predictions on dense time series.
+
+All settings can be overridden on either engine using the builder methods.
+Each ``with_*`` method modifies the object and returns it, so the calls can
+be chained:
 
 .. code-block:: python
 
@@ -365,8 +379,11 @@ analysis of tide gauge data):
         settings=settings,
     )
 
-Amplitudes are in the same units as the model (typically cm); phases are in
-degrees.
+Phases are Greenwich phase lags in degrees. Amplitudes must be in
+centimetres when the long-period equilibrium tide is enabled (the default
+with :class:`~pyfes.FESSettings`), because that term is computed in
+centimetres. The constituent names must belong to the engine selected by
+``settings`` (the Darwin engine if ``settings`` is omitted).
 
 ``evaluate_equilibrium_long_period`` — Equilibrium LPE
 -------------------------------------------------------

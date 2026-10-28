@@ -937,13 +937,16 @@ def load(
         yaml.YAMLError: If the YAML cannot be parsed.
 
     Example:
+        >>> import numpy as np
         >>> import pyfes
-        >>> config = pyfes.load('ocean_tide.yaml')
+        >>> config = pyfes.config.load('ocean_tide.yaml')
         >>> # Access the tide model
         >>> tide_model = config.models['tide']
         >>> # Use the settings for evaluation
-        >>> result = pyfes.core.evaluate_tide(
-        ...     tide_model, dates, lon, lat, config.settings
+        >>> dates = np.array(['2025-01-01T12:00:00'], dtype='datetime64[us]')
+        >>> lon, lat = np.array([0.0]), np.array([45.0])
+        >>> tide, lp, flags = pyfes.evaluate_tide(
+        ...     tide_model, dates, lon, lat, settings=config.settings
         ... )
 
     """

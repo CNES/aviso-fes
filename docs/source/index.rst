@@ -14,17 +14,20 @@ PyFES documentation
    Ocean tide prediction as a sum of harmonic constituents, interpolated
    from finite-element or Cartesian tidal atlases.
 
-This package is the fully revised version of the FES2022 distribution. A full
-description of the FES2022 tidal solution is given in the `handbook
+PyFES is a C++/Python library that predicts the ocean tide at any location on
+the Earth with the harmonic method, from global tidal atlases such as FES2022
+(Darwin engine) or GOT (PERTH engine). It is the fully revised software of the
+FES2022 distribution; the FES2022 tidal solution itself is described in the
+`handbook
 <https://www.aviso.altimetry.fr/fileadmin/documents/data/tools/hdbk_FES2022.pdf>`_
 and in the paper (Lyard et al. 2024).
 
-The library uses a set of tidal components to predict the ocean tide at any
-location on the Earth. The source code provides an older version of the FES99
-model, because it is significantly smaller than newer versions. **Do not
-use it for scientific purposes**. You can download the model from the `AVISO
+The atlases are not shipped with PyFES: download FES2022 from the `AVISO
 <https://www.aviso.altimetry.fr/en/data/products/auxiliary-products/global-tide-fes.html>`_
-website.
+website. The small grids downloaded with the test dataset
+(``tests/python/dataset``) come from a very old, low-resolution FES model and
+are only used by the tests and the examples. **Do not use them for scientific
+purposes**.
 
 Theoretical Background: The Harmonic Method
 --------------------------------------------
@@ -94,9 +97,10 @@ mathematical formulation and constituent notation:
   follows traditional oceanographic conventions.
 
 * **PERTH/Doodson Engine** (``engine: perth``): Uses :term:`Doodson number`
-  classification with group modulations. Developed by Dr. Richard Ray at NASA
-  Goddard Space Flight Center, this engine is designed for GOT (Goddard Ocean
-  Tide) models. It supports 80 tidal constituents.
+  classification, with individual nodal corrections by default and optional
+  group modulations. It is a C++ port of the PERTH5 program developed by
+  Dr. Richard Ray at NASA Goddard Space Flight Center, designed for GOT
+  (Goddard Ocean Tide) models. It supports 80 tidal constituents.
 
 Both engines support configurable inference modes (``ZERO``, ``LINEAR``,
 ``SPLINE``, ``FOURIER``) for handling minor constituents.
@@ -113,20 +117,24 @@ When a user requests a tide prediction for a specific location and time, PyFES:
 
 1.  Retrieves the amplitude and phase for each constituent from the tidal model
     maps at the desired location.
-2.  Calculates the astronomical argument (the angle inside the cosine function)
-    for the specified time using the known astronomical speeds of each constituent.
-3.  Applies nodal corrections appropriate to the selected engine:
+2.  Infers minor constituents not in the atlas using admittance relationships
+    (see :ref:`inference_types`).
+3.  Calculates the astronomical argument (the angle inside the cosine function)
+    for the specified time from the fundamental astronomical variables.
+4.  Applies nodal corrections appropriate to the selected engine:
 
     * **Darwin engine**: Individual Schureman nodal factors (*f*) and phase
       corrections (*u*)
-    * **PERTH engine**: Group modulation corrections or individual corrections
-      based on configuration
+    * **PERTH engine**: R. Ray's individual corrections, or group modulations
+      when enabled
 
-4.  Applies the fundamental prediction equation shown above, summing the
-    contributions of all constituents.
-5.  Infers minor constituents not in the atlas using admittance relationships.
-6.  Adds the local mean sea level (:math:`H_0`) to produce the final predicted
-    tide height relative to the datum.
+5.  Applies the fundamental prediction equation shown above, summing the
+    contributions of all constituents, and returns the short-period and
+    long-period parts separately, the latter including the long-period
+    equilibrium tide when it is enabled.
+
+PyFES does not add a mean sea level or datum offset (:math:`H_0`): the result
+is the tide relative to the mean sea surface of the atlas.
 
 References
 ~~~~~~~~~~
@@ -144,7 +152,7 @@ Bibliography
 ------------
 
 * Lyard, F., Carrere, L., Fouchet, E., Cancet, M., Greenberg, D.,
-  Dibarboure, G., and Picot, N.: FES2022 a step towards a SWOTcompliant tidal
+  Dibarboure, G., and Picot, N.: FES2022 a step towards a SWOT-compliant tidal
   correction, Submitted to J. Geophy. Res., in review, 2025
 
 * Lyard, F. H., Allain, D. J., Cancet, M., Carrère, L., and Picot, N.: FES2014

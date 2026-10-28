@@ -9,9 +9,9 @@ Glossary
     Admittance
         The complex ratio between a minor tidal constituent and a major
         constituent, used to infer amplitudes and phases of constituents not
-        explicitly provided in a tidal atlas. Both prediction engines support
-        admittance inference but use different algorithms. See also
-        :term:`Inference`.
+        explicitly provided in a tidal atlas. Both prediction engines use the
+        same inference algorithms (``LINEAR``, ``SPLINE``, ``FOURIER``). See
+        also :term:`Inference`.
 
     Astronomical Argument
         The angle :math:`V_k(t) = n_1\tau + n_2 s + n_3 h + n_4 p + n_5 N'
