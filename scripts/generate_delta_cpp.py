@@ -24,7 +24,6 @@ from collections import defaultdict
 import datetime
 import hashlib
 import pathlib
-import ssl
 import textwrap
 import urllib.request
 
@@ -61,20 +60,12 @@ LEAP_SECONDS_LEN = 2
 ENTRIES_PER_LINE = 3
 
 
-def get_ssl_context() -> ssl.SSLContext:
-    """Create a relaxed SSL context to handle government server certs."""
-    ctx = ssl.create_default_context()
-    ctx.check_hostname = False
-    ctx.verify_mode = ssl.CERT_NONE
-    return ctx
-
-
 def download(url: str) -> bytes:
     """Download the content of a URL."""
     print(f'Downloading {url}...')
     try:
         # The URLs are the HTTPS constants defined in this module.
-        with urllib.request.urlopen(url, context=get_ssl_context()) as response:  # noqa: S310
+        with urllib.request.urlopen(url) as response:  # noqa: S310
             return response.read()
     except Exception as exc:
         raise RuntimeError(f'Failed to download {url}: {exc}') from exc
