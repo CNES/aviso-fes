@@ -8,6 +8,7 @@
 #include <pybind11/pybind11.h>
 
 #include <limits>
+#include <stdexcept>
 #include <string>
 #include <tuple>
 // clang-format off
@@ -84,9 +85,6 @@ inline auto split_datetime(const py::handle& datetime)
     sec += PyDateTime_DATE_GET_HOUR(py_object) * 3'600 +
            PyDateTime_DATE_GET_MINUTE(py_object) * 60 +
            PyDateTime_DATE_GET_SECOND(py_object);
-    if (std::abs(sec) > std::numeric_limits<int32_t>::max()) {
-      throw std::invalid_argument("timestamp out of range for platform time_t");
-    }
     return std::make_tuple(sec, PyDateTime_DATE_GET_MICROSECOND(py_object));
   }
   throw std::invalid_argument(
@@ -99,6 +97,13 @@ inline auto split_datetime(const py::handle& datetime)
 /// @return POSIX timestamp as int64_t.
 auto inline as_int64(const py::handle& datetime) -> int64_t {
   auto sec_usec = split_datetime(datetime);
+  // datetime.datetime spans years 1 to 9999, i.e. about 3.2e17 microseconds,
+  // well within int64; the guard only protects the multiplication below.
+  constexpr auto kMaxSeconds = std::numeric_limits<int64_t>::max() / 1'000'000;
+  if (std::get<0>(sec_usec) >= kMaxSeconds ||
+      std::get<0>(sec_usec) <= -kMaxSeconds) {
+    throw std::overflow_error("timestamp out of range for int64 microseconds");
+  }
   return (std::get<0>(sec_usec) * 1'000'000) + std::get<1>(sec_usec);
 }
 

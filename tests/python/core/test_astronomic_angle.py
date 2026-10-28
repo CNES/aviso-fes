@@ -5,6 +5,7 @@
 import datetime
 import threading
 
+import numpy
 import pytest
 
 from pyfes import core
@@ -128,6 +129,38 @@ def test_astronomic_angle(constants_flavor: str) -> None:
     aa = core.AstronomicAngle(core.IERS)
     aa.update(datetime.datetime(2000, 1, 1))
     _check_angles(aa, EXPECTED_ANGLES['IERS'][constants_flavor])
+
+
+@pytest.mark.parametrize(
+    'date',
+    [
+        datetime.datetime(1950, 6, 15, 12, 30, 15, 250000),
+        datetime.datetime(2039, 1, 1),
+        datetime.datetime(2100, 1, 1, 6, 0, 0, 500000),
+    ],
+)
+def test_astronomic_angle_outside_int32_epoch(date: datetime.datetime) -> None:
+    """Dates outside the 32-bit POSIX range match the datetime64 path."""
+    expected_us = int(
+        (numpy.datetime64(date, 'us') - numpy.datetime64(0, 'us')).astype(
+            'int64'
+        )
+    )
+    assert core.datemanip.as_int64(date) == expected_us
+    assert core.datemanip.as_float64(date) == pytest.approx(
+        expected_us * 1e-6, rel=1e-15
+    )
+
+    aa = core.AstronomicAngle()
+    aa.update(date)
+    wt = core.wave_table_factory(core.DARWIN, ['M2', 'K1', 'O1', 'N2', 'Mf'])
+    wt.compute_nodal_corrections(aa)
+    f, vu = wt.compute_nodal_modulations(
+        numpy.array([date], dtype='datetime64[us]')
+    )
+    for ix, wave in enumerate(wt):
+        assert wave.f == pytest.approx(f[ix, 0], rel=1e-12), wave.name
+        assert wave.vu == pytest.approx(vu[ix, 0], abs=1e-9), wave.name
 
 
 def test_astronomical_angle_thread_safety() -> None:
