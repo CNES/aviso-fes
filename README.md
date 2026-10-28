@@ -168,7 +168,7 @@ satellite altimetry applications.
 
 A full technical description is available in the
 [FES2022 handbook](https://www.aviso.altimetry.fr/fileadmin/documents/data/tools/hdbk_FES2022.pdf)
-and the scientific paper (Lyard et al. 2024).
+and the scientific paper (Lyard et al., 2025, in review).
 
 ### Operational Use
 

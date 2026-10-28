@@ -319,10 +319,10 @@ PyFES supports three grid discretisations, each available in double
 
 * **Cartesian grids** — regular latitude/longitude grids. Each constituent is
   stored in a separate NetCDF file containing amplitude and phase arrays.
-* **LGP1** — linear Galerkin--Petrov discretisation on unstructured triangular
-  meshes. All constituents are stored in a single NetCDF file.
-* **LGP2** — quadratic Galerkin--Petrov discretisation on unstructured triangular
-  meshes, providing higher accuracy than LGP1 on the same mesh.
+* **LGP1** — piecewise-linear (P1) Lagrange finite elements on unstructured
+  triangular meshes. All constituents are stored in a single NetCDF file.
+* **LGP2** — piecewise-quadratic (P2) Lagrange finite elements on unstructured
+  triangular meshes, providing higher accuracy than LGP1 on the same mesh.
 
 The grid type is determined by the YAML configuration (``cartesian`` or ``lgp``
 section).

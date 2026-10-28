@@ -20,7 +20,7 @@ the Earth with the harmonic method, from global tidal atlases such as FES2022
 FES2022 distribution; the FES2022 tidal solution itself is described in the
 `handbook
 <https://www.aviso.altimetry.fr/fileadmin/documents/data/tools/hdbk_FES2022.pdf>`_
-and in the paper (Lyard et al. 2024).
+and in the paper (Lyard et al., 2025, in review).
 
 The atlases are not shipped with PyFES: download FES2022 from the `AVISO
 <https://www.aviso.altimetry.fr/en/data/products/auxiliary-products/global-tide-fes.html>`_
