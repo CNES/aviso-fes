@@ -93,8 +93,9 @@ each value as a single token).
     * - ``--iers[=yes|no]``
       - Compile with the IERS 2010 astronomic constants instead of the
         Schureman (1958) values. Defines ``-DFES_USE_IERS_CONSTANTS=ON``.
-        See :ref:`Astronomic Constants <astronomic_constants>` for the
-        difference.
+        See :ref:`sphx_glr_auto_examples_ex_astronomic_constants.py` for
+        how these coefficients are derived. At runtime,
+        ``pyfes.core.IERS_2010`` tells whether the build uses them.
     * - ``--reconfigure``
       - Force CMake to re-run from scratch (drops the cached configuration).
 
@@ -154,9 +155,10 @@ engine. Here is a minimal example for a FES atlas with Cartesian grids:
           O1: /path/to/O1_tide.nc
           # ... additional constituents
 
-The top-level ``engine`` key selects the prediction engine: ``darwin`` for
-FES atlases or ``perth`` for GOT atlases. See :doc:`engines` for details on
-each engine.
+The top-level ``engine`` key selects the settings of the prediction engine:
+``darwin`` for FES atlases or ``perth`` for GOT atlases. Pass these settings
+to the prediction functions (``settings=config.settings``): they carry the
+engine actually used. See :doc:`engines` for details on each engine.
 
 Environment variables are supported using ``${VAR}`` syntax:
 
@@ -194,8 +196,8 @@ Step 2: Load the Model and Predict
         settings=config.settings,
     )
 
-    # tide: short-period constituent heights (cm)
-    # lp: long-period equilibrium tide (cm)
+    # tide: short-period constituents (atlas units, typically cm)
+    # lp: long-period constituents + long-period equilibrium tide
     # flags: quality flags (>0: interpolated, <0: extrapolated, 0: undefined)
     total_tide = tide + lp
 

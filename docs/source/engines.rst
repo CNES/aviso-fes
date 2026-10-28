@@ -12,7 +12,7 @@ engines implement the same fundamental
 :ref:`astronomic formulae <astronomic_formulae>`, and
 :ref:`prediction functions <prediction_functions>`.
 
-The choice of engine is determined by the tidal atlas format.
+The choice of engine is determined by the tidal atlas family (FES or GOT).
 
 Engine Comparison
 =================
@@ -45,6 +45,9 @@ Engine Comparison
    * - **Default formulae**
      - ``SCHUREMAN_ORDER_1``
      - ``IERS``
+   * - **Long-period equilibrium tide**
+     - Computed by default
+     - Not computed by default
    * - **Compatible atlases**
      - FES2014, FES2022
      - GOT4.10, GOT5.5, GOT5.6
@@ -95,9 +98,11 @@ Default Settings
 
     settings = pyfes.FESSettings()
     # Defaults:
+    #   engine_type = DARWIN
     #   inference_type = SPLINE
     #   astronomic_formulae = SCHUREMAN_ORDER_1
     #   group_modulations = False
+    #   compute_long_period_equilibrium = True
 
 Constituent List
 ----------------
@@ -148,8 +153,9 @@ enabled or disabled through the settings:
 
     settings = pyfes.PerthSettings().with_group_modulations(True)
 
-When group modulations are disabled, the engine falls back to individual
-nodal corrections similar to the Darwin approach.
+When group modulations are disabled, the engine applies R. Ray's individual
+nodal corrections, which differ slightly from the Schureman formulas of the
+Darwin engine (see :doc:`theory/nodal_corrections`).
 
 Default Settings
 ----------------
@@ -158,9 +164,11 @@ Default Settings
 
     settings = pyfes.PerthSettings()
     # Defaults:
+    #   engine_type = DOODSON
     #   inference_type = LINEAR
     #   astronomic_formulae = IERS
     #   group_modulations = False
+    #   compute_long_period_equilibrium = False
 
 Constituent List
 ----------------
@@ -177,7 +185,16 @@ The engine choice depends on your tidal atlas:
 - **FES atlases** (FES2014, FES2022): use ``engine: darwin``.
 - **GOT atlases** (GOT4.10, GOT5.5, GOT5.6): use ``engine: perth``.
 
-The engine is set in the YAML configuration file. If omitted, it defaults to
-``darwin``. All other settings (inference mode, formulae, parallelism) are
-independent of the engine choice and can be configured freely with either
-engine. See :ref:`inference_types` and :ref:`astronomic_formulae`.
+The ``engine`` key of the YAML file (default ``darwin``) selects the settings
+object returned by :func:`pyfes.config.load`: :class:`~pyfes.FESSettings`
+for ``darwin`` and :class:`~pyfes.PerthSettings` for ``perth``. The engine
+actually used by :func:`~pyfes.evaluate_tide` is the one carried by its
+``settings`` argument, so always pass ``settings=config.settings`` (or
+settings derived from it). If ``settings`` is omitted, the Darwin engine with
+the FES defaults is used, whatever the YAML file says.
+
+In the API, the two engines are identified by :class:`~pyfes.EngineType`:
+``DARWIN`` (``engine: darwin``, :class:`~pyfes.FESSettings`) and ``DOODSON``
+(``engine: perth``, :class:`~pyfes.PerthSettings`). All other settings
+(inference mode, formulae, parallelism) are independent of the engine choice
+and can be configured freely with either engine. See :ref:`inference_types` and :ref:`astronomic_formulae`.

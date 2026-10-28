@@ -156,8 +156,9 @@ Runtime Settings
 ================
 
 All prediction parameters are configured through the :class:`~pyfes.Settings`
-class using a builder pattern. The two engine-specific subclasses differ only
-in their default values:
+class using a builder pattern. The two engine-specific subclasses differ in
+their default values, including the engine itself and the long-period
+equilibrium tide:
 
 .. list-table::
    :header-rows: 1
@@ -166,6 +167,9 @@ in their default values:
    * - Setting
      - :class:`~pyfes.FESSettings`
      - :class:`~pyfes.PerthSettings`
+   * - ``engine_type``
+     - ``DARWIN``
+     - ``DOODSON``
    * - ``inference_type``
      - ``SPLINE``
      - ``LINEAR``
@@ -177,7 +181,13 @@ in their default values:
      - ``False``
    * - ``compute_long_period_equilibrium``
      - ``True``
-     - ``True``
+     - ``False``
+   * - ``num_threads``
+     - ``0`` (all available cores)
+     - ``0`` (all available cores)
+   * - ``time_tolerance``
+     - ``0.0`` s
+     - ``0.0`` s
 
 All settings can be overridden on either engine using the builder methods:
 
@@ -328,10 +338,15 @@ model at the requested locations:
 
 Returns:
 
-- ``tide``: short-period constituent heights (cm). ``NaN`` where no data is
-  available.
-- ``lp``: long-period equilibrium tide (cm). Always computed (does not depend
-  on the model).
+- ``tide``: sum of the short-period constituents (diurnal, semidiurnal,
+  compound waves), in the units of the atlas (typically cm). ``NaN`` where no
+  data is available.
+- ``lp``: long-period part of the tide: the long-period constituents of the
+  atlas, modelled or inferred (e.g. :math:`M_m`, :math:`M_f`), plus the
+  long-period equilibrium tide when ``compute_long_period_equilibrium`` is
+  enabled (the default with :class:`~pyfes.FESSettings`, not with
+  :class:`~pyfes.PerthSettings`). The equilibrium tide is never added for a
+  ``radial`` model.
 - ``flags``: quality indicators. Positive = number of interpolation points
   used; negative = extrapolated; zero = undefined.
 
@@ -386,8 +401,12 @@ from a given record length:
 
     wt = pyfes.darwin.WaveTable()  # or pyfes.perth.WaveTable()
 
-    # Select constituents resolvable from a 30-day record
+    # Select constituents resolvable from a 30-day record (in seconds)
     names = wt.select_waves_for_analysis(duration=30 * 24 * 3600)
+
+    # Restrict the wave table to these constituents: analysing every
+    # constituent of the table would make the system ill-conditioned.
+    wt = pyfes.darwin.WaveTable(names)
 
 Computing Nodal Modulations
 ----------------------------
@@ -397,7 +416,12 @@ corrections (:math:`V+u`) needed for the design matrix:
 
 .. code-block:: python
 
+    # f, vu: arrays of shape (n_constituents, n_times)
     f, vu = wt.compute_nodal_modulations(dates)
+
+By default, the nodal corrections are computed with the
+``SCHUREMAN_ORDER_1`` formulae and without group modulations; pass
+``formulae=pyfes.Formulae.IERS`` to match the defaults of the PERTH engine.
 
 Solving the Least-Squares Problem
 -----------------------------------
@@ -407,11 +431,13 @@ the observation equation using least squares:
 
 .. code-block:: python
 
-    # h: observed sea level [n_times, n_positions]
-    # f: nodal factors [n_times, n_constituents]
-    # vu: V+u phases [n_times, n_constituents]
+    # h: observed sea level at one location, shape (n_times,)
     amplitudes = pyfes.WaveTableInterface.harmonic_analysis(h, f, vu)
 
-The result is a vector of complex amplitudes :math:`H_k e^{i G_k}` for each
-constituent. For the mathematical formulation, see
+The result is a vector of complex amplitudes :math:`H_k e^{i G_k}`, one per
+constituent, in the order of the wave table (``[wave.name for wave in
+wt]``), which is not necessarily the order of ``names``. The mean sea level
+is estimated but not returned. To analyse several locations, call
+``harmonic_analysis`` once per time series: ``f`` and ``vu`` can be
+reused. For the mathematical formulation, see
 :doc:`theory/harmonic_analysis`.

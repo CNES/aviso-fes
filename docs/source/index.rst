@@ -103,7 +103,7 @@ Both engines support configurable inference modes (``ZERO``, ``LINEAR``,
 
 Both engines implement the same fundamental harmonic method but differ in their
 constituent representation and approach to nodal corrections. The choice of
-engine depends on your tidal atlas format. For a detailed comparison, see
+engine depends on your tidal atlas family (FES or GOT). For a detailed comparison, see
 :doc:`engines`.
 
 Prediction Workflow
