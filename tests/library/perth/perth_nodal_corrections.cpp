@@ -211,8 +211,10 @@ TEST(NodalCorrectionsTest, EvaluateNodalCorrections) {
         EXPECT_NEAR(item.u, 7.783470, 1e-6);
         break;
       case kMSK6:
+        // MSK6 = M2 + S2 + K2: u(M2) + u(K2). R. Ray's code uses
+        // u(M2) - u(K2), which gives 15.731458.
         EXPECT_NEAR(item.f, 0.999415, 1e-6);
-        EXPECT_NEAR(item.u, 15.731458, 1e-6);
+        EXPECT_NEAR(item.u, -19.994686, 1e-6);
         break;
       case kMSm:
         EXPECT_NEAR(item.f, 1.061803, 1e-6);

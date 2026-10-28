@@ -6,6 +6,7 @@
 
 #include <array>
 #include <cmath>
+#include <cstdlib>
 #include <map>
 #include <string>
 #include <utility>
@@ -268,7 +269,7 @@ inline auto check_nodal_phase(const WaveTable& table,
         EXPECT_NEAR(detail::math::degrees(wave->vu()), 6.0, 1e-8);
         break;
       case kMP1:
-        EXPECT_NEAR(detail::math::degrees(wave->vu()), 271.0, 1e-8);
+        EXPECT_NEAR(detail::math::degrees(wave->vu()), 272.0, 1e-8);
         break;
       case k2SM2:
         EXPECT_NEAR(detail::math::degrees(wave->vu()), 2.0, 1e-8);
@@ -349,7 +350,7 @@ inline auto check_nodal_phase(const WaveTable& table,
         EXPECT_NEAR(detail::math::degrees(wave->vu()), 2, 1e-8);
         break;
       case kOQ2:
-        EXPECT_NEAR(detail::math::degrees(wave->vu()), 180, 1e-8);
+        EXPECT_NEAR(detail::math::degrees(wave->vu()), 182, 1e-8);
         break;
       case k3MS4:
         EXPECT_NEAR(detail::math::degrees(wave->vu()), 4, 1e-8);
@@ -373,7 +374,7 @@ inline auto check_nodal_phase(const WaveTable& table,
         EXPECT_NEAR(detail::math::degrees(wave->vu()), 2, 1e-8);
         break;
       case kML4:
-        EXPECT_NEAR(detail::math::degrees(wave->vu()), 4, 1e-8);
+        EXPECT_NEAR(detail::math::degrees(wave->vu()), 183, 1e-8);
         break;
       case kSO1:
         EXPECT_NEAR(detail::math::degrees(wave->vu()), 271, 1e-8);
@@ -409,16 +410,16 @@ inline auto check_nodal_phase(const WaveTable& table,
         check_ray_wave(*wave, angles, -88);
         break;
       case kBeta1:
-        EXPECT_NEAR(detail::math::degrees(wave->vu()), 271, 1e-8);
+        check_ray_wave(*wave, angles, 270);
         break;
       case kGamma2:
         check_ray_wave(*wave, angles, 182);
         break;
       case kAlpha2:
-        EXPECT_NEAR(detail::math::degrees(wave->vu()), 182, 1e-8);
+        check_ray_wave(*wave, angles, 182);
         break;
       case kBeta2:
-        EXPECT_NEAR(detail::math::degrees(wave->vu()), 2, 1e-8);
+        check_ray_wave(*wave, angles, 2);
         break;
       case kDelta2:
         check_ray_wave(*wave, angles, 4);
@@ -442,7 +443,6 @@ inline auto check_nodal_amplitude(const WaveTable& table,
       case kM11:
       case kSO1:
       case kSO3:
-      case kBeta1:
         EXPECT_NEAR(wave->f(), kFO1, 1e-8);
         break;
       case kP1:
@@ -480,8 +480,7 @@ inline auto check_nodal_amplitude(const WaveTable& table,
       case kMSf:
       case k2SMu2:
       case kL2:
-      case kAlpha2:
-      case kBeta2:
+      case kMP1:
         EXPECT_NEAR(wave->f(), kFM2, 1e-8);
         break;
       case kK2:
@@ -495,7 +494,6 @@ inline auto check_nodal_amplitude(const WaveTable& table,
       case kChi1:
       case kTheta1:
       case kJ1:
-      case kMP1:
         EXPECT_NEAR(wave->f(), kFJ1, 1e-8);
         break;
       case kOO1:
@@ -551,7 +549,7 @@ inline auto check_nodal_amplitude(const WaveTable& table,
         EXPECT_NEAR(wave->f(), kFM2 * kFK2, 1e-8);
         break;
       case k2MK6:
-        EXPECT_NEAR(wave->f(), kFM6 * kFK2, 1e-8);
+        EXPECT_NEAR(wave->f(), kFM4 * kFK2, 1e-8);
         break;
       case kMO3:
         EXPECT_NEAR(wave->f(), kFM2 * kFO1, 1e-8);
@@ -589,10 +587,13 @@ inline auto check_nodal_amplitude(const WaveTable& table,
         EXPECT_NEAR(wave->f(), kFM2 * kFM2, 1e-8);
         break;
       case k2NM6:
-        EXPECT_NEAR(wave->f(), detail::math::pow<4>(kFM2) * kFM2, 1e-8);
+        EXPECT_NEAR(wave->f(), kFM6, 1e-8);
         break;
       case kTau1:
+      case kBeta1:
       case kGamma2:
+      case kAlpha2:
+      case kBeta2:
       case kDelta2:
         EXPECT_NEAR(wave->f(),
                     perth::evaluate_nodal_correction(
@@ -623,16 +624,16 @@ TEST(Wave, NodalAmplitude) {
 }
 
 // Validates the nodal corrections of Tau1, Beta1, Gamma2, Alpha2, Beta2 and
-// Delta2 against the PERTH engine over 40 years (1990-2030). Beta1, Alpha2 and
-// Beta2 use Schureman's formulas, which differ slightly from those of R. Ray;
-// the other ones use R. Ray's formulas and must be identical.
+// Delta2 against the PERTH engine over 40 years (1990-2030). They use R. Ray's
+// formulas and must be identical.
 TEST(Wave, NodalCorrectionsAgainstPerth) {
   const auto names = std::vector<std::string>{"Tau1",   "Beta1", "Gamma2",
                                               "Alpha2", "Beta2", "Delta2"};
   // Maximum differences on f and on V + u (degrees).
   const auto tolerances = std::map<ConstituentId, std::pair<double, double>>{
-      {kTau1, {1e-12, 1e-8}}, {kBeta1, {0.045, 3.6}}, {kGamma2, {1e-12, 1e-8}},
-      {kAlpha2, {0.04, 3.7}}, {kBeta2, {0.04, 3.7}},  {kDelta2, {1e-12, 1e-8}}};
+      {kTau1, {1e-12, 1e-8}},   {kBeta1, {1e-12, 1e-8}},
+      {kGamma2, {1e-12, 1e-8}}, {kAlpha2, {1e-12, 1e-8}},
+      {kBeta2, {1e-12, 1e-8}},  {kDelta2, {1e-12, 1e-8}}};
   auto darwin_table = WaveTable(names);
   auto perth_table = perth::WaveTable(names);
   for (const auto& item : tolerances) {
@@ -689,14 +690,14 @@ TEST(Wave, DoodsonNumbersReproduceTheArgument) {
 }
 
 // XDO codes checked against independent references: the IHO list of tidal
-// constituents (TWCWG, 2017) for M3, M13 (M1 at 14.492052 deg/h), S1, O1, K1
-// and L2, and the PERTH engine for M3, M13, S1, L2P, N2P and K1 (PERTH writes
-// -1 as 3, e.g. L2P = BAZZZZC).
+// constituents (TWCWG, 2017) for M3, M13 (M1 at 14.492052 deg/h), S1, O1, K1,
+// L2 and ML4 (M2 + L2, with the 180 deg of L2), and the PERTH engine for M3,
+// M13, S1, L2P, N2P and K1 (PERTH writes -1 as 3, e.g. L2P = BAZZZZC).
 TEST(Wave, XdoMatchesReferences) {
   const auto expected = std::map<std::string, std::string>{
       {"M3", "CZZZZZB"},  {"M13", "AZZZZZB"}, {"S1", "AAYZZZB"},
       {"L2P", "BAZZZZY"}, {"N2P", "BYZZZZA"}, {"O1", "AYZZZZY"},
-      {"K1", "AAZZZZA"},  {"L2", "BAZYZZB"}};
+      {"K1", "AAZZZZA"},  {"L2", "BAZYZZB"},  {"ML4", "DAZYZZB"}};
   auto names = std::vector<std::string>{};
   for (const auto& item : expected) {
     names.push_back(item.first);
@@ -706,6 +707,113 @@ TEST(Wave, XdoMatchesReferences) {
     const auto& wave = item.value();
     EXPECT_EQ(wave->xdo_alphabetical(), expected.at(wave->name()))
         << wave->name();
+  }
+}
+
+using Parts = std::vector<std::pair<ConstituentId, int>>;
+using WaveIndex = std::map<ConstituentId, const WaveInterface*>;
+
+// Indexes the waves of a table by identifier.
+static auto index_waves(WaveTableInterface& table) -> WaveIndex {
+  auto result = WaveIndex{};
+  for (const auto& item : table) {
+    result.emplace(item.key(), item.value().get());
+  }
+  return result;
+}
+
+// Difference between two angles, in radians, reduced to [-pi, pi).
+static auto angle_error(const double lhs, const double rhs) -> double {
+  return detail::math::normalize_angle(lhs - rhs, -detail::math::pi<double>(),
+                                       detail::math::two_pi<double>());
+}
+
+// Checks that f, u and V of a compound wave follow those of its components.
+static void expect_compound(const WaveIndex& waves, const ConstituentId ident,
+                            const Parts& parts) {
+  auto f = 1.0;
+  auto u = 0.0;
+  auto v = 0.0;
+  for (const auto& part : parts) {
+    const auto* component = waves.at(part.first);
+    f *= std::pow(component->f(), std::abs(part.second));
+    u += part.second * component->u();
+    v += part.second * component->v();
+  }
+  const auto* wave = waves.at(ident);
+  EXPECT_NEAR(wave->f(), f, 1e-12) << wave->name();
+  EXPECT_NEAR(angle_error(wave->u(), u), 0.0, 1e-9) << wave->name();
+  EXPECT_NEAR(angle_error(wave->v(), v), 0.0, 1e-9) << wave->name();
+}
+
+// Compound waves follow their components (Simon, 2013, eq. 6.55; IHO,
+// Annex B): f is the product of the factors (even for a subtracted
+// component) and V and u the signed sums of the arguments and of the phases.
+TEST(Wave, CompoundWavesFollowTheirComponents) {
+  const auto compounds = std::map<ConstituentId, Parts>{
+      {k2MK6, {{kM2, 2}, {kK2, 1}}}, {kMSK6, {{kM2, 1}, {kS2, 1}, {kK2, 1}}},
+      {kOQ2, {{kO1, 1}, {kQ1, 1}}},  {k2NM6, {{kN2, 2}, {kM2, 1}}},
+      {kML4, {{kM2, 1}, {kL2, 1}}},  {kSO1, {{kS2, 1}, {kO1, -1}}},
+      {kMP1, {{kM2, 1}, {kP1, -1}}}};
+  auto table = WaveTable();
+  const auto waves = index_waves(table);
+  // 631152000 = 1990-01-01 00:00:00 UTC; one date every 1000 days.
+  for (auto day = 0; day <= 19 * 365; day += 1000) {
+    table.compute_nodal_corrections(
+        angle::Astronomic(angle::Formulae::kIERS,
+                          631152000.0 + (day * 86400.0)),
+        false);
+    for (const auto& item : compounds) {
+      expect_compound(waves, item.first, item.second);
+    }
+  }
+}
+
+// The predictions work on copies of the wave table (clone()): a copied wave
+// must compute the same nodal corrections as the original, which fails if a
+// wave overriding nodal_g() does not override clone_impl() as well.
+TEST(Wave, ClonedWavesKeepTheirNodalCorrections) {
+  auto table = WaveTable();
+  auto copy = WaveTable(table);
+  const auto waves = index_waves(table);
+  const auto copies = index_waves(copy);
+  // 1057017600 = 2003-07-01 00:00:00 UTC, when R (L2, ML4) is about 19.5 deg.
+  const auto angles = angle::Astronomic(angle::Formulae::kIERS, 1057017600.0);
+  table.compute_nodal_corrections(angles, false);
+  copy.compute_nodal_corrections(angles, false);
+  for (const auto& item : waves) {
+    const auto* wave = item.second;
+    const auto* clone = copies.at(item.first);
+    EXPECT_EQ(clone->f(), wave->f()) << wave->name();
+    EXPECT_EQ(clone->u(), wave->u()) << wave->name();
+    EXPECT_EQ(clone->v(), wave->v()) << wave->name();
+  }
+}
+
+// MSK6 and 2MK6 are also defined by the PERTH engine, which uses R. Ray's
+// nodal corrections for M2 and K2: both engines must agree closely.
+TEST(Wave, CompoundWavesAgainstPerth) {
+  const auto names = std::vector<std::string>{"MSK6", "2MK6"};
+  auto darwin_table = WaveTable(names);
+  auto perth_table = perth::WaveTable(names);
+  const auto darwin_waves = index_waves(darwin_table);
+  const auto perth_waves = index_waves(perth_table);
+  for (auto day = 0; day <= 19 * 365; day += 10) {
+    // 631152000 = 1990-01-01 00:00:00 UTC
+    const auto angles = angle::Astronomic(angle::Formulae::kIERS,
+                                          631152000.0 + (day * 86400.0));
+    darwin_table.compute_nodal_corrections(angles, false);
+    perth_table.compute_nodal_corrections(angles, false);
+    for (const auto ident : {kMSK6, k2MK6}) {
+      const auto* darwin_wave = darwin_waves.at(ident);
+      const auto* perth_wave = perth_waves.at(ident);
+      EXPECT_NEAR(darwin_wave->f(), perth_wave->f(), 2e-3)
+          << darwin_wave->name();
+      EXPECT_NEAR(detail::math::degrees(
+                      angle_error(darwin_wave->vu(), perth_wave->vu())),
+                  0.0, 0.05)
+          << darwin_wave->name();
+    }
   }
 }
 

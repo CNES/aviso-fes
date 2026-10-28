@@ -101,8 +101,8 @@ O1::O1()
 
 MP1::MP1()
     : Wave(kMP1, kShortPeriod,
-           Darwin::Builder().T(1).s(-2).h(3).shift(-1).nu(-1),
-           &angle::Astronomic::f_j1) {}
+           Darwin::Builder().T(1).s(-2).h(3).shift(-1).xi(2).nu(-2),
+           &angle::Astronomic::f_m2) {}
 
 M1::M1()
     : Wave(kM1, kShortPeriod,
@@ -332,7 +332,7 @@ _2MS6::_2MS6()
 _2MK6::_2MK6()
     : Wave(k2MK6, kShortPeriod,
            Darwin::Builder().T(6).s(-4).h(6).xi(4).nu(-4).nusec(-2),
-           &angle::Astronomic::f_m23_k2) {}
+           &angle::Astronomic::f_m22_k2) {}
 
 _2SM6::_2SM6()
     : Wave(k2SM6, kShortPeriod, Darwin::Builder().T(6).s(-2).h(2).xi(2).nu(-2),
@@ -340,7 +340,7 @@ _2SM6::_2SM6()
 
 MSK6::MSK6()
     : Wave(kMSK6, kShortPeriod,
-           Darwin::Builder().T(6).s(-2).h(4).xi(2).nu(-2).nuprim(-2),
+           Darwin::Builder().T(6).s(-2).h(4).xi(2).nu(-2).nusec(-2),
            &angle::Astronomic::f_m2_k2) {}
 
 S6::S6()
@@ -407,7 +407,8 @@ SKM2::SKM2()
            &angle::Astronomic::f_m2_k2) {}
 
 OQ2::OQ2()
-    : Wave(kOQ2, kShortPeriod, Darwin::Builder().T(2).s(-5).h(2).p(1).shift(2),
+    : Wave(kOQ2, kShortPeriod,
+           Darwin::Builder().T(2).s(-5).h(2).p(1).shift(2).xi(4).nu(-2),
            &angle::Astronomic::f_o12) {}  // f(O1) * f(Q1) = f(O1)^2
 
 _3MS4::_3MS4()
@@ -446,12 +447,12 @@ NKM2::NKM2()
 
 ML4::ML4()
     : Wave(kML4, kShortPeriod,
-           Darwin::Builder().T(4).s(-3).h(4).p(-1).xi(4).nu(-4),
+           Darwin::Builder().T(4).s(-3).h(4).p(-1).shift(2).xi(4).nu(-4),
            &angle::Astronomic::f_m2_l2) {}
 
 SO1::SO1()
     : Wave(kSO1, kShortPeriod,
-           Darwin::Builder().T(1).s(2).h(-1).shift(-1).nu(-1),
+           Darwin::Builder().T(1).s(2).h(-1).shift(-1).xi(-2).nu(1),
            &angle::Astronomic::f_o1) {}
 
 SO3::SO3()
@@ -472,7 +473,7 @@ MNK6::MNK6()
 _2NM6::_2NM6()
     : Wave(k2NM6, kShortPeriod,
            Darwin::Builder().T(6).s(-8).h(6).p(2).xi(6).nu(-6),
-           &angle::Astronomic::f_m24_l2) {}
+           &angle::Astronomic::f_m23) {}
 
 _3MS8::_3MS8()
     : Wave(k3MS8, kShortPeriod, Darwin::Builder().T(8).s(-6).h(6).xi(6).nu(-6),
@@ -501,23 +502,19 @@ Tau1::Tau1()
               Darwin::Builder().T(1).s(-2).h(3).shift(-1)) {}
 
 Beta1::Beta1()
-    : Wave(kBeta1, kShortPeriod,
-           Darwin::Builder().T(1).s(-1).h(-1).p(1).shift(-1).xi(2).nu(-1),
-           &angle::Astronomic::f_o1) {}
+    : RayWave(kBeta1, kShortPeriod,
+              Darwin::Builder().T(1).s(-1).h(-1).p(1).shift(-1)) {}
 
 Gamma2::Gamma2()
     : RayWave(kGamma2, kShortPeriod,
               Darwin::Builder().T(2).s(-2).p(2).shift(2)) {}
 
 Alpha2::Alpha2()
-    : Wave(kAlpha2, kShortPeriod,
-           Darwin::Builder().T(2).s(-2).h(1).p1(1).shift(2).xi(2).nu(-2),
-           &angle::Astronomic::f_m2) {}
+    : RayWave(kAlpha2, kShortPeriod,
+              Darwin::Builder().T(2).s(-2).h(1).p1(1).shift(2)) {}
 
 Beta2::Beta2()
-    : Wave(kBeta2, kShortPeriod,
-           Darwin::Builder().T(2).s(-2).h(3).p1(-1).xi(2).nu(-2),
-           &angle::Astronomic::f_m2) {}
+    : RayWave(kBeta2, kShortPeriod, Darwin::Builder().T(2).s(-2).h(3).p1(-1)) {}
 
 Delta2::Delta2()
     : RayWave(kDelta2, kShortPeriod, Darwin::Builder().T(2).s(-2).h(4)) {}

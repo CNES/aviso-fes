@@ -288,14 +288,12 @@ auto evaluate_standard(const ConstituentId constituent, const Arguments &args,
         break;
       case kMK4:
       case kMKS2:
+      case kMSK6:
+        // MSK6 = M2 + S2 + K2: R. Ray's PERTH5 uses u(M2) - u(K2); the sum
+        // follows the composition rule (Simon, 2013, eq. 6.55; IHO, Annex B).
         nodal_corrections = {{base(kM2), base(kK2)}};
         correction.f = nodal_corrections[0].f * nodal_corrections[1].f;
         correction.u = nodal_corrections[0].u + nodal_corrections[1].u;
-        break;
-      case kMSK6:
-        nodal_corrections = {{base(kM2), base(kK2)}};
-        correction.f = nodal_corrections[0].f * nodal_corrections[1].f;
-        correction.u = nodal_corrections[0].u - nodal_corrections[1].u;
         break;
       case k2MK6:
         nodal_corrections = {{base(kM2), base(kK2)}};

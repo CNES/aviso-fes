@@ -24,6 +24,48 @@ Bug Fixes
   model was loaded as LGP2. LGP1 meshes can now be loaded. The example
   configuration ``examples/fes_lpg.yml``, which declared ``lgp1`` for an LGP2
   mesh, now declares ``lgp2``.
+* Fixed the nodal corrections of ten minor constituents. The compound waves
+  now follow the composition rule (Simon, 2013, eq. 6.55; IHO constituent
+  list, Annex B): :math:`f` is the product of the factors of the components
+  and :math:`u` the signed sum of their phases.
+
+  - :math:`2MK_6 = 2M_2 + K_2`: :math:`f = f(M_2)^2 f(K_2)` instead of
+    :math:`f(M_2)^3 f(K_2)`.
+  - :math:`MSK_6 = M_2 + S_2 + K_2`: :math:`u = u(M_2) + u(K_2)` in both
+    engines. The Darwin engine used the angle :math:`\nu'` of :math:`K_1`
+    instead of :math:`\nu''`; the PERTH engine used
+    :math:`u(M_2) - u(K_2)`, as R. Ray's PERTH5 does.
+  - :math:`OQ_2 = O_1 + Q_1`: :math:`u = 4\xi - 2\nu` instead of 0.
+  - :math:`2NM_6 = 2N_2 + M_2`: :math:`f = f(M_2)^3` instead of
+    :math:`f(M_2)^4 f(L_2)`.
+  - :math:`ML_4 = M_2 + L_2`: :math:`V` now includes the 180° of
+    :math:`L_2` and :math:`u` its term :math:`-R`; its XDO code becomes
+    ``DAZYZZB``.
+  - :math:`SO_1 = S_2 - O_1`: :math:`u = -2\xi + \nu` instead of
+    :math:`-\nu`.
+  - :math:`MP_1 = M_2 - P_1`: the nodal corrections of :math:`M_2` instead of
+    those of :math:`J_1`, which belonged to the astronomical term now
+    modelled by :math:`\tau_1`.
+  - :math:`\alpha_2`, :math:`\beta_1` and :math:`\beta_2` (added in 2026.10.0
+    with the corrections of :math:`M_2` or :math:`O_1`) now use R. Ray's
+    nodal corrections, as in the PERTH engine:
+    :math:`f e^{iu} = 1 + 0.226 e^{iN}` for :math:`\beta_1`, and no nodal
+    correction for :math:`\alpha_2` and :math:`\beta_2`.
+
+  The Darwin engine was cross-checked against pyTMD and UTide (T_TIDE) over a
+  nodal cycle. Predictions with the default FES settings (``SPLINE``
+  inference) are unchanged; the ``LINEAR`` and ``FOURIER`` inferences of the
+  Darwin engine infer :math:`\alpha_2`, :math:`\beta_1`, :math:`\beta_2` and
+  :math:`SO_1`, whose contribution changes by at most 2 mm with FES2022. The
+  PERTH engine with GOT5.6 is unaffected.
+
+  .. warning::
+
+      Harmonic constants of these ten constituents obtained with earlier
+      versions (by harmonic analysis or in user atlases) are not consistent
+      with the new nodal corrections and should be recomputed. For
+      :math:`ML_4`, the 180° shift of :math:`V` reverses the sign of the
+      constant.
 
 Documentation
 -------------

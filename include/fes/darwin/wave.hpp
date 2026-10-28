@@ -327,15 +327,17 @@ class O1 : public Wave {
   O1();
 };
 
-/// @brief @f$MP_1@f$
+/// @brief @f$MP_1 = M_2 - P_1@f$
 ///
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
 /// <tr><td>@f$T - 2s + 3h - 90^{\circ}@f$</td>
-/// <td>@f$-\nu@f$</td>
-/// <td>@f$f(J_1)@f$</td></tr>
+/// <td>@f$2\xi - 2\nu@f$</td>
+/// <td>@f$f(M_2)@f$</td></tr>
 /// </table>
-/// @note Schureman: %Table 2, Page 164, Ref. A29
+/// @note The astronomical term of Schureman's Table 2 (Ref. A29), which has
+/// the same speed, is @f$\tau_1@f$. MP1 is the compound wave M2 - P1, with the
+/// nodal corrections of M2 (IHO constituent list, code "m").
 class MP1 : public Wave {
  public:
   MP1();
@@ -1086,7 +1088,7 @@ class _2SM6 : public Wave {
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
 /// <tr><td>@f$6T - 2s + 4h@f$</td>
-/// <td>@f$2\xi - 2\nu - 2\nu^{\prime}@f$</td>
+/// <td>@f$2\xi - 2\nu - 2\nu^{\prime\prime}@f$</td>
 /// <td>@f$f(M_2) \times f(K_2)@f$</td></tr>
 /// </table>
 class MSK6 : public Wave {
@@ -1303,12 +1305,12 @@ class SKM2 : public Wave {
   SKM2();
 };
 
-/// @brief @f$OQ2@f$
+/// @brief @f$OQ2 = O1 + Q1@f$
 ///
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
 /// <tr><td>@f$2T - 5s + 2h + 1p + 180^{\circ}@f$</td>
-/// <td>@f$0@f$</td>
+/// <td>@f$4\xi - 2\nu@f$</td>
 /// <td>@f$f(O_1) \times f(Q_1)@f$</td></tr>
 /// </table>
 class OQ2 : public Wave {
@@ -1411,21 +1413,37 @@ class NKM2 : public Wave {
 ///
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
-/// <tr><td>@f$4T - 3s + 4h - p@f$</td>
-/// <td>@f$4\xi - 4\nu@f$</td>
+/// <tr><td>@f$4T - 3s + 4h - p + 180^{\circ}@f$</td>
+/// <td>@f$4\xi - 4\nu - R@f$</td>
 /// <td>@f$f(M_2) \times f(L_2)@f$</td></tr>
 /// </table>
+/// @note V and u are those of M2 plus those of L2, including the 180° shift
+/// and the term R of L2.
 class ML4 : public Wave {
  public:
   ML4();
+
+  /// Compute nodal corrections from SCHUREMAN (1958).
+  ///
+  /// @param[in] angular_position Astronomic angle
+  void nodal_g(const angle::Astronomic& angular_position) final {
+    Wave::nodal_g(angular_position);
+    u_ -= angular_position.r();
+  }
+
+ private:
+  /// Clones the wave. This is a helper function for the public clone() method.
+  auto clone_impl() const -> std::unique_ptr<WaveInterface> override {
+    return std::make_unique<ML4>(*this);
+  }
 };
 
-/// @brief @f$SO1@f$
+/// @brief @f$SO1 = S2 - O1@f$
 ///
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
 /// <tr><td>@f$T + 2s - h - 90^{\circ}@f$</td>
-/// <td>@f$-\nu@f$</td>
+/// <td>@f$-2\xi + \nu@f$</td>
 /// <td>@f$f(O_1)@f$</td></tr>
 /// </table>
 class SO1 : public Wave {
@@ -1472,13 +1490,13 @@ class MNK6 : public Wave {
   MNK6();
 };
 
-/// @brief @f$3MNL6 = 3M2 + N2 - L2@f$
+/// @brief @f$2NM6 = 2N2 + M2@f$
 ///
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
 /// <tr><td>@f$6T - 8s + 6h + 2p@f$</td>
 /// <td>@f$6\xi - 6\nu@f$</td>
-/// <td>@f$f(M_2)^4 \times f(L_2)@f$</td></tr>
+/// <td>@f$f(M_2)^3@f$</td></tr>
 /// </table>
 class _2NM6 : public Wave {
  public:
@@ -1577,13 +1595,21 @@ class Tau1 : public RayWave {
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
 /// <tr><td>@f$T - s - h + p - 90^{\circ}@f$</td>
-/// <td>@f$+2\xi - \nu@f$</td>
-/// <td>@f$f(O_1)@f$</td></tr>
+/// <td colspan="2">@f$f e^{iu} = 1 + 0.226 e^{iN}@f$</td></tr>
 /// </table>
-/// @note Schureman: %Table 2, Page 164, Ref. A21
-class Beta1 : public Wave {
+/// @note Schureman: %Table 2, Page 164, Ref. A21. Schureman gives this term
+/// the nodal corrections of @f$O_1@f$ (@f$f(O_1)@f$, @f$2\xi - \nu@f$); the
+/// nodal corrections are those of R. Ray (PERTH), closer to the satellite of
+/// relative amplitude 0.214 at @f$+N@f$ given by Simon (2013).
+class Beta1 : public RayWave {
  public:
   Beta1();
+
+ private:
+  /// Clones the wave. This is a helper function for the public clone() method.
+  auto clone_impl() const -> std::unique_ptr<WaveInterface> override {
+    return std::make_unique<Beta1>(*this);
+  }
 };
 
 /// @brief @f$\gamma_2@f$
@@ -1611,13 +1637,20 @@ class Gamma2 : public RayWave {
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
 /// <tr><td>@f$2T - 2s + h + p_1 + 180^{\circ}@f$</td>
-/// <td>@f$+2\xi - 2\nu@f$</td>
-/// <td>@f$f(M_2)@f$</td></tr>
+/// <td colspan="2">@f$f = 1@f$, @f$u = 0@f$</td></tr>
 /// </table>
-/// @note Not listed by Schureman.
-class Alpha2 : public Wave {
+/// @note Not listed by Schureman. As in R. Ray's PERTH, this term has no
+/// nodal correction: Simon (2013), who names it @f$M(SK)_2@f$, lists no
+/// nodal satellite for it.
+class Alpha2 : public RayWave {
  public:
   Alpha2();
+
+ private:
+  /// Clones the wave. This is a helper function for the public clone() method.
+  auto clone_impl() const -> std::unique_ptr<WaveInterface> override {
+    return std::make_unique<Alpha2>(*this);
+  }
 };
 
 /// @brief @f$\beta_2@f$
@@ -1625,13 +1658,20 @@ class Alpha2 : public Wave {
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
 /// <tr><td>@f$2T - 2s + 3h - p_1@f$</td>
-/// <td>@f$+2\xi - 2\nu@f$</td>
-/// <td>@f$f(M_2)@f$</td></tr>
+/// <td colspan="2">@f$f = 1@f$, @f$u = 0@f$</td></tr>
 /// </table>
-/// @note Not listed by Schureman.
-class Beta2 : public Wave {
+/// @note Not listed by Schureman. As in R. Ray's PERTH, this term has no
+/// nodal correction: Simon (2013), who names it @f$M(KS)_2@f$, lists no
+/// nodal satellite for it.
+class Beta2 : public RayWave {
  public:
   Beta2();
+
+ private:
+  /// Clones the wave. This is a helper function for the public clone() method.
+  auto clone_impl() const -> std::unique_ptr<WaveInterface> override {
+    return std::make_unique<Beta2>(*this);
+  }
 };
 
 /// @brief @f$\delta_2@f$
