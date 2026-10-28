@@ -19,8 +19,8 @@ Binary wheels are published on `PyPI <https://pypi.org/p/pyfes>`_ for:
 * **macOS** — ``arm64`` (Apple Silicon), deployment target 13.4
 * **Windows** — ``x86_64``
 
-Wheels are built for CPython 3.11, 3.12, 3.13, 3.14 and the free-threaded
-build 3.14t.
+Wheels are built for CPython 3.12, 3.13, 3.14 and the free-threaded build
+3.14t.
 
 .. code-block:: bash
 

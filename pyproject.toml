@@ -7,7 +7,7 @@ backend-path = ["_custom_build"]
 name = "pyfes"
 description = "Tidal constituents analysis in Python"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 license = "BSD-3-Clause"
 license-files = ["LICENSE"]
 authors = [
@@ -20,7 +20,6 @@ classifiers = [
     "Operating System :: POSIX",
     "Operating System :: MacOS",
     "Operating System :: Microsoft :: Windows",
-    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
@@ -116,8 +115,8 @@ force-sort-within-sections = true
 # Triggered by: .github/workflows/wheels.yml
 # ---------------------------------------------------------------------------
 [tool.cibuildwheel]
-# Build CPython 3.11–3.14 (+ 3.14 free-threaded); skip 32-bit and musl builds.
-build = "cp311-* cp312-* cp313-* cp314-* cp314t-*"
+# Build CPython 3.12–3.14 (+ 3.14 free-threaded); skip 32-bit and musl builds.
+build = "cp312-* cp313-* cp314-* cp314t-*"
 skip = ["*-win32", "*-manylinux_i686", "*-musllinux*"]
 build-verbosity = 1
 # Opt into free-threaded (cp*t-*) builds and the still-pre-release cp314 matrix.

@@ -81,6 +81,11 @@ Documentation
   links to GitHub and conda-forge, and the footer has a slot for the official
   partner logos (see ``_static/partners/README.md``).
 
+Distribution
+------------
+* Python 3.11 is no longer supported: pyfes now requires Python 3.12 or later
+  and wheels are built for CPython 3.12, 3.13, 3.14 and 3.14t.
+
 2026.10.0
 =========
 * Added the :math:`\tau_1`, :math:`\beta_1`, :math:`\gamma_2`,
