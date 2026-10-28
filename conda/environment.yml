@@ -1,7 +1,7 @@
 name: FES
 channels:
   - conda-forge
-  - defaults
+  - nodefaults
 dependencies:
   - binutils # [not win]
   - boost-cpp
