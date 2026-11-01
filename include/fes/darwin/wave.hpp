@@ -348,7 +348,7 @@ class MP1 : public Wave {
 /// <table>
 /// <tr><th>V</th><th>u</th><th>Factor-f</th></tr>
 /// <tr><td>@f$T - s + h + p - 90@f$</td>
-/// <td>@f$-\nu@f$</td>
+/// <td>@f$-\nu - Q_u@f$</td>
 /// <td>@f$f(M_1)@f$</td></tr>
 /// </table>
 class M1 : public Wave {
@@ -360,11 +360,14 @@ class M1 : public Wave {
   /// @param[in] angular_position Astronomic angle
   void nodal_g(const angle::Astronomic& angular_position) final {
     Wave::nodal_g(angular_position);
-    u_ -= detail::math::radians(
-        1.0 /
-        std::sqrt(numbers::k197_1 +
-                  (numbers::k197_2 * std::cos(2 * (angular_position.p() -
-                                                   angular_position.xi())))));
+    // SCHUREMAN P.41 (194, 196). The denominator is always positive: Qu stays
+    // within about +/-21 deg and is continuous, unlike P - Q (204).
+    const auto two_p = 2 * (angular_position.p() - angular_position.xi());
+    u_ -= std::atan(
+        std::sin(two_p) /
+        ((3 * std::cos(angular_position.i()) /
+          detail::math::pow<2>(std::cos(angular_position.i() * 0.5))) +
+         std::cos(two_p)));
   }
 
  private:

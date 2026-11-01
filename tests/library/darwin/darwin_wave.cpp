@@ -6,6 +6,7 @@
 
 #include <array>
 #include <cmath>
+#include <complex>
 #include <cstdlib>
 #include <map>
 #include <string>
@@ -45,7 +46,8 @@ constexpr double kFMm2 = kSchureman ? 0.302919608612788 : 0.303011689233;
 constexpr double kFL2P = kSchureman ? 0.60201203371380 : 0.602082294664;
 constexpr double kFN2P = kSchureman ? 1.36441782384535 : 1.365052211150;
 
-constexpr double kVuM1 = kSchureman ? 270.48325761 : 270.48332383;
+// T - s + h + p - 90 - nu - Qu, where Qu vanishes because P = p - xi = 0.
+constexpr double kVuM1 = 271.0;
 
 }  // namespace
 
@@ -815,6 +817,60 @@ TEST(Wave, CompoundWavesAgainstPerth) {
           << darwin_wave->name();
     }
   }
+}
+
+// M1 stands for the doublet tau + p, tau - p of degree 2 and its nodal
+// satellites. Sums the 7 lines of group 155 from the Cartwright-Tayler-Edden
+// tables and compares them with f exp(i(V + u)), once a single complex factor
+// is removed: the Schureman node factor of M1 does not average 1 (par. 126).
+TEST(Wave, M1FollowsTheTidalPotential) {
+  struct Line {
+    int p;       // Multiple of p
+    int n;       // Multiple of N' = -N
+    double amp;  // Cartwright-Tayler-Edden height
+  };
+  constexpr auto kLines = std::array<Line, 7>{{{-1, -2, -0.00012},
+                                               {-1, -1, 0.00137},
+                                               {-1, 0, 0.00741},
+                                               {1, -1, -0.00059},
+                                               {1, 0, 0.02062},
+                                               {1, 1, 0.00414},
+                                               {1, 2, -0.00011}}};
+  auto table = WaveTable(std::vector<std::string>{"M1"});
+  const auto& wave = table[kM1];
+  // Pairs (potential, model).
+  auto samples =
+      std::vector<std::pair<std::complex<double>, std::complex<double>>>{};
+  // 946684800 = 2000-01-01 00:00:00 UTC, every 10 days over 56 years.
+  for (auto day = 0; day < 56 * 365; day += 10) {
+    const auto angles = angle::Astronomic(angle::Formulae::kIERS,
+                                          946684800.0 + (day * 86400.0));
+    table.compute_nodal_corrections(angles, false);
+    auto sum = std::complex<double>{};
+    for (const auto& line : kLines) {
+      sum += line.amp *
+             std::polar(1.0, angles.t() - angles.s() + angles.h() +
+                                 (line.p * angles.p()) - (line.n * angles.n()));
+    }
+    samples.emplace_back(sum, std::polar(wave->f(), wave->vu()));
+    // Qu is bounded: u does not wrap, unlike with P - Q.
+    EXPECT_LE(std::abs(wave->u() + angles.nu()), detail::math::radians(21.0))
+        << day;
+  }
+  auto numerator = std::complex<double>{};
+  auto denominator = 0.0;
+  for (const auto& sample : samples) {
+    numerator += std::conj(sample.second) * sample.first;
+    denominator += std::norm(sample.second);
+  }
+  const auto factor = numerator / denominator;
+  auto residual = 0.0;
+  auto power = 0.0;
+  for (const auto& sample : samples) {
+    residual += std::norm(sample.first - (factor * sample.second));
+    power += std::norm(sample.first);
+  }
+  EXPECT_LT(std::sqrt(residual / power), 0.02);
 }
 
 TEST(Wave, CorrectedTideFollowsNodalCorrections) {

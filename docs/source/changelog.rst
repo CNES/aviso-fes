@@ -67,6 +67,25 @@ Bug Fixes
       :math:`ML_4`, the 180° shift of :math:`V` reverses the sign of the
       constant.
 
+* Fixed the nodal phase of :math:`M_1` in the Darwin engine. The term
+  subtracted from :math:`u` was :math:`Q_a`, an amplitude factor converted to
+  radians as if it were an angle in degrees (at most 1.1°), instead of the
+  phase :math:`Q_u` (Schureman, 1958, eq. 194 and 196), which reaches ±21°:
+  :math:`u = -\nu - Q_u`. Against the 7 lines of group 155 of the tidal
+  potential (Cartwright-Tayler-Edden), the error over 2000-2056 falls from
+  24 % to 1.5 %. The node factor :math:`f(M_1)` is unchanged. Predictions with
+  the default FES settings (``SPLINE`` inference), which do not use
+  :math:`M_1`, are unchanged, as is the PERTH engine with GOT5.6. The
+  ``LINEAR`` and ``FOURIER`` inferences of the Darwin engine do infer
+  :math:`M_1`: with FES2022 the prediction changes by up to 58 mm (13 mm at
+  the 99th percentile), where the diurnal tide is strongest.
+
+  .. warning::
+
+      Harmonic constants of :math:`M_1` obtained with earlier versions of the
+      Darwin engine (by harmonic analysis or in user atlases) are not
+      consistent with the new nodal correction and should be recomputed.
+
 Documentation
 -------------
 * Added a visual identity for FES: a logo (a triangular finite element holding

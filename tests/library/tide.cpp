@@ -146,10 +146,10 @@ TEST_F(EvaluateTideFromConstituentsTest, Darwin) {
   auto result = evaluate_tide_from_constituents(
       data_, epochs, 48.383, FESSettings{}.with_num_threads((1)));
 #ifdef FES_USE_IERS_CONSTANTS
-  EXPECT_NEAR(std::get<0>(result)(0), -272.383990608873, 1e-6);
+  EXPECT_NEAR(std::get<0>(result)(0), -272.283810107401, 1e-6);
   EXPECT_NEAR(std::get<1>(result)(0), 3.7838737298299381, 1e-6);
 #else
-  EXPECT_NEAR(std::get<0>(result)(0), -272.414054055131, 1e-6);
+  EXPECT_NEAR(std::get<0>(result)(0), -272.313799727866, 1e-6);
   EXPECT_NEAR(std::get<1>(result)(0), 3.7832571896134044, 1e-6);
 #endif
 }
