@@ -60,7 +60,7 @@ jobs:
           echo "BUILD_PREFIX=${prefix}" >> "$GITHUB_ENV"
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@8c2dcd2e96041a619f5ff03c9638d7941e2553a4 # v4.3.3
+        uses: pypa/cibuildwheel@b9e566a2b284570af229f6c2a33673410d0389a3 # v4.3.4
         env:
           # Windows: point CMake at the conda-forge Boost and Eigen headers.
           CIBW_ENVIRONMENT_WINDOWS: >-
