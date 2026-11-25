@@ -1211,7 +1211,7 @@ main(void)
                     1,
                     1,
                     &hlp);
-  err = CHECK_FLOAT(hlp, -1.069196011706);
+  err = CHECK_FLOAT(hlp, -1.044891534017);
   SUMMARIZE_ERR;
 
   FINAL_RESULTS;

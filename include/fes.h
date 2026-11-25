@@ -28,7 +28,7 @@ extern "C"
 #include <stdlib.h>
 
 /// Library version
-#define FES_VERSION "2.9.7"
+#define FES_VERSION "2.9.8"
   /**
    @brief Possible type of access.
    */

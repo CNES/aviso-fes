@@ -856,6 +856,9 @@ lpe_minus_n_waves(const float w2nd[][N_COEFS],
   double h30 = 0.0;
   double c20;
   double c30;
+  /* Love number factors of degree 2 and 3 */
+  const double factor_20 = 1.0 - 0.609 /* H2 */ + 0.302 /* K2 */;
+  const double factor_30 = 1.0 - 0.291 /* H3 */ + 0.093 /* K3 */;
 
   /* Compute 4 principal mean longitudes in radians at time TD */
   td = ((ts + 33282.0) * 86400.0 - 4043174400.0) / 86400.0;
@@ -887,16 +890,18 @@ lpe_minus_n_waves(const float w2nd[][N_COEFS],
 
   /* FES14C: mass conservation for LP equilibrium */
   /* subtraction of the mean of c20 and c30 on ocean, for mass conservation */
-  /* mean_c20 = -0.014432247 */
-  /* mean_c30 = 0.012469818  */
-  c20 = sqrt(5.0 / (4.0 * M_PI)) * (1.5 * SQR(tmp) - 0.5) + 0.014432247;
-  c30 = sqrt(7.0 / (4.0 * M_PI)) * (2.5 * SQR(tmp) - 1.5) * tmp - 0.012469818;
+  /* mean_c20 = -0.014432247 / factor_20 */
+  /* mean_c30 = 0.012469818 / factor_20 */
+  /* The means are normalized by the degree-2 loading factor: they must not be
+     scaled a second time by the Love number factors applied below. factor_20
+     is also used for mean_c30, as in the original calculation of the mean. */
+  c20 = sqrt(5.0 / (4.0 * M_PI)) * (1.5 * SQR(tmp) - 0.5) +
+        0.014432247 / factor_20;
+  c30 = sqrt(7.0 / (4.0 * M_PI)) * (2.5 * SQR(tmp) - 1.5) * tmp -
+        0.012469818 / factor_20;
 
   /* m -> cm */
-  /* clang-format off */
-  *tlp = ((1.0 - 0.609 /* H2 */+ 0.302 /* K2 */) * c20 * h20 + (1.0 - 0.291
-  /* H3 */+ 0.093 /* K3 */) * c30 * h30) * 1e2;
-  /* clang-format on */
+  *tlp = (factor_20 * c20 * h20 + factor_30 * c30 * h30) * 1e2;
 }
 
 /*
